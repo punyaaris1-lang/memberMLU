@@ -1,4 +1,4 @@
-           <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -81,7 +81,7 @@
     <div id="login-page">
         <h2 style="margin-bottom: 20px; color: #00a8e8;">MEMBER ACCESS</h2>
         <div class="login-box">
-            <input type="tel" id="inputHP" placeholder="Masukkan Nomor HP Terdaftar" autocomplete="off">
+            <input type="tel" id="inputHP" placeholder="Nomor HP (Contoh: 856xxx)" autocomplete="off">
             <button onclick="cekLogin()" id="btnLogin">MASUK</button>
             <p id="status-msg" style="color: #666; font-size: 12px; margin-top: 10px; text-align: center;"></p>
         </div>
@@ -155,11 +155,26 @@
 
     <script>
         // --- KONFIGURASI DATABASE ---
-        // Link Sheet yang kamu berikan sudah saya masukkan di sini:
         const googleSheetLink = 'https://docs.google.com/spreadsheets/d/1ERgIFLVIS1SRHrXi2clXiU8oj0gtLT4XZUzO1sy_P1Q/edit?usp=drivesdk'; 
 
+        // Fungsi Pembersih Nomor HP (Jantung dari sistem ini)
+        function cleanPhone(phone) {
+            let p = String(phone).trim();
+            // Buang karakter selain angka (biar aman dari spasi/-)
+            p = p.replace(/[^0-9]/g, '');
+            // Jika diawali 62, buang 62
+            if (p.startsWith('62')) {
+                p = p.substring(2);
+            }
+            // Jika diawali 0, buang 0
+            if (p.startsWith('0')) {
+                p = p.substring(1);
+            }
+            return p;
+        }
+
         function cekLogin() {
-            const hpInput = document.getElementById("inputHP").value;
+            var hpInput = document.getElementById("inputHP").value;
             const btn = document.getElementById("btnLogin");
             const msg = document.getElementById("status-msg");
 
@@ -169,47 +184,54 @@
                 return;
             }
 
+            // Bersihkan Input User (Jadi kalau user iseng ngetik 08xxx, tetap kita proses 8xxx)
+            const cleanInput = cleanPhone(hpInput);
+
             // UI Loading
             btn.innerHTML = "MEMERIKSA...";
             btn.disabled = true;
             msg.innerText = "Mencari data di server...";
             msg.style.color = "blue";
 
-            // Ambil ID dari Link Google Sheet
             const sheetID = getSheetID(googleSheetLink);
             
-            // Tarik Data dari API OpenSheet (Gratis)
             fetch(`https://opensheet.elk.sh/${sheetID}/Sheet1`)
             .then(res => res.json())
             .then(data => {
-                console.log("Data diterima:", data); // Untuk debugging
-                
-                // Cari User (Ubah No HP jadi String biar aman)
-                const user = data.find(row => String(row['No HP']) === String(hpInput));
+                // LOGIKA PENCARIAN CERDAS (SMART MATCH)
+                const user = data.find(row => {
+                    // Kita bersihkan juga nomor yang ada di Database
+                    // Jadi mau di database tulisannya 08xxx atau 628xxx, kita ubah jadi 8xxx
+                    const dbHP = cleanPhone(row['No HP']);
+                    return dbHP === cleanInput;
+                });
 
                 if (user) {
-                    // KETEMU! Tampilkan Data
+                    // KETEMU!
                     document.getElementById("disp-nama").innerText = user['Nama'] || "Member";
                     document.getElementById("disp-motor").innerText = user['Motor'] || "-";
                     document.getElementById("disp-plat").innerText = user['Plat Nomor'] || "B xxxx";
                     document.getElementById("disp-tenor").innerText = (user['Tenor Hari'] || "0") + " Hari";
                     document.getElementById("disp-tagihan").innerText = user['Tagihan'] || "Lunas";
 
-                    // Pindah Halaman
                     document.getElementById("login-page").style.display = "none";
                     document.getElementById("dashboard-page").style.display = "block";
                     document.getElementById("bottomNav").style.display = "flex";
                 } else {
-                    // TIDAK KETEMU
+                    // GAGAL
                     msg.innerText = "Nomor tidak terdaftar!";
                     msg.style.color = "red";
+                    
+                    // Alert Debugging (Opsional: Kalau mau tau input yg dibaca apa)
+                    // alert("Input bersih: " + cleanInput);
+
                     btn.innerHTML = "MASUK";
                     btn.disabled = false;
                 }
             })
             .catch(err => {
                 console.error(err);
-                msg.innerText = "Gagal koneksi. Pastikan Sheet 'Anyone with Link'";
+                msg.innerText = "Gagal koneksi. Cek internet/Sheet.";
                 msg.style.color = "red";
                 btn.innerHTML = "MASUK";
                 btn.disabled = false;
@@ -219,47 +241,6 @@
         function getSheetID(url) {
             const matches = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
             return matches ? matches[1] : null;
-        }
-    </script>
-
-</body>
-</html>
-   "0812345": { // Contoh No HP
-                    nama: "OGI",
-                    motor: "Cavalry 160KM",
-                    plat: "B 4088 SVZ",
-                    tenor: "1095 Hari",
-                    tagihan: "Rp 160.000"
-                },
-                "0811111": { 
-                    nama: "DAME",
-                    motor: "Gesits G1",
-                    plat: "B 1234 ABC",
-                    tenor: "365 Hari",
-                    tagihan: "Rp 50.000"
-                }
-            };
-
-            if (databaseUser[hp]) {
-                // Jika No HP ada di database dummy
-                var user = databaseUser[hp];
-                
-                // Masukkan data ke HTML
-                document.getElementById("disp-nama").innerText = user.nama;
-                document.getElementById("disp-motor").innerText = user.motor;
-                document.getElementById("disp-plat").innerText = user.plat;
-                document.getElementById("disp-tenor").innerText = user.tenor;
-                document.getElementById("disp-tagihan").innerText = user.tagihan;
-
-                // Ganti Halaman
-                document.getElementById("login-page").style.display = "none";
-                document.getElementById("dashboard-page").style.display = "block";
-                document.getElementById("bottomNav").style.display = "flex";
-            } else {
-                // Jika salah
-                loading.style.display = "block";
-                loading.innerText = "Nomor tidak terdaftar!";
-            }
         }
     </script>
 
