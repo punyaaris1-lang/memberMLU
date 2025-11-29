@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Member Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* CSS PREMIUM DARK GOLD */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #000;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%);
+            color: #d4af37;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(20, 20, 20, 0.9);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hiasan Kilau Emas */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .sub-title {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            margin-bottom: 8px;
+            color: #888;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Tombol Emas */
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
+            border: none;
+            color: #000;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Membership</h2>
+        <p class="sub-title">Exclusive Access</p>
+
+        <form id="memberForm">
+            <input type="hidden" name="Waktu" value="x-sheetmonkey-current-date-time" />
+
+            <div class="input-group">
+                <label>Nama Lengkap</label>
+                <input type="text" name="Nama" required placeholder="Nama Sesuai ID">
+            </div>
+
+            <div class="input-group">
+                <label>Nomor WhatsApp</label>
+                <input type="number" name="No HP" required placeholder="08xxx">
+            </div>
+
+            <div class="input-group">
+                <label>Domisili</label>
+                <select name="Domisili">
+                    <option value="Jakarta">Jakarta</option>
+                    <option value="Bogor">Bogor</option>
+                    <option value="Depok">Depok</option>
+                    <option value="Tangerang">Tangerang</option>
+                    <option value="Bekasi">Bekasi</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+
+            <button type="submit" id="btnSubmit">Join Member</button>
+            <div class="loading" id="loadingText">Processing data...</div>
+        </form>
+    </div>
+
+    <script>
+        // --- PASTE LINK SHEETMONKEY DI BAWAH INI ---
+        const scriptURL = 'https://api.sheetmonkey.io/form/kfZAeccwx49Hr3Lhmiu1v2'; 
+        // -------------------------------------------
+
+        const form = document.getElementById('memberForm');
+        const btn = document.getElementById('btnSubmit');
+        const loading = document.getElementById('loadingText');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            // Ubah tombol jadi loading
+            btn.style.opacity = '0.5';
+            btn.innerHTML = 'MENGIRIM...';
+            loading.style.display = 'block';
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                // Notifikasi Sukses
+                Swal.fire({
+                    title: 'Welcome!',
+                    text: 'Data member berhasil didaftarkan.',
+                    icon: 'success',
+                    background: '#111',
+                    color: '#fff',
+                    confirmButtonColor: '#d4af37'
+                });
+                
+                // Reset Form
+                form.reset();
+                btn.style.opacity = '1';
+                btn.innerHTML = 'JOIN MEMBER';
+                loading.style.display = 'none';
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Gagal mengirim data. Cek koneksi internet.',
+                    icon: 'error',
+                    background: '#111',
+                    color: '#fff'
+                });
+                btn.style.opacity = '1';
+                btn.innerHTML = 'JOIN MEMBER';
+                loading.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
