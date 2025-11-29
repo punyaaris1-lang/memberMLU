@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Member Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', sans-serif; }
+        body { background-color: #f5f6fa; color: #333; padding-bottom: 80px; }
+
+        /* --- HALAMAN LOGIN --- */
+        #login-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            padding: 20px;
+        }
+        .login-box input {
+            padding: 15px; width: 100%; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .login-box button {
+            padding: 15px; width: 100%; background: #00a8e8; color: white; border: none; border-radius: 10px;
+            font-weight: bold; font-size: 16px; cursor: pointer;
+        }
+
+        /* --- HALAMAN DASHBOARD (Disembunyikan dulu) --- */
+        #dashboard-page { display: none; padding: 20px; }
+
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .greeting h1 { font-size: 18px; color: #008eb3; font-weight: 700; }
+        .greeting p { font-size: 24px; font-weight: 800; text-transform: uppercase; margin-top: 5px;}
+        .notif-icon { background: #00a8e8; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+        .badge { position: absolute; top: 0; right: 0; background: red; width: 15px; height: 15px; border-radius: 50%; font-size: 10px; color: white; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+
+        /* Kartu Biru Utama */
+        .main-card {
+            background: linear-gradient(135deg, #00a8e8 0%, #0077b6 100%);
+            border-radius: 20px; padding: 25px; color: white; margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0, 168, 232, 0.3); position: relative; overflow: hidden;
+        }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
+        .motor-name { font-size: 18px; font-weight: 700; }
+        .status-label { font-size: 12px; opacity: 0.8; }
+        .price { font-size: 22px; font-weight: 800; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 15px; }
+        .plat-nomor { font-family: monospace; font-size: 16px; letter-spacing: 1px; }
+
+        /* Kartu Putih (Tenor) */
+        .info-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .tenor-info { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .tenor-box { display: flex; align-items: center; gap: 10px; }
+        .icon-box { width: 40px; height: 40px; background: #e3f2fd; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #00a8e8; }
+        .tenor-text h3 { font-size: 18px; color: #00a8e8; font-weight: 800; }
+        .tenor-text span { font-size: 12px; color: #888; }
+        .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        .progress-fill { height: 100%; background: #00a8e8; width: 6%; } /* Settingan manual nanti pake JS */
+        .progress-text { text-align: center; font-size: 12px; color: #666; font-weight: 600; }
+
+        /* Kartu Tagihan */
+        .bill-card {
+            background: #e1f5fe; border-radius: 15px; padding: 20px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;
+        }
+        .bill-info h4 { font-size: 12px; color: #008eb3; margin-bottom: 5px; }
+        .bill-info .bill-amount { font-size: 20px; font-weight: 800; color: #0277bd; }
+        .btn-pay { background: #00a8e8; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+        /* Grid Menu */
+        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
+        .menu-item i { font-size: 20px; color: white; }
+        .icon-circle { width: 50px; height: 50px; background: #00a8e8; border-radius: 15px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 10px rgba(0, 168, 232, 0.2); }
+        .menu-item span { font-size: 12px; color: #555; font-weight: 600; }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: white;
+            display: flex; justify-content: space-around; padding: 15px 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px;
+        }
+        .nav-item { text-align: center; color: #aaa; text-decoration: none; font-size: 10px; }
+        .nav-item i { font-size: 20px; margin-bottom: 5px; display: block; }
+        .nav-item.active { color: #00a8e8; }
+        .qr-btn {
+            background: #00a8e8; width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; margin-top: -35px; box-shadow: 0 10px 20px rgba(0, 168, 232, 0.4); border: 5px solid white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-page">
+        <h2 style="margin-bottom: 20px; color: #00a8e8;">MEMBER ACCESS</h2>
+        <div class="login-box">
+            <input type="tel" id="inputHP" placeholder="Masukkan Nomor HP Terdaftar">
+            <button onclick="login()">MASUK</button>
+            <p id="error-msg" style="color: red; font-size: 12px; margin-top: 10px; display: none;">Nomor tidak ditemukan!</p>
+        </div>
+    </div>
+
+    <div id="dashboard-page">
+        <div class="header">
+            <div class="greeting">
+                <h1>Selamat malam,</h1>
+                <p id="disp-nama">NAMA USER</p>
+            </div>
+            <div class="notif-icon">
+                <i class="fas fa-bell"></i>
+                <div class="badge">0</div>
+            </div>
+        </div>
+
+        <div class="main-card">
+            <div class="card-top">
+                <div>
+                    <div class="status-label">Maka</div>
+                    <div class="motor-name" id="disp-motor">Jenis Motor</div>
+                </div>
+                <div class="price">Rp 70.000</div>
+            </div>
+            <div class="card-bottom">
+                <div class="plat-nomor"><i class="far fa-id-card"></i> <span id="disp-plat">B xxxx XXX</span></div>
+                <div style="font-size: 12px;"><i class="fas fa-cogs"></i> Automatic</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="tenor-info">
+                <div class="tenor-box">
+                    <div class="icon-box"><i class="far fa-calendar-alt"></i></div>
+                    <div class="tenor-text">
+                        <h3 id="disp-tenor">0 Hari</h3>
+                        <span>Total tenor</span>
+                    </div>
+                </div>
+                <div class="tenor-box">
+                    <div class="icon-box" style="background: #fff3e0; color: #ff9800;"><i class="far fa-clock"></i></div>
+                    <div class="tenor-text">
+                        <h3 style="color: #ff9800;">65 Hari</h3>
+                        <span>Terbayar</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p class="progress-text">6% Menuju tenor selesai</p>
+        </div>
+
+        <div class="bill-card">
+            <div class="bill-info">
+                <h4>Tagihan 2 Invoice</h4>
+                <div class="bill-amount" id="disp-tagihan">Rp 0</div>
+            </div>
+            <button class="btn-pay">Bayar Sekarang</button>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-item"><div class="icon-circle"><i class="far fa-credit-card"></i></div><span>Tagihan</span></div>
+            <div class="menu-item"><div class="icon-circle"><i class="far fa-calendar-check"></i></div><span>Riwayat</span></div>
+            <div class="menu-item"><div class="icon-circle"><i class="fas fa-wifi"></i></div><span>SOS</span></div>
+            <div class="menu-item"><div class="icon-circle"><i class="fas fa-certificate"></i></div><span>RTO</span></div>
+        </div>
+    </div>
+
+    <div class="bottom-nav" id="bottomNav" style="display: none;">
+        <a href="#" class="nav-item active"><i class="fas fa-home"></i>Home</a>
+        <a href="#" class="nav-item"><i class="far fa-credit-card"></i>Tagihan</a>
+        <a href="#" class="qr-btn"><i class="fas fa-qrcode"></i></a>
+        <a href="#" class="nav-item"><i class="far fa-calendar-alt"></i>Riwayat</a>
+        <a href="#" class="nav-item"><i class="far fa-user"></i>Profile</a>
+    </div>
+
+    <script>
+        // --- LOGIC SEDERHANA UNTUK DEMO ---
+        // Nanti bagian ini kita ganti supaya connect ke Google Sheet Beneran
+        
+        function login() {
+            var hp = document.getElementById("inputHP").value;
+            var loading = document.getElementById("error-msg");
+            
+            // SIMULASI DATA (Contoh dulu)
+            // Nanti kita ganti ini dengan "Fetch CSV Google Sheet"
+            var databaseUser = {
+                "0812345": { // Contoh No HP
+                    nama: "OGI",
+                    motor: "Cavalry 160KM",
+                    plat: "B 4088 SVZ",
+                    tenor: "1095 Hari",
+                    tagihan: "Rp 160.000"
+                },
+                "0811111": { 
+                    nama: "DAME",
+                    motor: "Gesits G1",
+                    plat: "B 1234 ABC",
+                    tenor: "365 Hari",
+                    tagihan: "Rp 50.000"
+                }
+            };
+
+            if (databaseUser[hp]) {
+                // Jika No HP ada di database dummy
+                var user = databaseUser[hp];
+                
+                // Masukkan data ke HTML
+                document.getElementById("disp-nama").innerText = user.nama;
+                document.getElementById("disp-motor").innerText = user.motor;
+                document.getElementById("disp-plat").innerText = user.plat;
+                document.getElementById("disp-tenor").innerText = user.tenor;
+                document.getElementById("disp-tagihan").innerText = user.tagihan;
+
+                // Ganti Halaman
+                document.getElementById("login-page").style.display = "none";
+                document.getElementById("dashboard-page").style.display = "block";
+                document.getElementById("bottomNav").style.display = "flex";
+            } else {
+                // Jika salah
+                loading.style.display = "block";
+                loading.innerText = "Nomor tidak terdaftar!";
+            }
+        }
+    </script>
+
+</body>
+</html>
