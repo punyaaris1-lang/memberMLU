@@ -75,7 +75,7 @@
             text-transform: uppercase;
         }
 
-        input, select {
+        input {
             width: 100%;
             padding: 12px;
             background: #0a0a0a;
@@ -87,7 +87,7 @@
             transition: 0.3s;
         }
 
-        input:focus, select:focus {
+        input:focus {
             border-color: #d4af37;
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
         }
@@ -124,15 +124,15 @@
 <body>
 
     <div class="card">
-        <h2>Membership</h2>
-        <p class="sub-title">Exclusive Access</p>
+        <h2>MAKA LINTAS UTARA</h2>
+        <p class="sub-title">Form Member</p>
 
         <form id="memberForm">
             <input type="hidden" name="Waktu" value="x-sheetmonkey-current-date-time" />
 
             <div class="input-group">
                 <label>Nama Lengkap</label>
-                <input type="text" name="Nama" required placeholder="Nama Sesuai ID">
+                <input type="text" name="Nama" required placeholder="Nama Sesuai KTP">
             </div>
 
             <div class="input-group">
@@ -142,14 +142,12 @@
 
             <div class="input-group">
                 <label>Domisili</label>
-                <select name="Domisili">
-                    <option value="Jakarta">Jakarta</option>
-                    <option value="Bogor">Bogor</option>
-                    <option value="Depok">Depok</option>
-                    <option value="Tangerang">Tangerang</option>
-                    <option value="Bekasi">Bekasi</option>
-                    <option value="Lainnya">Lainnya</option>
-                </select>
+                <input type="text" name="Domisili" required placeholder="Kota tempat tinggal">
+            </div>
+
+            <div class="input-group">
+                <label>Plat Nomor</label>
+                <input type="text" name="Plat Nomor" required placeholder="B 1234 XXX">
             </div>
 
             <button type="submit" id="btnSubmit">Join Member</button>
