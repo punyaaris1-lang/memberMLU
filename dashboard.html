@@ -292,17 +292,77 @@
             });
         }
 
-        function submitRegister() {
-            const form = document.getElementById('form-register');
+                function submitRegister() {
             const btn = document.querySelector("#form-register button");
+            const form = document.getElementById('form-register');
             
+            // 1. Ambil Nilai Input Manual (Supaya Lebih Aman)
+            const hp = document.getElementById('reg-hp').value;
             const nama = form.querySelector('input[name="Nama"]').value;
             const plat = form.querySelector('input[name="Plat Nomor"]').value;
             const tgl = form.querySelector('input[name="Tanggal Join"]').value;
-
-            if(!nama || !plat || !tgl) {
-                return Swal.fire({title:'Data Kurang', text:'Mohon isi semua data.', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+            const dp = form.querySelector('select[name="DP Awal"]').value;
+            const makaPlus = document.getElementById("reg-maka-plus").value;
+            
+            // 2. Set Tgl Aktivasi
+            let tglAktivasi = "-";
+            if(makaPlus === "YA") {
+                tglAktivasi = new Date().toISOString().split('T')[0];
             }
+
+            // 3. Validasi
+            if(!nama || !plat || !tgl) {
+                return Swal.fire({title:'Data Belum Lengkap', text:'Mohon lengkapi semua kolom.', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+            }
+
+            // 4. Siapkan Data (JSON Object)
+            const dataKirim = {
+                "No HP": hp,
+                "Nama": nama,
+                "Plat Nomor": plat,
+                "Tanggal Join": tgl,
+                "DP Awal": dp,
+                "Maka Plus": makaPlus,
+                "Tgl Aktivasi Maka": tglAktivasi
+            };
+
+            // 5. Kirim Data (Direct Fetch JSON)
+            btn.innerText = "MENGIRIM...";
+            btn.disabled = true;
+
+            fetch(sheetMonkeyURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataKirim)
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'SUKSES!', 
+                        text: 'Data berhasil disimpan. Silakan Login ulang.', 
+                        icon: 'success', 
+                        background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    throw new Error("Gagal kirim ke server.");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                Swal.fire({
+                    title: 'GAGAL MENYIMPAN', 
+                    text: 'Pastikan koneksi lancar. Coba refresh halaman.', 
+                    icon: 'error', background:'#111', color:'#fff', confirmButtonColor:'#ff3333'
+                });
+                btn.innerText = "COBA LAGI";
+                btn.disabled = false;
+            });
+                   }
+                  
 
             const makaSelect = document.getElementById("reg-maka-plus").value;
             const tglAktivasi = document.getElementById("reg-tgl-maka");
