@@ -90,7 +90,6 @@
         /* SOS */
         .sos-header { text-align: center; margin: 20px; }
         .sos-header i { font-size: 50px; color: #ff3333; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -232,9 +231,9 @@
     </div>
 
     <script>
-        // --- KONFIGURASI (PASTIKAN LINK BENAR) ---
+        // --- KONFIGURASI ---
         const googleSheetLink = 'https://docs.google.com/spreadsheets/d/1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ/edit?usp=drivesdk'; 
-        const sheetMonkeyURL = 'https://api.sheetmonkey.io/form/88rjffsKVodtfwaQE4gU58'; 
+        const sheetMonkeyURL = 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2'; 
         const waAdmin = "6285691536957"; 
 
         // GLOBAL VARS
@@ -326,6 +325,7 @@
                 }
             })
             .catch(error => {
+                console.error(error);
                 Swal.fire({ title: 'GAGAL', text: 'Cek koneksi atau Tab USER.', icon: 'error', background:'#111', color:'#fff', confirmButtonColor:'#ff3333' });
                 btn.innerText = "COBA LAGI"; btn.disabled = false;
             });
@@ -337,7 +337,6 @@
             document.getElementById("disp-plat").innerText = user['Plat Nomor'];
             document.getElementById("disp-join").innerText = user['Tanggal Join'];
             
-            // Cek status Maka+ (Database atau Local override)
             const isMakaDB = String(user['Maka Plus']).toUpperCase().includes("YA");
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
             const isMaka = isMakaDB || isMakaLocal;
@@ -350,128 +349,95 @@
             document.getElementById("page-register").classList.add("hidden");
             document.getElementById("main-app").classList.remove("hidden");
             
+            // Fix Map
             setTimeout(initMap, 1000);
         }
 
-        // --- UPDATE: MENU MAKA PLUS ---
-        function bukaMenuMakaPlus() {
-            if(!currentUser) return;
+        // --- MAP SYSTEM UPDATE ---
+        function initMap() { 
+            if(map)return; 
+            map=L.map('map').setView([-6.2,106.8],12); 
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map); 
             
-            // Cek Status Sekarang
-            const isMakaDB = String(currentUser['Maka Plus']).toUpperCase().includes("YA");
-            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+            var iconCharge = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+            var iconUser = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png', iconSize: [25, 41], iconAnchor: [12, 41] });
 
-            if(isMakaDB || isMakaLocal) {
-                Swal.fire({title:'Maka+ Aktif', text:'Layanan Maka+ Anda sudah aktif.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
-            } else {
-                // POPUP PILIHAN BARU
-                Swal.fire({
-                    title: 'Layanan Maka+',
-                    html: `
-                        <p style="font-size:12px; color:#aaa;">Benefit: Ganti oli, Service ringan, dll.</p>
-                        <br>
-                        <button id="btn-daftar-maka" style="background:#fff; color:#000; border:none; padding:10px 20px; border-radius:5px; font-weight:bold; width:100%; margin-bottom:10px;">DAFTAR SEKARANG</button>
-                        <button id="btn-sudah-punya" style="background:#00f3ff; color:#000; border:none; padding:10px 20px; border-radius:5px; font-weight:bold; width:100%;">SAYA SUDAH PUNYA</button>
-                    `,
-                    showConfirmButton: false,
-                    background:'#111', color:'#fff',
-                    didOpen: () => {
-                        // Tombol 1: Buka Link
-                        document.getElementById('btn-daftar-maka').addEventListener('click', () => {
-                            window.open('https://bit.ly/semilchargerplus', '_blank');
-                        });
-                        // Tombol 2: Aktifkan Status & Tambah Tagihan
-                        document.getElementById('btn-sudah-punya').addEventListener('click', () => {
-                            aktifkanMakaPlusLocal();
-                        });
-                    }
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(p=>{
+                    const lat = p.coords.latitude;
+                    const lng = p.coords.longitude;
+                    map.setView([lat, lng], 14);
+                    L.marker([lat, lng], {icon: iconUser}).addTo(map).bindPopup("Lokasi Kamu").openPopup();
+                    loadChargingStations(lat, lng, iconCharge);
                 });
             }
         }
 
-        function aktifkanMakaPlusLocal() {
-            // Set Status Lokal jadi Aktif
-            localStorage.setItem('makaPlusOverride', 'true');
-            
-            // Update Tampilan Langsung
-            document.getElementById("disp-maka-status").innerText = "AKTIF";
-            document.getElementById("disp-maka-status").style.color = "#00f3ff";
-            document.getElementById("icon-maka").style.color = "#00f3ff";
-            
-            // Hitung Ulang Tagihan
-            hitungTagihan(currentUser);
-
-            Swal.fire({
-                title: 'Berhasil Diaktifkan!',
-                text: 'Tagihan Anda otomatis ditambahkan +10rb.',
-                icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'
-            });
-            
-            // Opsional: Kirim Notif ke Admin via WA agar Admin update Sheet
-            // window.open(`https://wa.me/${waAdmin}?text=User ${currentUser['Nama']} mengaktifkan Maka+ di Aplikasi.`, '_blank');
+        function loadChargingStations(userLat, userLng, iconStyle) { 
+            const sheetID = getSheetID(googleSheetLink); 
+            fetch(`https://opensheet.elk.sh/${sheetID}/LOKASI`).then(res => res.json()).then(data => { 
+                let terdekatJarak = 9999999; 
+                let terdekatNama = ""; 
+                let terdekatLat = 0; let terdekatLng = 0; 
+                data.forEach(loc => { 
+                    if(loc.lat && loc.lng) { 
+                        L.marker([loc.lat, loc.lng], {icon: iconStyle}).addTo(map).bindPopup(`<b>${loc.nama}</b><br>${loc.kota}`); 
+                        const jarak = getDistanceFromLatLonInKm(userLat, userLng, loc.lat, loc.lng); 
+                        if(jarak < terdekatJarak) { 
+                            terdekatJarak = jarak; 
+                            terdekatNama = loc.nama; 
+                            terdekatLat = loc.lat; 
+                            terdekatLng = loc.lng; 
+                        } 
+                    } 
+                }); 
+                if(terdekatNama) { 
+                    document.getElementById('lokasi-info').innerText = `${terdekatNama} (${terdekatJarak.toFixed(1)} Km)`; 
+                    destinasiTujuan = `https://www.google.com/maps/dir/?api=1&destination=${terdekatLat},${terdekatLng}`; 
+                } 
+            }); 
         }
 
-        // --- HITUNG TAGIHAN (DENGAN LOCAL OVERRIDE) ---
+        function navigasiKeTujuan() { if(destinasiTujuan)window.open(destinasiTujuan,'_blank'); else alert("Mencari lokasi..."); }
+        
+        // --- LAINNYA ---
+        function bukaMenuMakaPlus() {
+            if(!currentUser) return;
+            const isMakaDB = String(currentUser['Maka Plus']).toUpperCase().includes("YA");
+            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+            if(isMakaDB || isMakaLocal) {
+                Swal.fire({title:'Maka+ Aktif', text:'Layanan Maka+ Anda sudah aktif.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+            } else {
+                Swal.fire({
+                    title: 'Layanan Maka+', html: `<button id="btn-daftar-maka" style="background:#fff; color:#000; border:none; padding:10px; width:100%; margin-bottom:10px;">DAFTAR SEKARANG</button><button id="btn-sudah-punya" style="background:#00f3ff; color:#000; border:none; padding:10px; width:100%;">SAYA SUDAH PUNYA</button>`, showConfirmButton: false, background:'#111', color:'#fff',
+                    didOpen: () => {
+                        document.getElementById('btn-daftar-maka').addEventListener('click', () => { window.open('https://bit.ly/semilchargerplus', '_blank'); });
+                        document.getElementById('btn-sudah-punya').addEventListener('click', () => { aktifkanMakaPlusLocal(); });
+                    }
+                });
+            }
+        }
+        function aktifkanMakaPlusLocal() { localStorage.setItem('makaPlusOverride', 'true'); document.getElementById("disp-maka-status").innerText = "AKTIF"; document.getElementById("disp-maka-status").style.color = "#00f3ff"; document.getElementById("icon-maka").style.color = "#00f3ff"; hitungTagihan(currentUser); Swal.fire({title:'Berhasil!', text:'Tagihan +10rb.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
+        
         function hitungTagihan(user) {
-            const joinDateStr = user['Tanggal Join'];
-            const tipeDP = parseInt(user['DP Awal']);
-            
-            // Cek Status Maka+ (Gabungan DB + Local)
+            const joinDateStr = user['Tanggal Join']; const tipeDP = parseInt(user['DP Awal']);
             const isMakaDB = String(user['Maka Plus']).toUpperCase().includes("YA");
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
             const makaPlus = isMakaDB || isMakaLocal;
-
-            const tglAktivasiMaka = user['Tgl Aktivasi Maka']; 
-
-            let baseSewa = 70000;
-            
-            // LOGIKA TAMBAH TAGIHAN
-            if (makaPlus) {
-                 baseSewa += 10000; // Langsung tambah 10rb jika aktif (sesuai request)
-            }
-
-            const today = new Date();
-            const tgl = today.getDate();
-            let tagihanFinal = baseSewa;
-            let statusKet = "Pembayaran Harian Normal";
-
-            if (tgl === 31) {
-                tagihanFinal = 0; statusKet = "LIBUR: Tanggal 31";
-            } else if (tgl === 14 || tgl === 28) {
-                if (tipeDP === 775) {
-                    tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 775rb";
-                } else if (tipeDP === 355) {
-                    const joinDate = new Date(joinDateStr);
-                    let monthsDiff = (today.getFullYear() - joinDate.getFullYear()) * 12 + (today.getMonth() - joinDate.getMonth());
-                    if (monthsDiff > 0 && monthsDiff <= 3) {
-                        tagihanFinal = baseSewa; statusKet = "TAGIHAN AKTIF: Cicilan DP";
-                    } else {
-                        tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 355rb";
-                    }
-                }
-            }
-
-            const elTagihan = document.getElementById("disp-tagihan");
-            if (tagihanFinal === 0) {
-                elTagihan.innerText = "LIBUR"; elTagihan.className = "value-free";
-            } else {
-                elTagihan.innerText = "Rp " + tagihanFinal.toLocaleString('id-ID'); elTagihan.className = "value-blue";
-            }
-            document.getElementById("disp-ket-tagihan").innerText = statusKet;
+            let baseSewa = 70000; if (makaPlus) baseSewa += 10000;
+            const today = new Date(); const tgl = today.getDate();
+            let tagihanFinal = baseSewa; let statusKet = "Pembayaran Harian Normal";
+            if (tgl === 31) { tagihanFinal = 0; statusKet = "LIBUR: Tanggal 31"; } else if (tgl === 14 || tgl === 28) { if (tipeDP === 775) { tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 775rb"; } else if (tipeDP === 355) { const joinDate = new Date(joinDateStr); let monthsDiff = (today.getFullYear() - joinDate.getFullYear()) * 12 + (today.getMonth() - joinDate.getMonth()); if (monthsDiff > 0 && monthsDiff <= 3) { tagihanFinal = baseSewa; statusKet = "TAGIHAN AKTIF: Cicilan DP"; } else { tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 355rb"; } } }
+            const elTagihan = document.getElementById("disp-tagihan"); if (tagihanFinal === 0) { elTagihan.innerText = "LIBUR"; elTagihan.className = "value-free"; } else { elTagihan.innerText = "Rp " + tagihanFinal.toLocaleString('id-ID'); elTagihan.className = "value-blue"; } document.getElementById("disp-ket-tagihan").innerText = statusKet;
         }
 
         function logout() { localStorage.removeItem('userHP'); localStorage.removeItem('makaPlusOverride'); location.reload(); }
-        function switchPage(p) { 
-            document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); 
-            document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active'));
-            document.getElementById('page-'+p).classList.remove('hidden');
-            if(p=='map') setTimeout(()=>map.invalidateSize(),200);
-        }
+        function switchPage(p) { document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.remove('hidden'); if(p=='map') setTimeout(()=>map.invalidateSize(),200); }
         function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
-        function initMap() { if(map)return; map=L.map('map').setView([-6.2,106.8],12); L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map); if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>{map.setView([p.coords.latitude,p.coords.longitude],14);}); }
-        function navigasiKeTujuan() { if(destinasiTujuan)window.open(destinasiTujuan,'_blank'); else alert("Mencari lokasi..."); }
         function kirimSOSWA() { window.open(`https://wa.me/${waAdmin}?text=SOS`, '_blank'); }
         function getSheetID(url) { const matches = url.match(/\/d\/([a-zA-Z0-9-_]+)/); return matches ? matches[1] : null; }
+        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
+        function deg2rad(deg) { return deg * (Math.PI/180) }
     </script>
 </body>
 </html>
