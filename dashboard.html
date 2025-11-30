@@ -68,7 +68,7 @@
         .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
-        .stat-box { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; }
+        .stat-box { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; cursor: pointer; }
         
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
         .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; }
@@ -131,10 +131,10 @@
                     <option value="775">DP 775 Ribu</option>
                 </select>
 
-                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Ikut Maka+ (+10rb/hari)?</label>
+                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Maka Plus ?</label>
                 <select name="Maka Plus" id="reg-maka-plus">
                     <option value="TIDAK">TIDAK</option>
-                    <option value="YA">YA (Saya bersedia)</option>
+                    <option value="YA">YA</option>
                 </select>
                 
                 <input type="hidden" name="Tgl Aktivasi Maka" id="reg-tgl-maka" value="-">
@@ -178,7 +178,7 @@
                     <span style="display:block; color:#666; font-size:10px;">Tgl Join</span>
                     <span style="font-size:14px; font-weight:bold;" id="disp-join">...</span>
                 </div>
-                <div class="stat-box" onclick="toggleMakaPlus()">
+                <div class="stat-box" onclick="bukaMenuMakaPlus()">
                     <i class="fas fa-bolt" id="icon-maka"></i>
                     <span style="display:block; color:#666; font-size:10px;">Maka+</span>
                     <span style="font-size:14px; font-weight:bold;" id="disp-maka-status">...</span>
@@ -232,7 +232,7 @@
     </div>
 
     <script>
-        // --- KONFIGURASI FINAL ---
+        // --- KONFIGURASI (PASTIKAN LINK BENAR) ---
         const googleSheetLink = 'https://docs.google.com/spreadsheets/d/1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ/edit?usp=drivesdk'; 
         const sheetMonkeyURL = 'https://api.sheetmonkey.io/form/88rjffsKVodtfwaQE4gU58'; 
         const waAdmin = "6285691536957"; 
@@ -297,6 +297,14 @@
             const form = document.getElementById('form-register');
             const btn = document.querySelector("#form-register button");
             
+            const nama = form.querySelector('input[name="Nama"]').value;
+            const plat = form.querySelector('input[name="Plat Nomor"]').value;
+            const tgl = form.querySelector('input[name="Tanggal Join"]').value;
+
+            if(!nama || !plat || !tgl) {
+                return Swal.fire({title:'Data Kurang', text:'Mohon isi semua data.', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+            }
+
             const makaSelect = document.getElementById("reg-maka-plus").value;
             const tglAktivasi = document.getElementById("reg-tgl-maka");
             
@@ -310,14 +318,16 @@
 
             fetch(sheetMonkeyURL, { method: 'POST', body: new FormData(form)})
             .then(response => {
-                Swal.fire({ title: 'Berhasil!', text: 'Data tersimpan. Silakan Login ulang.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
-                .then(() => {
-                    location.reload(); 
-                });
+                if (response.ok || response.status === 200) {
+                    Swal.fire({ title: 'BERHASIL!', text: 'Data tersimpan.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
+                    .then(() => { location.reload(); });
+                } else {
+                    throw new Error("Server menolak data.");
+                }
             })
             .catch(error => {
-                alert("Gagal menyimpan data!");
-                btn.innerText = "SIMPAN DATA"; btn.disabled = false;
+                Swal.fire({ title: 'GAGAL', text: 'Cek koneksi atau Tab USER.', icon: 'error', background:'#111', color:'#fff', confirmButtonColor:'#ff3333' });
+                btn.innerText = "COBA LAGI"; btn.disabled = false;
             });
         }
 
@@ -327,7 +337,11 @@
             document.getElementById("disp-plat").innerText = user['Plat Nomor'];
             document.getElementById("disp-join").innerText = user['Tanggal Join'];
             
-            const isMaka = String(user['Maka Plus']).toUpperCase().includes("YA");
+            // Cek status Maka+ (Database atau Local override)
+            const isMakaDB = String(user['Maka Plus']).toUpperCase().includes("YA");
+            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+            const isMaka = isMakaDB || isMakaLocal;
+
             document.getElementById("disp-maka-status").innerText = isMaka ? "AKTIF" : "NON-AKTIF";
             document.getElementById("disp-maka-status").style.color = isMaka ? "#00f3ff" : "#666";
             document.getElementById("icon-maka").style.color = isMaka ? "#00f3ff" : "#333";
@@ -339,25 +353,81 @@
             setTimeout(initMap, 1000);
         }
 
-        // --- OTAK HITUNG TAGIHAN ---
+        // --- UPDATE: MENU MAKA PLUS ---
+        function bukaMenuMakaPlus() {
+            if(!currentUser) return;
+            
+            // Cek Status Sekarang
+            const isMakaDB = String(currentUser['Maka Plus']).toUpperCase().includes("YA");
+            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+
+            if(isMakaDB || isMakaLocal) {
+                Swal.fire({title:'Maka+ Aktif', text:'Layanan Maka+ Anda sudah aktif.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+            } else {
+                // POPUP PILIHAN BARU
+                Swal.fire({
+                    title: 'Layanan Maka+',
+                    html: `
+                        <p style="font-size:12px; color:#aaa;">Benefit: Ganti oli, Service ringan, dll.</p>
+                        <br>
+                        <button id="btn-daftar-maka" style="background:#fff; color:#000; border:none; padding:10px 20px; border-radius:5px; font-weight:bold; width:100%; margin-bottom:10px;">DAFTAR SEKARANG</button>
+                        <button id="btn-sudah-punya" style="background:#00f3ff; color:#000; border:none; padding:10px 20px; border-radius:5px; font-weight:bold; width:100%;">SAYA SUDAH PUNYA</button>
+                    `,
+                    showConfirmButton: false,
+                    background:'#111', color:'#fff',
+                    didOpen: () => {
+                        // Tombol 1: Buka Link
+                        document.getElementById('btn-daftar-maka').addEventListener('click', () => {
+                            window.open('https://bit.ly/semilchargerplus', '_blank');
+                        });
+                        // Tombol 2: Aktifkan Status & Tambah Tagihan
+                        document.getElementById('btn-sudah-punya').addEventListener('click', () => {
+                            aktifkanMakaPlusLocal();
+                        });
+                    }
+                });
+            }
+        }
+
+        function aktifkanMakaPlusLocal() {
+            // Set Status Lokal jadi Aktif
+            localStorage.setItem('makaPlusOverride', 'true');
+            
+            // Update Tampilan Langsung
+            document.getElementById("disp-maka-status").innerText = "AKTIF";
+            document.getElementById("disp-maka-status").style.color = "#00f3ff";
+            document.getElementById("icon-maka").style.color = "#00f3ff";
+            
+            // Hitung Ulang Tagihan
+            hitungTagihan(currentUser);
+
+            Swal.fire({
+                title: 'Berhasil Diaktifkan!',
+                text: 'Tagihan Anda otomatis ditambahkan +10rb.',
+                icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'
+            });
+            
+            // Opsional: Kirim Notif ke Admin via WA agar Admin update Sheet
+            // window.open(`https://wa.me/${waAdmin}?text=User ${currentUser['Nama']} mengaktifkan Maka+ di Aplikasi.`, '_blank');
+        }
+
+        // --- HITUNG TAGIHAN (DENGAN LOCAL OVERRIDE) ---
         function hitungTagihan(user) {
             const joinDateStr = user['Tanggal Join'];
             const tipeDP = parseInt(user['DP Awal']);
-            const makaPlus = String(user['Maka Plus']).toUpperCase().includes("YA");
+            
+            // Cek Status Maka+ (Gabungan DB + Local)
+            const isMakaDB = String(user['Maka Plus']).toUpperCase().includes("YA");
+            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+            const makaPlus = isMakaDB || isMakaLocal;
+
             const tglAktivasiMaka = user['Tgl Aktivasi Maka']; 
 
             let baseSewa = 70000;
             
-            if (makaPlus && tglAktivasiMaka && tglAktivasiMaka !== "-") {
-                const activationDate = new Date(tglAktivasiMaka);
-                const today = new Date();
-                activationDate.setHours(0,0,0,0);
-                today.setHours(0,0,0,0);
-                if (today > activationDate) {
-                    baseSewa += 10000; 
-                }
-            } else if (makaPlus && (!tglAktivasiMaka || tglAktivasiMaka === "-")) {
-                 baseSewa += 10000;
+            // LOGIKA TAMBAH TAGIHAN
+            if (makaPlus) {
+                 baseSewa += 10000; // Langsung tambah 10rb jika aktif (sesuai request)
             }
 
             const today = new Date();
@@ -390,30 +460,7 @@
             document.getElementById("disp-ket-tagihan").innerText = statusKet;
         }
 
-        // --- REQUEST MAKA+ ---
-        function toggleMakaPlus() {
-            if(!currentUser) return;
-            const isMaka = String(currentUser['Maka Plus']).toUpperCase().includes("YA");
-            if(isMaka) {
-                Swal.fire({title:'Maka+ Aktif', text:'Anda sudah berlangganan Maka+.', icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
-            } else {
-                Swal.fire({
-                    title: 'Aktifkan Maka+?',
-                    text: "Tagihan akan naik +10rb mulai BESOK. Kirim permintaan ke Admin?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Aktifkan',
-                    background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const text = `*REQUEST AKTIVASI MAKA+*%0A%0AUser: ${currentUser['Nama']}%0ANo HP: ${currentUser['No HP']}%0A%0AMohon update status Maka+ saya menjadi YA.`;
-                        window.open(`https://wa.me/${waAdmin}?text=${text}`, '_blank');
-                    }
-                });
-            }
-        }
-
-        function logout() { localStorage.removeItem('userHP'); location.reload(); }
+        function logout() { localStorage.removeItem('userHP'); localStorage.removeItem('makaPlusOverride'); location.reload(); }
         function switchPage(p) { 
             document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); 
             document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active'));
