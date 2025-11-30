@@ -8,7 +8,7 @@
     <script>
         const CFG = {
             sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', // ID Sheet Kamu
-            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', // Link SheetMonkey Baru
+            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', // Link SheetMonkey
             waAdmin: '6285691536957'
         };
     </script>
@@ -27,7 +27,7 @@
         .hidden { display: none !important; }
 
         input, select, textarea { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: var(--neon-blue); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; font-family: 'Rajdhani', sans-serif; }
-        .btn-neon { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; }
+        .btn-neon { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; }
         .btn-neon:disabled { background: #333; color: #666; cursor: not-allowed; }
 
         #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; }
@@ -75,9 +75,7 @@
             <p style="color:#aaa; font-size:10px; margin-bottom:20px;">Isi data sesuai fakta lapangan</p>
             
             <form id="form-register">
-                <input type="hidden" id="reg-hp">
-                
-                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
+                <input type="hidden" id="reg-hp"> <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
                 <input type="text" id="reg-nama" required placeholder="Nama Member">
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Plat Nomor</label>
@@ -106,10 +104,7 @@
     <div id="main-app" class="hidden">
         <div id="page-dashboard" class="app-container">
             <div class="header">
-                <div class="user-info">
-                    <h1 style="color:#aaa; font-size:12px;">Selamat Datang,</h1>
-                    <p id="disp-nama">Loading...</p>
-                </div>
+                <div class="user-info"><h1 style="color:#aaa; font-size:12px;">Selamat Datang,</h1><p id="disp-nama">Loading...</p></div>
                 <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" class="header-logo" onclick="logout()">
             </div>
 
@@ -125,12 +120,8 @@
             </div>
 
             <div class="stats-grid">
-                <div class="stat-box">
-                    <i class="far fa-calendar-check"></i><span style="display:block; color:#666; font-size:10px;">Tgl Join</span><span style="font-size:14px; font-weight:bold;" id="disp-join">...</span>
-                </div>
-                <div class="stat-box" onclick="bukaMenuMakaPlus()">
-                    <i class="fas fa-bolt" id="icon-maka"></i><span style="display:block; color:#666; font-size:10px;">Maka+</span><span style="font-size:14px; font-weight:bold;" id="disp-maka-status">...</span>
-                </div>
+                <div class="stat-box"><i class="far fa-calendar-check"></i><span style="display:block; color:#666; font-size:10px;">Tgl Join</span><span style="font-size:14px; font-weight:bold;" id="disp-join">...</span></div>
+                <div class="stat-box" onclick="bukaMenuMakaPlus()"><i class="fas fa-bolt" id="icon-maka"></i><span style="display:block; color:#666; font-size:10px;">Maka+</span><span style="font-size:14px; font-weight:bold;" id="disp-maka-status">...</span></div>
             </div>
 
             <p style="margin:0 20px 10px; color:#666; font-size:12px;">MENU UTAMA</p>
@@ -204,7 +195,7 @@
                     } else {
                         document.getElementById("page-login").classList.add("hidden");
                         document.getElementById("page-register").classList.remove("hidden");
-                        document.getElementById("reg-hp").value = cleanInput; 
+                        document.getElementById("reg-hp").value = cleanInput; // Set HP otomatis
                     }
                 }
                 if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
@@ -215,10 +206,11 @@
             });
         }
 
-        // --- SUBMIT REGISTER (KUNCI UTAMA DISINI) ---
+        // --- SUBMIT REGISTER (VERSI FORMDATA) ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
             
+            // 1. Ambil Nilai
             const hp = document.getElementById('reg-hp').value;
             const nama = document.getElementById('reg-nama').value;
             const plat = document.getElementById('reg-plat').value;
@@ -226,36 +218,39 @@
             const dp = document.getElementById('reg-dp').value;
             const makaPlus = document.getElementById('reg-maka-plus').value;
             
+            // 2. Cek apakah HP ada (Safety Check)
+            if(!hp) {
+                alert("Sesi HP hilang. Silakan refresh dan Login ulang dari awal.");
+                location.reload();
+                return;
+            }
+
+            // 3. Validasi
+            if(!nama || !plat || !tgl) return Swal.fire({title:'Data Kurang', text:'Isi semua kolom!', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+
             let tglAktivasi = "-";
             if(makaPlus === "YA") tglAktivasi = new Date().toISOString().split('T')[0];
 
-            if(!nama || !plat || !tgl) return Swal.fire({title:'Data Kurang', text:'Isi semua kolom!', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
-
-            // DATA DIKIRIM SESUAI KOLOM SHEET TERBARU KAMU
-            const dataKirim = {
-                "No HP": hp,
-                "Nama": nama,
-                "Plat Nomor": plat,
-                "Tanggal Join": tgl,   // Ini KUNCI-nya: "Tanggal Join" (Sesuai Sheet)
-                "DP Awal": dp,
-                "Maka Plus": makaPlus, // Ini KUNCI-nya: "Maka Plus" (Sesuai Sheet)
-                "Tgl Aktivasi Maka": tglAktivasi
-            };
+            // 4. BUNGKUS DATA (FormData)
+            const formData = new FormData();
+            formData.append("No HP", hp);
+            formData.append("Nama", nama);
+            formData.append("Plat Nomor", plat);
+            formData.append("Tanggal Join", tgl);
+            formData.append("DP Awal", dp);
+            formData.append("Maka Plus", makaPlus);
+            formData.append("Tgl Aktivasi Maka", tglAktivasi);
+            // Paksa masuk tab USER
+            formData.append("x-sheetmonkey-sheet-name", "USER");
 
             btn.innerText = "MENGIRIM..."; btn.disabled = true;
 
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
-
             fetch(CFG.monkeyURL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataKirim),
-                signal: controller.signal
+                body: formData
             })
             .then(response => {
-                clearTimeout(timeoutId);
-                if (response.ok) {
+                if (response.ok || response.status === 200) {
                     Swal.fire({ title: 'SUKSES!', text: 'Data tersimpan.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
                     .then(() => location.reload());
                 } else {
@@ -263,22 +258,20 @@
                 }
             })
             .catch(error => {
-                clearTimeout(timeoutId);
                 console.error(error);
-                let pesanErr = "Koneksi terputus/lambat.";
-                Swal.fire({ title: 'GAGAL', text: pesanErr, icon: 'error', background:'#111', color:'#fff', confirmButtonColor:'#ff3333' });
+                Swal.fire({ title: 'GAGAL', text: 'Koneksi error.', icon: 'error', background:'#111', color:'#fff', confirmButtonColor:'#ff3333' });
                 btn.innerText = "COBA LAGI"; btn.disabled = false;
             });
         }
 
-        // --- DASHBOARD FUNCTIONS ---
+        // --- DASHBOARD ---
         function loadDashboard(user) {
             hitungTagihan(user);
             document.getElementById("disp-nama").innerText = user['Nama'];
             document.getElementById("disp-plat").innerText = user['Plat Nomor'];
-            document.getElementById("disp-join").innerText = user['Tanggal Join']; // Baca Tanggal Join
+            document.getElementById("disp-join").innerText = user['Tanggal Join']; 
             
-            const makaVal = user['Maka Plus'] || "TIDAK"; // Baca Maka Plus
+            const makaVal = user['Maka Plus'] || "TIDAK";
             const isMakaDB = String(makaVal).toUpperCase().includes("YA");
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
             const isMaka = isMakaDB || isMakaLocal;
@@ -293,11 +286,10 @@
             setTimeout(initMap, 1000);
         }
 
+        // --- HITUNG TAGIHAN ---
         function hitungTagihan(user) {
-            const joinDateStr = user['Tanggal Join']; 
-            const tipeDP = parseInt(user['DP Awal']);
+            const joinDateStr = user['Tanggal Join']; const tipeDP = parseInt(user['DP Awal']);
             const makaVal = user['Maka Plus'] || "TIDAK";
-            
             const isMakaDB = String(makaVal).toUpperCase().includes("YA");
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
             const makaPlus = isMakaDB || isMakaLocal;
@@ -324,6 +316,7 @@
             document.getElementById("disp-ket-tagihan").innerText = statusKet;
         }
 
+        // --- MAKA PLUS MENU ---
         function bukaMenuMakaPlus() {
             if(!currentUser) return;
             const makaVal = currentUser['Maka Plus'] || "TIDAK";
@@ -343,14 +336,7 @@
         }
         function aktifkanMakaPlusLocal() { localStorage.setItem('makaPlusOverride', 'true'); document.getElementById("disp-maka-status").innerText = "AKTIF"; document.getElementById("disp-maka-status").style.color = "#00f3ff"; document.getElementById("icon-maka").style.color = "#00f3ff"; hitungTagihan(currentUser); Swal.fire({title:'Berhasil!', text:'Tagihan +10rb.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
 
-        function logout() { localStorage.removeItem('userHP'); localStorage.removeItem('makaPlusOverride'); location.reload(); }
-        function switchPage(p) { document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.remove('hidden'); if(p=='map') setTimeout(()=>map.invalidateSize(),200); }
-        function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
-        function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
-        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
-        function deg2rad(deg) { return deg * (Math.PI/180) }
-
-        // MAPS LOAD
+        // --- MAPS (Fix Data CSV) ---
         function initMap() { 
             if(map)return; 
             map=L.map('map').setView([-6.2,106.8],12); 
@@ -370,6 +356,7 @@
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(res => res.json()).then(data => { 
                 let terdekatJarak = 9999999; let terdekatNama = ""; let terdekatLat = 0; let terdekatLng = 0; 
                 data.forEach(loc => { 
+                    // CSV kamu pakai 'lat' dan 'lng' huruf kecil. Code ini sudah sesuai.
                     if(loc.lat && loc.lng) { 
                         L.marker([loc.lat, loc.lng], {icon: iconStyle}).addTo(map).bindPopup(`<b>${loc.nama}</b><br>${loc.kota}`); 
                         const jarak = getDistanceFromLatLonInKm(userLat, userLng, loc.lat, loc.lng); 
@@ -379,6 +366,14 @@
                 if(terdekatNama) { document.getElementById('lokasi-info').innerText = `${terdekatNama} (${terdekatJarak.toFixed(1)} Km)`; destinasiTujuan = `https://www.google.com/maps/dir/?api=1&destination=${terdekatLat},${terdekatLng}`; } 
             }); 
         }
+
+        // --- UTILS ---
+        function logout() { localStorage.removeItem('userHP'); localStorage.removeItem('makaPlusOverride'); location.reload(); }
+        function switchPage(p) { document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.remove('hidden'); if(p=='map') setTimeout(()=>map.invalidateSize(),200); }
+        function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
+        function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
+        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
+        function deg2rad(deg) { return deg * (Math.PI/180) }
     </script>
 </body>
 </html>
