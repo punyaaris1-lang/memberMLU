@@ -7,9 +7,9 @@
     
     <script>
         const CFG = {
-            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', // ID Google Sheet
+            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', // ID Sheet
             monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', // Link SheetMonkey
-            waAdmin: '6285691536957' // Nomor Admin WA
+            waAdmin: '6285691536957' // No WA Admin
         };
     </script>
 
@@ -31,7 +31,7 @@
             position: relative;
         }
 
-        /* WATERMARK BACKGROUND LOGO */
+        /* WATERMARK BACKGROUND */
         body::before {
             content: "";
             position: fixed; top: 50%; left: 50%;
@@ -119,7 +119,6 @@
         .map-overlay { position: absolute; bottom: 100px; left: 20px; right: 20px; z-index: 999; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 15px; border: 1px solid var(--neon-blue); text-align: center; backdrop-filter: blur(5px); }
         .sos-header { text-align: center; margin: 20px; }
         .sos-header i { font-size: 50px; color: #ff3333; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -223,13 +222,9 @@
     </div>
 
     <script>
-        const CFG = {
-            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', 
-            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2',
-            waAdmin: '6285691536957'
-        };
-
-        let currentUser = null; let map; let destinasiTujuan = "";
+        // GLOBAL VARS
+        let currentUser = null; 
+        let map; let destinasiTujuan = "";
 
         // AUTO LOGIN
         window.onload = function() {
@@ -244,7 +239,7 @@
             return p;
         }
 
-        // --- SISTEM LOGIN ---
+        // --- CEK LOGIN (DENGAN ANTI-CACHE) ---
         function cekLogin(savedHP = null, isAuto = false) {
             const hpInput = savedHP || document.getElementById("inputHP").value;
             const msg = document.getElementById("login-msg");
@@ -254,8 +249,9 @@
             if(!isAuto) { btn.innerText = "CHECKING..."; btn.disabled = true; }
 
             const cleanInput = cleanPhone(hpInput);
+            const timeStamp = new Date().getTime(); // ANTI-CACHE
 
-            fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER`)
+            fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${timeStamp}`)
             .then(res => res.json())
             .then(data => {
                 const user = data.find(row => cleanPhone(row['No HP']) === cleanInput);
@@ -268,7 +264,7 @@
                     if(isAuto) {
                         localStorage.removeItem('userHP'); location.reload();
                     } else {
-                        // Data tidak ketemu -> Buka Register
+                        // Tidak ketemu -> REGISTRASI
                         document.getElementById("page-login").classList.add("hidden");
                         document.getElementById("page-register").classList.remove("hidden");
                         document.getElementById("reg-hp").value = cleanInput; 
@@ -277,13 +273,12 @@
                 if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
             })
             .catch(err => {
-                console.error(err);
-                msg.innerText = "Gagal koneksi. Coba lagi.";
+                msg.innerText = "Gagal koneksi server. Coba lagi.";
                 if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
             });
         }
 
-        // --- SUBMIT REGISTER (FIXED) ---
+        // --- SUBMIT REGISTER (JSON + NAMA KOLOM FIXED) ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
             
@@ -300,13 +295,14 @@
             if(!hp) { alert("Sesi habis. Silakan Login ulang."); location.reload(); return; }
             if(!nama || !plat || !tgl) return Swal.fire({title:'Data Kurang', text:'Isi semua kolom!', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
 
+            // DATA SESUAI JUDUL KOLOM GOOGLE SHEET (DARI SCREENSHOT)
             const dataKirim = {
                 "No HP": hp,
                 "Nama": nama,
                 "Plat Nomor": plat,
-                "Tanggal Join": tgl,  // Sesuai Sheet
+                "Tanggal Join": tgl,   // FIXED
                 "DP Awal": dp,
-                "Maka Plus": makaPlus, // Sesuai Sheet
+                "Maka Plus": makaPlus, // FIXED
                 "Tgl Aktivasi Maka": tglAktivasi
             };
 
@@ -321,7 +317,9 @@
                 if (response.ok) {
                     Swal.fire({ title: 'SUKSES!', text: 'Data tersimpan.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
                     .then(() => location.reload());
-                } else { throw new Error("Gagal kirim."); }
+                } else {
+                    throw new Error("Gagal kirim.");
+                }
             })
             .catch(error => {
                 console.error(error);
@@ -330,11 +328,12 @@
             });
         }
 
+        // --- DASHBOARD FUNCTIONS ---
         function loadDashboard(user) {
             hitungTagihan(user);
             document.getElementById("disp-nama").innerText = user['Nama'];
             document.getElementById("disp-plat").innerText = user['Plat Nomor'];
-            document.getElementById("disp-join").innerText = user['Tanggal Join'] || "-";
+            document.getElementById("disp-join").innerText = user['Tanggal Join'];
             
             const makaVal = user['Maka Plus'] || "TIDAK";
             const isMakaDB = String(makaVal).toUpperCase().includes("YA");
@@ -353,8 +352,8 @@
 
         function hitungTagihan(user) {
             const joinDateStr = user['Tanggal Join']; 
-            const makaVal = user['Maka Plus'] || "TIDAK";
             const tipeDP = parseInt(user['DP Awal']);
+            const makaVal = user['Maka Plus'] || "TIDAK";
             
             const isMakaDB = String(makaVal).toUpperCase().includes("YA");
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
@@ -408,6 +407,7 @@
         function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
         function deg2rad(deg) { return deg * (Math.PI/180) }
 
+        // MAPS LOAD (Fix Koordinat)
         function initMap() { 
             if(map)return; 
             map=L.map('map').setView([-6.2,106.8],12); 
@@ -427,11 +427,11 @@
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(res => res.json()).then(data => { 
                 let terdekatJarak = 9999999; let terdekatNama = ""; let terdekatLat = 0; let terdekatLng = 0; 
                 data.forEach(loc => { 
-                    // FIX PARSING COORDINATES (DOT or COMMA)
+                    // AUTO FIX KOORDINAT (Titik/Koma)
                     let lat = parseFloat(String(loc.lat).replace(',', '.').trim());
                     let lng = parseFloat(String(loc.lng).replace(',', '.').trim());
 
-                    if(!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) { 
+                    if(!isNaN(lat) && !isNaN(lng) && lat !== 0) { 
                         let linkNav = loc.gmap ? loc.gmap : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
                         L.marker([lat, lng], {icon: iconStyle})
                          .addTo(map)
@@ -442,7 +442,6 @@
                                 <a href="${linkNav}" target="_blank" style="display:inline-block; margin-top:8px; background:#00f3ff; color:#000; padding:5px 15px; border-radius:20px; text-decoration:none; font-weight:bold; font-size:12px;">NAVIGASI KE SINI</a>
                             </div>
                          `);
-                        
                         const jarak = getDistanceFromLatLonInKm(userLat, userLng, lat, lng); 
                         if(jarak < terdekatJarak) { terdekatJarak = jarak; terdekatNama = loc.nama; terdekatLat = lat; terdekatLng = lng; destinasiTujuan = linkNav; } 
                     } 
