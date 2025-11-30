@@ -293,7 +293,7 @@
 
         // --- FUNGSI REGISTER (METODE JSON DIRECT) ---
         function submitRegister() {
-            const btn = document.querySelector("#page-register button");
+            const btn = document.querySelector("#form-register button");
             
             // Ambil Value
             const hp = document.getElementById('reg-hp').value;
@@ -421,6 +421,7 @@
             if(map)return; 
             map=L.map('map').setView([-6.2,106.8],12); 
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map); 
+            
             var iconCharge = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png', iconSize: [25, 41], iconAnchor: [12, 41] });
             var iconUser = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png', iconSize: [25, 41], iconAnchor: [12, 41] });
             if(navigator.geolocation) {
