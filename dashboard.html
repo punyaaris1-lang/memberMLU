@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU Super App</title>
     
+    <script>
+        const CFG = {
+            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', // ID Sheet Kamu
+            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', // Link SheetMonkey
+            waAdmin: '6285691536957'
+        };
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -12,29 +20,104 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        :root { --neon-blue: #00f3ff; --bg-dark: #050505; --card-bg: #111; --text-main: #fff; }
+        :root { --neon-blue: #00f3ff; --bg-dark: #050505; --card-bg: rgba(10, 10, 10, 0.85); --text-main: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Rajdhani', sans-serif; background-color: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; }
+        
+        body { 
+            font-family: 'Rajdhani', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            height: 100vh; overflow: hidden; 
+            position: relative;
+        }
+
+        /* --- WALLPAPER LOGO RAKSASA (GLOBAL) --- */
+        body::before {
+            content: "";
+            position: fixed; /* Tetap di tempat walau scroll */
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 60%;
+            background: url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center;
+            background-size: contain;
+            opacity: 0.15; /* Transparansi pas */
+            z-index: -1;
+            filter: grayscale(20%); /* Sedikit abu biar elegan */
+        }
+
         .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
         .hidden { display: none !important; }
 
-        input, select, textarea { width: 100%; padding: 15px; background: #111; border: 1px solid #333; color: var(--neon-blue); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; font-family: 'Rajdhani', sans-serif; }
-        .btn-neon { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; }
-        .btn-neon:disabled { background: #333; color: #666; cursor: not-allowed; }
+        /* INPUT FIELD */
+        input, select, textarea { 
+            width: 100%; padding: 15px; 
+            background: rgba(0, 0, 0, 0.6); /* Lebih gelap dikit biar teks jelas */
+            border: 1px solid #333; color: var(--neon-blue); 
+            border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; 
+            font-family: 'Rajdhani', sans-serif; 
+            backdrop-filter: blur(5px);
+        }
+        input:focus, select:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-        #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; }
-        .login-card { width: 100%; max-width: 400px; background: rgba(20, 20, 20, 0.9); border: 1px solid var(--neon-blue); padding: 30px; border-radius: 15px; text-align: center; margin: auto; }
-        .logo-img { width: 100px; margin-bottom: 15px; }
+        /* TOMBOL NEON */
+        .btn-neon { 
+            width: 100%; padding: 15px; background: var(--neon-blue); color: #000; 
+            font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; 
+            font-family: 'Orbitron', sans-serif; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+        .btn-neon:active { transform: scale(0.95); }
+        .btn-neon:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
-        .header { padding: 20px; background: linear-gradient(180deg, rgba(0,243,255,0.1) 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; }
-        .vehicle-card { background: var(--card-bg); border: 1px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin: 20px; }
-        .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; }
-        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        /* HALAMAN FULLSCREEN (LOGIN/REGISTER) - TRANSPARAN */
+        #page-login, #page-register { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: transparent; /* TRANSPARAN SUPAYA LOGO KELIHATAN */
+            z-index: 9999; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 30px; 
+            overflow-y: auto; 
+            backdrop-filter: blur(3px); /* Efek blur dikit di background */
+        }
+
+        .login-card { 
+            width: 100%; max-width: 400px; 
+            background: rgba(15, 15, 15, 0.85); /* Kartu semi transparan */
+            border: 1px solid var(--neon-blue); 
+            padding: 30px; border-radius: 20px; text-align: center; margin: auto; 
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); 
+            backdrop-filter: blur(10px);
+        }
+        .logo-img { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon-blue)); }
+
+        /* DASHBOARD HEADER */
+        .header { 
+            padding: 20px; 
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        /* Logo Kecil di Pojok Kanan */
+        .header-logo { 
+            width: 45px !important; height: 45px !important; 
+            border-radius: 50%; border: 2px solid var(--neon-blue); 
+            object-fit: cover; background: #000;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        /* CARDS DASHBOARD */
+        .vehicle-card { 
+            background: var(--card-bg); border: 1px solid var(--neon-blue); 
+            border-radius: 15px; padding: 20px; margin: 20px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
+        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
         .stat-box { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; cursor: pointer; }
+        
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
-        .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; }
+        .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; transition: 0.3s; }
+        .menu-item:active { border-color: var(--neon-blue); background: rgba(0, 243, 255, 0.1); }
         .menu-item i { font-size: 20px; color: var(--neon-blue); margin-bottom: 8px; display: block; }
         .menu-item span { font-size: 10px; color: #fff; }
 
@@ -43,16 +126,17 @@
         
         #page-map, #page-sos { width: 100%; height: 100%; }
         #map { width: 100%; height: 100%; }
-        .map-overlay { position: absolute; bottom: 100px; left: 20px; right: 20px; z-index: 999; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 15px; border: 1px solid var(--neon-blue); text-align: center; }
+        .map-overlay { position: absolute; bottom: 100px; left: 20px; right: 20px; z-index: 999; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 15px; border: 1px solid var(--neon-blue); text-align: center; backdrop-filter: blur(5px); }
         .sos-header { text-align: center; margin: 20px; }
         .sos-header i { font-size: 50px; color: #ff3333; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
     <div id="page-login">
-        <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" class="logo-img">
         <div class="login-card">
+            <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" class="logo-img">
             <h2>MEMBER ACCESS</h2>
             <p style="color:#aaa; font-size:12px; margin-bottom:20px;">Maka Lintas Utara System</p>
             <input type="tel" id="inputHP" placeholder="Nomor HP (Contoh: 812xxx)" autocomplete="off">
@@ -67,33 +151,29 @@
             <p style="color:#aaa; font-size:10px; margin-bottom:20px;">Isi data sesuai fakta lapangan</p>
             
             <form id="form-register">
-                <input type="hidden" name="x-sheetmonkey-insert-worksheet" value="USER" />
-                
-                <input type="hidden" name="No HP" id="reg-hp">
+                <input type="hidden" id="reg-hp">
                 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
-                <input type="text" name="Nama" id="reg-nama" required placeholder="Nama Member">
+                <input type="text" id="reg-nama" required placeholder="Nama Member">
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Plat Nomor</label>
-                <input type="text" name="Plat Nomor" id="reg-plat" required placeholder="B xxxx XXX">
+                <input type="text" id="reg-plat" required placeholder="B xxxx XXX">
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Tanggal Ambil Unit (Join)</label>
-                <input type="date" name="Tanggal Join" id="reg-tgl" required>
+                <input type="date" id="reg-tgl" required>
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Tipe DP</label>
-                <select name="DP Awal" id="reg-dp">
+                <select id="reg-dp">
                     <option value="355">DP 355 Ribu</option>
                     <option value="775">DP 775 Ribu</option>
                 </select>
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Maka Plus ?</label>
-                <select name="Maka Plus" id="reg-maka-plus">
+                <select id="reg-maka-plus">
                     <option value="TIDAK">TIDAK</option>
                     <option value="YA">YA</option>
                 </select>
                 
-                <input type="hidden" name="Tgl Aktivasi Maka" id="reg-tgl-maka" value="-">
-
                 <button type="button" class="btn-neon" onclick="submitRegister()">SIMPAN DATA</button>
             </form>
         </div>
@@ -173,6 +253,7 @@
             return p;
         }
 
+        // --- CEK LOGIN ---
         function cekLogin(savedHP = null, isAuto = false) {
             const hpInput = savedHP || document.getElementById("inputHP").value;
             const msg = document.getElementById("login-msg");
@@ -208,48 +289,47 @@
             });
         }
 
-        // --- SUBMIT REGISTER (METODE FORMDATA DENGAN TARGET SHEET) ---
+        // --- SUBMIT REGISTER ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
-            const form = document.getElementById('form-register');
-            
             const hp = document.getElementById('reg-hp').value;
             const nama = document.getElementById('reg-nama').value;
             const plat = document.getElementById('reg-plat').value;
             const tgl = document.getElementById('reg-tgl').value;
+            const dp = document.getElementById('reg-dp').value;
+            const makaPlus = document.getElementById('reg-maka-plus').value;
             
-            if(!hp) { alert("Sesi habis. Refresh halaman."); location.reload(); return; }
+            let tglAktivasi = "-";
+            if(makaPlus === "YA") tglAktivasi = new Date().toISOString().split('T')[0];
+
             if(!nama || !plat || !tgl) return Swal.fire({title:'Data Kurang', text:'Isi semua kolom!', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
 
-            // Set Tanggal Aktivasi
-            const makaPlus = document.getElementById('reg-maka-plus').value;
-            const tglAktivasi = document.getElementById('reg-tgl-maka');
-            if(makaPlus === "YA") tglAktivasi.value = new Date().toISOString().split('T')[0];
-            else tglAktivasi.value = "-";
+            const dataKirim = {
+                "No HP": hp, "Nama": nama, "Plat Nomor": plat,
+                "Tanggal Join": tgl, "DP Awal": dp,
+                "Maka Plus": makaPlus, "Tgl Aktivasi Maka": tglAktivasi
+            };
 
             btn.innerText = "MENGIRIM..."; btn.disabled = true;
 
-            const formData = new FormData(form);
-
             fetch(CFG.monkeyURL, {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataKirim)
             })
             .then(response => {
                 if (response.ok) {
-                    Swal.fire({ title: 'SUKSES!', text: 'Data tersimpan. Login ulang.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
+                    Swal.fire({ title: 'SUKSES!', text: 'Data tersimpan.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
                     .then(() => location.reload());
-                } else {
-                    throw new Error("Gagal kirim.");
-                }
+                } else { throw new Error("Gagal kirim."); }
             })
             .catch(error => {
-                console.error(error);
                 Swal.fire({ title: 'GAGAL', text: 'Koneksi error.', icon: 'error', background:'#111', color:'#fff', confirmButtonColor:'#ff3333' });
                 btn.innerText = "COBA LAGI"; btn.disabled = false;
             });
         }
 
+        // --- DASHBOARD ---
         function loadDashboard(user) {
             hitungTagihan(user);
             document.getElementById("disp-nama").innerText = user['Nama'];
@@ -271,6 +351,7 @@
             setTimeout(initMap, 1000);
         }
 
+        // --- HITUNG TAGIHAN ---
         function hitungTagihan(user) {
             const joinDateStr = user['Tanggal Join']; const tipeDP = parseInt(user['DP Awal']);
             const makaVal = user['Maka Plus'] || "TIDAK";
@@ -278,9 +359,7 @@
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
             const makaPlus = isMakaDB || isMakaLocal;
             
-            let baseSewa = 70000;
-            if (makaPlus) baseSewa += 10000;
-
+            let baseSewa = 70000; if (makaPlus) baseSewa += 10000;
             const today = new Date(); const tgl = today.getDate();
             let tagihanFinal = baseSewa; let statusKet = "Pembayaran Harian Normal";
 
@@ -300,6 +379,7 @@
             document.getElementById("disp-ket-tagihan").innerText = statusKet;
         }
 
+        // --- MAKA PLUS MENU ---
         function bukaMenuMakaPlus() {
             if(!currentUser) return;
             const makaVal = currentUser['Maka Plus'] || "TIDAK";
@@ -326,6 +406,7 @@
         function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
         function deg2rad(deg) { return deg * (Math.PI/180) }
 
+        // MAPS LOAD
         function initMap() { 
             if(map)return; 
             map=L.map('map').setView([-6.2,106.8],12); 
@@ -346,12 +427,13 @@
                 let terdekatJarak = 9999999; let terdekatNama = ""; let terdekatLat = 0; let terdekatLng = 0; 
                 data.forEach(loc => { 
                     if(loc.lat && loc.lng) { 
-                        L.marker([loc.lat, loc.lng], {icon: iconStyle}).addTo(map).bindPopup(`<b>${loc.nama}</b><br>${loc.kota}`); 
+                        let linkNav = loc.gmap ? loc.gmap : `https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`;
+                        L.marker([loc.lat, loc.lng], {icon: iconStyle}).addTo(map).bindPopup(`<b>${loc.nama}</b><br>${loc.kota}<br><a href="${linkNav}" target="_blank" style="color:yellow; font-weight:bold;">NAVIGASI</a>`); 
                         const jarak = getDistanceFromLatLonInKm(userLat, userLng, loc.lat, loc.lng); 
-                        if(jarak < terdekatJarak) { terdekatJarak = jarak; terdekatNama = loc.nama; terdekatLat = loc.lat; terdekatLng = loc.lng; } 
+                        if(jarak < terdekatJarak) { terdekatJarak = jarak; terdekatNama = loc.nama; terdekatLat = loc.lat; terdekatLng = loc.lng; destinasiTujuan = linkNav; } 
                     } 
                 }); 
-                if(terdekatNama) { document.getElementById('lokasi-info').innerText = `${terdekatNama} (${terdekatJarak.toFixed(1)} Km)`; destinasiTujuan = `https://www.google.com/maps/dir/?api=1&destination=${terdekatLat},${terdekatLng}`; } 
+                if(terdekatNama) { document.getElementById('lokasi-info').innerText = `${terdekatNama} (${terdekatJarak.toFixed(1)} Km)`; } 
             }); 
         }
     </script>
