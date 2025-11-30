@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU Super App</title>
     
-    <script>
-        const CFG = {
-            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', // ID Sheet Kamu
-            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', // Link SheetMonkey
-            waAdmin: '6285691536957'
-        };
-    </script>
-
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -75,27 +67,33 @@
             <p style="color:#aaa; font-size:10px; margin-bottom:20px;">Isi data sesuai fakta lapangan</p>
             
             <form id="form-register">
-                <input type="hidden" id="reg-hp"> <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
-                <input type="text" id="reg-nama" required placeholder="Nama Member">
+                <input type="hidden" name="x-sheetmonkey-insert-worksheet" value="USER" />
+                
+                <input type="hidden" name="No HP" id="reg-hp">
+                
+                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
+                <input type="text" name="Nama" id="reg-nama" required placeholder="Nama Member">
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Plat Nomor</label>
-                <input type="text" id="reg-plat" required placeholder="B xxxx XXX">
+                <input type="text" name="Plat Nomor" id="reg-plat" required placeholder="B xxxx XXX">
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Tanggal Ambil Unit (Join)</label>
-                <input type="date" id="reg-tgl" required>
+                <input type="date" name="Tanggal Join" id="reg-tgl" required>
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Tipe DP</label>
-                <select id="reg-dp">
+                <select name="DP Awal" id="reg-dp">
                     <option value="355">DP 355 Ribu</option>
                     <option value="775">DP 775 Ribu</option>
                 </select>
 
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Maka Plus ?</label>
-                <select id="reg-maka-plus">
+                <select name="Maka Plus" id="reg-maka-plus">
                     <option value="TIDAK">TIDAK</option>
                     <option value="YA">YA</option>
                 </select>
                 
+                <input type="hidden" name="Tgl Aktivasi Maka" id="reg-tgl-maka" value="-">
+
                 <button type="button" class="btn-neon" onclick="submitRegister()">SIMPAN DATA</button>
             </form>
         </div>
@@ -155,9 +153,14 @@
     </div>
 
     <script>
+        const CFG = {
+            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', 
+            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2',
+            waAdmin: '6285691536957'
+        };
+
         let currentUser = null; let map; let destinasiTujuan = "";
 
-        // AUTO LOGIN
         window.onload = function() {
             const savedHP = localStorage.getItem('userHP');
             if (savedHP) cekLogin(savedHP, true);
@@ -170,7 +173,6 @@
             return p;
         }
 
-        // --- CEK LOGIN ---
         function cekLogin(savedHP = null, isAuto = false) {
             const hpInput = savedHP || document.getElementById("inputHP").value;
             const msg = document.getElementById("login-msg");
@@ -195,7 +197,7 @@
                     } else {
                         document.getElementById("page-login").classList.add("hidden");
                         document.getElementById("page-register").classList.remove("hidden");
-                        document.getElementById("reg-hp").value = cleanInput; // Set HP otomatis
+                        document.getElementById("reg-hp").value = cleanInput; 
                     }
                 }
                 if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
@@ -206,52 +208,36 @@
             });
         }
 
-        // --- SUBMIT REGISTER (VERSI FORMDATA) ---
+        // --- SUBMIT REGISTER (METODE FORMDATA DENGAN TARGET SHEET) ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
+            const form = document.getElementById('form-register');
             
-            // 1. Ambil Nilai
             const hp = document.getElementById('reg-hp').value;
             const nama = document.getElementById('reg-nama').value;
             const plat = document.getElementById('reg-plat').value;
             const tgl = document.getElementById('reg-tgl').value;
-            const dp = document.getElementById('reg-dp').value;
-            const makaPlus = document.getElementById('reg-maka-plus').value;
             
-            // 2. Cek apakah HP ada (Safety Check)
-            if(!hp) {
-                alert("Sesi HP hilang. Silakan refresh dan Login ulang dari awal.");
-                location.reload();
-                return;
-            }
-
-            // 3. Validasi
+            if(!hp) { alert("Sesi habis. Refresh halaman."); location.reload(); return; }
             if(!nama || !plat || !tgl) return Swal.fire({title:'Data Kurang', text:'Isi semua kolom!', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
 
-            let tglAktivasi = "-";
-            if(makaPlus === "YA") tglAktivasi = new Date().toISOString().split('T')[0];
-
-            // 4. BUNGKUS DATA (FormData)
-            const formData = new FormData();
-            formData.append("No HP", hp);
-            formData.append("Nama", nama);
-            formData.append("Plat Nomor", plat);
-            formData.append("Tanggal Join", tgl);
-            formData.append("DP Awal", dp);
-            formData.append("Maka Plus", makaPlus);
-            formData.append("Tgl Aktivasi Maka", tglAktivasi);
-            // Paksa masuk tab USER
-            formData.append("x-sheetmonkey-sheet-name", "USER");
+            // Set Tanggal Aktivasi
+            const makaPlus = document.getElementById('reg-maka-plus').value;
+            const tglAktivasi = document.getElementById('reg-tgl-maka');
+            if(makaPlus === "YA") tglAktivasi.value = new Date().toISOString().split('T')[0];
+            else tglAktivasi.value = "-";
 
             btn.innerText = "MENGIRIM..."; btn.disabled = true;
+
+            const formData = new FormData(form);
 
             fetch(CFG.monkeyURL, {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
-                if (response.ok || response.status === 200) {
-                    Swal.fire({ title: 'SUKSES!', text: 'Data tersimpan.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
+                if (response.ok) {
+                    Swal.fire({ title: 'SUKSES!', text: 'Data tersimpan. Login ulang.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
                     .then(() => location.reload());
                 } else {
                     throw new Error("Gagal kirim.");
@@ -264,7 +250,6 @@
             });
         }
 
-        // --- DASHBOARD ---
         function loadDashboard(user) {
             hitungTagihan(user);
             document.getElementById("disp-nama").innerText = user['Nama'];
@@ -286,7 +271,6 @@
             setTimeout(initMap, 1000);
         }
 
-        // --- HITUNG TAGIHAN ---
         function hitungTagihan(user) {
             const joinDateStr = user['Tanggal Join']; const tipeDP = parseInt(user['DP Awal']);
             const makaVal = user['Maka Plus'] || "TIDAK";
@@ -316,7 +300,6 @@
             document.getElementById("disp-ket-tagihan").innerText = statusKet;
         }
 
-        // --- MAKA PLUS MENU ---
         function bukaMenuMakaPlus() {
             if(!currentUser) return;
             const makaVal = currentUser['Maka Plus'] || "TIDAK";
@@ -336,7 +319,13 @@
         }
         function aktifkanMakaPlusLocal() { localStorage.setItem('makaPlusOverride', 'true'); document.getElementById("disp-maka-status").innerText = "AKTIF"; document.getElementById("disp-maka-status").style.color = "#00f3ff"; document.getElementById("icon-maka").style.color = "#00f3ff"; hitungTagihan(currentUser); Swal.fire({title:'Berhasil!', text:'Tagihan +10rb.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
 
-        // --- MAPS (Fix Data CSV) ---
+        function logout() { localStorage.removeItem('userHP'); localStorage.removeItem('makaPlusOverride'); location.reload(); }
+        function switchPage(p) { document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.remove('hidden'); if(p=='map') setTimeout(()=>map.invalidateSize(),200); }
+        function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
+        function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
+        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
+        function deg2rad(deg) { return deg * (Math.PI/180) }
+
         function initMap() { 
             if(map)return; 
             map=L.map('map').setView([-6.2,106.8],12); 
@@ -356,7 +345,6 @@
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(res => res.json()).then(data => { 
                 let terdekatJarak = 9999999; let terdekatNama = ""; let terdekatLat = 0; let terdekatLng = 0; 
                 data.forEach(loc => { 
-                    // CSV kamu pakai 'lat' dan 'lng' huruf kecil. Code ini sudah sesuai.
                     if(loc.lat && loc.lng) { 
                         L.marker([loc.lat, loc.lng], {icon: iconStyle}).addTo(map).bindPopup(`<b>${loc.nama}</b><br>${loc.kota}`); 
                         const jarak = getDistanceFromLatLonInKm(userLat, userLng, loc.lat, loc.lng); 
@@ -366,14 +354,6 @@
                 if(terdekatNama) { document.getElementById('lokasi-info').innerText = `${terdekatNama} (${terdekatJarak.toFixed(1)} Km)`; destinasiTujuan = `https://www.google.com/maps/dir/?api=1&destination=${terdekatLat},${terdekatLng}`; } 
             }); 
         }
-
-        // --- UTILS ---
-        function logout() { localStorage.removeItem('userHP'); localStorage.removeItem('makaPlusOverride'); location.reload(); }
-        function switchPage(p) { document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.remove('hidden'); if(p=='map') setTimeout(()=>map.invalidateSize(),200); }
-        function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
-        function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
-        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
-        function deg2rad(deg) { return deg * (Math.PI/180) }
     </script>
 </body>
 </html>
