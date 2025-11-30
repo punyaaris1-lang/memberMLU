@@ -3,246 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Member Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>MLU Super App</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-        /* CSS PREMIUM STYLE */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', sans-serif; }
-        body { background-color: #f5f6fa; color: #333; padding-bottom: 80px; }
-
-        /* Login Page */
-        #login-page {
-            height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; background: white; padding: 20px;
+        /* --- TEMA CYBER NEON BLUE --- */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-glow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+            --bg-dark: #050505;
+            --card-bg: #111;
+            --text-main: #fff;
         }
-        .login-box input { padding: 15px; width: 100%; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; font-size: 16px; }
-        .login-box button { padding: 15px; width: 100%; background: #00a8e8; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        .login-box button:hover { background: #008eb3; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Rajdhani', sans-serif; background-color: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; }
+        .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
+        .hidden { display: none !important; }
 
-        /* Dashboard Page */
-        #dashboard-page { display: none; padding: 20px; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* INPUT STYLE */
+        input, select, textarea {
+            width: 100%; padding: 15px; background: #111; border: 1px solid #333;
+            color: var(--neon-blue); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        input:focus, select:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
 
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .greeting h1 { font-size: 18px; color: #008eb3; font-weight: 700; }
-        .greeting p { font-size: 24px; font-weight: 800; text-transform: uppercase; margin-top: 5px;}
-        .notif-icon { background: #00a8e8; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+        /* BUTTON STYLE */
+        .btn-neon {
+            width: 100%; padding: 15px; background: var(--neon-blue); color: #000;
+            font-weight: 700; border: none; border-radius: 8px; font-size: 16px; text-transform: uppercase; cursor: pointer;
+            box-shadow: var(--neon-glow); transition: 0.3s; font-family: 'Orbitron', sans-serif;
+        }
+        .btn-neon:active { transform: scale(0.95); }
+
+        /* LOGIN & REGISTER PAGE */
+        #page-login, #page-register {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 30px; overflow-y: auto;
+        }
+        .login-card {
+            width: 100%; max-width: 400px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--neon-glow);
+            padding: 30px; border-radius: 15px; text-align: center; margin: auto;
+        }
+        .logo-img { width: 100px; margin-bottom: 15px; }
+
+        /* DASHBOARD STYLES */
+        .header { padding: 20px; background: linear-gradient(180deg, rgba(0,243,255,0.1) 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; }
+        .user-info p { font-size: 22px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        .header-logo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--neon-blue); }
         
-        /* Kartu Utama */
-        .main-card {
-            background: linear-gradient(135deg, #00a8e8 0%, #0077b6 100%);
-            border-radius: 20px; padding: 25px; color: white; margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0, 168, 232, 0.3);
-        }
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-        .motor-name { font-size: 18px; font-weight: 700; }
-        .status-label { font-size: 12px; opacity: 0.8; }
-        .price { font-size: 22px; font-weight: 800; }
-        .card-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 15px; }
-        .plat-nomor { font-family: monospace; font-size: 16px; letter-spacing: 1px; }
-
-        /* Kartu Info Putih */
-        .info-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .tenor-info { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .tenor-box { display: flex; align-items: center; gap: 10px; }
-        .icon-box { width: 40px; height: 40px; background: #e3f2fd; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #00a8e8; }
-        .tenor-text h3 { font-size: 18px; color: #00a8e8; font-weight: 800; }
-        .tenor-text span { font-size: 12px; color: #888; }
+        .vehicle-card { background: var(--card-bg); border: 1px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin: 20px; position: relative; }
+        .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; }
         
-        .bill-card { background: #e1f5fe; border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .bill-info h4 { font-size: 12px; color: #008eb3; margin-bottom: 5px; }
-        .bill-info .bill-amount { font-size: 20px; font-weight: 800; color: #0277bd; }
-        .btn-pay { background: #00a8e8; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
+        .stat-box { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; }
+        
+        .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
+        .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; }
+        .menu-item i { font-size: 20px; color: var(--neon-blue); margin-bottom: 8px; display: block; }
+        .menu-item span { font-size: 10px; color: #fff; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
-        .menu-item i { font-size: 20px; color: white; }
-        .icon-circle { width: 50px; height: 50px; background: #00a8e8; border-radius: 15px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; }
-        .menu-item span { font-size: 12px; color: #555; font-weight: 600; }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: white;
-            display: flex; justify-content: space-around; padding: 15px 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 99;
+        /* NAVBAR */
+        .navbar {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid #333;
+            display: flex; justify-content: space-around; align-items: center; padding: 15px 0; z-index: 999;
         }
-        .nav-item { text-align: center; color: #aaa; text-decoration: none; font-size: 10px; }
-        .nav-item i { font-size: 20px; margin-bottom: 5px; display: block; }
-        .nav-item.active { color: #00a8e8; }
-        .qr-btn {
-            background: #00a8e8; width: 55px; height: 55px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; margin-top: -35px; box-shadow: 0 10px 20px rgba(0, 168, 232, 0.4); border: 5px solid white;
-        }
+        .nav-icon.active { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+        
+        /* HIDDEN ELEMENTS */
+        #page-map, #page-sos { width: 100%; height: 100%; }
+        #map { width: 100%; height: 100%; }
+        .map-overlay { position: absolute; bottom: 100px; left: 20px; right: 20px; z-index: 999; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 15px; border: 1px solid var(--neon-blue); text-align: center; }
+        
+        /* SOS */
+        .sos-header { text-align: center; margin: 20px; }
+        .sos-header i { font-size: 50px; color: #ff3333; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <div id="login-page">
-        <h2 style="margin-bottom: 20px; color: #00a8e8;">MEMBER ACCESS</h2>
-        <div class="login-box">
-            <input type="tel" id="inputHP" placeholder="Nomor HP (Contoh: 856xxx)" autocomplete="off">
-            <button onclick="cekLogin()" id="btnLogin">MASUK</button>
-            <p id="status-msg" style="color: #666; font-size: 12px; margin-top: 10px; text-align: center;"></p>
+    <div id="page-login">
+        <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" class="logo-img">
+        <div class="login-card">
+            <h2>MEMBER ACCESS</h2>
+            <p style="color:#aaa; font-size:12px; margin-bottom:20px;">Maka Lintas Utara System</p>
+            <input type="tel" id="inputHP" placeholder="Nomor HP (Contoh: 812xxx)" autocomplete="off">
+            <button class="btn-neon" onclick="cekLogin()">LOGIN</button>
+            <p id="login-msg" style="margin-top: 15px; font-size: 12px; color: #ff3333;"></p>
         </div>
     </div>
 
-    <div id="dashboard-page">
-        <div class="header">
-            <div class="greeting">
-                <h1>Selamat Datang,</h1>
-                <p id="disp-nama">Loading...</p>
-            </div>
-            <div class="notif-icon"><i class="fas fa-bell"></i></div>
-        </div>
+    <div id="page-register" class="hidden">
+        <div class="login-card" style="max-height: 90vh; overflow-y: auto;">
+            <h2 style="font-size: 20px;">REGISTRASI UNIT</h2>
+            <p style="color:#aaa; font-size:10px; margin-bottom:20px;">Isi data sesuai fakta lapangan</p>
+            
+            <form id="form-register">
+                <input type="hidden" name="x-sheetmonkey-sheet-name" value="USER" />
+                
+                <input type="hidden" name="No HP" id="reg-hp">
+                
+                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
+                <input type="text" name="Nama" required placeholder="Nama Member">
 
-        <div class="main-card">
-            <div class="card-top">
-                <div>
-                    <div class="status-label">Kendaraan</div>
-                    <div class="motor-name" id="disp-motor">...</div>
-                </div>
-                <div class="price">Rp 70.000</div>
-            </div>
-            <div class="card-bottom">
-                <div class="plat-nomor"><i class="far fa-id-card"></i> <span id="disp-plat">...</span></div>
-                <div style="font-size: 12px;"><i class="fas fa-cogs"></i> Automatic</div>
-            </div>
-        </div>
+                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Plat Nomor</label>
+                <input type="text" name="Plat Nomor" required placeholder="B xxxx XXX">
 
-        <div class="info-card">
-            <div class="tenor-info">
-                <div class="tenor-box">
-                    <div class="icon-box"><i class="far fa-calendar-alt"></i></div>
-                    <div class="tenor-text">
-                        <h3 id="disp-tenor">0</h3>
-                        <span>Total tenor</span>
-                    </div>
-                </div>
-                <div class="tenor-box">
-                    <div class="icon-box" style="background: #fff3e0; color: #ff9800;"><i class="far fa-clock"></i></div>
-                    <div class="tenor-text">
-                        <h3 style="color: #ff9800;">Aktif</h3>
-                        <span>Status</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Tanggal Ambil Unit (Join)</label>
+                <input type="date" name="Tanggal Join" required>
 
-        <div class="bill-card">
-            <div class="bill-info">
-                <h4>Tagihan Saat Ini</h4>
-                <div class="bill-amount" id="disp-tagihan">Rp 0</div>
-            </div>
-            <button class="btn-pay">Bayar Sekarang</button>
-        </div>
+                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Tipe DP</label>
+                <select name="DP Awal">
+                    <option value="355">DP 355 Ribu</option>
+                    <option value="775">DP 775 Ribu</option>
+                </select>
 
-        <div class="menu-grid">
-            <div class="menu-item"><div class="icon-circle"><i class="far fa-credit-card"></i></div><span>Tagihan</span></div>
-            <div class="menu-item"><div class="icon-circle"><i class="far fa-calendar-check"></i></div><span>Riwayat</span></div>
-            <div class="menu-item"><div class="icon-circle"><i class="fas fa-wifi"></i></div><span>SOS</span></div>
-            <div class="menu-item"><div class="icon-circle"><i class="fas fa-certificate"></i></div><span>RTO</span></div>
+                <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Ikut Maka+ (+10rb/hari)?</label>
+                <select name="Maka Plus" id="reg-maka-plus">
+                    <option value="TIDAK">TIDAK</option>
+                    <option value="YA">YA (Saya bersedia)</option>
+                </select>
+                
+                <input type="hidden" name="Tgl Aktivasi Maka" id="reg-tgl-maka" value="-">
+
+                <button type="button" class="btn-neon" onclick="submitRegister()">SIMPAN DATA</button>
+            </form>
         </div>
     </div>
 
-    <div class="bottom-nav" id="bottomNav" style="display: none;">
-        <a href="#" class="nav-item active"><i class="fas fa-home"></i>Home</a>
-        <a href="#" class="nav-item"><i class="far fa-credit-card"></i>Tagihan</a>
-        <a href="#" class="qr-btn"><i class="fas fa-qrcode"></i></a>
-        <a href="#" class="nav-item"><i class="far fa-calendar-alt"></i>Riwayat</a>
-        <a href="#" class="nav-item"><i class="far fa-user"></i>Profile</a>
+    <div id="main-app" class="hidden">
+        
+        <div id="page-dashboard" class="app-container">
+            <div class="header">
+                <div class="user-info">
+                    <h1 style="color:#aaa; font-size:12px;">Selamat Datang,</h1>
+                    <p id="disp-nama">Loading...</p>
+                </div>
+                <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" class="header-logo" onclick="logout()">
+            </div>
+
+            <div class="vehicle-card">
+                <div style="display:flex; justify-content:space-between;">
+                    <div>
+                        <span style="color:#666; font-size:10px;">UNIT KENDARAAN</span>
+                        <div style="font-size:18px; font-weight:bold; color:#fff;">Maka Motors</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="color:#666; font-size:10px;">TAGIHAN HARI INI</span>
+                        <div class="value-blue" id="disp-tagihan">...</div>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <div style="background:rgba(0,243,255,0.1); border:1px solid var(--neon-blue); padding:5px; border-radius:5px; color:var(--neon-blue); font-family:monospace;" id="disp-plat">...</div>
+                    <span id="disp-ket-tagihan" style="font-size:10px; color:#aaa;">...</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <i class="far fa-calendar-check"></i>
+                    <span style="display:block; color:#666; font-size:10px;">Tgl Join</span>
+                    <span style="font-size:14px; font-weight:bold;" id="disp-join">...</span>
+                </div>
+                <div class="stat-box" onclick="toggleMakaPlus()">
+                    <i class="fas fa-bolt" id="icon-maka"></i>
+                    <span style="display:block; color:#666; font-size:10px;">Maka+</span>
+                    <span style="font-size:14px; font-weight:bold;" id="disp-maka-status">...</span>
+                </div>
+            </div>
+
+            <p style="margin:0 20px 10px; color:#666; font-size:12px;">MENU UTAMA</p>
+            <div class="menu-list">
+                <div class="menu-item" onclick="popupInfo('Info Tagihan', document.getElementById('disp-ket-tagihan').innerText)">
+                    <i class="fas fa-file-invoice-dollar"></i><span>Tagihan</span>
+                </div>
+                <div class="menu-item" onclick="popupInfo('Riwayat', 'Cek Sheet Riwayat.')">
+                    <i class="fas fa-history"></i><span>Riwayat</span>
+                </div>
+                <div class="menu-item" onclick="switchPage('sos')">
+                    <i class="fas fa-exclamation-triangle" style="color:#ff3333;"></i><span style="color:#ff3333;">SOS</span>
+                </div>
+                <div class="menu-item" onclick="popupInfo('RTO', 'Layanan RTO Siaga.')">
+                    <i class="fas fa-tools"></i><span>RTO</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-map" class="app-container hidden">
+            <div id="map"></div>
+            <div class="map-overlay">
+                <h3 id="lokasi-info" style="color:var(--neon-blue);">Mencari lokasi...</h3>
+                <button onclick="navigasiKeTujuan()" style="margin-top:10px; background:var(--neon-blue); border:none; padding:8px 20px; border-radius:20px; font-weight:bold;">GOOGLE MAPS</button>
+            </div>
+        </div>
+
+        <div id="page-sos" class="app-container hidden">
+            <div class="sos-header">
+                <i class="fas fa-exclamation-circle"></i>
+                <h2 style="color:#ff3333;">EMERGENCY SIGNAL</h2>
+            </div>
+            <div style="padding:20px;">
+                <label style="color:#aaa; font-size:12px;">TIPE DARURAT</label>
+                <select id="sos-tipe"><option>Mesin Mati</option><option>Kecelakaan</option><option>Ban Bocor</option><option>Begal</option></select>
+                <label style="color:#aaa; font-size:12px;">KETERANGAN</label>
+                <textarea id="sos-ket" rows="4"></textarea>
+                <button class="btn-neon" style="background:#ff3333; box-shadow:0 0 10px #ff3333;" onclick="kirimSOSWA()">KIRIM SOS</button>
+            </div>
+        </div>
+
+        <div class="navbar">
+            <div class="nav-icon active" onclick="switchPage('dashboard')"><i class="fas fa-home" style="font-size:20px;"></i></div>
+            <div onclick="switchPage('map')" style="background:#111; border:2px solid var(--neon-blue); width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-25px; box-shadow:0 0 10px rgba(0,243,255,0.4);"><i class="fas fa-map-marked-alt" style="color:var(--neon-blue);"></i></div>
+            <div class="nav-icon" onclick="switchPage('sos')"><i class="fas fa-user-shield" style="font-size:20px; color:#666;"></i></div>
+        </div>
     </div>
 
     <script>
-        // --- KONFIGURASI DATABASE ---
-        const googleSheetLink = 'https://docs.google.com/spreadsheets/d/1ERgIFLVIS1SRHrXi2clXiU8oj0gtLT4XZUzO1sy_P1Q/edit?usp=drivesdk'; 
+        // --- KONFIGURASI FINAL ---
+        const googleSheetLink = 'https://docs.google.com/spreadsheets/d/1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ/edit?usp=drivesdk'; 
+        const sheetMonkeyURL = 'https://api.sheetmonkey.io/form/88rjffsKVodtfwaQE4gU58'; 
+        const waAdmin = "6285691536957"; 
 
-        // Fungsi Pembersih Nomor HP (Jantung dari sistem ini)
+        // GLOBAL VARS
+        let currentUser = null; 
+        let map; let destinasiTujuan = "";
+
+        // AUTO LOGIN
+        window.onload = function() {
+            const savedHP = localStorage.getItem('userHP');
+            if (savedHP) cekLogin(savedHP, true);
+        };
+
         function cleanPhone(phone) {
-            let p = String(phone).trim();
-            // Buang karakter selain angka (biar aman dari spasi/-)
-            p = p.replace(/[^0-9]/g, '');
-            // Jika diawali 62, buang 62
-            if (p.startsWith('62')) {
-                p = p.substring(2);
-            }
-            // Jika diawali 0, buang 0
-            if (p.startsWith('0')) {
-                p = p.substring(1);
-            }
+            let p = String(phone).trim().replace(/[^0-9]/g, '');
+            if (p.startsWith('62')) p = p.substring(2);
+            if (p.startsWith('0')) p = p.substring(1);
             return p;
         }
 
-        function cekLogin() {
-            var hpInput = document.getElementById("inputHP").value;
-            const btn = document.getElementById("btnLogin");
-            const msg = document.getElementById("status-msg");
+        // --- SISTEM LOGIN & REGISTER ---
+        function cekLogin(savedHP = null, isAuto = false) {
+            const hpInput = savedHP || document.getElementById("inputHP").value;
+            const msg = document.getElementById("login-msg");
+            const btn = document.querySelector("#page-login button");
 
-            if(!hpInput) {
-                msg.innerText = "Masukkan nomor HP dulu!";
-                msg.style.color = "red";
-                return;
-            }
+            if(!hpInput) return alert("Masukkan Nomor HP");
+            if(!isAuto) { btn.innerText = "CHECKING..."; btn.disabled = true; }
 
-            // Bersihkan Input User (Jadi kalau user iseng ngetik 08xxx, tetap kita proses 8xxx)
             const cleanInput = cleanPhone(hpInput);
-
-            // UI Loading
-            btn.innerHTML = "MEMERIKSA...";
-            btn.disabled = true;
-            msg.innerText = "Mencari data di server...";
-            msg.style.color = "blue";
-
             const sheetID = getSheetID(googleSheetLink);
-            
-            fetch(`https://opensheet.elk.sh/${sheetID}/Sheet1`)
+
+            fetch(`https://opensheet.elk.sh/${sheetID}/USER`)
             .then(res => res.json())
             .then(data => {
-                // LOGIKA PENCARIAN CERDAS (SMART MATCH)
-                const user = data.find(row => {
-                    // Kita bersihkan juga nomor yang ada di Database
-                    // Jadi mau di database tulisannya 08xxx atau 628xxx, kita ubah jadi 8xxx
-                    const dbHP = cleanPhone(row['No HP']);
-                    return dbHP === cleanInput;
-                });
-
+                const user = data.find(row => cleanPhone(row['No HP']) === cleanInput);
+                
                 if (user) {
-                    // KETEMU!
-                    document.getElementById("disp-nama").innerText = user['Nama'] || "Member";
-                    document.getElementById("disp-motor").innerText = user['Motor'] || "-";
-                    document.getElementById("disp-plat").innerText = user['Plat Nomor'] || "B xxxx";
-                    document.getElementById("disp-tenor").innerText = (user['Tenor Hari'] || "0") + " Hari";
-                    document.getElementById("disp-tagihan").innerText = user['Tagihan'] || "Lunas";
-
-                    document.getElementById("login-page").style.display = "none";
-                    document.getElementById("dashboard-page").style.display = "block";
-                    document.getElementById("bottomNav").style.display = "flex";
+                    currentUser = user;
+                    localStorage.setItem('userHP', cleanInput);
+                    loadDashboard(user);
                 } else {
-                    // GAGAL
-                    msg.innerText = "Nomor tidak terdaftar!";
-                    msg.style.color = "red";
-                    
-                    // Alert Debugging (Opsional: Kalau mau tau input yg dibaca apa)
-                    // alert("Input bersih: " + cleanInput);
-
-                    btn.innerHTML = "MASUK";
-                    btn.disabled = false;
+                    if(isAuto) {
+                        localStorage.removeItem('userHP');
+                        alert("Sesi habis atau data tidak ditemukan.");
+                    } else {
+                        document.getElementById("page-login").classList.add("hidden");
+                        document.getElementById("page-register").classList.remove("hidden");
+                        document.getElementById("reg-hp").value = cleanInput; 
+                    }
                 }
+                if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
             })
             .catch(err => {
-                console.error(err);
-                msg.innerText = "Gagal koneksi. Cek internet/Sheet.";
-                msg.style.color = "red";
-                btn.innerHTML = "MASUK";
-                btn.disabled = false;
+                msg.innerText = "Gagal koneksi server.";
+                if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
             });
         }
 
-        function getSheetID(url) {
-            const matches = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-            return matches ? matches[1] : null;
-        }
-    </script>
+        function submitRegister() {
+            const form = document.getElementById('form-register');
+            const btn = document.querySelector("#form-register button");
+            
+            const makaSelect = document.getElementById("reg-maka-plus").value;
+            const tglAktivasi = document.getElementById("reg-tgl-maka");
+            
+            if(makaSelect === "YA") {
+                tglAktivasi.value = new Date().toISOString().split('T')[0]; 
+            } else {
+                tglAktivasi.value = "-";
+            }
 
+            btn.innerText = "MENYIMPAN..."; btn.disabled = true;
+
+            fetch(sheetMonkeyURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                Swal.fire({ title: 'Berhasil!', text: 'Data tersimpan. Silakan Login ulang.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
+                .then(() => {
+                    location.reload(); 
+                });
+            })
+            .catch(error => {
+                alert("Gagal menyimpan data!");
+                btn.innerText = "SIMPAN DATA"; btn.disabled = false;
+            });
+        }
+
+        function loadDashboard(user) {
+            hitungTagihan(user);
+            document.getElementById("disp-nama").innerText = user['Nama'];
+            document.getElementById("disp-plat").innerText = user['Plat Nomor'];
+            document.getElementById("disp-join").innerText = user['Tanggal Join'];
+            
+            const isMaka = String(user['Maka Plus']).toUpperCase().includes("YA");
+            document.getElementById("disp-maka-status").innerText = isMaka ? "AKTIF" : "NON-AKTIF";
+            document.getElementById("disp-maka-status").style.color = isMaka ? "#00f3ff" : "#666";
+            document.getElementById("icon-maka").style.color = isMaka ? "#00f3ff" : "#333";
+
+            document.getElementById("page-login").classList.add("hidden");
+            document.getElementById("page-register").classList.add("hidden");
+            document.getElementById("main-app").classList.remove("hidden");
+            
+            setTimeout(initMap, 1000);
+        }
+
+        // --- OTAK HITUNG TAGIHAN ---
+        function hitungTagihan(user) {
+            const joinDateStr = user['Tanggal Join'];
+            const tipeDP = parseInt(user['DP Awal']);
+            const makaPlus = String(user['Maka Plus']).toUpperCase().includes("YA");
+            const tglAktivasiMaka = user['Tgl Aktivasi Maka']; 
+
+            let baseSewa = 70000;
+            
+            if (makaPlus && tglAktivasiMaka && tglAktivasiMaka !== "-") {
+                const activationDate = new Date(tglAktivasiMaka);
+                const today = new Date();
+                activationDate.setHours(0,0,0,0);
+                today.setHours(0,0,0,0);
+                if (today > activationDate) {
+                    baseSewa += 10000; 
+                }
+            } else if (makaPlus && (!tglAktivasiMaka || tglAktivasiMaka === "-")) {
+                 baseSewa += 10000;
+            }
+
+            const today = new Date();
+            const tgl = today.getDate();
+            let tagihanFinal = baseSewa;
+            let statusKet = "Pembayaran Harian Normal";
+
+            if (tgl === 31) {
+                tagihanFinal = 0; statusKet = "LIBUR: Tanggal 31";
+            } else if (tgl === 14 || tgl === 28) {
+                if (tipeDP === 775) {
+                    tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 775rb";
+                } else if (tipeDP === 355) {
+                    const joinDate = new Date(joinDateStr);
+                    let monthsDiff = (today.getFullYear() - joinDate.getFullYear()) * 12 + (today.getMonth() - joinDate.getMonth());
+                    if (monthsDiff > 0 && monthsDiff <= 3) {
+                        tagihanFinal = baseSewa; statusKet = "TAGIHAN AKTIF: Cicilan DP";
+                    } else {
+                        tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 355rb";
+                    }
+                }
+            }
+
+            const elTagihan = document.getElementById("disp-tagihan");
+            if (tagihanFinal === 0) {
+                elTagihan.innerText = "LIBUR"; elTagihan.className = "value-free";
+            } else {
+                elTagihan.innerText = "Rp " + tagihanFinal.toLocaleString('id-ID'); elTagihan.className = "value-blue";
+            }
+            document.getElementById("disp-ket-tagihan").innerText = statusKet;
+        }
+
+        // --- REQUEST MAKA+ ---
+        function toggleMakaPlus() {
+            if(!currentUser) return;
+            const isMaka = String(currentUser['Maka Plus']).toUpperCase().includes("YA");
+            if(isMaka) {
+                Swal.fire({title:'Maka+ Aktif', text:'Anda sudah berlangganan Maka+.', icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+            } else {
+                Swal.fire({
+                    title: 'Aktifkan Maka+?',
+                    text: "Tagihan akan naik +10rb mulai BESOK. Kirim permintaan ke Admin?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Aktifkan',
+                    background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const text = `*REQUEST AKTIVASI MAKA+*%0A%0AUser: ${currentUser['Nama']}%0ANo HP: ${currentUser['No HP']}%0A%0AMohon update status Maka+ saya menjadi YA.`;
+                        window.open(`https://wa.me/${waAdmin}?text=${text}`, '_blank');
+                    }
+                });
+            }
+        }
+
+        function logout() { localStorage.removeItem('userHP'); location.reload(); }
+        function switchPage(p) { 
+            document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); 
+            document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active'));
+            document.getElementById('page-'+p).classList.remove('hidden');
+            if(p=='map') setTimeout(()=>map.invalidateSize(),200);
+        }
+        function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
+        function initMap() { if(map)return; map=L.map('map').setView([-6.2,106.8],12); L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map); if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>{map.setView([p.coords.latitude,p.coords.longitude],14);}); }
+        function navigasiKeTujuan() { if(destinasiTujuan)window.open(destinasiTujuan,'_blank'); else alert("Mencari lokasi..."); }
+        function kirimSOSWA() { window.open(`https://wa.me/${waAdmin}?text=SOS`, '_blank'); }
+        function getSheetID(url) { const matches = url.match(/\/d\/([a-zA-Z0-9-_]+)/); return matches ? matches[1] : null; }
+    </script>
 </body>
 </html>
