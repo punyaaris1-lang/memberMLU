@@ -7,9 +7,9 @@
     
     <script>
         const CFG = {
-            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', 
-            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', 
-            waAdmin: '6285691536957'
+            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', // ID Google Sheet
+            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', // Link SheetMonkey
+            waAdmin: '6285691536957' // Nomor Admin WA
         };
     </script>
 
@@ -20,40 +20,94 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        :root { --neon-blue: #00f3ff; --bg-dark: #050505; --card-bg: rgba(10, 10, 10, 0.85); --text-main: #fff; }
+        :root { --neon-blue: #00f3ff; --bg-dark: #050505; --card-bg: rgba(15, 15, 15, 0.85); --text-main: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            font-family: 'Rajdhani', sans-serif; background-color: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; position: relative;
+            font-family: 'Rajdhani', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            height: 100vh; overflow: hidden; 
+            position: relative;
         }
+
+        /* WATERMARK BACKGROUND LOGO */
         body::before {
-            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 100%; height: 60%; background: url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center;
-            background-size: contain; opacity: 0.15; z-index: -1; filter: grayscale(20%);
+            content: "";
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%; height: 60%;
+            background: url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center;
+            background-size: contain;
+            opacity: 0.15; z-index: -1;
+            filter: grayscale(20%);
         }
 
         .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
         .hidden { display: none !important; }
 
-        input, select, textarea { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid #333; color: var(--neon-blue); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; font-family: 'Rajdhani', sans-serif; backdrop-filter: blur(5px); }
-        .btn-neon { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.3s; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
+        input, select, textarea { 
+            width: 100%; padding: 15px; 
+            background: rgba(0, 0, 0, 0.6); 
+            border: 1px solid #333; color: var(--neon-blue); 
+            border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; 
+            font-family: 'Rajdhani', sans-serif; 
+            backdrop-filter: blur(5px);
+        }
+        input:focus, select:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+
+        .btn-neon { 
+            width: 100%; padding: 15px; background: var(--neon-blue); color: #000; 
+            font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; 
+            font-family: 'Orbitron', sans-serif; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+        .btn-neon:active { transform: scale(0.95); }
         .btn-neon:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
-        #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; backdrop-filter: blur(3px); }
-        .login-card { width: 100%; max-width: 400px; background: rgba(15, 15, 15, 0.85); border: 1px solid var(--neon-blue); padding: 30px; border-radius: 20px; text-align: center; margin: auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); backdrop-filter: blur(10px); }
+        #page-login, #page-register { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: transparent; z-index: 9999; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 30px; 
+            overflow-y: auto; backdrop-filter: blur(3px);
+        }
+
+        .login-card { 
+            width: 100%; max-width: 400px; 
+            background: rgba(15, 15, 15, 0.9); 
+            border: 1px solid var(--neon-blue); 
+            padding: 30px; border-radius: 20px; text-align: center; margin: auto; 
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); 
+            backdrop-filter: blur(10px);
+        }
         .logo-img { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon-blue)); }
 
-        .header { padding: 20px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; }
-        .header-logo { width: 45px !important; height: 45px !important; border-radius: 50%; border: 2px solid var(--neon-blue); object-fit: cover; background: #000; box-shadow: 0 0 10px var(--neon-blue); }
+        .header { 
+            padding: 20px; 
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .header-logo { 
+            width: 45px !important; height: 45px !important; 
+            border-radius: 50%; border: 2px solid var(--neon-blue); 
+            object-fit: cover; background: #000;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
 
-        .vehicle-card { background: var(--card-bg); border: 1px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin: 20px; backdrop-filter: blur(5px); }
+        .vehicle-card { 
+            background: var(--card-bg); border: 1px solid var(--neon-blue); 
+            border-radius: 15px; padding: 20px; margin: 20px; 
+            backdrop-filter: blur(5px);
+        }
         .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
         .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
         .stat-box { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; cursor: pointer; backdrop-filter: blur(5px); }
+        
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
         .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; transition: 0.3s; backdrop-filter: blur(5px); }
+        .menu-item:active { border-color: var(--neon-blue); background: rgba(0, 243, 255, 0.1); }
         .menu-item i { font-size: 20px; color: var(--neon-blue); margin-bottom: 8px; display: block; }
         .menu-item span { font-size: 10px; color: #fff; }
 
@@ -65,6 +119,7 @@
         .map-overlay { position: absolute; bottom: 100px; left: 20px; right: 20px; z-index: 999; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 15px; border: 1px solid var(--neon-blue); text-align: center; backdrop-filter: blur(5px); }
         .sos-header { text-align: center; margin: 20px; }
         .sos-header i { font-size: 50px; color: #ff3333; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -168,8 +223,15 @@
     </div>
 
     <script>
+        const CFG = {
+            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', 
+            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2',
+            waAdmin: '6285691536957'
+        };
+
         let currentUser = null; let map; let destinasiTujuan = "";
 
+        // AUTO LOGIN
         window.onload = function() {
             const savedHP = localStorage.getItem('userHP');
             if (savedHP) cekLogin(savedHP, true);
@@ -182,7 +244,7 @@
             return p;
         }
 
-        // --- FUNGSI LOGIN (LEBIH PINTAR) ---
+        // --- SISTEM LOGIN ---
         function cekLogin(savedHP = null, isAuto = false) {
             const hpInput = savedHP || document.getElementById("inputHP").value;
             const msg = document.getElementById("login-msg");
@@ -197,6 +259,7 @@
             .then(res => res.json())
             .then(data => {
                 const user = data.find(row => cleanPhone(row['No HP']) === cleanInput);
+                
                 if (user) {
                     currentUser = user;
                     localStorage.setItem('userHP', cleanInput);
@@ -220,9 +283,10 @@
             });
         }
 
-        // --- FUNGSI SUBMIT REGISTER (KIRIM SEMUA VERSI KEY) ---
+        // --- SUBMIT REGISTER (FIXED) ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
+            
             const hp = document.getElementById('reg-hp').value;
             const nama = document.getElementById('reg-nama').value;
             const plat = document.getElementById('reg-plat').value;
@@ -233,20 +297,16 @@
             let tglAktivasi = "-";
             if(makaPlus === "YA") tglAktivasi = new Date().toISOString().split('T')[0];
 
-            if(!hp) { alert("Sesi habis. Refresh halaman."); location.reload(); return; }
+            if(!hp) { alert("Sesi habis. Silakan Login ulang."); location.reload(); return; }
             if(!nama || !plat || !tgl) return Swal.fire({title:'Data Kurang', text:'Isi semua kolom!', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
 
-            // TRIK JITU: KIRIM 2 VERSI NAMA KOLOM SEKALIGUS
-            // Biar SheetMonkey yang pilih mana yang cocok
             const dataKirim = {
                 "No HP": hp,
                 "Nama": nama,
                 "Plat Nomor": plat,
-                "Tanggal Join": tgl,  // Versi 1
-                "Tgl Join": tgl,      // Versi 2 (Cadangan)
+                "Tanggal Join": tgl,  // Sesuai Sheet
                 "DP Awal": dp,
-                "Maka Plus": makaPlus,// Versi 1
-                "MAKA Plus": makaPlus,// Versi 2 (Cadangan)
+                "Maka Plus": makaPlus, // Sesuai Sheet
                 "Tgl Aktivasi Maka": tglAktivasi
             };
 
@@ -270,18 +330,13 @@
             });
         }
 
-        // --- LOAD DASHBOARD (BACA SEMUA VERSI KEY) ---
         function loadDashboard(user) {
             hitungTagihan(user);
             document.getElementById("disp-nama").innerText = user['Nama'];
             document.getElementById("disp-plat").innerText = user['Plat Nomor'];
+            document.getElementById("disp-join").innerText = user['Tanggal Join'] || "-";
             
-            // Baca Tanggal Join (Cek kedua kemungkinan)
-            document.getElementById("disp-join").innerText = user['Tanggal Join'] || user['Tgl Join'] || "-";
-            
-            // Baca Maka Plus (Cek kedua kemungkinan)
-            const makaVal = user['Maka Plus'] || user['MAKA Plus'] || "TIDAK";
-            
+            const makaVal = user['Maka Plus'] || "TIDAK";
             const isMakaDB = String(makaVal).toUpperCase().includes("YA");
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
             const isMaka = isMakaDB || isMakaLocal;
@@ -297,9 +352,8 @@
         }
 
         function hitungTagihan(user) {
-            // Adaptasi nama kolom ganda
-            const joinDateStr = user['Tanggal Join'] || user['Tgl Join']; 
-            const makaVal = user['Maka Plus'] || user['MAKA Plus'] || "TIDAK";
+            const joinDateStr = user['Tanggal Join']; 
+            const makaVal = user['Maka Plus'] || "TIDAK";
             const tipeDP = parseInt(user['DP Awal']);
             
             const isMakaDB = String(makaVal).toUpperCase().includes("YA");
@@ -330,11 +384,9 @@
 
         function bukaMenuMakaPlus() {
             if(!currentUser) return;
-            // Cek Status
-            const makaVal = currentUser['Maka Plus'] || currentUser['MAKA Plus'] || "TIDAK";
+            const makaVal = currentUser['Maka Plus'] || "TIDAK";
             const isMakaDB = String(makaVal).toUpperCase().includes("YA");
             const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
-            
             if(isMakaDB || isMakaLocal) {
                 Swal.fire({title:'Maka+ Aktif', text:'Layanan Maka+ Anda sudah aktif.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
             } else {
@@ -375,14 +427,35 @@
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(res => res.json()).then(data => { 
                 let terdekatJarak = 9999999; let terdekatNama = ""; let terdekatLat = 0; let terdekatLng = 0; 
                 data.forEach(loc => { 
-                    if(loc.lat && loc.lng) { 
-                        let linkNav = loc.gmap ? loc.gmap : `https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lng}`;
-                        L.marker([loc.lat, loc.lng], {icon: iconStyle}).addTo(map).bindPopup(`<b>${loc.nama}</b><br>${loc.kota}<br><a href="${linkNav}" target="_blank" style="color:yellow; font-weight:bold;">NAVIGASI</a>`); 
-                        const jarak = getDistanceFromLatLonInKm(userLat, userLng, loc.lat, loc.lng); 
-                        if(jarak < terdekatJarak) { terdekatJarak = jarak; terdekatNama = loc.nama; terdekatLat = loc.lat; terdekatLng = loc.lng; destinasiTujuan = linkNav; } 
+                    // FIX PARSING COORDINATES (DOT or COMMA)
+                    let lat = parseFloat(String(loc.lat).replace(',', '.').trim());
+                    let lng = parseFloat(String(loc.lng).replace(',', '.').trim());
+
+                    if(!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) { 
+                        let linkNav = loc.gmap ? loc.gmap : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+                        L.marker([lat, lng], {icon: iconStyle})
+                         .addTo(map)
+                         .bindPopup(`
+                            <div style="text-align:center; color:#333; font-family:sans-serif;">
+                                <b style="font-size:14px;">${loc.nama}</b><br>
+                                <span style="font-size:11px; color:#666;">${loc.kota || ''}</span><br>
+                                <a href="${linkNav}" target="_blank" style="display:inline-block; margin-top:8px; background:#00f3ff; color:#000; padding:5px 15px; border-radius:20px; text-decoration:none; font-weight:bold; font-size:12px;">NAVIGASI KE SINI</a>
+                            </div>
+                         `);
+                        
+                        const jarak = getDistanceFromLatLonInKm(userLat, userLng, lat, lng); 
+                        if(jarak < terdekatJarak) { terdekatJarak = jarak; terdekatNama = loc.nama; terdekatLat = lat; terdekatLng = lng; destinasiTujuan = linkNav; } 
                     } 
                 }); 
-                if(terdekatNama) { document.getElementById('lokasi-info').innerText = `${terdekatNama} (${terdekatJarak.toFixed(1)} Km)`; } 
+                if(terdekatNama) { 
+                    document.getElementById('lokasi-info').innerHTML = `
+                        <div style="text-align:center;">
+                            <span style="color:#aaa; font-size:10px;">LOKASI TERDEKAT</span><br>
+                            <b style="color:var(--neon-blue); font-size:14px;">${terdekatNama}</b> 
+                            <span style="background:#222; color:#fff; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;">${terdekatJarak.toFixed(1)} Km</span>
+                        </div>
+                    `;
+                } 
             }); 
         }
     </script>
