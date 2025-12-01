@@ -7,9 +7,9 @@
     
     <script>
         const CFG = {
-            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ',
-            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2',
-            waAdmin: '6285691536957'
+            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', // ID Sheet Anda
+            monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2', // Link SheetMonkey Baru
+            waAdmin: '6285691536957' // Nomor Admin WA
         };
     </script>
 
@@ -21,78 +21,125 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        :root { --neon-blue: #00f3ff; --bg-dark: #050505; --card-bg: rgba(20, 20, 20, 0.95); --text-main: #fff; }
+        /* --- TEMA CYBER NEON BLUE --- */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-glow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+            --bg-dark: #050505;
+            --card-bg: rgba(15, 15, 15, 0.9);
+            --text-main: #fff;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            font-family: 'Rajdhani', sans-serif; background-color: var(--bg-dark); 
-            color: var(--text-main); height: 100vh; overflow: hidden; position: relative;
+            font-family: 'Rajdhani', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            height: 100vh; overflow: hidden; 
+            position: relative;
         }
+
+        /* WATERMARK BACKGROUND */
         body::before {
-            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; height: 60%;
+            content: "";
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%; height: 60%;
             background: url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center;
-            background-size: contain; opacity: 0.15; z-index: -1; filter: grayscale(20%);
+            background-size: contain;
+            opacity: 0.15; z-index: -1;
+            filter: grayscale(20%);
         }
 
         .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
         .hidden { display: none !important; }
 
-        input, select, textarea { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid #333; color: var(--neon-blue); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; font-family: 'Rajdhani', sans-serif; backdrop-filter: blur(5px); }
-        .btn-neon { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.3s; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
-        .btn-neon:disabled { background: #333; color: #666; cursor: not-allowed; }
+        input, select, textarea { 
+            width: 100%; padding: 15px; 
+            background: rgba(0, 0, 0, 0.6); 
+            border: 1px solid #333; color: var(--neon-blue); 
+            border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; 
+            font-family: 'Rajdhani', sans-serif; 
+            backdrop-filter: blur(5px);
+        }
+        input:focus, select:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-        .header { padding: 20px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; }
-        .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--neon-blue); object-fit: cover; background: #000; box-shadow: 0 0 10px var(--neon-blue); }
+        .btn-neon { 
+            width: 100%; padding: 15px; background: var(--neon-blue); color: #000; 
+            font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; 
+            font-family: 'Orbitron', sans-serif; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+        .btn-neon:active { transform: scale(0.95); }
+        .btn-neon:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
-        .vehicle-card { background: var(--card-bg); border: 1px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin: 20px; backdrop-filter: blur(5px); }
-        .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; }
-        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        #page-login, #page-register { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: transparent; z-index: 9999; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 30px; 
+            overflow-y: auto; backdrop-filter: blur(3px);
+        }
+
+        .login-card { 
+            width: 100%; max-width: 400px; 
+            background: rgba(15, 15, 15, 0.9); 
+            border: 1px solid var(--neon-blue); 
+            padding: 30px; border-radius: 20px; text-align: center; margin: auto; 
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); 
+            backdrop-filter: blur(10px);
+        }
+        .logo-img { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon-blue)); }
+
+        .header { 
+            padding: 20px; 
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .header-logo { 
+            width: 45px !important; height: 45px !important; 
+            border-radius: 50%; border: 2px solid var(--neon-blue); 
+            object-fit: cover; background: #000;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .vehicle-card { 
+            background: var(--card-bg); border: 1px solid var(--neon-blue); 
+            border-radius: 15px; padding: 20px; margin: 20px; 
+            backdrop-filter: blur(5px);
+        }
+        .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
+        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
         .stat-box { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; cursor: pointer; backdrop-filter: blur(5px); }
         
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
-        .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; backdrop-filter: blur(5px); }
+        .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; transition: 0.3s; backdrop-filter: blur(5px); }
+        .menu-item:active { border-color: var(--neon-blue); background: rgba(0, 243, 255, 0.1); }
         .menu-item i { font-size: 20px; color: var(--neon-blue); margin-bottom: 8px; display: block; }
         .menu-item span { font-size: 10px; color: #fff; }
 
         .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; padding: 15px 0; z-index: 999; }
-        .nav-icon { color: #666; font-size: 20px; transition: 0.3s; }
         .nav-icon.active { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.2); }
         
-        #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; backdrop-filter: blur(3px); }
-        .login-card { width: 100%; max-width: 400px; background: rgba(15, 15, 15, 0.9); border: 1px solid var(--neon-blue); padding: 30px; border-radius: 20px; text-align: center; margin: auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); }
-        .logo-img { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon-blue)); }
-
-        /* --- MAPS STYLE --- */
+        /* FIX MAP SIZE */
         #page-map { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            display: none; /* Hide default */
-            z-index: 50; background: #f0f0f0; 
+            display: none; /* Default hide */
+            z-index: 50; 
+            background: #222; 
         }
         #page-map.active-map { display: block !important; }
         
         #map { width: 100%; height: 100%; z-index: 1; }
         
-        .map-overlay { 
-            position: absolute; bottom: 90px; left: 15px; right: 15px; z-index: 999; 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 15px; border-radius: 20px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            text-align: center; border: 2px solid #333;
-        }
-
-        /* CUSTOM ICONS */
-        .motor-icon { font-size: 32px; color: #333; filter: drop-shadow(2px 2px 0 #fff); animation: bounce 1s infinite alternate; }
-        .thunder-icon { font-size: 32px; color: #ffcc00; filter: drop-shadow(0 0 5px #ffcc00); animation: pulse 0.8s infinite; }
-        @keyframes bounce { from {transform: translateY(0);} to {transform: translateY(-5px);} }
-        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
-
+        .map-overlay { position: absolute; bottom: 100px; left: 20px; right: 20px; z-index: 999; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 15px; border: 1px solid var(--neon-blue); text-align: center; backdrop-filter: blur(5px); }
+        
         #page-sos { width: 100%; height: 100%; display: none; }
         #page-sos.active-sos { display: block; }
         .sos-header { text-align: center; margin: 20px; }
         .sos-header i { font-size: 50px; color: #ff3333; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -111,6 +158,7 @@
     <div id="page-register" class="hidden">
         <div class="login-card" style="max-height: 90vh; overflow-y: auto;">
             <h2 style="font-size: 20px;">REGISTRASI UNIT</h2>
+            <p style="color:#aaa; font-size:10px; margin-bottom:20px;">Isi data sesuai fakta lapangan</p>
             <form id="form-register">
                 <input type="hidden" id="reg-hp">
                 <label style="color:var(--neon-blue); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
@@ -159,13 +207,7 @@
 
         <div id="page-map" class="hidden">
             <div id="map"></div>
-            <div class="map-overlay">
-                <div style="color:#333; font-weight:bold; font-size:14px;">CHARGING STATION</div>
-                <div id="lokasi-info" style="color:#007bff; font-size:18px; margin:5px 0;">Mencari lokasi...</div>
-                <button onclick="navigasiKeTujuan()" style="margin-top:10px; background:#333; color:#fff; border:none; padding:10px 25px; border-radius:20px; font-weight:bold; width:100%;">
-                    <i class="fas fa-location-arrow"></i> BUKA GOOGLE MAPS
-                </button>
-            </div>
+            <div class="map-overlay"><h3 id="lokasi-info" style="color:var(--neon-blue);">Memuat lokasi...</h3><button onclick="navigasiKeTujuan()" style="margin-top:10px; background:var(--neon-blue); border:none; padding:8px 20px; border-radius:20px; font-weight:bold;">GOOGLE MAPS</button></div>
         </div>
 
         <div id="page-sos" class="hidden">
@@ -199,14 +241,19 @@
             return p;
         }
 
+        // --- CEK LOGIN & AUTO UPDATE ---
         function cekLogin(savedHP = null, isAuto = false) {
             const hpInput = savedHP || document.getElementById("inputHP").value;
+            const msg = document.getElementById("login-msg");
             const btn = document.querySelector("#page-login button");
+
             if(!hpInput) return alert("Masukkan Nomor HP");
             if(!isAuto) { btn.innerText = "CHECKING..."; btn.disabled = true; }
+
             const cleanInput = cleanPhone(hpInput);
-            
-            fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${new Date().getTime()}`)
+            const ts = new Date().getTime(); 
+
+            fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${ts}`)
             .then(res => res.json())
             .then(data => {
                 const user = data.find(row => cleanPhone(row['No HP']) === cleanInput);
@@ -218,25 +265,50 @@
                 }
                 if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
             })
-            .catch(e => { if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; alert("Gagal koneksi."); } });
+            .catch(err => {
+                msg.innerText = "Gagal koneksi server. Coba lagi.";
+                if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
+            });
         }
 
+        // --- SUBMIT REGISTER ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
+            const hp = document.getElementById('reg-hp').value;
+            const nama = document.getElementById('reg-nama').value;
+            const plat = document.getElementById('reg-plat').value;
+            const tgl = document.getElementById('reg-tgl').value;
+            const dp = document.getElementById('reg-dp').value;
+            const makaPlus = document.getElementById('reg-maka-plus').value;
+            
+            let tglAktivasi = "-";
+            if(makaPlus === "YA") tglAktivasi = new Date().toISOString().split('T')[0];
+
+            if(!hp) { alert("Sesi habis. Silakan Login ulang."); location.reload(); return; }
+            if(!nama || !plat || !tgl) return Swal.fire({title:'Data Kurang', text:'Isi semua kolom!', icon:'warning', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+
             const dataKirim = {
-                "No HP": document.getElementById('reg-hp').value,
-                "Nama": document.getElementById('reg-nama').value,
-                "Plat Nomor": document.getElementById('reg-plat').value,
-                "Tanggal Join": document.getElementById('reg-tgl').value,
-                "DP Awal": document.getElementById('reg-dp').value,
-                "Maka Plus": document.getElementById('reg-maka-plus').value,
-                "Tgl Aktivasi Maka": (document.getElementById('reg-maka-plus').value === "YA") ? new Date().toISOString().split('T')[0] : "-"
+                "No HP": hp, "Nama": nama, "Plat Nomor": plat, "Tanggal Join": tgl, 
+                "DP Awal": dp, "Maka Plus": makaPlus, "Tgl Aktivasi Maka": tglAktivasi
             };
-            if(!dataKirim['Nama']) return alert("Lengkapi data!");
+
             btn.innerText = "MENGIRIM..."; btn.disabled = true;
-            fetch(CFG.monkeyURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dataKirim) })
-            .then(r => { if(r.ok) { Swal.fire('Sukses!', 'Login ulang.', 'success').then(()=>location.reload()); } else throw new Error(); })
-            .catch(e => { Swal.fire('Gagal', 'Cek internet.', 'error'); btn.innerText = "COBA LAGI"; btn.disabled = false; });
+
+            fetch(CFG.monkeyURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataKirim)
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({ title: 'SUKSES!', text: 'Data tersimpan.', icon: 'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff' })
+                    .then(() => location.reload());
+                } else { throw new Error("Gagal kirim."); }
+            })
+            .catch(error => {
+                Swal.fire({ title: 'GAGAL', text: 'Koneksi error.', icon: 'error', background:'#111', color:'#fff', confirmButtonColor:'#ff3333' });
+                btn.innerText = "COBA LAGI"; btn.disabled = false;
+            });
         }
 
         function loadDashboard(user) {
@@ -244,7 +316,10 @@
             document.getElementById("disp-nama").innerText = user['Nama'];
             document.getElementById("disp-plat").innerText = user['Plat Nomor'];
             document.getElementById("disp-join").innerText = user['Tanggal Join'] || "-";
-            const isMaka = String(user['Maka Plus']).toUpperCase().includes("YA") || localStorage.getItem('makaPlusOverride') === 'true';
+            
+            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+            const isMaka = String(user['Maka Plus']).toUpperCase().includes("YA") || isMakaLocal;
+
             document.getElementById("disp-maka-status").innerText = isMaka ? "AKTIF" : "NON-AKTIF";
             document.getElementById("disp-maka-status").style.color = isMaka ? "#00f3ff" : "#666";
             document.getElementById("icon-maka").style.color = isMaka ? "#00f3ff" : "#333";
@@ -252,104 +327,136 @@
             document.getElementById("page-login").classList.add("hidden");
             document.getElementById("page-register").classList.add("hidden");
             document.getElementById("main-app").classList.remove("hidden");
+            
+            // JANGAN INIT MAP DISINI! Nanti Blank.
         }
 
         function hitungTagihan(user) {
             const joinDateStr = user['Tanggal Join']; const tipeDP = parseInt(user['DP Awal']);
-            const isMaka = String(user['Maka Plus']).toUpperCase().includes("YA") || localStorage.getItem('makaPlusOverride') === 'true';
-            let baseSewa = 70000; if (isMaka) baseSewa += 10000;
-            const tgl = new Date().getDate(); let tagihanFinal = baseSewa; let statusKet = "Pembayaran Harian";
+            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+            const makaPlus = String(user['Maka Plus']).toUpperCase().includes("YA") || isMakaLocal;
+            
+            let baseSewa = 70000; if (makaPlus) baseSewa += 10000;
+            const today = new Date(); const tgl = today.getDate();
+            let tagihanFinal = baseSewa; let statusKet = "Pembayaran Harian Normal";
+
             if (tgl === 31) { tagihanFinal = 0; statusKet = "LIBUR: Tanggal 31"; }
             else if (tgl === 14 || tgl === 28) {
                 if (tipeDP === 775) { tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 775rb"; }
                 else if (tipeDP === 355 && joinDateStr) {
-                    const diff = (new Date().getFullYear() - new Date(joinDateStr).getFullYear()) * 12 + (new Date().getMonth() - new Date(joinDateStr).getMonth());
-                    if (diff > 0 && diff <= 3) { tagihanFinal = baseSewa; statusKet = "TAGIHAN AKTIF: Cicilan DP"; }
+                    const joinDate = new Date(joinDateStr);
+                    let monthsDiff = (today.getFullYear() - joinDate.getFullYear()) * 12 + (today.getMonth() - joinDate.getMonth());
+                    if (monthsDiff > 0 && monthsDiff <= 3) { tagihanFinal = baseSewa; statusKet = "TAGIHAN AKTIF: Cicilan DP"; }
                     else { tagihanFinal = 0; statusKet = "LIBUR: Benefit DP 355rb"; }
                 }
             }
-            const el = document.getElementById("disp-tagihan");
-            el.innerText = tagihanFinal === 0 ? "LIBUR" : "Rp " + tagihanFinal.toLocaleString('id-ID');
-            el.className = tagihanFinal === 0 ? "value-free" : "value-blue";
+            const elTagihan = document.getElementById("disp-tagihan");
+            if (tagihanFinal === 0) { elTagihan.innerText = "LIBUR"; elTagihan.className = "value-free"; }
+            else { elTagihan.innerText = "Rp " + tagihanFinal.toLocaleString('id-ID'); elTagihan.className = "value-blue"; }
             document.getElementById("disp-ket-tagihan").innerText = statusKet;
         }
 
-        function bukaMenuMakaPlus() { Swal.fire({ title: 'Layanan Maka+', html: `<button onclick="window.open('https://bit.ly/semilchargerplus')" style="background:#fff; color:#000; padding:10px; width:100%; border:none; margin-bottom:10px;">DAFTAR</button><button onclick="aktifkanMakaPlusLocal()" style="background:#00f3ff; color:#000; padding:10px; width:100%; border:none;">SAYA SUDAH PUNYA</button>`, showConfirmButton: false, background:'#111', color:'#fff' }); }
-        function aktifkanMakaPlusLocal() { localStorage.setItem('makaPlusOverride', 'true'); location.reload(); }
+        function bukaMenuMakaPlus() {
+            if(!currentUser) return;
+            const isMakaLocal = localStorage.getItem('makaPlusOverride') === 'true';
+            if(String(currentUser['Maka Plus']).toUpperCase().includes("YA") || isMakaLocal) {
+                Swal.fire({title:'Maka+ Aktif', text:'Layanan Maka+ Anda sudah aktif.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'});
+            } else {
+                Swal.fire({
+                    title: 'Layanan Maka+', html: `<button id="btn-daftar-maka" style="background:#fff; color:#000; border:none; padding:10px; width:100%; margin-bottom:10px;">DAFTAR SEKARANG</button><button id="btn-sudah-punya" style="background:#00f3ff; color:#000; border:none; padding:10px; width:100%;">SAYA SUDAH PUNYA</button>`, showConfirmButton: false, background:'#111', color:'#fff',
+                    didOpen: () => {
+                        document.getElementById('btn-daftar-maka').addEventListener('click', () => { window.open('https://bit.ly/semilchargerplus', '_blank'); });
+                        document.getElementById('btn-sudah-punya').addEventListener('click', () => { aktifkanMakaPlusLocal(); });
+                    }
+                });
+            }
+        }
+        function aktifkanMakaPlusLocal() { localStorage.setItem('makaPlusOverride', 'true'); document.getElementById("disp-maka-status").innerText = "AKTIF"; document.getElementById("disp-maka-status").style.color = "#00f3ff"; document.getElementById("icon-maka").style.color = "#00f3ff"; hitungTagihan(currentUser); Swal.fire({title:'Berhasil!', text:'Tagihan +10rb.', icon:'success', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
+
         function logout() { localStorage.removeItem('userHP'); localStorage.removeItem('makaPlusOverride'); location.reload(); }
+        function switchPage(p) { document.getElementById('page-dashboard').classList.add('hidden'); document.getElementById('page-map').classList.add('hidden'); document.getElementById('page-sos').classList.add('hidden'); document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.remove('hidden'); 
+            
+            if(p=='dashboard') document.querySelector('.nav-icon:nth-child(1)').classList.add('active');
+            if(p=='sos') document.querySelector('.nav-icon:nth-child(3)').classList.add('active');
+
+            // --- INI KUNCI FIX MAP BLANK ---
+            if(p=='map') {
+                document.querySelector('.nav-icon:nth-child(2)').classList.add('active'); 
+                document.getElementById('page-map').classList.add('active-map');
+                setTimeout(() => {
+                    if(!map) initMap();
+                    else map.invalidateSize(); // BANGUNIN PETA!
+                }, 100);
+            }
+        }
         function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
         function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
-        function navigasiKeTujuan() { if(destinasiTujuan)window.open(destinasiTujuan,'_blank'); else alert("Tunggu sebentar..."); }
         function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
         function deg2rad(deg) { return deg * (Math.PI/180) }
 
-        // --- NAVIGASI ---
-        function switchPage(p) {
-            document.getElementById('page-dashboard').classList.add('hidden');
-            document.getElementById('page-map').classList.remove('active-map'); 
-            document.getElementById('page-sos').classList.remove('active-sos'); 
-            document.querySelectorAll('.nav-icon').forEach(e=>e.classList.remove('active'));
-
-            if(p === 'dashboard') {
-                document.getElementById('page-dashboard').classList.remove('hidden');
-                document.querySelector('.nav-icon:nth-child(1)').classList.add('active');
-            } else if (p === 'map') {
-                document.getElementById('page-map').classList.add('active-map');
-                document.querySelector('.nav-icon:nth-child(2)').classList.add('active');
-                
-                // === INIT PETA SAAT DIBUKA ===
-                setTimeout(() => {
-                    if(!map) initMap();
-                    else map.invalidateSize();
-                }, 100);
-            } else if (p === 'sos') {
-                document.getElementById('page-sos').classList.add('active-sos');
-                document.querySelector('.nav-icon:nth-child(3)').classList.add('active');
-            }
-        }
-
-        // --- MAP SYSTEM (GAMIFIED) ---
+        // MAPS LOAD (FIX AUTO WAKE UP)
         function initMap() { 
             if(map) { map.invalidateSize(); return; }
-            map = L.map('map').setView([-6.2, 106.8], 12);
+            map=L.map('map').setView([-6.2, 106.8], 12); 
+            // Pakai Tile Standar dulu biar aman, baru ganti ke Dark kalau mau
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
             
-            // PAKAI CARTO VOYAGER (STYLE KARTUN)
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '© MLU Map', maxZoom: 20
-            }).addTo(map);
+            var iconCharge = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png', iconSize: [25, 41], iconAnchor: [12, 41] });
+            var iconUser = L.icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png', iconSize: [25, 41], iconAnchor: [12, 41] });
 
-            // CUSTOM ICONS
-            const iconUser = L.divIcon({ className: 'custom-div-icon', html: "<i class='fas fa-motorcycle motor-icon'></i>", iconSize: [30, 42], iconAnchor: [15, 42] });
-            const iconCharge = L.divIcon({ className: 'custom-div-icon', html: "<i class='fas fa-bolt thunder-icon'></i>", iconSize: [30, 42], iconAnchor: [15, 42] });
-
-            // AMBIL LOKASI (SETELAH PETA RENDER)
             if(navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(p => {
+                navigator.geolocation.getCurrentPosition(p=>{
                     const lat = p.coords.latitude; const lng = p.coords.longitude;
                     map.setView([lat, lng], 14);
                     L.marker([lat, lng], {icon: iconUser}).addTo(map).bindPopup("Lokasi Kamu").openPopup();
                     loadChargingStations(lat, lng, iconCharge);
-                }, () => loadChargingStations(-6.2, 106.8, iconCharge));
-            } else { loadChargingStations(-6.2, 106.8, iconCharge); }
+                });
+            } else {
+                loadChargingStations(-6.2, 106.8, iconCharge); // Default Jakarta
+            }
         }
 
-        function loadChargingStations(userLat, userLng, iconStyle) {
-            fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(r=>r.json()).then(data => {
-                let minDist = 99999; let nearestName = "";
-                data.forEach(loc => {
-                    let lat = parseFloat(String(loc.lat).replace(',','.'));
-                    let lng = parseFloat(String(loc.lng).replace(',','.'));
-                    if(!isNaN(lat) && !isNaN(lng)) {
-                        let link = loc.gmap || `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-                        L.marker([lat, lng], {icon: iconStyle}).addTo(map)
-                         .bindPopup(`<b>${loc.nama}</b><br><a href="${link}" style="color:blue">NAVIGASI</a>`);
-                        
-                        let d = getDistanceFromLatLonInKm(userLat, userLng, lat, lng);
-                        if(d < minDist) { minDist = d; nearestName = loc.nama; destinasiTujuan = link; }
-                    }
-                });
-                if(nearestName) document.getElementById('lokasi-info').innerHTML = `<b style="color:var(--neon-blue);">${nearestName}</b> (${minDist.toFixed(1)} Km)`;
-            });
+        function loadChargingStations(userLat, userLng, iconStyle) { 
+            fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(res => res.json()).then(data => { 
+                let terdekatJarak = 9999999; let terdekatNama = ""; 
+                
+                if(data.length === 0) { 
+                    // DEBUG: Kalau data kosong
+                    document.getElementById('lokasi-info').innerText = "Data LOKASI Kosong/Gagal Load";
+                    return; 
+                }
+
+                data.forEach(loc => { 
+                    // AUTO FIX: Ganti koma jadi titik & hapus spasi
+                    let lat = parseFloat(String(loc.lat).replace(',', '.').trim());
+                    let lng = parseFloat(String(loc.lng).replace(',', '.').trim());
+
+                    if(!isNaN(lat) && !isNaN(lng) && lat !== 0) { 
+                        let linkNav = loc.gmap ? loc.gmap : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+                        L.marker([lat, lng], {icon: iconStyle})
+                         .addTo(map)
+                         .bindPopup(`
+                            <div style="text-align:center; color:#333; font-family:sans-serif;">
+                                <b style="font-size:14px;">${loc.nama}</b><br>
+                                <span style="font-size:11px; color:#666;">${loc.kota || ''}</span><br>
+                                <a href="${linkNav}" target="_blank" style="display:inline-block; margin-top:8px; background:#00f3ff; color:#000; padding:5px 15px; border-radius:20px; text-decoration:none; font-weight:bold; font-size:12px;">NAVIGASI</a>
+                            </div>
+                         `);
+                        const jarak = getDistanceFromLatLonInKm(userLat, userLng, lat, lng); 
+                        if(jarak < terdekatJarak) { terdekatJarak = jarak; terdekatNama = loc.nama; destinasiTujuan = linkNav; } 
+                    } 
+                }); 
+                
+                if(terdekatNama) { 
+                    document.getElementById('lokasi-info').innerHTML = `
+                        <div style="text-align:center;">
+                            <span style="color:#aaa; font-size:10px;">LOKASI TERDEKAT</span><br>
+                            <b style="color:var(--neon-blue); font-size:14px;">${terdekatNama}</b> 
+                            <span style="background:#222; color:#fff; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;">${terdekatJarak.toFixed(1)} Km</span>
+                        </div>
+                    `;
+                } 
+            }); 
         }
     </script>
 </body>
