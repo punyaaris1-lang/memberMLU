@@ -15,34 +15,27 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* --- TEMA WHITE & BLUE --- */
+        /* TEMA CLEAN LIGHT (PUTIH BIRU) */
         :root {
-            --primary: #007bff; /* Biru Profesional */
-            --primary-dark: #0056b3;
-            --bg-light: #f4f7f6; /* Putih Abu dikit */
-            --card-white: #ffffff;
-            --text-dark: #333333;
-            --text-grey: #666666;
+            --primary: #007bff; --primary-dark: #0056b3;
+            --bg-light: #f4f7f6; --card-white: #ffffff;
+            --text-dark: #333333; --text-grey: #666666;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: var(--bg-light); 
-            color: var(--text-dark); 
-            height: 100vh; overflow: hidden; position: relative;
+            font-family: 'Poppins', sans-serif; background-color: var(--bg-light); 
+            color: var(--text-dark); height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* WATERMARK (Lebih halus di background putih) */
+        /* WATERMARK */
         body::before {
             content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 80%; height: 60%;
@@ -53,107 +46,55 @@
         .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
         .hidden { display: none !important; }
 
-        /* INPUT & BUTTON STYLE (Light Mode) */
-        input, select, textarea { 
-            width: 100%; padding: 15px; 
-            background: #fff; 
-            border: 1px solid #ddd; border-left: 4px solid var(--primary);
-            color: var(--text-dark); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; 
-        }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 123, 255, 0.1); }
+        /* UI ELEMENTS */
+        input, select { width: 100%; padding: 15px; background: #fff; border: 1px solid #ddd; border-left: 4px solid var(--primary); color: var(--text-dark); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; }
+        .btn-blue { width: 100%; padding: 15px; background: var(--primary); color: #fff; weight: 600; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2); }
 
-        .btn-blue { 
-            width: 100%; padding: 15px; background: var(--primary); color: #fff; 
-            font-weight: 600; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; 
-            transition: 0.3s; box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-        }
-        .btn-blue:active { transform: scale(0.98); background: var(--primary-dark); }
-        .btn-blue:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
-
-        /* HEADER */
-        .header { 
-            padding: 25px 20px; 
-            background: #fff; 
-            display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
-        }
-        .header h1 { font-size: 12px; color: #999; margin-bottom: 2px; font-weight: 400; }
-        .header p { font-size: 18px; font-weight: 700; color: var(--primary-dark); }
+        .header { padding: 25px 20px; background: #fff; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
         .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; background: #fff; }
 
-        /* LOGIN PAGE */
-        #page-login, #page-register { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--bg-light); z-index: 9999; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 30px; overflow-y: auto;
-        }
-        .login-card { 
-            width: 100%; max-width: 400px; 
-            background: #fff; border: none; 
-            padding: 40px 30px; border-radius: 20px; text-align: center; margin: auto; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-        .logo-img { width: 100px; margin-bottom: 20px; }
-
-        /* DASHBOARD CARDS */
-        .vehicle-card { 
-            background: #fff; border: none; 
-            border-radius: 15px; padding: 20px; margin: 20px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-        }
+        .vehicle-card { background: #fff; border: none; border-radius: 15px; padding: 20px; margin: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .value-big { font-size: 28px; font-weight: 700; color: var(--text-dark); margin: 5px 0; }
-        
-        /* TAGS */
         .tag-blue { background: rgba(0, 123, 255, 0.1); color: var(--primary); padding: 4px 8px; border-radius: 5px; font-size: 12px; font-weight: 600; }
-        .tag-green { background: rgba(40, 167, 69, 0.1); color: #28a745; padding: 4px 8px; border-radius: 5px; font-size: 12px; font-weight: 600; }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
         .stat-box { background: #fff; padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; box-shadow: 0 5px 10px rgba(0,0,0,0.02); }
         
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
         .menu-item { background: #fff; padding: 15px 5px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 3px 6px rgba(0,0,0,0.02); }
-        .menu-item:active { transform: scale(0.95); }
         .menu-item i { font-size: 22px; color: var(--primary); margin-bottom: 8px; display: block; }
         .menu-item span { font-size: 11px; color: var(--text-grey); font-weight: 500; }
 
-        /* NAVBAR */
-        .navbar { 
-            position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: #fff; border-top: 1px solid #eee; 
-            display: flex; justify-content: space-around; align-items: center; 
-            padding: 10px 0; z-index: 9999; 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
-        }
+        .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; padding: 10px 0; z-index: 9999; box-shadow: 0 -5px 20px rgba(0,0,0,0.03); }
         .nav-icon { color: #ccc; font-size: 24px; transition: 0.3s; }
         .nav-icon.active { color: var(--primary); transform: translateY(-2px); }
-        
-        /* MAP PAGE (LIGHT) */
-        #page-map { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 100; display: none; background: #fff; 
-        }
+
+        /* --- MAP SYSTEM --- */
+        #page-map { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: none; background: #fff; }
         #page-map.active-map { display: block !important; }
         #map { width: 100%; height: 100%; }
 
-        /* OVERLAY INFO MAP */
+        /* Overlay Info */
         .map-overlay { 
             position: absolute; bottom: 95px; left: 15px; right: 15px; z-index: 999; 
-            background: #fff; 
-            padding: 20px; border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center; display: none;
+            background: #fff; padding: 20px; border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); text-align: center; display: none;
+            border: 1px solid #eee;
         }
-        
-        /* BUTTONS IN MAP */
         .btn-map-action { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin: 0 5px; font-size: 13px; }
         .btn-start-map { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(0,123,255,0.3); }
         .btn-gmaps-map { background: #f1f3f5; color: #333; }
-        
-        /* Ikon Peta */
-        .motor-icon { font-size: 36px; color: var(--primary-dark); filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); animation: bounce 1s infinite alternate; }
-        .thunder-icon { font-size: 36px; color: #ffc107; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); animation: pulse 1s infinite; }
+
+        /* Tombol Center */
+        .btn-center {
+            position: absolute; bottom: 230px; right: 15px; width: 45px; height: 45px;
+            background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            z-index: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.2); cursor: pointer; color: #333; font-size: 20px;
+        }
+
+        /* Icons */
+        .motor-icon { font-size: 36px; color: #333; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); animation: bounce 1s infinite alternate; }
+        .thunder-icon { font-size: 36px; color: #ffc107; filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3)); animation: pulse 1s infinite; }
         @keyframes bounce { from {transform: translateY(0);} to {transform: translateY(-8px);} }
         @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.15);} 100% {transform: scale(1);} }
 
@@ -161,12 +102,14 @@
         .leaflet-routing-container { display: none !important; }
         svg.leaflet-zoom-animated path { stroke: var(--primary); stroke-width: 6; opacity: 0.8; }
 
-        /* SOS PAGE */
         #page-sos { width: 100%; height: 100%; display: none; background: #fff; z-index: 150; padding-top: 40px; }
         #page-sos.active-sos { display: block; }
-        .sos-header { text-align: center; margin: 20px; } 
-        .sos-header i { font-size: 60px; color: #dc3545; animation: pulse 1s infinite; }
+        .sos-header { text-align: center; margin: 20px; } .sos-header i { font-size: 60px; color: #dc3545; animation: pulse 1s infinite; }
         .btn-sos-red { background: #dc3545; color: #fff; width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 20px; box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3); }
+
+        #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-light); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; }
+        .login-card { width: 100%; max-width: 400px; background: #fff; padding: 40px 30px; border-radius: 20px; text-align: center; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .logo-img { width: 100px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -187,21 +130,11 @@
             <h2 style="font-size: 20px; color:var(--text-dark); margin-bottom:20px;">Daftar Anggota</h2>
             <form id="form-register">
                 <input type="hidden" id="reg-hp">
-                <label style="display:block; text-align:left; font-size:12px; color:#666;">Nama Lengkap</label>
-                <input type="text" id="reg-nama" required>
-                
-                <label style="display:block; text-align:left; font-size:12px; color:#666;">Plat Nomor</label>
-                <input type="text" id="reg-plat" required placeholder="B xxxx XXX">
-                
-                <label style="display:block; text-align:left; font-size:12px; color:#666;">Tanggal Join</label>
-                <input type="date" id="reg-tgl" required>
-                
-                <label style="display:block; text-align:left; font-size:12px; color:#666;">Tipe DP</label>
-                <select id="reg-dp"><option value="355">DP 355 Ribu</option><option value="775">DP 775 Ribu</option></select>
-                
-                <label style="display:block; text-align:left; font-size:12px; color:#666;">Maka Plus ?</label>
-                <select id="reg-maka-plus"><option value="TIDAK">TIDAK</option><option value="YA">YA</option></select>
-                
+                <label style="display:block; text-align:left; font-size:12px; color:#666;">Nama Lengkap</label><input type="text" id="reg-nama" required>
+                <label style="display:block; text-align:left; font-size:12px; color:#666;">Plat Nomor</label><input type="text" id="reg-plat" required>
+                <label style="display:block; text-align:left; font-size:12px; color:#666;">Tanggal Join</label><input type="date" id="reg-tgl" required>
+                <label style="display:block; text-align:left; font-size:12px; color:#666;">Tipe DP</label><select id="reg-dp"><option value="355">DP 355 Ribu</option><option value="775">DP 775 Ribu</option></select>
+                <label style="display:block; text-align:left; font-size:12px; color:#666;">Maka Plus ?</label><select id="reg-maka-plus"><option value="TIDAK">TIDAK</option><option value="YA">YA</option></select>
                 <button type="button" class="btn-blue" onclick="submitRegister()">SIMPAN DATA</button>
             </form>
         </div>
@@ -213,99 +146,60 @@
                 <div class="user-info"><h1>Selamat Datang,</h1><p id="disp-nama">Loading...</p></div>
                 <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" class="header-logo" onclick="logout()">
             </div>
-
             <div class="vehicle-card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div><span style="color:#999; font-size:10px;">UNIT KENDARAAN</span><div style="font-size:16px; font-weight:600; color:#333;">Maka Motors</div></div>
-                    <div style="text-align:right;">
-                        <span style="color:#999; font-size:10px;">TAGIHAN HARI INI</span>
-                        <div class="value-big" id="disp-tagihan">...</div>
-                    </div>
+                    <div style="text-align:right;"><span style="color:#999; font-size:10px;">TAGIHAN HARI INI</span><div class="value-big" id="disp-tagihan">...</div></div>
                 </div>
                 <div style="border-top:1px solid #f0f0f0; margin-top:15px; padding-top:10px; display:flex; justify-content:space-between; align-items:center;">
-                    <span class="tag-blue">ACTIVE MEMBER</span>
-                    <span id="disp-plat" style="font-weight:600; font-size:14px; color:#333;">...</span>
+                    <span class="tag-blue">ACTIVE MEMBER</span><span id="disp-plat" style="font-weight:600; font-size:14px; color:#333;">...</span>
                 </div>
             </div>
-
             <div class="stats-grid">
-                <div class="stat-box">
-                    <i class="far fa-calendar-check" style="color:var(--primary); font-size:20px; margin-bottom:5px;"></i>
-                    <span style="display:block; color:#999; font-size:10px;">Tgl Join</span>
-                    <span style="font-size:14px; font-weight:600; color:#333;" id="disp-join">...</span>
-                </div>
-                <div class="stat-box" onclick="bukaMenuMakaPlus()">
-                    <i class="fas fa-bolt" id="icon-maka" style="color:#999; font-size:20px; margin-bottom:5px;"></i>
-                    <span style="display:block; color:#999; font-size:10px;">Maka+</span>
-                    <span style="font-size:14px; font-weight:600; color:#333;" id="disp-maka-status">...</span>
-                </div>
+                <div class="stat-box"><i class="far fa-calendar-check" style="color:var(--primary); font-size:20px;"></i><span style="display:block; color:#999; font-size:10px;">Tgl Join</span><span style="font-size:14px; font-weight:600; color:#333;" id="disp-join">...</span></div>
+                <div class="stat-box" onclick="bukaMenuMakaPlus()"><i class="fas fa-bolt" id="icon-maka" style="color:#999; font-size:20px;"></i><span style="display:block; color:#999; font-size:10px;">Maka+</span><span style="font-size:14px; font-weight:600; color:#333;" id="disp-maka-status">...</span></div>
             </div>
-
             <p style="margin:0 20px 10px; color:#999; font-size:12px; font-weight:600;">MENU UTAMA</p>
             <div class="menu-list">
-                <div class="menu-item" onclick="popupInfo('Info Tagihan', document.getElementById('disp-ket-tagihan').innerText)">
-                    <i class="fas fa-file-invoice-dollar"></i><span>Tagihan</span>
-                </div>
-                <div class="menu-item" onclick="popupInfo('Riwayat', 'Cek Sheet Riwayat.')">
-                    <i class="fas fa-history"></i><span>Riwayat</span>
-                </div>
-                <div class="menu-item" onclick="switchPage('sos')">
-                    <i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i><span style="color:#dc3545;">SOS</span>
-                </div>
-                <div class="menu-item" onclick="popupInfo('RTO', 'Layanan RTO Siaga.')">
-                    <i class="fas fa-tools"></i><span>RTO</span>
-                </div>
+                <div class="menu-item" onclick="popupInfo('Info Tagihan', document.getElementById('disp-ket-tagihan').innerText)"><i class="fas fa-file-invoice-dollar"></i><span>Tagihan</span></div>
+                <div class="menu-item" onclick="popupInfo('Riwayat', 'Cek Sheet Riwayat.')"><i class="fas fa-history"></i><span>Riwayat</span></div>
+                <div class="menu-item" onclick="switchPage('sos')"><i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i><span style="color:#dc3545;">SOS</span></div>
+                <div class="menu-item" onclick="popupInfo('RTO', 'Layanan RTO Siaga.')"><i class="fas fa-tools"></i><span>RTO</span></div>
             </div>
             <div id="disp-ket-tagihan" style="display:none;"></div>
         </div>
 
         <div id="page-map" class="hidden">
             <div id="map"></div>
-            
-            <div onclick="centerGPS()" style="position:absolute; bottom:230px; right:15px; width:45px; height:45px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:900; box-shadow:0 2px 10px rgba(0,0,0,0.2); cursor:pointer;">
-                <i class="fas fa-crosshairs" style="color:#333;"></i>
-            </div>
-
+            <div class="btn-center" onclick="centerGPS()"><i class="fas fa-crosshairs"></i></div>
             <div id="map-panel" class="map-overlay">
                 <h3 id="panel-name" style="margin:0 0 5px; color:#333;">Nama Lokasi</h3>
                 <div id="panel-desc" style="font-size:12px; color:#666; margin-bottom:15px;">Pilih lokasi untuk mulai navigasi</div>
                 <div style="display:flex; gap:10px;">
-                    <button class="btn-map-action btn-start-map" onclick="startRoute()">RUTE APLIKASI</button>
+                    <button class="btn-map-action btn-start-map" onclick="startRoute()">START JALAN</button>
                     <button class="btn-map-action btn-gmaps-map" onclick="openGmaps()">GOOGLE MAPS</button>
                 </div>
             </div>
         </div>
 
         <div id="page-sos" class="hidden">
-            <div class="sos-header">
-                <i class="fas fa-exclamation-circle"></i>
-                <h2 style="color:#dc3545; margin-top:10px;">DARURAT</h2>
-                <p style="font-size:12px; color:#666;">Sinyal akan dikirim ke Admin Pusat</p>
-            </div>
+            <div class="sos-header"><i class="fas fa-exclamation-circle"></i><h2 style="color:#dc3545; margin-top:10px;">DARURAT</h2></div>
             <div style="padding:20px;">
-                <label style="color:#333; font-size:12px;">Jenis Masalah</label>
-                <select id="sos-tipe"><option>Mesin Mati</option><option>Kecelakaan</option><option>Ban Bocor</option><option>Begal</option></select>
-                
-                <label style="color:#333; font-size:12px;">Keterangan Lokasi</label>
-                <textarea id="sos-ket" rows="4" placeholder="Contoh: Dekat indomaret..."></textarea>
-                
+                <label style="color:#333; font-size:12px;">Jenis Masalah</label><select id="sos-tipe"><option>Mesin Mati</option><option>Kecelakaan</option><option>Ban Bocor</option><option>Begal</option></select>
+                <label style="color:#333; font-size:12px;">Keterangan</label><textarea id="sos-ket" rows="4"></textarea>
                 <button class="btn-sos-red" onclick="kirimSOSWA()">KIRIM SINYAL SOS</button>
             </div>
         </div>
 
         <div class="navbar">
             <div class="nav-icon active" onclick="switchPage('dashboard')"><i class="fas fa-home"></i></div>
-            
-            <div onclick="switchPage('map')" style="background:var(--primary); width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-30px; box-shadow:0 5px 15px rgba(0, 123, 255, 0.4);">
-                <i class="fas fa-map-marked-alt" style="color:#fff; font-size:24px;"></i>
-            </div>
-            
+            <div onclick="switchPage('map')" style="background:var(--primary); width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-30px; box-shadow:0 5px 15px rgba(0, 123, 255, 0.4);"><i class="fas fa-map-marked-alt" style="color:#fff; font-size:24px;"></i></div>
             <div class="nav-icon" onclick="switchPage('sos')"><i class="fas fa-user-shield"></i></div>
         </div>
     </div>
 
     <script>
-        let currentUser = null; let map = null; let routingControl = null; let selectedFC = null; let userLat = null; let userLng = null;
+        let currentUser = null; let map = null; let routingControl = null; let selectedFC = null; let userLat = null; let userLng = null; let userMarker = null;
 
         window.onload = function() {
             const savedHP = localStorage.getItem('userHP');
@@ -314,33 +208,25 @@
 
         function cleanPhone(phone) { return String(phone).replace(/[^0-9]/g, '').replace(/^62/, '').replace(/^0/, ''); }
 
-        // --- LOGIN ---
         function cekLogin(savedHP = null, isAuto = false) {
             const hpInput = savedHP || document.getElementById("inputHP").value;
             const btn = document.querySelector("#page-login button");
             if(!hpInput) return alert("Isi Nomor HP");
             if(!isAuto) { btn.innerText = "Loading..."; btn.disabled = true; }
-            
             const clean = cleanPhone(hpInput);
             
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${Date.now()}`)
             .then(r=>r.json()).then(data => {
                 const user = data.find(u => cleanPhone(u['No HP']) === clean);
                 if(user) {
-                    currentUser = user; localStorage.setItem('userHP', clean);
-                    loadDashboard(user);
+                    currentUser = user; localStorage.setItem('userHP', clean); loadDashboard(user);
                 } else {
                     if(isAuto) { localStorage.removeItem('userHP'); location.reload(); }
-                    else { 
-                        document.getElementById('page-login').classList.add('hidden'); 
-                        document.getElementById('page-register').classList.remove('hidden'); 
-                        document.getElementById('reg-hp').value = clean; 
-                    }
+                    else { document.getElementById('page-login').classList.add('hidden'); document.getElementById('page-register').classList.remove('hidden'); document.getElementById('reg-hp').value = clean; }
                 }
             }).catch(() => { if(!isAuto) btn.disabled = false; alert("Gagal Koneksi"); });
         }
 
-        // --- REGISTRASI ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
             const data = {
@@ -353,9 +239,7 @@
                 "Tgl Aktivasi Maka": "-"
             };
             btn.innerText = "Menyimpan..."; btn.disabled = true;
-            
-            const fd = new FormData();
-            for(let k in data) fd.append(k, data[k]);
+            const fd = new FormData(); for(let k in data) fd.append(k, data[k]);
             fd.append("x-sheetmonkey-insert-worksheet", "USER");
 
             fetch(CFG.monkeyURL, { method:'POST', body:fd })
@@ -367,19 +251,16 @@
             document.getElementById("disp-nama").innerText = user['Nama'];
             document.getElementById("disp-plat").innerText = user['Plat Nomor'];
             document.getElementById("disp-join").innerText = user['Tanggal Join'] || "-";
-            
             const isMaka = String(user['Maka Plus']).toUpperCase().includes("YA") || localStorage.getItem('makaLocal') === 'true';
             document.getElementById("disp-maka-status").innerText = isMaka ? "AKTIF" : "NON";
             document.getElementById("disp-maka-status").style.color = isMaka ? "#007bff" : "#999";
             document.getElementById("icon-maka").style.color = isMaka ? "#007bff" : "#ccc";
-            
             hitungTagihan(user, isMaka);
-
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-register').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             
-            // PRELOAD MAP
+            // INIT MAP (FIX BLANK & MISSING MOTOR)
             setTimeout(() => initMap(), 500);
         }
 
@@ -397,13 +278,7 @@
             }
         }
 
-        function bukaMenuMakaPlus() { Swal.fire({title:'Maka+', html:`<button onclick="aktifkanMaka()" style="background:#007bff; color:#fff; border:none; padding:10px; width:100%; border-radius:5px;">SAYA SUDAH PUNYA</button>`, showConfirmButton:false}); }
-        function aktifkanMaka() { localStorage.setItem('makaLocal', 'true'); location.reload(); }
-        function logout() { localStorage.clear(); location.reload(); }
-        function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', confirmButtonColor:'#007bff'}); }
-        function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
-
-        // --- MAP SYSTEM (LIGHT MODE) ---
+        // --- MAP SYSTEM (FIX MOTOR) ---
         function switchPage(p) {
             document.getElementById('page-dashboard').classList.add('hidden');
             document.getElementById('page-map').classList.remove('active-map'); 
@@ -425,25 +300,33 @@
         function initMap() {
             if(map) return;
             
-            // CARTO DB POSITRON (LIGHT/CLEAN)
+            // PETA TERANG (CartoDB Positron)
             map = L.map('map', {zoomControl: false}).setView([-6.2, 106.8], 11);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '© MLU', maxZoom: 19
             }).addTo(map);
 
+            // ICONS
             const iconUser = L.divIcon({ className: 'custom', html: "<i class='fas fa-motorcycle motor-icon'></i>", iconSize: [40, 40], iconAnchor: [20, 20] });
             const iconFc = L.divIcon({ className: 'custom', html: "<i class='fas fa-bolt thunder-icon'></i>", iconSize: [30, 30], iconAnchor: [15, 15] });
 
+            // LOAD FC
             loadFC(iconFc);
 
+            // GPS TRACKING (FIX LOGIC)
             if(navigator.geolocation) {
                 navigator.geolocation.watchPosition(p => {
                     userLat = p.coords.latitude; userLng = p.coords.longitude;
-                    if(!map.hasLayer(userMarker)) {
+                    
+                    // Cek apakah marker motor sudah ada?
+                    if(!userMarker) {
                         userMarker = L.marker([userLat, userLng], {icon: iconUser}).addTo(map);
+                        userMarker.bindPopup("Posisi Anda").openPopup();
                         map.flyTo([userLat, userLng], 14);
-                    } else { userMarker.setLatLng([userLat, userLng]); }
-                }, err => console.log("GPS Error"));
+                    } else {
+                        userMarker.setLatLng([userLat, userLng]);
+                    }
+                }, err => console.log("GPS Error"), {enableHighAccuracy: true});
             }
         }
 
@@ -471,13 +354,11 @@
                 let d = getDist(userLat, userLng, loc.lat, loc.lng).toFixed(1);
                 let t = Math.ceil(d*2.5);
                 document.getElementById('panel-desc').innerHTML = `🏁 ${d} km | ⏳ ${t} mnt | 🔋 -${Math.ceil(d*1.2)}%`;
-            } else {
-                document.getElementById('panel-desc').innerText = loc.kota || "Klik untuk rute";
             }
         }
 
         function startRoute() {
-            if(!userLat || !selectedFC) return alert("Tunggu sinyal GPS...");
+            if(!userLat || !selectedFC) return alert("Tunggu GPS...");
             if(routingControl) map.removeControl(routingControl);
 
             routingControl = L.Routing.control({
@@ -490,13 +371,15 @@
             document.getElementById('map-panel').style.display = 'none';
         }
 
-        function openGmaps() {
-            if(selectedFC) window.open(selectedFC.gmap || `https://www.google.com/maps/dir/?api=1&destination=${selectedFC.lat},${selectedFC.lng}`, '_blank');
-        }
-
+        function openGmaps() { if(selectedFC) window.open(selectedFC.gmap || `https://www.google.com/maps/dir/?api=1&destination=${selectedFC.lat},${selectedFC.lng}`, '_blank'); }
         function centerGPS() { if(userLat) map.flyTo([userLat, userLng], 16); else alert("Mencari sinyal..."); }
         function getDist(lat1,lon1,lat2,lon2) { var R=6371; var dLat=deg2rad(lat2-lat1); var dLon=deg2rad(lon2-lon1); var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(deg2rad(lat1))*Math.cos(deg2rad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2); return R*(2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))); }
         function deg2rad(deg) { return deg*(Math.PI/180); }
+        function bukaMenuMakaPlus() { Swal.fire({title:'Maka+', html:`<button onclick="aktifkanMaka()" style="background:#007bff; color:#fff; border:none; padding:10px; width:100%; border-radius:5px;">SAYA SUDAH PUNYA</button>`, showConfirmButton:false}); }
+        function aktifkanMaka() { localStorage.setItem('makaLocal', 'true'); location.reload(); }
+        function logout() { localStorage.clear(); location.reload(); }
+        function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', confirmButtonColor:'#007bff'}); }
+        function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
     </script>
 </body>
 </html>
