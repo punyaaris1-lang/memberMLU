@@ -7,7 +7,7 @@
     
     <script>
         const CFG = {
-            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', 
+            sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ',
             monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2',
             waAdmin: '6285691536957'
         };
@@ -18,20 +18,21 @@
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        :root { --neon-blue: #00f3ff; --bg-dark: #050505; --card-bg: rgba(20, 20, 20, 0.9); --text-main: #fff; }
+        :root { --neon-blue: #00f3ff; --bg-dark: #050505; --card-bg: rgba(20, 20, 20, 0.95); --text-main: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Rajdhani', sans-serif; background-color: var(--bg-dark); color: var(--text-main); height: 100vh; overflow: hidden; position: relative; }
         
+        body { 
+            font-family: 'Rajdhani', sans-serif; background-color: var(--bg-dark); 
+            color: var(--text-main); height: 100vh; overflow: hidden; position: relative;
+        }
         body::before {
             content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; height: 60%; background: url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center;
-            background-size: contain; opacity: 0.1; z-index: -1; filter: grayscale(20%);
+            width: 80%; height: 60%;
+            background: url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center;
+            background-size: contain; opacity: 0.15; z-index: -1; filter: grayscale(20%);
         }
 
         .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
@@ -41,18 +42,21 @@
         .btn-neon { width: 100%; padding: 15px; background: var(--neon-blue); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.3s; box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
         .btn-neon:disabled { background: #333; color: #666; cursor: not-allowed; }
 
-        /* HEADER & UI */
         .header { padding: 20px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; }
         .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--neon-blue); object-fit: cover; background: #000; box-shadow: 0 0 10px var(--neon-blue); }
+
         .vehicle-card { background: var(--card-bg); border: 1px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin: 20px; backdrop-filter: blur(5px); }
-        .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
+        .value-blue { font-size: 28px; color: var(--neon-blue); font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; }
+        
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
         .stat-box { background: var(--card-bg); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; cursor: pointer; backdrop-filter: blur(5px); }
+        
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
-        .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; transition: 0.3s; backdrop-filter: blur(5px); }
+        .menu-item { background: var(--card-bg); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; backdrop-filter: blur(5px); }
         .menu-item i { font-size: 20px; color: var(--neon-blue); margin-bottom: 8px; display: block; }
         .menu-item span { font-size: 10px; color: #fff; }
+
         .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; padding: 15px 0; z-index: 999; }
         .nav-icon { color: #666; font-size: 20px; transition: 0.3s; }
         .nav-icon.active { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); transform: scale(1.2); }
@@ -60,46 +64,30 @@
         #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; backdrop-filter: blur(3px); }
         .login-card { width: 100%; max-width: 400px; background: rgba(15, 15, 15, 0.9); border: 1px solid var(--neon-blue); padding: 30px; border-radius: 20px; text-align: center; margin: auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); }
         .logo-img { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon-blue)); }
-        
-        /* --- GAMIFIED MAP STYLES --- */
-        #page-map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; z-index: 50; background: #ddd; }
+
+        /* --- MAPS STYLE --- */
+        #page-map { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: none; /* Hide default */
+            z-index: 50; background: #f0f0f0; 
+        }
         #page-map.active-map { display: block !important; }
-        #map { width: 100%; height: 100%; }
         
-        /* Overlay Bawah */
+        #map { width: 100%; height: 100%; z-index: 1; }
+        
         .map-overlay { 
             position: absolute; bottom: 90px; left: 15px; right: 15px; z-index: 999; 
             background: rgba(255, 255, 255, 0.95); 
             padding: 15px; border-radius: 20px; 
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             text-align: center; border: 2px solid #333;
-            transition: 0.3s;
         }
 
-        /* ICON STYLES */
-        .motor-icon {
-            font-size: 28px; color: #333; 
-            text-shadow: 2px 2px 0 #fff;
-            animation: bounce 1s infinite alternate;
-        }
-        .thunder-icon {
-            font-size: 30px; color: #ffcc00; 
-            text-shadow: 0 0 10px #ffcc00;
-            animation: pulse-thunder 0.8s infinite;
-        }
-        
-        /* Animasi Jalur (Jalan Semut) */
-        .leaflet-routing-container { display: none !important; } /* Sembunyikan box text arahan */
-        svg.leaflet-zoom-animated path {
-            stroke: #0088ff; 
-            stroke-width: 6;
-            stroke-dasharray: 10, 10; 
-            animation: dash 1s linear infinite; 
-        }
-
-        @keyframes dash { to { stroke-dashoffset: -20; } }
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-5px); } }
-        @keyframes pulse-thunder { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        /* CUSTOM ICONS */
+        .motor-icon { font-size: 32px; color: #333; filter: drop-shadow(2px 2px 0 #fff); animation: bounce 1s infinite alternate; }
+        .thunder-icon { font-size: 32px; color: #ffcc00; filter: drop-shadow(0 0 5px #ffcc00); animation: pulse 0.8s infinite; }
+        @keyframes bounce { from {transform: translateY(0);} to {transform: translateY(-5px);} }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
 
         #page-sos { width: 100%; height: 100%; display: none; }
         #page-sos.active-sos { display: block; }
@@ -172,7 +160,7 @@
         <div id="page-map" class="hidden">
             <div id="map"></div>
             <div class="map-overlay">
-                <div style="color:#333; font-weight:bold; font-size:14px;">MENEMUKAN CHARGING STATION</div>
+                <div style="color:#333; font-weight:bold; font-size:14px;">CHARGING STATION</div>
                 <div id="lokasi-info" style="color:#007bff; font-size:18px; margin:5px 0;">Mencari lokasi...</div>
                 <button onclick="navigasiKeTujuan()" style="margin-top:10px; background:#333; color:#fff; border:none; padding:10px 25px; border-radius:20px; font-weight:bold; width:100%;">
                     <i class="fas fa-location-arrow"></i> BUKA GOOGLE MAPS
@@ -197,7 +185,7 @@
     </div>
 
     <script>
-        let currentUser = null; let map; let routingControl; let destinasiTujuan = "";
+        let currentUser = null; let map; let destinasiTujuan = "";
 
         window.onload = function() {
             const savedHP = localStorage.getItem('userHP');
@@ -295,6 +283,7 @@
         function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) { var R = 6371; var dLat = deg2rad(lat2-lat1); var dLon = deg2rad(lon2-lon1); var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
         function deg2rad(deg) { return deg * (Math.PI/180) }
 
+        // --- NAVIGASI ---
         function switchPage(p) {
             document.getElementById('page-dashboard').classList.add('hidden');
             document.getElementById('page-map').classList.remove('active-map'); 
@@ -307,7 +296,12 @@
             } else if (p === 'map') {
                 document.getElementById('page-map').classList.add('active-map');
                 document.querySelector('.nav-icon:nth-child(2)').classList.add('active');
-                setTimeout(() => { if(!map) initMap(); else map.invalidateSize(); }, 100);
+                
+                // === INIT PETA SAAT DIBUKA ===
+                setTimeout(() => {
+                    if(!map) initMap();
+                    else map.invalidateSize();
+                }, 100);
             } else if (p === 'sos') {
                 document.getElementById('page-sos').classList.add('active-sos');
                 document.querySelector('.nav-icon:nth-child(3)').classList.add('active');
@@ -319,15 +313,16 @@
             if(map) { map.invalidateSize(); return; }
             map = L.map('map').setView([-6.2, 106.8], 12);
             
-            // PAKAI TILE CARTO VOYAGER (LEBIH BERSIH/KARTUN)
+            // PAKAI CARTO VOYAGER (STYLE KARTUN)
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 attribution: '© MLU Map', maxZoom: 20
             }).addTo(map);
 
-            // CUSTOM ICONS (MOTOR & PETIR)
+            // CUSTOM ICONS
             const iconUser = L.divIcon({ className: 'custom-div-icon', html: "<i class='fas fa-motorcycle motor-icon'></i>", iconSize: [30, 42], iconAnchor: [15, 42] });
             const iconCharge = L.divIcon({ className: 'custom-div-icon', html: "<i class='fas fa-bolt thunder-icon'></i>", iconSize: [30, 42], iconAnchor: [15, 42] });
 
+            // AMBIL LOKASI (SETELAH PETA RENDER)
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => {
                     const lat = p.coords.latitude; const lng = p.coords.longitude;
@@ -340,11 +335,7 @@
 
         function loadChargingStations(userLat, userLng, iconStyle) {
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(r=>r.json()).then(data => {
-                let minDist = 99999; let nearestName = ""; let nearestLat = 0; let nearestLng = 0;
-                
-                // Hapus routing lama jika ada
-                if (routingControl) { map.removeControl(routingControl); }
-
+                let minDist = 99999; let nearestName = "";
                 data.forEach(loc => {
                     let lat = parseFloat(String(loc.lat).replace(',','.'));
                     let lng = parseFloat(String(loc.lng).replace(',','.'));
@@ -354,29 +345,10 @@
                          .bindPopup(`<b>${loc.nama}</b><br><a href="${link}" style="color:blue">NAVIGASI</a>`);
                         
                         let d = getDistanceFromLatLonInKm(userLat, userLng, lat, lng);
-                        if(d < minDist) { 
-                            minDist = d; nearestName = loc.nama; destinasiTujuan = link; 
-                            nearestLat = lat; nearestLng = lng;
-                        }
+                        if(d < minDist) { minDist = d; nearestName = loc.nama; destinasiTujuan = link; }
                     }
                 });
-
-                if(nearestName) {
-                    document.getElementById('lokasi-info').innerHTML = `<b style="color:var(--neon-blue);">${nearestName}</b> (${minDist.toFixed(1)} Km)`;
-                    
-                    // GAMBAR JALUR JALAN (ROUTING MACHINE)
-                    if(userLat && userLng && nearestLat && nearestLng) {
-                        routingControl = L.Routing.control({
-                            waypoints: [
-                                L.latLng(userLat, userLng),
-                                L.latLng(nearestLat, nearestLng)
-                            ],
-                            lineOptions: { styles: [{color: '#0088ff', opacity: 0.8, weight: 6}] },
-                            createMarker: function() { return null; }, // Jangan buat marker baru (pakai custom kita)
-                            addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true, show: false 
-                        }).addTo(map);
-                    }
-                }
+                if(nearestName) document.getElementById('lokasi-info').innerHTML = `<b style="color:var(--neon-blue);">${nearestName}</b> (${minDist.toFixed(1)} Km)`;
             });
         }
     </script>
