@@ -19,6 +19,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -40,61 +41,58 @@
         .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
         .hidden { display: none !important; }
 
-        input, select { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid #333; color: var(--neon); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; font-family: 'Rajdhani', sans-serif; backdrop-filter: blur(5px); }
-        .btn-neon { width: 100%; padding: 15px; background: var(--neon); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; font-family: 'Orbitron', sans-serif; transition: 0.3s; box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
+        /* UI ELEMENTS */
+        input, select { width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid #333; color: var(--neon); border-radius: 8px; margin-bottom: 15px; font-size: 16px; outline: none; font-family: 'Rajdhani'; }
+        .btn-neon { width: 100%; padding: 15px; background: var(--neon); color: #000; font-weight: 700; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
 
         .header { padding: 20px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; }
         .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--neon); object-fit: cover; background: #000; }
         .vehicle-card { background: var(--card); border: 1px solid var(--neon); border-radius: 15px; padding: 20px; margin: 20px; backdrop-filter: blur(5px); }
-        .value-blue { font-size: 28px; color: var(--neon); font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
+        
+        .value-blue { font-size: 28px; color: var(--neon); font-weight: 700; font-family: 'Orbitron'; }
+        .value-free { font-size: 24px; color: #0f0; font-weight: 700; font-family: 'Orbitron'; }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; margin-bottom: 20px; }
         .stat-box { background: var(--card); padding: 15px; border-radius: 10px; border: 1px solid #333; text-align: center; cursor: pointer; }
+        
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
-        .menu-item { background: var(--card); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; transition: 0.3s; backdrop-filter: blur(5px); }
+        .menu-item { background: var(--card); padding: 15px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 1px solid transparent; }
         .menu-item i { font-size: 20px; color: var(--neon); margin-bottom: 8px; display: block; }
         .menu-item span { font-size: 10px; color: #fff; }
 
         .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; padding: 15px 0; z-index: 9999; }
         .nav-icon { color: #666; font-size: 20px; transition: 0.3s; }
         .nav-icon.active { color: var(--neon); text-shadow: 0 0 10px var(--neon); transform: scale(1.2); }
-        
-        #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; backdrop-filter: blur(3px); }
+
+        #page-login, #page-register { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; overflow-y: auto; backdrop-filter: blur(5px); }
         .login-card { width: 100%; max-width: 400px; background: rgba(15, 15, 15, 0.9); border: 1px solid var(--neon); padding: 30px; border-radius: 20px; text-align: center; margin: auto; box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); }
         .logo-img { width: 100px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon)); }
 
-        /* --- MAP CYBERPUNK STYLE --- */
-        #page-map { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 100; background: #111; display: none; 
-        }
+        /* --- MAPS LIGHT STYLE --- */
+        #page-map { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: none; background: #fff; }
         #page-map.active-map { display: block !important; }
-        #map { width: 100%; height: 100%; background: #0a0a0a; }
+        #map { width: 100%; height: 100%; }
         
-        /* Overlay Bawah */
+        /* Overlay Info */
         .map-overlay { 
             position: absolute; bottom: 90px; left: 15px; right: 15px; z-index: 999; 
-            background: rgba(20, 20, 20, 0.95); border: 1px solid var(--neon);
+            background: #fff; /* Putih biar kontras */
             padding: 15px; border-radius: 20px; 
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-            text-align: center; display: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            text-align: center; border: 2px solid #333;
         }
-        
-        /* Tombol GPS & Refresh */
         .map-controls { position: absolute; bottom: 100px; right: 15px; z-index: 900; display: flex; flex-direction: column; gap: 10px; }
-        .btn-circle { width: 45px; height: 45px; background: rgba(0,0,0,0.8); border: 2px solid var(--neon); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--neon); font-size: 20px; cursor: pointer; box-shadow: 0 0 10px var(--neon); }
+        .btn-circle { width: 45px; height: 45px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #333; font-size: 20px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
 
-        /* Icons */
-        .motor-icon { font-size: 36px; color: #fff; filter: drop-shadow(0 0 5px #00f3ff); animation: bounce 1s infinite alternate; }
-        .thunder-icon { font-size: 36px; color: #FFD700; text-shadow: 0 0 15px #FFD700; animation: pulse 1s infinite; }
+        /* Ikon Peta (Lebih Jelas di Background Putih) */
+        .motor-icon { font-size: 40px; color: #333; filter: drop-shadow(2px 2px 0 #fff); animation: bounce 1s infinite alternate; }
+        .thunder-icon { font-size: 36px; color: #FFD700; text-shadow: 1px 1px 0 #000; animation: pulse 1s infinite; }
         @keyframes bounce { from {transform: translateY(0);} to {transform: translateY(-5px);} }
         @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.2);} 100% {transform: scale(1);} }
 
-        /* Routing Line Neon */
+        /* Routing Line (Biru Tebal) */
         .leaflet-routing-container { display: none !important; }
-        svg.leaflet-zoom-animated path { stroke: var(--neon); stroke-width: 6; stroke-dasharray: 10, 20; animation: dash 1s linear infinite; opacity: 0.8; }
-        @keyframes dash { to { stroke-dashoffset: -30; } }
+        svg.leaflet-zoom-animated path { stroke: #0088ff; stroke-width: 6; opacity: 0.8; }
 
         #page-sos { width: 100%; height: 100%; display: none; background: #000; z-index: 150; }
         #page-sos.active-sos { display: block; }
@@ -103,14 +101,14 @@
 </head>
 <body>
 
-    <div class="bg-watermark"></div>
+    <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:80%; height:60%; background:url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center; background-size:contain; opacity:0.1; z-index:-1; filter:grayscale(100%);"></div>
 
     <div id="page-login">
         <div class="login-card">
             <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" class="logo-img">
             <h2>MEMBER ACCESS</h2>
             <p style="color:#aaa; font-size:12px; margin-bottom:20px;">Maka Lintas Utara System</p>
-            <input type="tel" id="inputHP" placeholder="Nomor HP" autocomplete="off">
+            <input type="tel" id="inputHP" placeholder="Nomor HP (Contoh: 812xxx)" autocomplete="off">
             <button class="btn-neon" onclick="cekLogin()">LOGIN</button>
             <p id="login-msg" style="margin-top: 15px; font-size: 12px; color: #ff3333;"></p>
         </div>
@@ -121,16 +119,11 @@
             <h2 style="font-size: 20px;">REGISTRASI UNIT</h2>
             <form id="form-register">
                 <input type="hidden" id="reg-hp">
-                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Nama Lengkap</label>
-                <input type="text" id="reg-nama" required>
-                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Plat Nomor</label>
-                <input type="text" id="reg-plat" required>
-                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Tanggal Join</label>
-                <input type="date" id="reg-tgl" required>
-                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Tipe DP</label>
-                <select id="reg-dp"><option value="355">DP 355 Ribu</option><option value="775">DP 775 Ribu</option></select>
-                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Maka Plus ?</label>
-                <select id="reg-maka-plus"><option value="TIDAK">TIDAK</option><option value="YA">YA</option></select>
+                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Nama Lengkap</label><input type="text" id="reg-nama" required>
+                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Plat Nomor</label><input type="text" id="reg-plat" required>
+                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Tanggal Join</label><input type="date" id="reg-tgl" required>
+                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Tipe DP</label><select id="reg-dp"><option value="355">DP 355 Ribu</option><option value="775">DP 775 Ribu</option></select>
+                <label style="color:var(--neon); font-size:12px; display:block; text-align:left;">Maka Plus ?</label><select id="reg-maka-plus"><option value="TIDAK">TIDAK</option><option value="YA">YA</option></select>
                 <button type="button" class="btn-neon" onclick="submitRegister()">SIMPAN DATA</button>
             </form>
         </div>
@@ -170,11 +163,11 @@
                 <div class="btn-circle" onclick="initMap()"><i class="fas fa-sync-alt"></i></div>
             </div>
 
-            <div id="map-panel" class="map-overlay">
-                <h3 id="panel-name" style="margin:0 0 5px; color:var(--neon);">Nama FC</h3>
-                <div id="panel-desc" style="font-size:12px; color:#aaa; margin-bottom:10px;">Pilih lokasi...</div>
+            <div id="map-panel" class="map-overlay" style="display:none;">
+                <h3 id="panel-name" style="margin:0 0 5px; color:#333;">Nama FC</h3>
+                <div id="panel-desc" style="font-size:12px; color:#666; margin-bottom:10px;">Pilih lokasi...</div>
                 <div style="display:flex; gap:10px;">
-                    <button onclick="startRoute()" style="flex:1; background:var(--neon); color:#000; border:none; padding:10px; border-radius:20px; font-weight:bold;">START JALAN</button>
+                    <button onclick="startRoute()" style="flex:1; background:var(--neon); color:#000; border:none; padding:10px; border-radius:20px; font-weight:bold;">MULAI JALAN</button>
                     <button onclick="openGmaps()" style="flex:1; background:#333; color:#fff; border:1px solid #fff; padding:10px; border-radius:20px; font-weight:bold;">GMAPS</button>
                 </div>
             </div>
@@ -191,13 +184,13 @@
 
         <div class="navbar">
             <div class="nav-icon active" onclick="switchPage('dashboard')"><i class="fas fa-home"></i></div>
-            <div onclick="switchPage('map')" style="background:#111; border:2px solid var(--neon); width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-25px; box-shadow:0 0 10px var(--neon);"><i class="fas fa-map-marked-alt" style="color:var(--neon);"></i></div>
+            <div onclick="switchPage('map')" style="background:#222; border:2px solid var(--neon); width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:-25px; box-shadow:0 0 10px var(--neon);"><i class="fas fa-map-marked-alt" style="color:var(--neon);"></i></div>
             <div class="nav-icon" onclick="switchPage('sos')"><i class="fas fa-user-shield"></i></div>
         </div>
     </div>
 
     <script>
-        let currentUser = null; let map = null; let routingControl = null; let selectedFC = null; let userLat = null, userLng = null;
+        let currentUser = null; let map = null; let routingControl = null; let selectedFC = null; let userLat = null; let userLng = null;
 
         window.onload = function() {
             const savedHP = localStorage.getItem('userHP');
@@ -206,7 +199,6 @@
 
         function cleanPhone(phone) { return String(phone).replace(/[^0-9]/g, '').replace(/^62/, '').replace(/^0/, ''); }
 
-        // --- LOGIN ---
         function cekLogin(savedHP = null, isAuto = false) {
             const hpInput = savedHP || document.getElementById("inputHP").value;
             const btn = document.querySelector("#page-login button");
@@ -215,7 +207,7 @@
             const clean = cleanPhone(hpInput);
             
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${Date.now()}`)
-            .then(r => r.json()).then(data => {
+            .then(r=>r.json()).then(data => {
                 const user = data.find(u => cleanPhone(u['No HP']) === clean);
                 if(user) {
                     currentUser = user; localStorage.setItem('userHP', clean); loadDashboard(user);
@@ -224,10 +216,9 @@
                     else { document.getElementById('page-login').classList.add('hidden'); document.getElementById('page-register').classList.remove('hidden'); document.getElementById('reg-hp').value = clean; }
                 }
                 if(!isAuto) { btn.innerText = "LOGIN"; btn.disabled = false; }
-            }).catch(() => { if(!isAuto) btn.disabled = false; alert("Koneksi Gagal"); });
+            }).catch(e => { if(!isAuto) btn.disabled = false; alert("Koneksi Gagal"); });
         }
 
-        // --- REGISTER ---
         function submitRegister() {
             const btn = document.querySelector("#form-register button");
             const data = {
@@ -237,11 +228,10 @@
                 "Tanggal Join": document.getElementById('reg-tgl').value,
                 "DP Awal": document.getElementById('reg-dp').value,
                 "Maka Plus": document.getElementById('reg-maka-plus').value,
-                "Tgl Aktivasi Maka": (document.getElementById('reg-maka-plus').value === "YA") ? new Date().toISOString().split('T')[0] : "-"
+                "Tgl Aktivasi Maka": "-"
             };
             btn.innerText = "MENGIRIM..."; btn.disabled = true;
             
-            // FORMDATA
             const fd = new FormData();
             for(let k in data) fd.append(k, data[k]);
             fd.append("x-sheetmonkey-insert-worksheet", "USER");
@@ -263,7 +253,9 @@
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-register').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-            setTimeout(() => { initMap(); }, 1000);
+            
+            // PRELOAD DATA PETA
+            setTimeout(() => { initMap(); }, 500);
         }
 
         function hitungTagihan(user, isMaka) {
@@ -284,7 +276,6 @@
         function popupInfo(t, x) { Swal.fire({title:t, text:x, icon:'info', background:'#111', color:'#fff', confirmButtonColor:'#00f3ff'}); }
         function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
 
-        // --- MAP SYSTEM (DARK & GAMIFIED) ---
         function switchPage(p) {
             document.getElementById('page-dashboard').classList.add('hidden');
             document.getElementById('page-map').classList.remove('active-map');
@@ -298,7 +289,8 @@
             else if (p === 'map') {
                 document.getElementById('page-map').classList.add('active-map');
                 document.querySelector('.nav-icon:nth-child(2)').classList.add('active');
-                setTimeout(() => { if(!map) initMap(); else map.invalidateSize(); }, 100);
+                // FORCE RENDER
+                setTimeout(() => { if(map) map.invalidateSize(); else initMap(); }, 200);
             }
             else if (p === 'sos') {
                 document.getElementById('page-sos').classList.add('active-sos');
@@ -309,13 +301,13 @@
         function initMap() {
             if(map) { map.invalidateSize(); return; }
             
-            // DARK MATTER (TEMA CYBERPUNK)
+            // CARTODB VOYAGER (LIGHT/CARTOON)
             map = L.map('map', {zoomControl: false}).setView([-6.2, 106.8], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '© MLU', maxZoom: 19
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '© MLU', maxZoom: 20
             }).addTo(map);
 
-            // ICONS
+            // CUSTOM ICONS
             const iconMotor = L.divIcon({ className: 'custom', html: "<i class='fas fa-motorcycle motor-icon'></i>", iconSize: [40, 40], iconAnchor: [20, 20] });
             const iconFc = L.divIcon({ className: 'custom', html: "<i class='fas fa-bolt thunder-icon'></i>", iconSize: [30, 30], iconAnchor: [15, 15] });
 
@@ -327,10 +319,8 @@
                         userMarker = L.marker([userLat, userLng], {icon: iconMotor}).addTo(map);
                         map.flyTo([userLat, userLng], 14);
                         loadFC(iconFc);
-                    } else {
-                        userMarker.setLatLng([userLat, userLng]);
-                    }
-                }, () => loadFC(iconFc));
+                    } else { userMarker.setLatLng([userLat, userLng]); }
+                }, err => { console.log("GPS Error"); loadFC(iconFc); });
             } else { loadFC(iconFc); }
         }
 
@@ -369,7 +359,7 @@
                 waypoints: [ L.latLng(userLat, userLng), L.latLng(selectedFC.lat, selectedFC.lng) ],
                 lineOptions: { styles: [{color: '#00f3ff', opacity: 0.8, weight: 6}] },
                 createMarker: function() { return null; },
-                addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true
+                addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true, show: false
             }).addTo(map);
             
             document.getElementById('map-panel').style.display = 'none';
@@ -378,7 +368,7 @@
         function openGmaps() {
             if(selectedFC) window.open(selectedFC.gmap || `https://www.google.com/maps/dir/?api=1&destination=${selectedFC.lat},${selectedFC.lng}`, '_blank');
         }
-        
+
         function centerGPS() { if(userLat) map.flyTo([userLat, userLng], 16); else alert("Mencari sinyal..."); }
         function getDist(lat1,lon1,lat2,lon2) { var R=6371; var dLat=deg2rad(lat2-lat1); var dLon=deg2rad(lon2-lon1); var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(deg2rad(lat1))*Math.cos(deg2rad(lat2))*Math.sin(dLon/2)*Math.sin(dLon/2); return R*(2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))); }
         function deg2rad(deg) { return deg*(Math.PI/180); }
