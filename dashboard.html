@@ -10,14 +10,13 @@
             sheetID: '1kp7bHdgSTTNZF3uyd1ul-LnTZVjuLs1TVQnRxoViPfQ', 
             monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2',
             waAdmin: '6285691536957',
-            // TOKEN JAWG ANDA
+            // TOKEN JAWG MAPS (PREMIUM)
             jawgToken: 'Ib0LSDjhJiC1BY56MZJHrrK3Yj8igwWItRrou7T9pad1JfbRm27zlB4OuRfjZbb7'
         };
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -25,40 +24,40 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* TEMA DARK NEON (PREMIUM) */
-        :root { --primary: #00f3ff; --bg: #0a0a0a; --card: rgba(20,20,20,0.95); --text: #fff; }
+        /* TEMA CYBERPUNK (JAWG STYLE) */
+        :root { --primary: #00f3ff; --bg: #050505; --card: rgba(20,20,20,0.95); --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Rajdhani', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-        /* LAYOUT UTAMA */
-        .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; }
+        /* Watermark */
+        body::before {
+            content: ""; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; height: 60%;
+            background: url('https://i.ibb.co.com/4ZL4bhGR/1763994565752.png') no-repeat center center;
+            background-size: contain; opacity: 0.1; z-index: -1; filter: grayscale(20%);
+        }
+
+        .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; position: relative; }
         .hidden { display: none !important; }
 
-        /* UI ELEMENTS */
-        input, select { width: 100%; padding: 15px; background: #2c2c2c; border: 1px solid #444; color: #fff; border-radius: 8px; margin-bottom: 15px; outline: none; font-size: 16px; }
-        .btn-green { width: 100%; padding: 15px; background: var(--primary); color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); font-size: 16px; }
+        input, select { width: 100%; padding: 15px; background: #222; border: 1px solid #444; color: #fff; border-radius: 8px; margin-bottom: 15px; outline: none; font-size: 16px; }
+        .btn-main { width: 100%; padding: 15px; background: var(--primary); color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 0 15px rgba(0,243,255,0.3); }
 
-        /* HEADER */
-        .header { padding: 20px; background: linear-gradient(180deg, #111 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+        .header { padding: 20px; background: linear-gradient(180deg, #111 0%, transparent 100%); display: flex; justify-content: space-between; align-items: center; }
         .header-logo { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); object-fit: cover; background: #000; }
-        
         .vehicle-card { background: var(--card); margin: 20px; padding: 20px; border-radius: 15px; border: 1px solid #333; }
         .value-big { font-size: 28px; font-weight: 700; color: var(--primary); margin: 5px 0; text-shadow: 0 0 10px rgba(0, 243, 255, 0.3); }
-        
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
-        .stat-box { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; cursor: pointer; border: 1px solid #333; }
-        
-        /* MENU */
+        .stat-box { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #333; cursor: pointer; }
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 20px; text-align: center; font-size: 11px; color: #aaa; }
-        .menu-icon { width: 50px; height: 50px; background: #1a1a1a; border: 1px solid #333; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-size: 22px; color: var(--primary); }
+        .menu-icon { width: 50px; height: 50px; background: #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-size: 22px; color: var(--primary); border: 1px solid #333; }
 
-        /* NAVBAR */
         .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; border-top: 1px solid #333; display: flex; justify-content: space-around; padding: 12px 0; z-index: 2000; }
         .nav-icon { font-size: 24px; color: #555; }
-        .nav-icon.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); transform: scale(1.2); }
+        .nav-icon.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
         .nav-center { width: 55px; height: 55px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-size: 24px; margin-top: -35px; box-shadow: 0 0 15px rgba(0, 243, 255, 0.5); border: 3px solid #fff; }
 
-        /* --- MAP FULLSCREEN --- */
+        /* --- MAP FULLSCREEN (Z-INDEX FIX) --- */
         #page-map { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: none; background: #000; }
         #page-map.active { display: block !important; }
         #map { width: 100%; height: 100%; }
@@ -76,22 +75,23 @@
         .map-card h3 { margin: 0; font-size: 18px; color: #fff; }
         .map-card p { margin: 0; font-size: 13px; color: #aaa; }
 
-        /* TOMBOL PETA */
         .btn-grp { display: flex; gap: 10px; }
         .btn-act { flex: 1; padding: 12px; border-radius: 30px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; }
         .btn-go { background: var(--primary); color: #000; }
         .btn-gmap { background: #333; color: #fff; border: 1px solid #555; }
         .btn-stop { background: #dc3545; color: #fff; display: none; width: 100%; }
 
-        /* ICONS */
-        .user-dot { width: 20px; height: 20px; background: #00f3ff; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 15px #00f3ff; }
-        .leaflet-routing-container { display: none !important; }
-        path.leaflet-interactive { stroke: var(--primary); stroke-width: 6; opacity: 0.8; stroke-linecap: round; filter: drop-shadow(0 0 5px var(--primary)); }
-        
         /* CENTER BUTTON */
         .btn-gps { position: absolute; bottom: 250px; right: 15px; width: 45px; height: 45px; background: rgba(0,0,0,0.8); border-radius: 50%; box-shadow: 0 0 10px var(--primary); z-index: 900; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; border: 1px solid var(--primary); cursor: pointer; }
 
-        /* PAGES */
+        /* ICONS & ROUTING */
+        .user-dot { width: 20px; height: 20px; background: #00f3ff; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 15px #00f3ff; }
+        .fc-icon i { color: #FFD700; font-size: 36px; text-shadow: 0 0 10px #FFD700; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
+        
+        .leaflet-routing-container { display: none !important; }
+        path.leaflet-interactive { stroke: var(--primary); stroke-width: 6; opacity: 0.8; stroke-linecap: round; filter: drop-shadow(0 0 5px var(--primary)); }
+
         #page-sos { display:none; height:100%; width:100%; background:#0a0a0a; z-index:200; }
         #page-sos.active { display:block; }
         #page-login, #page-register { position:fixed; top:0; left:0; width:100%; height:100%; background:#0a0a0a; z-index:300; padding:30px; display:flex; flex-direction:column; justify-content:center; }
@@ -155,12 +155,12 @@
         <div id="map"></div>
         <div class="btn-gps" onclick="centerMap()"><i class="fas fa-crosshairs"></i></div>
         
-        <div id="map-panel" class="map-card">
-            <h3 id="mapTitle" style="margin:0;">Nama Lokasi</h3>
-            <p id="mapSub" style="color:#aaa;">Jarak: -- KM</p>
+        <div id="panel-fc" class="map-card">
+            <h3 id="fc-name">Lokasi</h3>
+            <p id="fc-desc">...</p>
             <div class="btn-grp">
                 <button id="btn-go" class="btn-act btn-go" onclick="startNav()">START JALAN</button>
-                <button id="btn-gmap" class="btn-act btn-gmap" onclick="openGmaps()">GMAPS</button>
+                <button id="btn-ext" class="btn-act btn-gmap" onclick="openGmaps()">GMAPS</button>
             </div>
             <button id="btn-stop" class="btn-act btn-stop" onclick="stopNav()">STOP NAVIGASI</button>
         </div>
@@ -186,11 +186,12 @@
     </div>
 
     <script>
-        let map, userLat, userLng, userMarker, routingControl, selectedFC;
+        let map, userMarker, routingControl, selectedFC, userLat, userLng;
 
         window.onload = () => {
             if(localStorage.getItem('uHP')) autoLogin(localStorage.getItem('uHP'));
         };
+        
         function clean(p) { return String(p).replace(/[^0-9]/g,'').replace(/^62/,'').replace(/^0/,''); }
 
         // --- LOGIN SYSTEM ---
@@ -203,7 +204,11 @@
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${Date.now()}`).then(r=>r.json()).then(data=>{
                 const user = data.find(u => clean(u['No HP']) === cHP);
                 if(user) { localStorage.setItem('uHP', cHP); initApp(user); }
-                else { document.getElementById('page-login').classList.add('hidden'); document.getElementById('page-register').classList.remove('hidden'); document.getElementById('reg-hp').value=cHP; }
+                else { 
+                    document.getElementById('page-login').classList.add('hidden');
+                    document.getElementById('page-register').classList.remove('hidden');
+                    document.getElementById('reg-hp').value = cHP;
+                }
             }).catch(()=>{ alert("Gagal Koneksi"); document.querySelector('#page-login button').innerText = "MASUK"; });
         }
 
@@ -223,7 +228,7 @@
         function initApp(user) {
             document.getElementById('disp-nama').innerText = user['Nama'];
             const tgl = new Date().getDate();
-            let price = 70000; if(String(user['Maka Plus']).includes("YA")) price+=10000;
+            let price = 70000; if(String(user['Maka Plus']).includes("YA")) price += 10000;
             document.getElementById('disp-tagihan').innerText = [14,28,31].includes(tgl) ? "LIBUR" : "Rp "+price.toLocaleString('id-ID');
             document.getElementById('disp-join').innerText = user['Tanggal Join'] || "-";
             document.getElementById('disp-maka').innerText = String(user['Maka Plus']).includes("YA") ? "AKTIF" : "NON";
@@ -231,14 +236,13 @@
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-register').classList.add('hidden');
             document.getElementById('page-dashboard').classList.remove('hidden');
+            document.getElementById('navbar').style.display = 'flex';
             
-            // Preload Map
             setTimeout(initMap, 1000);
         }
 
         function doLogout() { localStorage.clear(); location.reload(); }
-
-        // --- NAVIGATION UI ---
+        
         function showDash() {
             document.getElementById('page-dashboard').classList.remove('hidden');
             document.getElementById('page-map').classList.remove('active');
@@ -251,14 +255,14 @@
         function switchPage(p) { if(p==='sos') document.getElementById('page-sos').classList.add('active'); }
         function closeSOS() { document.getElementById('page-sos').classList.remove('active'); }
 
-        // --- MAP ENGINE (JAWG) ---
+        // --- JAWG MAPS ENGINE ---
         function initMap() {
             if(map) return;
             map = L.map('map', {zoomControl: false}).setView([-6.2, 106.8], 12);
             
-            // JAWG MAPS (Dark)
-            L.tileLayer(`https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=${CFG.jawgToken}`, {
-                attribution: 'Map data © OpenStreetMap contributors, Tiles Courtesy of Jawg Maps',
+            // USE JAWG DARK (PREMIUM)
+            L.tileLayer(`https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=${CFG.jawgToken}`, {
+                attribution: '<a href="http://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 maxZoom: 22
             }).addTo(map);
 
@@ -277,7 +281,7 @@
             });
 
             if(navigator.geolocation) {
-                navigator.geolocation.watchPosition(pos=>{
+                navigator.geolocation.watchPosition(pos => {
                     userLat = pos.coords.latitude; userLng = pos.coords.longitude;
                     if(!userMarker) {
                         userMarker = L.marker([userLat, userLng], {icon: icoUser}).addTo(map);
@@ -289,51 +293,46 @@
 
         function showFC(loc, lat, lng) {
             selectedFC = {lat, lng, ...loc};
-            document.getElementById('map-card').classList.add('show');
-            document.getElementById('mapTitle').innerText = loc.nama;
+            document.getElementById('panel-fc').classList.add('show');
+            document.getElementById('fc-name').innerText = loc.nama;
             
             if(userLat) {
-                // OSRM Routing Calc
-                const router = L.Routing.osrmv1();
-                router.route([
-                    L.Routing.waypoint(L.latLng(userLat, userLng)),
-                    L.Routing.waypoint(L.latLng(lat, lng))
-                ], (err, routes) => {
-                    if (!err && routes && routes.length > 0) {
-                        const km = (routes[0].summary.totalDistance/1000).toFixed(1);
-                        const min = Math.ceil(routes[0].summary.totalTime/60);
-                        document.getElementById('mapSub').innerText = `${km} km • ${min} mnt`;
-                    }
-                });
+                let d = (map.distance([userLat,userLng], [lat,lng])/1000).toFixed(1);
+                document.getElementById('fc-desc').innerText = `${d} km dari sini`;
             }
+            
+            document.getElementById('btn-go').style.display = 'block';
+            document.getElementById('btn-ext').style.display = 'block';
+            document.getElementById('btn-stop').style.display = 'none';
+            if(routingControl) { map.removeControl(routingControl); routingControl=null; }
         }
 
         function startNav() {
             if(!userLat) return alert("Tunggu GPS...");
             if(routingControl) map.removeControl(routingControl);
             
+            // OSRM ROUTING (GARIS JALAN RAYA)
             routingControl = L.Routing.control({
                 waypoints: [L.latLng(userLat, userLng), L.latLng(selectedFC.lat, selectedFC.lng)],
                 lineOptions: { styles:[{color:'#00f3ff', opacity:0.8, weight:6}] },
-                createMarker: function() { return null; },
-                addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true, show: false
+                createMarker: function() { return null; }, show: false
             }).addTo(map);
-
-            document.querySelector('.btn-grp').style.display = 'none';
+            
+            document.getElementById('btn-go').style.display = 'none';
+            document.getElementById('btn-ext').style.display = 'none';
             document.getElementById('btn-stop').style.display = 'block';
         }
 
         function stopNav() {
             if(routingControl) { map.removeControl(routingControl); routingControl=null; }
-            document.getElementById('map-card').classList.remove('show');
-            document.querySelector('.btn-grp').style.display = 'flex';
-            document.getElementById('btn-stop').style.display = 'none';
+            document.getElementById('panel-fc').classList.remove('show');
             map.setView([userLat, userLng], 15);
         }
 
         function openGmaps() { if(selectedFC) window.open(selectedFC.gmap || `https://www.google.com/maps/dir/?api=1&destination=${selectedFC.lat},${selectedFC.lng}`, '_blank'); }
         function centerMap() { if(userLat) map.flyTo([userLat, userLng], 17); }
         function popupInfo(t, m) { Swal.fire(t, m, 'info'); }
+        function toggleMaka() { localStorage.setItem('makaLocal','true'); location.reload(); }
         function kirimSOSWA() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
     </script>
 </body>
