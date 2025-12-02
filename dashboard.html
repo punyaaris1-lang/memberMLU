@@ -11,9 +11,11 @@
             monkeyURL: 'https://api.sheetmonkey.io/form/h12GBnHqFk6zUJDgH9qmn2',
             waAdmin: '6285691536957'
         };
+        // DATA DUMMY (Jaga-jaga kalau Sheet Error)
+        const DUMMY_USER = { 'Nama': 'Tamu (Test Mode)', 'Plat Nomor': 'B 1234 TES', 'Tanggal Join': '2024-01-01', 'Maka Plus': 'YA' };
     </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -22,78 +24,80 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        /* STYLE BERSIH (CLEAN LIGHT) */
-        :root { --primary: #007bff; --bg: #fff; --text: #333; }
+        :root { --primary: #00b14f; /* Hijau Grab */ --bg: #fff; --text: #333; --blue-rute: #007bff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
 
-        /* LAYOUT */
-        .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; background: #f8f9fa; }
+        .app-container { height: 100%; overflow-y: auto; padding-bottom: 80px; background: #f4f7f6; }
         .hidden { display: none !important; }
 
-        /* LOGIN */
-        #page-login, #page-register { position: fixed; inset: 0; background: #fff; z-index: 3000; display: flex; flex-direction: column; justify-content: center; padding: 30px; }
-        input, select { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; font-size: 16px; outline: none; }
-        .btn-main { width: 100%; padding: 15px; background: var(--primary); color: #fff; font-weight: bold; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+        /* Login Style */
+        #page-login, #page-register { position: fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:5000; display:flex; flex-direction:column; justify-content:center; padding:30px; }
+        input, select { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; font-size: 16px; }
+        .btn-main { width: 100%; padding: 15px; background: var(--primary); color: #fff; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
+        .btn-guest { background: #333; margin-top: 10px; } /* Tombol Bypass */
 
-        /* DASHBOARD */
+        /* Dashboard Style */
         .header { padding: 20px; background: #fff; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
         .vehicle-card { background: #fff; margin: 20px; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
-        .stat-box { background: #fff; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
-        
         .menu-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 20px; text-align: center; font-size: 11px; color: #555; }
-        .menu-icon { width: 50px; height: 50px; background: #f0f2f5; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-size: 24px; color: var(--primary); }
+        .menu-icon { width: 50px; height: 50px; background: #e8f5e9; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto 5px; font-size: 24px; color: var(--primary); }
 
-        /* NAVBAR */
-        .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 12px 0; z-index: 2000; }
-        .nav-icon { font-size: 24px; color: #ccc; }
-        .nav-icon.active { color: var(--primary); }
-        .nav-center { width: 55px; height: 55px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; margin-top: -35px; box-shadow: 0 4px 10px rgba(0,123,255,0.3); }
-
-        /* MAP FULLSCREEN */
-        #page-map { position: fixed; inset: 0; z-index: 2000; background: #eee; display: none; }
-        #page-map.active { display: block !important; }
+        /* MAP SYSTEM */
+        #page-map { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; background: #ddd; visibility: hidden; }
+        #page-map.active { visibility: visible; }
         #map { width: 100%; height: 100%; }
-        .btn-gps { position: absolute; bottom: 260px; right: 15px; width: 45px; height: 45px; background: #fff; border-radius: 50%; z-index: 2500; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #333; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
 
-        /* MAP OVERLAY */
-        .map-card { position: absolute; bottom: 0; left: 0; width: 100%; z-index: 3000; background: #fff; padding: 20px 20px 90px 20px; border-radius: 25px 25px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); display: none; flex-direction: column; gap: 10px; }
-        .map-card.show { display: flex; animation: slideUp 0.3s; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .btn-row { display: flex; gap: 10px; }
-        .btn-act { flex: 1; padding: 12px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .btn-go { background: var(--primary); color: #fff; }
+        .map-overlay { 
+            position: absolute; bottom: 0; left: 0; width: 100%; z-index: 3000; 
+            background: #fff; padding: 20px 20px 90px 20px; 
+            border-top-left-radius: 25px; border-top-right-radius: 25px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            transform: translateY(150%); transition: 0.3s;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .map-overlay.show { transform: translateY(0); }
+
+        .btn-grp { display: flex; gap: 10px; }
+        .btn-act { flex: 1; padding: 12px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-start { background: var(--blue-rute); color: #fff; }
+        .btn-gmap { background: #f0f0f0; color: #333; border: 1px solid #ddd; }
         .btn-stop { background: #dc3545; color: #fff; display: none; width: 100%; }
 
-        /* SOS */
-        #page-sos { display:none; position:fixed; inset:0; background:#fff; z-index:4000; padding:50px 20px; text-align:center; }
-        #page-sos.active { display:block; }
+        /* Navbar */
+        .navbar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 12px 0; z-index: 4000; }
+        .nav-icon { font-size: 24px; color: #ccc; }
+        .nav-icon.active { color: var(--primary); }
+        .nav-center { width: 55px; height: 55px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; margin-top: -35px; box-shadow: 0 4px 10px rgba(0,177,79,0.3); }
 
-        /* ICONS */
-        .user-puck { width: 18px; height: 18px; background: #007bff; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 8px rgba(0,0,0,0.3); }
+        /* ICONS & ROUTING */
         .leaflet-routing-container { display: none !important; }
+        path.leaflet-interactive { stroke: var(--blue-rute); stroke-width: 6; opacity: 0.8; stroke-linecap: round; }
+        .user-dot { width: 20px; height: 20px; background: #007bff; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .fc-icon { font-size: 32px; color: #ffc107; text-shadow: 0 2px 2px rgba(0,0,0,0.3); }
+        
+        .btn-gps { position: absolute; bottom: 260px; right: 15px; width: 45px; height: 45px; background: #fff; border-radius: 50%; z-index: 2500; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #333; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
     <div id="page-login">
-        <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" width="120" style="margin:0 auto 20px;">
-        <h2 style="text-align:center;">LOGIN MEMBER</h2>
-        <input type="tel" id="inputHP" placeholder="Nomor HP (08xxx)">
+        <img src="https://i.ibb.co.com/4ZL4bhGR/1763994565752.png" width="100" style="margin:0 auto 20px;">
+        <h2 style="text-align:center;">LOGIN</h2>
+        <input type="tel" id="inputHP" placeholder="Nomor HP (Contoh: 0812xxx)">
         <button class="btn-main" onclick="cekLogin()">MASUK</button>
-        <p id="debug-msg" style="text-align:center; font-size:10px; color:red; margin-top:10px;"></p>
+        <button class="btn-main btn-guest" onclick="bypassLogin()">MASUK TANPA LOGIN (TEST)</button>
+        <p id="login-msg" style="text-align:center; margin-top:10px; color:red; font-size:12px;"></p>
     </div>
 
     <div id="page-register" class="hidden">
-        <h2 style="text-align:center;">DAFTAR BARU</h2>
+        <h2 style="text-align:center;">DAFTAR</h2>
         <form id="form-reg">
             <input type="hidden" id="reg-hp">
             <input type="text" id="reg-nama" placeholder="Nama Lengkap">
             <input type="text" id="reg-plat" placeholder="Plat Nomor">
-            <label>Tanggal Join</label><input type="date" id="reg-tgl">
-            <select id="reg-dp"><option value="355">DP 355 Ribu</option><option value="775">DP 775 Ribu</option></select>
+            <label style="font-size:12px;">Tgl Join</label><input type="date" id="reg-tgl">
+            <select id="reg-dp"><option value="355">DP 355</option><option value="775">DP 775</option></select>
             <select id="reg-maka"><option value="TIDAK">Maka+ TIDAK</option><option value="YA">Maka+ YA</option></select>
             <button type="button" class="btn-main" onclick="submitRegister()">SIMPAN</button>
         </form>
@@ -103,28 +107,26 @@
         <div class="app-container">
             <div class="header">
                 <div><small style="color:#888">Hi,</small><h3 style="margin:0" id="disp-nama">User</h3></div>
-                <button onclick="doLogout()" style="border:none; background:none; color:red; font-weight:bold;">Keluar</button>
+                <button onclick="doLogout()" style="border:none; background:none; color:red;">Keluar</button>
             </div>
-            
             <div class="vehicle-card">
                 <div style="display:flex; justify-content:space-between;">
                     <span style="font-size:11px; color:#888;">TAGIHAN HARI INI</span>
-                    <span id="disp-tagihan" style="font-size:24px; font-weight:800; color:var(--primary);">...</span>
+                    <span id="disp-tagihan" style="font-size:24px; font-weight:bold; color:var(--primary);">...</span>
                 </div>
-                <div style="margin-top:10px; font-weight:bold;">Unit: Maka Motors</div>
+                <div style="margin-top:10px;">Unit: Maka Motors</div>
             </div>
-
-            <div class="stats-grid">
-                <div class="stat-box"><span>Join</span><br><strong id="disp-join">...</strong></div>
-                <div class="stat-box" onclick="toggleMaka()"><span>Maka+</span><br><strong id="disp-maka" style="color:var(--primary)">...</strong></div>
-            </div>
-
             <div class="menu-list">
                 <div><div class="menu-icon"><i class="fas fa-wallet"></i></div>Tagihan</div>
                 <div><div class="menu-icon"><i class="fas fa-history"></i></div>Riwayat</div>
-                <div onclick="switchPage('sos')"><div class="menu-icon" style="color:red;"><i class="fas fa-exclamation-triangle"></i></div>SOS</div>
+                <div onclick="alert('SOS')"><div class="menu-icon" style="color:red; background:#ffebee;"><i class="fas fa-exclamation-triangle"></i></div>SOS</div>
                 <div><div class="menu-icon"><i class="fas fa-tools"></i></div>RTO</div>
             </div>
+        </div>
+        <div class="navbar">
+            <div class="nav-icon active" id="nav-home" onclick="toDash()"><i class="fas fa-home"></i></div>
+            <div class="nav-center" onclick="toMap()"><i class="fas fa-map-marked-alt"></i></div>
+            <div class="nav-icon"><i class="fas fa-user"></i></div>
         </div>
     </div>
 
@@ -133,158 +135,124 @@
         <div class="btn-gps" onclick="centerUser()"><i class="fas fa-crosshairs"></i></div>
         
         <div id="panel-fc" class="map-card">
-            <h3 id="fc-name">Lokasi</h3>
+            <h3 id="fc-name" style="margin:0;">Lokasi</h3>
             <p id="fc-desc" style="color:#666; font-size:13px;">...</p>
-            <div class="btn-row">
-                <button class="btn-act btn-go" id="btn-go" onclick="startNav()">START JALAN</button>
-                <button class="btn-act" style="background:#eee; color:#333;" onclick="openGmaps()">GMAPS</button>
+            <div class="btn-grp">
+                <button class="btn-act btn-start" id="btn-go" onclick="startNav()">START JALAN</button>
+                <button class="btn-act btn-gmap" id="btn-ext" onclick="openGmaps()">GMAPS</button>
             </div>
             <button class="btn-act btn-stop" id="btn-stop" onclick="stopNav()">STOP NAVIGASI</button>
         </div>
 
         <div class="navbar">
-            <div class="nav-icon active" id="nav-home" onclick="toDash()"><i class="fas fa-home"></i></div>
+            <div class="nav-icon" onclick="toDash()"><i class="fas fa-home"></i></div>
             <div class="nav-center" onclick="toMap()"><i class="fas fa-map-marked-alt"></i></div>
             <div class="nav-icon"><i class="fas fa-user"></i></div>
         </div>
     </div>
 
-    <div id="page-sos">
-        <i class="fas fa-exclamation-circle" style="font-size:60px; color:red;"></i>
-        <h2 style="color:red;">DARURAT</h2>
-        <textarea id="sos-ket" rows="4" style="width:100%; padding:10px; margin:20px 0; border:1px solid #ddd; border-radius:10px;" placeholder="Keterangan..."></textarea>
-        <button class="btn-main" style="background:red;" onclick="kirimSOS()">KIRIM SINYAL</button>
-        <button class="btn-main" style="background:#eee; color:#333; margin-top:10px;" onclick="closeSOS()">BATAL</button>
-    </div>
-
     <script>
-        let map, userLat, userLng, userMarker, routingControl, selectedFC;
+        let map, userMarker, routingControl, selectedFC, userLat, userLng;
 
         window.onload = () => {
             if(localStorage.getItem('uHP')) autoLogin(localStorage.getItem('uHP'));
         };
 
-        // --- FUNGSI PEMBERSIH NOMOR (SUPER FLEKSIBEL) ---
-        // Hanya ambil angka, buang 62 atau 0 di depan. Jadi 0812 = 812, 62812 = 812
+        // FUNGSI BERSIH NOMOR (Supaya 0812 = 62812 = 812)
         function clean(p) { return String(p).replace(/[^0-9]/g,'').replace(/^62/,'').replace(/^0/,''); }
 
-        // --- LOGIN FIX ---
-        function cekLogin() {
-            const hpInput = document.getElementById('inputHP').value;
-            if(!hpInput) return alert("Masukkan Nomor HP");
-            
-            const btn = document.querySelector('#page-login button');
-            const debug = document.getElementById('debug-msg');
-            btn.innerText = "Mencari..."; btn.disabled = true;
+        function bypassLogin() {
+            // LOGIN PAKSA (TESTING)
+            initApp(DUMMY_USER);
+        }
 
-            // Input user dibersihkan (jadi 856...)
-            const myHP = clean(hpInput);
+        function cekLogin() {
+            const hp = document.getElementById('inputHP').value;
+            if(!hp) return alert("Isi Nomor");
+            document.querySelector('#page-login button').innerText = "Loading...";
+            
+            const myHP = clean(hp);
 
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${Date.now()}`)
-            .then(r => r.json())
-            .then(data => {
-                console.log(data); // Cek di console
+            .then(r=>r.json()).then(data=>{
+                // Logika Cocokkan Nomor (Fleksibel)
+                const user = data.find(u => u['No HP'] && clean(u['No HP']) === myHP);
                 
-                // Cari User dengan logika LONGGAR (Asal mengandung angka yg sama)
-                const user = data.find(u => {
-                    // Pastikan kolom No HP ada isinya
-                    if(!u['No HP']) return false;
-                    // Bersihkan nomor di Excel juga
-                    const dbHP = clean(u['No HP']);
-                    return dbHP === myHP;
-                });
-
                 if(user) {
                     localStorage.setItem('uHP', myHP);
                     initApp(user);
                 } else {
-                    // Tidak ketemu -> Ke Register
                     document.getElementById('page-login').classList.add('hidden');
                     document.getElementById('page-register').classList.remove('hidden');
                     document.getElementById('reg-hp').value = myHP;
                 }
-                btn.innerText = "MASUK"; btn.disabled = false;
-            })
-            .catch(err => {
-                debug.innerText = "Gagal Koneksi: " + err.message;
-                btn.innerText = "MASUK"; btn.disabled = false;
+                document.querySelector('#page-login button').innerText = "MASUK";
+            }).catch(e => {
+                document.getElementById('login-msg').innerText = "Gagal koneksi. Coba Bypass Login.";
+                document.querySelector('#page-login button').innerText = "MASUK";
             });
         }
 
         function submitRegister() {
             const btn = document.querySelector('#page-register button');
-            btn.innerText = "Menyimpan..."; btn.disabled = true;
+            btn.innerText="Menyimpan..."; btn.disabled=true;
             const fd = new FormData(document.getElementById('form-reg'));
             fd.append("x-sheetmonkey-insert-worksheet", "USER");
-
-            fetch(CFG.monkeyURL, {method:'POST', body:fd}).then(r=>{
-                if(r.ok) { 
-                    alert("Berhasil! Silakan Login."); 
-                    location.reload(); 
-                } else {
-                    alert("Gagal menyimpan. Cek koneksi.");
-                    btn.disabled = false;
-                }
+            fetch(CFG.monkeyURL, {method:'POST', body:fd}).then(r=>{ 
+                if(r.ok){ alert("Sukses!"); location.reload(); } 
+                else { alert("Gagal"); btn.disabled=false; }
             });
         }
 
         function autoLogin(hp) {
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/USER?t=${Date.now()}`).then(r=>r.json()).then(data=>{
-                const user = data.find(u => clean(u['No HP']) === hp);
+                const user = data.find(u => u['No HP'] && clean(u['No HP']) === hp);
                 if(user) initApp(user); else { localStorage.clear(); location.reload(); }
             });
         }
 
         function initApp(user) {
             document.getElementById('disp-nama').innerText = user['Nama'];
-            document.getElementById('disp-join').innerText = user['Tanggal Join'] || "-";
-            const isMaka = String(user['Maka Plus']).includes("YA");
-            document.getElementById('disp-maka').innerText = isMaka ? "AKTIF" : "NON";
-
             const tgl = new Date().getDate();
-            let price = 70000; if(isMaka) price += 10000;
+            let price = 70000; if(String(user['Maka Plus']).includes("YA")) price += 10000;
             document.getElementById('disp-tagihan').innerText = [14,28,31].includes(tgl) ? "LIBUR" : "Rp "+price.toLocaleString('id-ID');
 
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('page-register').classList.add('hidden');
             document.getElementById('page-dashboard').classList.remove('hidden');
-            document.getElementById('navbar').style.display = 'flex';
-
-            // PRELOAD MAP DI BACKGROUND
+            
+            // Preload Map
             setTimeout(initMap, 1000);
         }
 
-        // --- NAVIGASI LAYAR ---
+        function doLogout() { localStorage.clear(); location.reload(); }
+
+        // --- NAVIGASI ---
         function toDash() {
             document.getElementById('page-dashboard').classList.remove('hidden');
             document.getElementById('page-map').classList.remove('active');
-            document.getElementById('page-sos').classList.remove('active');
             document.getElementById('nav-home').classList.add('active');
         }
         function toMap() {
             document.getElementById('page-dashboard').classList.add('hidden');
             document.getElementById('page-map').classList.add('active');
             document.getElementById('nav-home').classList.remove('active');
-            // JURUS ANTI BLANK: Refresh ukuran peta saat dibuka
             setTimeout(() => { if(map) map.invalidateSize(); else initMap(); }, 200);
         }
-        function switchPage(p) { if(p==='sos') document.getElementById('page-sos').classList.add('active'); }
-        function closeSOS() { document.getElementById('page-sos').classList.remove('active'); }
-        function doLogout() { localStorage.clear(); location.reload(); }
 
-        // --- MAP ENGINE (OSM STANDARD + GOOGLE ROUTING) ---
+        // --- MAP ENGINE (OSM STANDARD - DIJAMIN MUNCUL) ---
         function initMap() {
             if(map) return;
-            // Menggunakan OpenStreetMap Standard (Paling Stabil & Tidak Mungkin Blank)
+            // OpenStreetMap Standard (Paling Stabil)
             map = L.map('map', {zoomControl: false}).setView([-6.2, 106.8], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© MLU'
             }).addTo(map);
 
-            const icoUser = L.divIcon({ className:'c', html:'<div class="user-puck"></div>', iconSize:[20,20], iconAnchor:[10,10] });
-            const icoFc = L.icon({ iconUrl:'https://cdn-icons-png.flaticon.com/512/3524/3524335.png', iconSize:[36,36], iconAnchor:[18,36] });
+            const icoUser = L.divIcon({ className:'c', html:'<div class="user-dot"></div>', iconSize:[20,20], iconAnchor:[10,10] });
+            const icoFc = L.divIcon({ className:'c', html:'<i class="fas fa-bolt fc-icon"></i>', iconSize:[30,30], iconAnchor:[15,15] });
 
-            // LOAD LOKASI
+            // Load Data CSV
             fetch(`https://opensheet.elk.sh/${CFG.sheetID}/LOKASI`).then(r=>r.json()).then(data => {
                 data.forEach(loc => {
                     let lat = parseFloat(String(loc.lat).replace(',','.'));
@@ -327,6 +295,7 @@
             if(!userLat) return alert("Tunggu GPS...");
             if(routingControl) map.removeControl(routingControl);
             
+            // ROUTING MACHINE (Garis Biru Jalan Raya)
             routingControl = L.Routing.control({
                 waypoints: [L.latLng(userLat, userLng), L.latLng(selectedFC.lat, selectedFC.lng)],
                 lineOptions: { styles:[{color:'#007bff', opacity:0.8, weight:6}] },
@@ -348,9 +317,6 @@
 
         function openGmaps() { if(selectedFC) window.open(selectedFC.gmap || `https://www.google.com/maps/dir/?api=1&destination=${selectedFC.lat},${selectedFC.lng}`, '_blank'); }
         function centerUser() { if(userLat) map.flyTo([userLat, userLng], 17); }
-        function popupInfo(t, m) { Swal.fire(t, m, 'info'); }
-        function toggleMaka() { localStorage.setItem('makaLocal','true'); location.reload(); }
-        function kirimSOS() { window.open(`https://wa.me/${CFG.waAdmin}?text=SOS`, '_blank'); }
     </script>
 </body>
 </html>
