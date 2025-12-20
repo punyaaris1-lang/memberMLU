@@ -11,14 +11,13 @@
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  height:100vh;
+  min-height:100vh;
   background:#02040a;
   color:#fff;
   font-family:'Inter',sans-serif;
-  overflow:hidden;
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
 }
 
 /* BACKGROUND */
@@ -31,6 +30,7 @@ body{
     linear-gradient(90deg, rgba(0,255,255,.05) 1px, transparent 1px);
   background-size:100% 100%, 40px 40px, 40px 40px;
   animation:grid 20s linear infinite;
+  z-index:-1;
 }
 @keyframes grid{
   to{background-position:0 0,400px 400px,400px 400px}
@@ -41,14 +41,13 @@ body{
   position:fixed;
   inset:0;
   background:#000;
-  z-index:10;
+  z-index:99;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:18px;
 }
-
 #intro h1{
   font-family:'Orbitron';
   font-size:20px;
@@ -56,7 +55,6 @@ body{
   color:#00ffff;
   text-shadow:0 0 25px #00ffff;
 }
-
 #intro button{
   padding:12px 30px;
   border-radius:30px;
@@ -68,21 +66,14 @@ body{
 
 /* CARD */
 .card{
-  position:relative;
-  z-index:2;
   width:90%;
-  max-width:360px;
+  max-width:380px;
   padding:28px;
   border-radius:26px;
   background:rgba(255,255,255,.05);
   border:1px solid rgba(0,255,255,.4);
   box-shadow:0 0 45px rgba(0,255,255,.35);
   text-align:center;
-  animation:fade 1.2s ease forwards;
-}
-@keyframes fade{
-  from{opacity:0;transform:scale(.95)}
-  to{opacity:1;transform:scale(1)}
 }
 
 /* LOGO */
@@ -95,27 +86,19 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  box-shadow:0 0 35px rgba(0,255,255,.9);
-  animation:logoPulse 2s infinite alternate;
   overflow:hidden;
+  box-shadow:0 0 40px rgba(0,255,255,.9);
+  animation:logoPulse 2s infinite alternate;
 }
-
 .logo-wrap img{
   width:100%;
   height:100%;
   object-fit:cover;
   border-radius:50%;
 }
-
 @keyframes logoPulse{
-  from{
-    transform:scale(1);
-    box-shadow:0 0 20px rgba(0,255,255,.5);
-  }
-  to{
-    transform:scale(1.08);
-    box-shadow:0 0 55px rgba(0,255,255,1);
-  }
+  from{transform:scale(1)}
+  to{transform:scale(1.08)}
 }
 
 /* TEXT */
@@ -126,26 +109,19 @@ body{
   color:#00ffff;
   text-shadow:0 0 20px #00ffff;
 }
-
 .subtitle{
   font-size:12px;
   opacity:.7;
   margin:10px 0 22px;
 }
 
-/* INFO */
+/* INFO BLOCK */
 .info{
   margin:12px 0;
   padding:12px;
   border-radius:14px;
   border:1px solid rgba(0,255,255,.3);
-  animation:pulse 1.8s infinite alternate;
 }
-@keyframes pulse{
-  from{box-shadow:0 0 6px rgba(0,255,255,.3)}
-  to{box-shadow:0 0 14px rgba(0,255,255,.8)}
-}
-
 .label{
   font-size:11px;
   letter-spacing:1px;
@@ -156,10 +132,10 @@ body{
   font-size:15px;
 }
 
-/* MAP */
-.map{
+/* BUTTON */
+.btn{
   display:block;
-  margin-top:20px;
+  margin-top:12px;
   padding:12px;
   border-radius:24px;
   border:1px solid #00ffff;
@@ -168,12 +144,19 @@ body{
   text-decoration:none;
 }
 
+/* QRIS */
+.qris{
+  width:180px;
+  margin-top:12px;
+  border-radius:12px;
+  box-shadow:0 0 20px rgba(0,255,255,.6);
+}
+
 /* FOOTER */
 .footer{
   margin-top:18px;
   font-size:12px;
   opacity:.8;
-  letter-spacing:1px;
 }
 </style>
 </head>
@@ -181,7 +164,7 @@ body{
 <body>
 
 <div id="intro">
-  <h1>UNDANGAN ANGGOTA</h1>
+  <h1>UNDANGAN</h1>
   <h1>MAKA LINTAS UTARA</h1>
   <button onclick="start()">TAP TO OPEN</button>
 </div>
@@ -190,7 +173,7 @@ body{
 
 <div class="card">
 
-  <!-- LOGO ASLI -->
+  <!-- LOGO -->
   <div class="logo-wrap">
     <img src="1763947427555.jpg" alt="Logo MLU">
   </div>
@@ -200,7 +183,7 @@ body{
 
   <div class="info">
     <div class="label">HARI</div>
-    <div class="value">Minggu Malam</div>
+    <div class="value">Minggu</div>
   </div>
 
   <div class="info">
@@ -223,13 +206,33 @@ body{
     <div class="value">FC • OD • Keluh Kesah Anggota</div>
   </div>
 
-  <a class="map" href="https://maps.app.goo.gl/YHrBtpSCgo4KitBe7" target="_blank">
+  <!-- KONFIRMASI -->
+  <div class="info">
+    <div class="label">KONFIRMASI KEHADIRAN</div>
+    <a class="btn" href="https://wa.me/6282125611740?text=Konfirmasi%20Kehadiran%20KOPDAR%20MLU%0ANama:%20%0AStatus:%20HADIR">
+      ✅ HADIR
+    </a>
+    <a class="btn" href="https://wa.me/6282125611740?text=Konfirmasi%20Kehadiran%20KOPDAR%20MLU%0ANama:%20%0AStatus:%20TIDAK%20HADIR">
+      ❌ TIDAK HADIR
+    </a>
+  </div>
+
+  <!-- QRIS -->
+  <div class="info">
+    <div class="label">PATUNGAN KONSUMSI (QRIS)</div>
+    <div class="value">Scan QRIS di bawah ini</div>
+    <img src="IMG-20251221-WA0002.jpg" class="qris" alt="QRIS Patungan">
+  </div>
+
+  <a class="btn" href="https://maps.app.goo.gl/YHrBtpSCgo4KitBe7">
     📍 BUKA LOKASI
   </a>
 
   <div class="footer">
-    SALAM<br><strong>MAKA LINTAS UTARA</strong>
+    Patungan sukarela untuk konsumsi 🙏<br>
+    SALAM — <strong>MAKA LINTAS UTARA</strong>
   </div>
+
 </div>
 
 <script>
