@@ -1,208 +1,241 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP Member Registration</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        /* CSS PREMIUM DARK GOLD */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #000;
-            background-image: 
-                radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%);
-            color: #d4af37;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOPDAR MLU</title>
 
-        .card {
-            background: rgba(20, 20, 20, 0.9);
-            width: 100%;
-            max-width: 400px;
-            padding: 40px 30px;
-            border-radius: 15px;
-            border: 1px solid #333;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
 
-        /* Hiasan Kilau Emas */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: linear-gradient(90deg, transparent, #d4af37, transparent);
-        }
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
 
-        h2 {
-            font-family: 'Cinzel', serif;
-            text-align: center;
-            font-size: 26px;
-            margin-bottom: 5px;
-            letter-spacing: 2px;
-            color: #fff;
-            text-transform: uppercase;
-        }
+body{
+  height:100vh;
+  background:#02040a;
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-        .sub-title {
-            text-align: center;
-            font-size: 10px;
-            color: #666;
-            margin-bottom: 30px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
+/* BACKGROUND */
+.bg{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at top, rgba(0,255,255,.18), transparent 60%),
+    linear-gradient(rgba(0,255,255,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,.05) 1px, transparent 1px);
+  background-size:100% 100%, 40px 40px, 40px 40px;
+  animation:grid 20s linear infinite;
+}
+@keyframes grid{
+  to{background-position:0 0,400px 400px,400px 400px}
+}
 
-        .input-group {
-            margin-bottom: 20px;
-        }
+/* INTRO */
+#intro{
+  position:fixed;
+  inset:0;
+  background:#000;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+}
 
-        label {
-            display: block;
-            font-size: 11px;
-            margin-bottom: 8px;
-            color: #888;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
+#intro h1{
+  font-family:'Orbitron';
+  font-size:20px;
+  letter-spacing:3px;
+  color:#00ffff;
+  text-shadow:0 0 25px #00ffff;
+}
 
-        input {
-            width: 100%;
-            padding: 12px;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            color: #fff;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-        }
+#intro button{
+  padding:12px 30px;
+  border-radius:30px;
+  background:transparent;
+  border:1px solid #00ffff;
+  color:#00ffff;
+  font-size:13px;
+}
 
-        input:focus {
-            border-color: #d4af37;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
-        }
+/* CARD */
+.card{
+  position:relative;
+  z-index:2;
+  width:90%;
+  max-width:360px;
+  padding:28px;
+  border-radius:26px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(0,255,255,.4);
+  box-shadow:0 0 45px rgba(0,255,255,.35);
+  text-align:center;
+  animation:fade 1.2s ease forwards;
+}
+@keyframes fade{
+  from{opacity:0;transform:scale(.95)}
+  to{opacity:1;transform:scale(1)}
+}
 
-        /* Tombol Emas */
-        button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 10px;
-            background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
-            border: none;
-            color: #000;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 13px;
-            transition: 0.3s;
-        }
+/* LOGO */
+.logo-wrap{
+  width:120px;
+  height:120px;
+  margin:0 auto 16px;
+  border-radius:50%;
+  border:2px solid #00ffff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 0 35px rgba(0,255,255,.9);
+  animation:logoPulse 2s infinite alternate;
+  overflow:hidden;
+}
 
-        button:active {
-            transform: scale(0.98);
-        }
+.logo-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
 
-        .loading {
-            display: none;
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            margin-top: 10px;
-        }
-    </style>
+@keyframes logoPulse{
+  from{
+    transform:scale(1);
+    box-shadow:0 0 20px rgba(0,255,255,.5);
+  }
+  to{
+    transform:scale(1.08);
+    box-shadow:0 0 55px rgba(0,255,255,1);
+  }
+}
+
+/* TEXT */
+.title{
+  font-family:'Orbitron';
+  font-size:22px;
+  letter-spacing:2px;
+  color:#00ffff;
+  text-shadow:0 0 20px #00ffff;
+}
+
+.subtitle{
+  font-size:12px;
+  opacity:.7;
+  margin:10px 0 22px;
+}
+
+/* INFO */
+.info{
+  margin:12px 0;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid rgba(0,255,255,.3);
+  animation:pulse 1.8s infinite alternate;
+}
+@keyframes pulse{
+  from{box-shadow:0 0 6px rgba(0,255,255,.3)}
+  to{box-shadow:0 0 14px rgba(0,255,255,.8)}
+}
+
+.label{
+  font-size:11px;
+  letter-spacing:1px;
+  opacity:.6;
+}
+.value{
+  margin-top:4px;
+  font-size:15px;
+}
+
+/* MAP */
+.map{
+  display:block;
+  margin-top:20px;
+  padding:12px;
+  border-radius:24px;
+  border:1px solid #00ffff;
+  color:#00ffff;
+  font-size:13px;
+  text-decoration:none;
+}
+
+/* FOOTER */
+.footer{
+  margin-top:18px;
+  font-size:12px;
+  opacity:.8;
+  letter-spacing:1px;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="card">
-        <h2>MAKA LINTAS UTARA</h2>
-        <p class="sub-title">Form Member</p>
+<div id="intro">
+  <h1>MAKA LINTAS UTARA</h1>
+  <button onclick="start()">TAP TO OPEN</button>
+</div>
 
-        <form id="memberForm">
-            <input type="hidden" name="Waktu" value="x-sheetmonkey-current-date-time" />
+<div class="bg"></div>
 
-            <div class="input-group">
-                <label>Nama Lengkap</label>
-                <input type="text" name="Nama" required placeholder="Nama Sesuai KTP">
-            </div>
+<div class="card">
 
-            <div class="input-group">
-                <label>Nomor WhatsApp</label>
-                <input type="number" name="No HP" required placeholder="08xxx">
-            </div>
+  <!-- LOGO ASLI -->
+  <div class="logo-wrap">
+    <img src="1763947427555.jpg" alt="Logo MLU">
+  </div>
 
-            <div class="input-group">
-                <label>Domisili</label>
-                <input type="text" name="Domisili" required placeholder="Kota tempat tinggal">
-            </div>
+  <div class="title">KOPDAR DADAKAN</div>
+  <div class="subtitle">ASSALAMUALAIKUM</div>
 
-            <div class="input-group">
-                <label>Plat Nomor</label>
-                <input type="text" name="Plat Nomor" required placeholder="B 1234 XXX">
-            </div>
+  <div class="info">
+    <div class="label">HARI</div>
+    <div class="value">Minggu Malam</div>
+  </div>
 
-            <button type="submit" id="btnSubmit">Join Member</button>
-            <div class="loading" id="loadingText">Processing data...</div>
-        </form>
-    </div>
+  <div class="info">
+    <div class="label">JAM</div>
+    <div class="value">17:30 WIB</div>
+  </div>
 
-    <script>
-        // --- PASTE LINK SHEETMONKEY DI BAWAH INI ---
-        const scriptURL = 'https://api.sheetmonkey.io/form/kfZAeccwx49Hr3Lhmiu1v2'; 
-        // -------------------------------------------
+  <div class="info">
+    <div class="label">TANGGAL</div>
+    <div class="value">21 Desember</div>
+  </div>
 
-        const form = document.getElementById('memberForm');
-        const btn = document.getElementById('btnSubmit');
-        const loading = document.getElementById('loadingText');
+  <div class="info">
+    <div class="label">LOKASI</div>
+    <div class="value">Showroom Kelapa Gading</div>
+  </div>
 
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-            
-            // Ubah tombol jadi loading
-            btn.style.opacity = '0.5';
-            btn.innerHTML = 'MENGIRIM...';
-            loading.style.display = 'block';
+  <div class="info">
+    <div class="label">AGENDA</div>
+    <div class="value">FC • OD • Keluh Kesah Anggota</div>
+  </div>
 
-            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => {
-                // Notifikasi Sukses
-                Swal.fire({
-                    title: 'Welcome!',
-                    text: 'Data member berhasil didaftarkan.',
-                    icon: 'success',
-                    background: '#111',
-                    color: '#fff',
-                    confirmButtonColor: '#d4af37'
-                });
-                
-                // Reset Form
-                form.reset();
-                btn.style.opacity = '1';
-                btn.innerHTML = 'JOIN MEMBER';
-                loading.style.display = 'none';
-            })
-            .catch(error => {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Gagal mengirim data. Cek koneksi internet.',
-                    icon: 'error',
-                    background: '#111',
-                    color: '#fff'
-                });
-                btn.style.opacity = '1';
-                btn.innerHTML = 'JOIN MEMBER';
-                loading.style.display = 'none';
-            });
-        });
-    </script>
+  <a class="map" href="https://maps.google.com/?q=Showroom+Kelapa+Gading" target="_blank">
+    📍 BUKA LOKASI
+  </a>
+
+  <div class="footer">
+    SALAM<br><strong>MAKA LINTAS UTARA</strong>
+  </div>
+</div>
+
+<script>
+function start(){
+  document.getElementById('intro').style.display='none';
+}
+</script>
+
 </body>
 </html>
