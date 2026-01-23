@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Kerusakan Unit</title>
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #e2e8f0;
+            --input-bg: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #94a3b8;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.2);
+        }
+
+        /* Input khusus Lainnya (Hidden by default) */
+        #inputLainnya {
+            display: none; 
+            margin-top: 10px;
+            border: 1px solid var(--warning);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-submit { background: linear-gradient(45deg, var(--secondary), var(--primary)); color: white; }
+        .btn-export { background: var(--success); color: white; width: auto; padding: 8px 16px; font-size: 0.9em;}
+        
+        /* Table */
+        .table-container {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 900px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+            font-size: 0.85em;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        th { background-color: rgba(0,0,0,0.2); color: var(--primary); white-space: nowrap;}
+
+        /* Badges Kasus */
+        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; white-space: nowrap; font-size: 0.8em; }
+        .bg-kecelakaan { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .bg-mcu { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .bg-batre { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .bg-ban { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .bg-lain { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+
+    </style>
+</head>
+<body>
+
+    <h2>Laporan Kerusakan Unit</h2>
+
+    <div class="container">
+        <form id="laporForm">
+            <div class="form-group">
+                <label>Nama Driver</label>
+                <input type="text" id="nama" placeholder="Nama..." required>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Plat Nomor</label>
+                    <input type="text" id="plat" placeholder="B XXXX" style="text-transform: uppercase;" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Asal</label>
+                    <select id="tipe">
+                        <option value="RTO">RTO</option>
+                        <option value="TransGo">TransGo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Kasus Motor</label>
+                <select id="kasus" required onchange="toggleLainnya()">
+                    <option value="" disabled selected>-- Pilih Kasus --</option>
+                    <option value="Kecelakaan">Kecelakaan</option>
+                    <option value="MCU">MCU</option>
+                    <option value="Batre">Masalah Batre</option>
+                    <option value="Ban">Masalah Ban</option>
+                    <option value="Lainnya">Lainnya (Tulis Sendiri)</option>
+                </select>
+                <input type="text" id="inputLainnya" placeholder="Tulis masalahnya disini...">
+            </div>
+
+            <div class="form-group">
+                <label>Tanggal Kejadian</label>
+                <input type="date" id="tgl_kejadian" required>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Status Towing</label>
+                    <select id="status_towing">
+                        <option value="Belum">Belum</option>
+                        <option value="Sudah">Sudah</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Unit Pengganti</label>
+                    <select id="unit_pengganti">
+                        <option value="Belum">Belum Terima</option>
+                        <option value="Sudah">Sudah Terima</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSave">💾 Simpan Data</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span style="color: #94a3b8; font-size: 0.9em;">Urut Berdasarkan Jenis Kasus:</span>
+            <button id="btnExport" class="btn-export">📥 Excel</button>
+        </div>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>Plat</th>
+                    <th>Kasus</th>
+                    <th>Tgl Kejadian</th>
+                    <th>Towing</th>
+                    <th>Pengganti</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyALIlkIDALIk83K8s1htalvW6rmNNw02Go", 
+            authDomain: "sistem-antrian-b1c39.firebaseapp.com", 
+            projectId: "sistem-antrian-b1c39", 
+            storageBucket: "sistem-antrian-b1c39.firebasestorage.app", 
+            messagingSenderId: "454124587608", 
+            appId: "1:454124587608:web:34fbb0f5211067a67f982d" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // NAMA DATABASE BARU
+        const dbRef = collection(db, "laporan_kerusakan");
+        let currentData = [];
+
+        // 1. LOGIC TOGGLE INPUT "LAINNYA"
+        window.toggleLainnya = function() {
+            const select = document.getElementById('kasus');
+            const input = document.getElementById('inputLainnya');
+            if(select.value === 'Lainnya') {
+                input.style.display = 'block';
+                input.required = true;
+            } else {
+                input.style.display = 'none';
+                input.required = false;
+                input.value = '';
+            }
+        }
+
+        // 2. SIMPAN DATA
+        document.getElementById('laporForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            btn.innerHTML = "Menyimpan...";
+            btn.disabled = true;
+
+            // Cek Kasus: Ambil dari select, atau dari input teks jika 'Lainnya'
+            let nilaiKasus = document.getElementById('kasus').value;
+            let detailLainnya = ""; 
+            
+            if(nilaiKasus === 'Lainnya') {
+                detailLainnya = document.getElementById('inputLainnya').value;
+            }
+
+            try {
+                await addDoc(dbRef, {
+                    nama: document.getElementById('nama').value,
+                    plat: document.getElementById('plat').value.toUpperCase(),
+                    tipe: document.getElementById('tipe').value,
+                    kasus_utama: nilaiKasus, // Untuk sorting
+                    detail_kasus: nilaiKasus === 'Lainnya' ? detailLainnya : nilaiKasus, // Untuk display
+                    tgl_kejadian: document.getElementById('tgl_kejadian').value,
+                    status_towing: document.getElementById('status_towing').value,
+                    unit_pengganti: document.getElementById('unit_pengganti').value,
+                    timestamp: serverTimestamp()
+                });
+                
+                document.getElementById('laporForm').reset();
+                toggleLainnya(); // Sembunyikan lagi kolom lainnya
+                alert("Data Tersimpan!");
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Gagal: " + error.message);
+            }
+            btn.innerHTML = "💾 Simpan Data";
+            btn.disabled = false;
+        });
+
+        // 3. BACA DATA & SORTING
+        const q = query(dbRef, orderBy("timestamp", "desc"));
+        
+        onSnapshot(q, (snapshot) => {
+            const tbody = document.querySelector('#dataTable tbody');
+            tbody.innerHTML = '';
+            
+            let rawData = [];
+            snapshot.forEach(doc => {
+                rawData.push(doc.data());
+            });
+
+            // LOGIKA SORTING (PRIORITAS MASALAH)
+            // Kecelakaan (1) -> MCU (2) -> Batre (3) -> Ban (4) -> Lainnya (5)
+            const priority = {
+                "Kecelakaan": 1,
+                "MCU": 2,
+                "Batre": 3,
+                "Ban": 4,
+                "Lainnya": 5
+            };
+
+            rawData.sort((a, b) => {
+                const pA = priority[a.kasus_utama] || 99;
+                const pB = priority[b.kasus_utama] || 99;
+                return pA - pB;
+            });
+
+            currentData = rawData; // Update data untuk excel
+
+            // RENDER TABEL
+            rawData.forEach(item => {
+                let badgeClass = 'bg-lain';
+                if(item.kasus_utama === 'Kecelakaan') badgeClass = 'bg-kecelakaan';
+                else if(item.kasus_utama === 'MCU') badgeClass = 'bg-mcu';
+                else if(item.kasus_utama === 'Batre') badgeClass = 'bg-batre';
+                else if(item.kasus_utama === 'Ban') badgeClass = 'bg-ban';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.nama} <br><small style="color:#64748b">${item.tipe}</small></td>
+                    <td><strong>${item.plat}</strong></td>
+                    <td><span class="badge ${badgeClass}">${item.detail_kasus}</span></td>
+                    <td>${item.tgl_kejadian}</td>
+                    <td>${item.status_towing}</td>
+                    <td>${item.unit_pengganti}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+
+        // 4. EXPORT EXCEL
+        document.getElementById('btnExport').addEventListener('click', () => {
+            if(currentData.length === 0) { alert("Data kosong!"); return; }
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Nama,Plat,Tipe,Kasus,Tgl Kejadian,Status Towing,Unit Pengganti\n";
+            
+            currentData.forEach(row => {
+                // Bersihkan koma di dalam teks user agar CSV tidak berantakan
+                let cleanKasus = row.detail_kasus.replace(/,/g, " "); 
+                csvContent += `${row.nama},${row.plat},${row.tipe},${cleanKasus},${row.tgl_kejadian},${row.status_towing},${row.unit_pengganti}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Laporan_Kerusakan_" + new Date().toISOString().slice(0,10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+    </script>
+</body>
+</html>
