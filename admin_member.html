@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Admin - Database Member</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* STYLE UTAMA */
+body { background-color: #050505; color: #fff; font-family: 'Rajdhani', sans-serif; padding: 20px; margin: 0; }
+h2 { color: #00f0ff; font-family: 'Orbitron', sans-serif; text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px rgba(0,240,255,0.5); }
+.controls { max-width: 1200px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+.count { font-weight: bold; color: #aaa; font-family: 'Orbitron', sans-serif; }
+
+/* TOMBOL */
+button { padding: 10px 20px; background: linear-gradient(45deg, #00c3ff, #00f0ff); border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: 'Orbitron', sans-serif; color: #000; transition: 0.3s; }
+button:hover { box-shadow: 0 0 15px rgba(0, 240, 255, 0.6); }
+
+/* TABEL */
+.table-responsive { overflow-x: auto; max-width: 1200px; margin: auto; border: 1px solid #333; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+table { width: 100%; border-collapse: collapse; background: #111; min-width: 1100px; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #222; font-size: 15px; }
+th { background: #1a1a1a; color: #00f0ff; font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 1px; }
+tr:hover { background: #1f1f1f; }
+
+.btn-foto { background: #333; color: #0f0; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: bold; border: 1px solid #0f0; display: inline-block; text-align: center;}
+.btn-foto:hover { background: #0f0; color: #000; }
+
+/* TOMBOL AKSI (EDIT & HAPUS) */
+.action-btns { display: flex; gap: 5px; }
+.btn-edit { background: #ffcc00; color: #000; padding: 5px 10px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: 'Orbitron', sans-serif; }
+.btn-edit:hover { background: #e6b800; box-shadow: 0 0 10px #ffcc00; }
+.btn-hapus { background: #ff3333; color: #fff; padding: 5px 10px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: 'Orbitron', sans-serif; }
+.btn-hapus:hover { background: #cc0000; box-shadow: 0 0 10px #ff3333; }
+
+.loading { text-align: center; color: #666; padding: 30px; }
+
+/* MODAL EDIT (POP-UP) */
+.modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); justify-content: center; align-items: center; }
+.modal-content { background: #111; border: 1px solid #00f0ff; border-radius: 8px; padding: 20px; width: 90%; max-width: 400px; box-shadow: 0 0 20px rgba(0,240,255,0.3); }
+.modal-content h3 { color: #00f0ff; margin-top: 0; font-family: 'Orbitron', sans-serif; text-align: center; }
+.modal-content label { display: block; margin-top: 10px; color: #aaa; font-size: 12px; font-weight: bold; }
+.modal-content input, .modal-content textarea, .modal-content select { width: 100%; padding: 10px; margin-top: 5px; background: #000; border: 1px solid #333; color: #fff; border-radius: 4px; font-family: 'Rajdhani', sans-serif; font-size: 15px; }
+.modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus { border-color: #00f0ff; outline: none; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions button { flex: 1; padding: 12px; font-size: 14px; }
+.btn-batal { background: #333; color: #fff; }
+.btn-batal:hover { background: #555; box-shadow: none; }
+</style>
+</head>
+<body>
+
+<h2>DATABASE MEMBER (ADMIN PANEL)</h2>
+
+<div class="controls">
+  <span class="count" id="totalData">Total: 0 Member</span>
+  <button onclick="downloadExcel()">DOWNLOAD EXCEL (.CSV)</button>
+</div>
+
+<div class="table-responsive">
+  <table id="tabelAnggota">
+    <thead>
+      <tr>
+        <th>NAMA</th>
+        <th>WHATSAPP</th>
+        <th>PLAT MOTOR</th>
+        <th>PROGRAM</th>
+        <th>DARURAT</th>
+        <th>ALAMAT</th>
+        <th>FOTO</th>
+        <th>TANGGAL</th>
+        <th>AKSI</th> </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="9" class="loading">Memuat database...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h3>EDIT DATA MEMBER</h3>
+    <input type="hidden" id="editId">
+    
+    <label>Nama Lengkap</label>
+    <input type="text" id="editNama">
+    
+    <label>No WhatsApp</label>
+    <input type="text" id="editHp">
+    
+    <label>Plat Motor</label>
+    <input type="text" id="editPlat" style="text-transform: uppercase; color: #ffcc00; font-weight: bold; font-family: 'Orbitron', sans-serif;">
+    
+    <label>Program</label>
+    <select id="editProgram">
+      <option value="TransGO">TransGO</option>
+      <option value="RTO">RTO Maka</option>
+    </select>
+    
+    <label>Kontak Darurat</label>
+    <input type="text" id="editDarurat">
+    
+    <label>Alamat</label>
+    <textarea id="editAlamat" rows="2"></textarea>
+    
+    <div class="modal-actions">
+      <button class="btn-batal" onclick="tutupModal()">BATAL</button>
+      <button onclick="simpanEdit()" id="btn-simpan-edit">SIMPAN</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // IMPORT FUNGSI TAMBAHAN: deleteDoc, doc, updateDoc
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, getDocs, orderBy, query, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+      apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8",
+      authDomain: "fcgadingnew22.firebaseapp.com",
+      projectId: "fcgadingnew22",
+      storageBucket: "fcgadingnew22.firebasestorage.app",
+      messagingSenderId: "537736846678",
+      appId: "1:537736846678:web:53788d71a196423ac08af7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  
+  // Variabel Global untuk menyimpan data sementara di browser
+  window.allData = [];
+
+  // ==========================================
+  // 1. FUNGSI LOAD DATA
+  // ==========================================
+  window.loadData = async function() {
+    const tbody = document.getElementById("tbody");
+    try {
+      const q = query(collection(db, "database_member"), orderBy("tgl_daftar", "desc"));
+      const snapshot = await getDocs(q);
+      
+      let html = "";
+      window.allData = []; 
+      let count = 0;
+
+      if (snapshot.empty) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:30px;">DATABASE KOSONG</td></tr>';
+        document.getElementById("totalData").innerText = "Total: 0 Member";
+        return;
+      }
+
+      snapshot.forEach(documentSnapshot => {
+        // Ambil data dan sisipkan ID dokumennya (Penting untuk Edit/Hapus)
+        const d = documentSnapshot.data();
+        d.id = documentSnapshot.id; 
+        window.allData.push(d);
+        count++;
+        
+        const tglTampil = d.tgl_daftar ? new Date(d.tgl_daftar).toLocaleDateString("id-ID") : "-";
+        
+        let fotoBtn = d.foto_url 
+            ? `<a href="${d.foto_url}" target="_blank" class="btn-foto">LIHAT</a>` 
+            : `<span style="color:#666; font-size:12px;">Kosong</span>`;
+
+        html += `
+          <tr>
+            <td><strong>${d.nama || '-'}</strong></td>
+            <td><a href="https://wa.me/${d.hp ? d.hp.replace(/^0/, '62').replace(/[^0-9]/g, '') : ''}" target="_blank" style="color:#00f0ff;text-decoration:none">${d.hp || '-'}</a></td>
+            <td style="color:#ffcc00; font-family:'Orbitron'; font-weight:bold;">${d.plat || '-'}</td>
+            <td style="color:#0f0; font-weight:bold;">${d.program || '-'}</td>
+            <td>${d.kontak_darurat || '-'}</td>
+            <td>${d.alamat || '-'}</td>
+            <td>${fotoBtn}</td>
+            <td style="font-size:12px; color:#888;">${tglTampil}</td>
+            <td>
+              <div class="action-btns">
+                <button class="btn-edit" onclick="bukaModalEdit('${d.id}')">EDIT</button>
+                <button class="btn-hapus" onclick="hapusData('${d.id}', '${d.nama}')">HAPUS</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+      document.getElementById("totalData").innerText = "Total: " + count + " Member";
+
+    } catch (e) {
+      console.error(e);
+      if(e.message.includes("index")) {
+          tbody.innerHTML = `<tr><td colspan="9" style="color:#ffcc00; text-align:center;">
+          Sedang membuat Index Database. Buka console (F12) lalu klik link biru yang muncul untuk memperbolehkan fitur ini.
+          </td></tr>`;
+      } else {
+          tbody.innerHTML = `<tr><td colspan="9" style="color:red; text-align:center;">Error: ${e.message}</td></tr>`;
+      }
+    }
+  }
+
+  // ==========================================
+  // 2. FUNGSI HAPUS DATA
+  // ==========================================
+  window.hapusData = async function(id, nama) {
+    if(confirm(`⚠ PERINGATAN!\n\nYakin ingin MENGHAPUS data member bernama: ${nama}?\nData yang dihapus tidak bisa dikembalikan.`)) {
+      try {
+        await deleteDoc(doc(db, "database_member", id));
+        alert("✔ Data berhasil dihapus!");
+        loadData(); // Reload tabel
+      } catch (e) {
+        console.error(e);
+        alert("❌ Gagal menghapus: " + e.message);
+      }
+    }
+  }
+
+  // ==========================================
+  // 3. FUNGSI EDIT DATA (MODAL)
+  // ==========================================
+  window.bukaModalEdit = function(id) {
+    // Cari data member berdasarkan ID yang diklik
+    const member = window.allData.find(m => m.id === id);
+    if(!member) return;
+
+    // Isi form di dalam Modal
+    document.getElementById("editId").value = member.id;
+    document.getElementById("editNama").value = member.nama || "";
+    document.getElementById("editHp").value = member.hp || "";
+    document.getElementById("editPlat").value = member.plat || "";
+    document.getElementById("editProgram").value = member.program === "RTO" || member.program === "RTO Maka" ? "RTO" : "TransGO";
+    document.getElementById("editDarurat").value = member.kontak_darurat || "";
+    document.getElementById("editAlamat").value = member.alamat || "";
+
+    // Tampilkan Modal
+    document.getElementById("editModal").style.display = "flex";
+  }
+
+  window.tutupModal = function() {
+    document.getElementById("editModal").style.display = "none";
+  }
+
+  window.simpanEdit = async function() {
+    const id = document.getElementById("editId").value;
+    const btnSimpan = document.getElementById("btn-simpan-edit");
+    
+    // Ambil data baru dari form
+    const newData = {
+      nama: document.getElementById("editNama").value.trim(),
+      hp: document.getElementById("editHp").value.trim(),
+      plat: document.getElementById("editPlat").value.trim().toUpperCase(),
+      program: document.getElementById("editProgram").value,
+      kontak_darurat: document.getElementById("editDarurat").value.trim(),
+      alamat: document.getElementById("editAlamat").value.trim()
+    };
+
+    btnSimpan.innerText = "MENYIMPAN...";
+    btnSimpan.disabled = true;
+
+    try {
+      // Update data di Firebase
+      const targetDoc = doc(db, "database_member", id);
+      await updateDoc(targetDoc, newData);
+      
+      alert("✔ Data berhasil diperbarui!");
+      tutupModal();
+      loadData(); // Reload tabel
+    } catch (e) {
+      console.error(e);
+      alert("❌ Gagal menyimpan perubahan: " + e.message);
+    } finally {
+      btnSimpan.innerText = "SIMPAN";
+      btnSimpan.disabled = false;
+    }
+  }
+
+  // Format Plat Motor Otomatis di form Edit
+  document.getElementById("editPlat").addEventListener("input", function() {
+      let val = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+      const match = val.match(/^([A-Z]{1,2})(\d{1,4})([A-Z]{0,3})$/);
+      if (match) this.value = match[1] + " " + match[2] + (match[3] ? " " + match[3] : "");
+      else if (val.match(/^([A-Z]{1,2})(\d+)$/)) this.value = val.replace(/^([A-Z]{1,2})(\d+)$/, "$1 $2");
+      else this.value = val;
+  });
+
+  // ==========================================
+  // 4. DOWNLOAD EXCEL
+  // ==========================================
+  window.downloadExcel = function() {
+    if(window.allData.length === 0) { alert("Data kosong!"); return; }
+    let csvContent = "data:text/csv;charset=utf-8,Nama,No HP,Plat Motor,Program,Kontak Darurat,Alamat,Link Foto,Tanggal\r\n";
+    window.allData.forEach(d => {
+      const nama = (d.nama || "").replace(/,/g, " ");
+      const hp = "'" + (d.hp || "");
+      const plat = (d.plat || "").replace(/,/g, " ");
+      const program = (d.program || "").replace(/,/g, " ");
+      const darurat = (d.kontak_darurat || "").replace(/,/g, " ");
+      const alamat = (d.alamat || "").replace(/,/g, " ").replace(/\n/g, " ");
+      const foto = d.foto_url || "Kosong";
+      const tgl = d.tgl_daftar ? new Date(d.tgl_daftar).toLocaleDateString("id-ID") : "-";
+
+      csvContent += `${nama},${hp},${plat},${program},${darurat},${alamat},${foto},${tgl}\r\n`;
+    });
+    const link = document.createElement("a");
+    link.href = encodeURI(csvContent);
+    link.download = "Database_Member.csv";
+    link.click();
+  }
+
+  // Panggil fungsi saat halaman pertama kali dibuka
+  loadData();
+</script>
+
+</body>
+</html>

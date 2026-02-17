@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Form Registrasi Member</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* STYLE CYBERPUNK */
+* { box-sizing: border-box; outline: none; }
+body {
+  background-color: #050505;
+  background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, transparent 70%), linear-gradient(0deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  color: #fff; font-family: 'Rajdhani', sans-serif;
+  margin: 0; padding: 20px; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+}
+.container {
+  width: 100%; max-width: 450px; background: rgba(20, 20, 20, 0.9);
+  border: 1px solid #333; border-radius: 12px; padding: 30px 25px;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.1); position: relative; backdrop-filter: blur(10px);
+}
+.container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #00f0ff; box-shadow: 0 0 10px #00f0ff; }
+h2 { text-align: center; font-family: 'Orbitron', sans-serif; color: #00f0ff; margin: 0 0 25px 0; text-shadow: 0 0 10px rgba(0, 240, 255, 0.5); }
+label { font-size: 14px; color: #aaa; font-weight: 600; margin-bottom: 8px; display: block; }
+.input-group { margin-bottom: 20px; }
+input[type="text"], input[type="tel"], textarea {
+  width: 100%; background: #0a0a0a; border: 1px solid #333; border-left: 3px solid #333;
+  border-radius: 4px; padding: 12px 15px; color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 16px; transition: 0.3s;
+}
+input:focus, textarea:focus { border-color: #00f0ff; border-left-color: #00f0ff; background: #111; box-shadow: 0 0 15px rgba(0, 240, 255, 0.15); }
+#plat { text-transform: uppercase; font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-weight: bold; color: #ffcc00; }
+
+/* RADIO BUTTON PROGRAM */
+.radio-container { display: flex; gap: 10px; }
+.radio-box {
+  flex: 1; border: 1px solid #333; background: #111; padding: 12px; border-radius: 6px;
+  cursor: pointer; text-align: center; font-weight: bold; color: #888; transition: 0.3s;
+}
+.radio-box input { display: none; }
+.radio-box.active { border-color: #00f0ff; background: rgba(0, 240, 255, 0.1); color: #00f0ff; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); }
+
+/* UPLOAD FOTO */
+.file-upload-wrapper {
+  position: relative; width: 100%; height: 60px; border: 2px dashed #333; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; background: #0a0a0a; cursor: pointer; transition: 0.3s;
+}
+.file-upload-wrapper:hover { border-color: #00f0ff; background: #111; }
+.file-upload-wrapper input[type="file"] {
+  position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+}
+.file-upload-text { color: #888; font-weight: bold; font-family: 'Orbitron', sans-serif; }
+.file-upload-wrapper.has-file { border-color: #0f0; border-style: solid; }
+.file-upload-wrapper.has-file .file-upload-text { color: #0f0; }
+
+button {
+  width: 100%; margin-top: 15px; padding: 15px; border: none; border-radius: 4px;
+  background: linear-gradient(45deg, #00c3ff, #00f0ff); color: #000;
+  font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+button:disabled { background: #555; cursor: not-allowed; color: #999; }
+.msg { text-align: center; margin-top: 20px; font-weight: bold; min-height: 20px; font-size: 14px; }
+.success { color: #00f0ff; text-shadow: 0 0 5px #00f0ff; }
+.error { color: #ff3333; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>REGISTRASI MEMBER</h2>
+
+  <div class="input-group"><label>NAMA LENGKAP</label><input type="text" id="nama" placeholder="Ketik nama sesuai identitas..."></div>
+  <div class="input-group"><label>NO. WHATSAPP</label><input type="tel" id="hp" placeholder="Contoh: 0812xxxxxxxx"></div>
+  <div class="input-group"><label>ALAMAT LENGKAP</label><textarea id="alamat" rows="2" placeholder="Jalan, RT/RW, Kelurahan..."></textarea></div>
+  <div class="input-group"><label>KONTAK DARURAT (Nama & No HP)</label><input type="text" id="darurat" placeholder="Contoh: Istri - 081xxxxxx"></div>
+  <div class="input-group"><label>PLAT NOMOR MOTOR</label><input type="text" id="plat" placeholder="CONTOH: B 1234 XYZ" maxlength="11"></div>
+
+  <div class="input-group">
+    <label>PILIH PROGRAM</label>
+    <div class="radio-container">
+      <label class="radio-box active" onclick="selectProgram(this)"><input type="radio" name="program" value="TransGO" checked> TransGO</label>
+      <label class="radio-box" onclick="selectProgram(this)"><input type="radio" name="program" value="RTO"> RTO Maka</label>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>FOTO SELFIE</label>
+    <div class="file-upload-wrapper" id="file-wrapper">
+      <span class="file-upload-text" id="file-text">📸 AMBIL FOTO / PILIH FOTO</span>
+      <input type="file" id="foto" accept="image/*" capture="user" onchange="previewFile()">
+    </div>
+  </div>
+
+  <button onclick="kirimData()" id="btn-simpan">KIRIM DATA & FOTO</button>
+  <div id="msg" class="msg"></div>
+</div>
+
+<script type="module">
+  // 1. IMPORT FIRESTORE & STORAGE (BARU)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+  const firebaseConfig = {
+      apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8",
+      authDomain: "fcgadingnew22.firebaseapp.com",
+      projectId: "fcgadingnew22",
+      storageBucket: "fcgadingnew22.firebasestorage.app",
+      messagingSenderId: "537736846678",
+      appId: "1:537736846678:web:53788d71a196423ac08af7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app); // Akses Storage
+
+  // --- UI LOGIC ---
+  window.selectProgram = function(el) {
+    document.querySelectorAll('.radio-box').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    el.querySelector('input').checked = true;
+  }
+
+  window.previewFile = function() {
+    const file = document.getElementById("foto").files[0];
+    const wrapper = document.getElementById("file-wrapper");
+    const text = document.getElementById("file-text");
+    if(file) {
+      wrapper.classList.add("has-file");
+      text.innerText = "✔ FOTO SIAP: " + file.name.substring(0,15) + "...";
+    } else {
+      wrapper.classList.remove("has-file");
+      text.innerText = "📸 AMBIL FOTO / PILIH FOTO";
+    }
+  }
+
+  // Format Plat Nomor Otomatis
+  document.getElementById("plat").addEventListener("input", function() {
+      let val = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+      const match = val.match(/^([A-Z]{1,2})(\d{1,4})([A-Z]{0,3})$/);
+      if (match) this.value = match[1] + " " + match[2] + (match[3] ? " " + match[3] : "");
+      else if (val.match(/^([A-Z]{1,2})(\d+)$/)) this.value = val.replace(/^([A-Z]{1,2})(\d+)$/, "$1 $2");
+      else this.value = val;
+  });
+
+  // --- SUBMIT DATA & FOTO ---
+  window.kirimData = async function() {
+    const btn = document.getElementById("btn-simpan");
+    const msg = document.getElementById("msg");
+    
+    const nama = document.getElementById("nama").value.trim();
+    const hp = document.getElementById("hp").value.trim();
+    const alamat = document.getElementById("alamat").value.trim();
+    const darurat = document.getElementById("darurat").value.trim();
+    const plat = document.getElementById("plat").value.trim();
+    const program = document.querySelector('input[name="program"]:checked').value;
+    const fileFoto = document.getElementById("foto").files[0];
+
+    // Validasi Kosong
+    if(!nama || !hp || !alamat || !darurat || !plat) {
+      msg.innerText = "⚠ HARAP LENGKAPI SEMUA DATA TEKS!"; msg.className = "msg error"; return;
+    }
+    if(!fileFoto) {
+      msg.innerText = "⚠ HARAP MASUKKAN FOTO SELFIE!"; msg.className = "msg error"; return;
+    }
+
+    btn.innerHTML = "MENGUPLOAD FOTO... (Tunggu ya)"; 
+    btn.disabled = true; msg.innerText = "";
+
+    try {
+      // 1. PROSES UPLOAD FOTO KE FIREBASE STORAGE
+      // Buat nama file unik: NomorHP_NamaFileAsli
+      const fileExt = fileFoto.name.split('.').pop();
+      const namaFileUnik = `selfie_member/${hp}_${Date.now()}.${fileExt}`;
+      const storageRef = ref(storage, namaFileUnik);
+      
+      await uploadBytes(storageRef, fileFoto);
+      
+      // Ambil URL/Link Foto yang sudah diupload
+      const fotoUrl = await getDownloadURL(storageRef);
+
+      btn.innerHTML = "MENYIMPAN DATA...";
+
+      // 2. SIMPAN SEMUA DATA + URL FOTO KE DATABASE FIRESTORE
+      // Kita pakai nama laci "database_member"
+      await addDoc(collection(db, "database_member"), {
+        nama: nama,
+        hp: hp,
+        alamat: alamat,
+        kontak_darurat: darurat,
+        plat: plat,
+        program: program,
+        foto_url: fotoUrl, // <--- Link foto disimpan di sini
+        tgl_daftar: new Date().toISOString()
+      });
+
+      msg.innerText = "PENDAFTARAN BERHASIL ✔"; msg.className = "msg success";
+      setTimeout(() => location.reload(), 2500);
+
+    } catch (e) {
+      console.error(e);
+      // Pengecekan error jika Storage Rules dikunci
+      if(e.code === "storage/unauthorized") {
+        msg.innerText = "GAGAL: Izin Upload Foto Ditolak! (Admin harus buka Rules Storage)";
+      } else {
+        msg.innerText = "GAGAL: " + e.message; 
+      }
+      msg.className = "msg error";
+      btn.innerHTML = "COBA LAGI"; btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
