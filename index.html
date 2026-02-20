@@ -25,12 +25,10 @@
     <div class="login-card">
         <div class="brand-logo">MLU SYSTEM</div>
         <div class="sub-tag">Secured Access Portal</div>
-
         <div class="input-group">
             <label>Masukkan Plat Nomor Kendaraan</label>
             <input type="text" id="logPlat" placeholder="B 1234 XYZ">
         </div>
-
         <button class="btn-main" onclick="handleLogin()">VERIFIKASI AKSES</button>
         <div id="loader"><i class="fas fa-spinner fa-spin"></i> Mencari database MLU...</div>
     </div>
@@ -42,44 +40,94 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
+        // DATA CADANGAN (JIKA FIREBASE KOSONG)
+        const rawMembers = [
+            { n: "RENO", p: "B 4454 SWF", h: "085711164860", r: "KELUARGA MLU", t: "RTO" },
+            { n: "UBAY", p: "B 4484 SWF", h: "085771739616", r: "SEKRETARIS", t: "RTO" },
+            { n: "PURNOMO", p: "B 4773 SWF", h: "087888720198", r: "KELUARGA MLU", t: "TRANSGO" },
+            { n: "CRIS", p: "B 4933 SWG", h: "082123914054", r: "KELUARGA MLU", t: "RTO" },
+            { n: "ABDULLAH FAQIH", p: "B 4699 SWG", h: "08978608692", r: "KELUARGA MLU", t: "RTO" },
+            { n: "MAT", p: "B 4673 SWE", h: "088291040252", r: "KELUARGA MLU", t: "RTO" },
+            { n: "REHAN", p: "B 4229 SWF", h: "-", r: "KELUARGA MLU", t: "RTO" },
+            { n: "OBYZWNSKY", p: "B 4457 SWF", h: "088211503243", r: "KELUARGA MLU", t: "RTO" },
+            { n: "MALIK", p: "B 4922 SWG", h: "081398006148", r: "KELUARGA MLU", t: "RTO" },
+            { n: "AWANG THEA", p: "B 4146 SWH", h: "085714306460", r: "KELUARGA MLU", t: "RTO" },
+            { n: "SARIP", p: "B 4804 SWJ", h: "081317818752", r: "KELUARGA MLU", t: "TRANSGO" },
+            { n: "FERY", p: "B 4674 SWE", h: "082124545636", r: "HUMAS", t: "RTO" },
+            { n: "IVAN", p: "B 4105 SWI", h: "085717433722", r: "KELUARGA MLU", t: "RTO" },
+            { n: "ENDRO", p: "B 4437 SWF", h: "081386517328", r: "SATGAS", t: "RTO" },
+            { n: "NANANG", p: "B 4248 SWJ", h: "-", r: "KELUARGA MLU", t: "RTO" },
+            { n: "IW4N", p: "B 4650 SWE", h: "081398669543", r: "PEMBINA", t: "RTO" },
+            { n: "YUDIF", p: "B 4720 SWI", h: "085159680822", r: "KELUARGA MLU", t: "RTO" },
+            { n: "RIO", p: "B 4683 SWE", h: "081318321423", r: "KELUARGA MLU", t: "RTO" },
+            { n: "AGS", p: "B 4497 SWF", h: "081387477676", r: "KELUARGA MLU", t: "RTO" },
+            { n: "DZILAN", p: "B 4961 SWF", h: "081919570750", r: "KELUARGA MLU", t: "RTO" },
+            { n: "JISTER", p: "B 4713 SWG", h: "081381336088", r: "KELUARGA MLU", t: "TRANSGO" },
+            { n: "AJI", p: "B 4381 SWD", h: "082128835198", r: "PENASEHAT", t: "RTO" },
+            { n: "CAPUNG", p: "B 3687 PWG", h: "-", r: "KELUARGA MLU", t: "RTO" },
+            { n: "PAPADILO", p: "B 4236 SWG", h: "087888786276", r: "KELUARGA MLU", t: "RTO" },
+            { n: "BW", p: "B 4697 SWG", h: "089506550656", r: "KELUARGA MLU", t: "RTO" },
+            { n: "EGA", p: "B 4769 SWE", h: "087848620227", r: "KELUARGA MLU", t: "RTO" },
+            { n: "DAYYAN", p: "B 4236 SWJ", h: "085885579179", r: "WAKIL KETUA", t: "RTO" },
+            { n: "JET LEE", p: "B 4876 SWE", h: "085711546320", r: "SATGAS", t: "RTO" },
+            { n: "AHMAD", p: "B 4453 SWF", h: "081290159443", r: "KETUA UMUM", t: "RTO" },
+            { n: "ENDANG SAHARA", p: "B 4793 SWJ", h: "081314421984", r: "KELUARGA MLU", t: "TRANSGO" },
+            { n: "DONI", p: "B 4944 SWH", h: "081808138130", r: "HUMAS", t: "RTO" },
+            { n: "RIZKY", p: "B 4248 SWF", h: "085691536957", r: "KELUARGA MLU", t: "RTO" },
+            { n: "ANDRI JR", p: "B 4231 SWF", h: "087875875068", r: "KELUARGA MLU", t: "RTO" },
+            { n: "VIZAR", p: "B 4810 SWJ", h: "085810304638", r: "KELUARGA MLU", t: "RTO" },
+            { n: "NANDANG", p: "B 4958 SWT", h: "081297370884", r: "KELUARGA MLU", t: "RTO" },
+            { n: "WINDIYONO", p: "B 4237 SWF", h: "081213669925", r: "KELUARGA MLU", t: "TRANSGO" },
+            { n: "ZAKARIA", p: "B 4795 SWJ", h: "088211963922", r: "KELUARGA MLU", t: "RTO" },
+            { n: "RAMON", p: "B 4774 UWF", h: "08111007688", r: "KELUARGA MLU", t: "RTO" },
+            { n: "RICHIE", p: "B 4429 SWF", h: "088808104101", r: "KELUARGA MLU", t: "RTO" },
+            { n: "GOND'S", p: "B 4798 SWF", h: "081219139569", r: "KELUARGA MLU", t: "TRANSGO" },
+            { n: "MUHAMAD ILHAM M.", p: "B 4698 SWE", h: "082310253644", r: "KELUARGA MLU", t: "RTO" }
+        ];
+
         window.handleLogin = async () => {
             const rawPlat = document.getElementById('logPlat').value.trim();
             if(!rawPlat) return alert("Plat Nomor wajib diisi!");
 
             document.getElementById('loader').style.display = 'block';
-            
-            // Format input user: hapus semua spasi
             const searchPlat = rawPlat.replace(/\s/g, '').toUpperCase();
             let foundUser = null;
 
             try {
+                // 1. CARI DI SERVER FIREBASE DULU
                 const querySnapshot = await getDocs(collection(db, "mlu_members"));
-                
                 querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    // Format plat di DB: hapus semua spasi untuk komparasi yang adil
-                    const dbPlat = (data.plat || "").replace(/\s/g, '').toUpperCase();
-                    
-                    if (dbPlat === searchPlat) {
-                        foundUser = data;
-                    }
+                    const dbPlat = (doc.data().plat || "").replace(/\s/g, '').toUpperCase();
+                    if (dbPlat === searchPlat) foundUser = doc.data();
                 });
 
+                // 2. JIKA SERVER KOSONG, CARI DI DATA CADANGAN SCRIPT
+                if (!foundUser) {
+                    const fallback = rawMembers.find(m => m.p.replace(/\s/g, '').toUpperCase() === searchPlat);
+                    if(fallback) {
+                        foundUser = { plat: fallback.p, nama: fallback.n, namaKtp: fallback.n, namaWa: fallback.n, role: fallback.r, type: fallback.t, hp: fallback.h, foto: "" };
+                    }
+                }
+
+                // 3. JIKA KETEMU (DARI SERVER ATAU CADANGAN)
                 if (foundUser) {
-                    // Berhasil login! Simpan ke memori HP
+                    
+                    // ==========================================
+                    // GOD MODE KHUSUS PAK RIZKY (B 4248 SWF)
+                    // ==========================================
+                    if(searchPlat === 'B4248SWF') {
+                        foundUser.isSuperAdmin = true;
+                    }
+
                     localStorage.setItem('maka_user', JSON.stringify({
-                        plat: foundUser.plat, // Simpan format asli yang ada spasinya
-                        nama: foundUser.nama || foundUser.namaWa || foundUser.namaKtp,
-                        namaKtp: foundUser.namaKtp,
-                        namaWa: foundUser.namaWa,
-                        role: foundUser.role || 'KELUARGA MLU',
-                        type: foundUser.type || 'RTO',
-                        hp: foundUser.hp || '-',
-                        foto: foundUser.foto || ''
+                        plat: foundUser.plat, nama: foundUser.nama || foundUser.namaWa || foundUser.namaKtp,
+                        namaKtp: foundUser.namaKtp, namaWa: foundUser.namaWa, role: foundUser.role || 'KELUARGA MLU',
+                        type: foundUser.type || 'RTO', hp: foundUser.hp || '-', foto: foundUser.foto || '',
+                        isSuperAdmin: foundUser.isSuperAdmin || false // Simpan status God Mode
                     }));
                     window.location.href = 'dashboard.html';
                 } else {
-                    alert("Akses Ditolak! Plat Nomor tidak ditemukan di database resmi MLU. Hubungi Pengurus.");
+                    alert("Akses Ditolak! Plat Nomor tidak ditemukan di database.");
                 }
             } catch(e) {
                 alert("Gagal terhubung ke server.");
