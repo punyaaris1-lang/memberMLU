@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MLU Executive - Struktur Pengurus</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --royal-blue: #0A2259;
+            --electric-blue: #2D63ED;
+            --bg-surface: #F8FAFC;
+            --white: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --premium-gold: #D4AF37;
+            --border-soft: rgba(226, 232, 240, 0.8);
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            margin: 0; padding: 0; background: var(--bg-surface); color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 120px;
+        }
+
+        /* --- PREMIUM HEADER --- */
+        .header-premium {
+            background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%);
+            padding: 50px 25px 90px 25px;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            color: white; text-align: center;
+            box-shadow: 0 10px 30px rgba(10, 34, 89, 0.15);
+        }
+        .header-label { 
+            font-size: 10px; font-weight: 800; letter-spacing: 3px; 
+            text-transform: uppercase; opacity: 0.7; margin-bottom: 8px; display: block;
+        }
+        .main-title { 
+            font-family: 'Space Grotesk', sans-serif; font-size: 28px; 
+            font-weight: 800; margin: 0; letter-spacing: -0.5px;
+        }
+
+        /* --- CONTAINER GRID --- */
+        .container {
+            padding: 0 20px; max-width: 600px; margin: -50px auto 0;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            position: relative; z-index: 10;
+        }
+        
+        .full-width { grid-column: span 2; }
+
+        /* --- EXECUTIVE CARD STYLE --- */
+        .profile-card {
+            background: var(--white);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease;
+        }
+        .profile-card:active { transform: scale(0.97); }
+        
+        /* Image Container - Squircle Look */
+        .img-box {
+            width: 100%; aspect-ratio: 1/1.1;
+            overflow: hidden;
+            background: #F1F5F9;
+            display: flex; justify-content: center; align-items: flex-start;
+        }
+        .p-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+        
+        /* Info Box */
+        .info-box {
+            padding: 15px 10px; text-align: center;
+        }
+        .p-name {
+            font-family: 'Space Grotesk', sans-serif; font-size: 15px; 
+            font-weight: 800; color: var(--royal-blue);
+            text-transform: uppercase; margin-bottom: 4px;
+        }
+        .p-role {
+            font-size: 9px; font-weight: 800;
+            letter-spacing: 1px; text-transform: uppercase;
+            padding: 4px 10px; border-radius: 50px;
+            display: inline-block;
+        }
+
+        /* --- ROLE VARIANTS --- */
+        .role-gold { background: #FFFBEB; color: var(--premium-gold); border: 1px solid #FEF3C7; }
+        .role-blue { background: #EFF6FF; color: var(--electric-blue); border: 1px solid #DBEAFE; }
+        .role-navy { background: #F1F5F9; color: var(--royal-blue); border: 1px solid #E2E8F0; }
+
+        /* --- FLOATING BACK BUTTON --- */
+        .back-nav {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 100;
+        }
+        .btn-premium-back {
+            background: var(--white); border: 1px solid var(--border-soft);
+            color: var(--royal-blue); padding: 14px 35px; border-radius: 50px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800;
+            cursor: pointer; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            display: flex; align-items: center; gap: 10px; transition: 0.3s;
+            text-decoration: none; text-transform: uppercase;
+        }
+        .btn-premium-back:active { transform: scale(0.95); background: #F8FAFC; }
+    </style>
+</head>
+<body>
+
+    <div class="header-premium">
+        <span class="header-label">Organization Structure</span>
+        <h1 class="main-title">COMMAND CENTER</h1>
+    </div>
+
+    <div class="container" id="teamContainer">
+        </div>
+
+    <div class="back-nav">
+        <a href="dashboard.html" class="btn-premium-back">
+            <i class="fas fa-chevron-left"></i> KEMBALI
+        </a>
+    </div>
+
+    <script>
+        const TEAM_DATA = [
+            { nama: "KI AHMAD", jabatan: "KETUA UMUM", foto: "akiaki.jpg", type: "gold", full: true },
+            { nama: "SANDI DAYYAN", jabatan: "WAKIL KETUA", foto: "dayan.jpg", type: "gold", full: false },
+            { nama: "DEDI UBAY", jabatan: "SEKRETARIS", foto: "ubay.jpg", type: "blue", full: false },
+            { nama: "BANG IWAN", jabatan: "PEMBINA", foto: "iwan.jpg", type: "blue", full: false },
+            { nama: "PAK AJI", jabatan: "PENASEHAT", foto: "aji.jpg", type: "blue", full: false },
+            { nama: "FERRY", jabatan: "HUMAS", foto: "blue", type: "blue", full: false },
+            { nama: "DONI", jabatan: "HUMAS", foto: "doni.jpg", type: "blue", full: false },
+            { nama: "AMAR", jabatan: "KORLAP", foto: "amar.jpg", type: "navy", full: false },
+            { nama: "SANDI", jabatan: "KORLAP", foto: "sandi.jpg", type: "navy", full: false },
+            { nama: "SANDI JET LEE", jabatan: "SATGAS", foto: "jetlee.jpg", type: "navy", full: false },
+            { nama: "HENDRO", jabatan: "SATGAS", foto: "hendro.jpg", type: "navy", full: false }
+        ];
+
+        const container = document.getElementById('teamContainer');
+
+        TEAM_DATA.forEach(p => {
+            const card = document.createElement('div');
+            const roleClass = p.type === 'gold' ? 'role-gold' : (p.type === 'blue' ? 'role-blue' : 'role-navy');
+            const widthClass = p.full ? 'full-width' : '';
+            
+            card.className = `profile-card ${widthClass}`;
+            
+            card.innerHTML = `
+                <div class="img-box">
+                    <img src="${p.foto}" class="p-img" onerror="this.src='https://ui-avatars.com/api/?background=f1f5f9&color=0A2259&bold=true&name=${encodeURIComponent(p.nama)}';">
+                </div>
+                <div class="info-box">
+                    <div class="p-name">${p.nama}</div>
+                    <div class="p-role ${roleClass}">${p.jabatan}</div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
