@@ -2,27 +2,22 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MLU - Portal Akses</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-light: #F4F7FA; --white: #FFFFFF; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-light); background-image: radial-gradient(circle at 0% 0%, rgba(45, 99, 237, 0.05) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(10, 34, 89, 0.05) 0%, transparent 50%); height: 100vh; display: flex; align-items: center; justify-content: center; }
-        
-        .login-card { background: var(--white); width: 90%; max-width: 400px; padding: 40px 30px; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(10, 34, 89, 0.15); border: 1px solid rgba(255, 255, 255, 0.8); text-align: center; }
-        .brand-logo { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; letter-spacing: -1px; }
-        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #64748B; margin-bottom: 30px; }
-
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 10px; font-weight: 800; color: var(--royal-blue); margin-left: 15px; margin-bottom: 5px; display: block; text-transform: uppercase; }
-        input, select { width: 100%; padding: 16px 20px; border-radius: 18px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-size: 14px; font-weight: 600; outline: none; transition: 0.3s; color: #0F172A; }
-        input:focus, select:focus { border-color: var(--electric-blue); background: var(--white); box-shadow: 0 0 0 4px rgba(45, 99, 237, 0.1); }
-
-        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; box-shadow: 0 10px 25px rgba(10, 34, 89, 0.2); transition: 0.3s; letter-spacing: 1px; }
-        .btn-main:active { transform: scale(0.97); }
+        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-light: #F8FAFC; --white: #FFFFFF; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-light); height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: var(--white); width: 90%; max-width: 380px; padding: 40px 30px; border-radius: 40px; box-shadow: 0 25px 50px rgba(10, 34, 89, 0.15); text-align: center; }
+        .brand-logo { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #64748B; margin-bottom: 30px; text-transform: uppercase; }
+        .input-group { text-align: left; margin-bottom: 25px; }
+        label { font-size: 11px; font-weight: 800; color: var(--royal-blue); display: block; margin-bottom: 8px; margin-left: 10px; }
+        input { width: 100%; padding: 18px; border-radius: 20px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 18px; font-weight: 800; outline: none; text-transform: uppercase; text-align: center; letter-spacing: 2px; }
+        input:focus { border-color: var(--electric-blue); background: var(--white); }
+        .btn-main { width: 100%; padding: 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.3); }
+        #loader { display: none; margin-top: 15px; font-size: 12px; font-weight: 600; color: var(--electric-blue); }
     </style>
 </head>
 <body>
@@ -32,62 +27,65 @@
         <div class="sub-tag">Secured Access Portal</div>
 
         <div class="input-group">
-            <label>Plat Nomor Kendaraan</label>
-            <input type="text" id="logPlat" placeholder="B 1234 XYZ" style="text-transform: uppercase; font-family: 'Space Grotesk'; font-size: 18px; letter-spacing: 1px;">
-        </div>
-
-        <div class="input-group">
-            <label>Nama Anggota</label>
-            <input type="text" id="logNama" placeholder="Sesuai database MLU" style="text-transform: uppercase;">
-        </div>
-
-        <div class="input-group" style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label>Status</label>
-                <select id="logRole">
-                    <option value="KELUARGA MLU">Anggota (Keluarga MLU)</option>
-                    <option value="KETUA UMUM">Ketua Umum</option>
-                    <option value="WAKIL KETUA">Wakil Ketua</option>
-                    <option value="SEKRETARIS">Sekretaris</option>
-                    <option value="PEMBINA">Pembina</option>
-                    <option value="PENASEHAT">Penasehat</option>
-                    <option value="HUMAS">Humas</option>
-                    <option value="KORLAP">Korlap</option>
-                    <option value="SATGAS">Satgas</option>
-                </select>
-            </div>
-            <div style="flex: 1;">
-                <label>Tipe Motor</label>
-                <select id="logType">
-                    <option value="RTO">MAKA RTO</option>
-                    <option value="TRANSGO">TRANSGO</option>
-                </select>
-            </div>
+            <label>Masukkan Plat Nomor Kendaraan</label>
+            <input type="text" id="logPlat" placeholder="B 1234 XYZ">
         </div>
 
         <button class="btn-main" onclick="handleLogin()">VERIFIKASI AKSES</button>
+        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Mencari database MLU...</div>
     </div>
 
-    <script>
-        function handleLogin() {
-            const plat = document.getElementById('logPlat').value.trim().toUpperCase();
-            const nama = document.getElementById('logNama').value.trim().toUpperCase();
-            const role = document.getElementById('logRole').value;
-            const type = document.getElementById('logType').value;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-            if(!plat || !nama) return alert("Plat Nomor dan Nama wajib diisi!");
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-            // Simpan Profil ke Local Storage (Browser)
-            const userProfile = {
-                plat: plat,
-                nama: nama,
-                role: role,
-                type: type,
-                hp: "Belum Diisi" // Bisa diupdate nanti
-            };
+        window.handleLogin = async () => {
+            const rawPlat = document.getElementById('logPlat').value.trim();
+            if(!rawPlat) return alert("Plat Nomor wajib diisi!");
 
-            localStorage.setItem('maka_user', JSON.stringify(userProfile));
-            window.location.href = 'dashboard.html';
+            document.getElementById('loader').style.display = 'block';
+            
+            // Format input user: hapus semua spasi
+            const searchPlat = rawPlat.replace(/\s/g, '').toUpperCase();
+            let foundUser = null;
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "mlu_members"));
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Format plat di DB: hapus semua spasi untuk komparasi yang adil
+                    const dbPlat = (data.plat || "").replace(/\s/g, '').toUpperCase();
+                    
+                    if (dbPlat === searchPlat) {
+                        foundUser = data;
+                    }
+                });
+
+                if (foundUser) {
+                    // Berhasil login! Simpan ke memori HP
+                    localStorage.setItem('maka_user', JSON.stringify({
+                        plat: foundUser.plat, // Simpan format asli yang ada spasinya
+                        nama: foundUser.nama || foundUser.namaWa || foundUser.namaKtp,
+                        namaKtp: foundUser.namaKtp,
+                        namaWa: foundUser.namaWa,
+                        role: foundUser.role || 'KELUARGA MLU',
+                        type: foundUser.type || 'RTO',
+                        hp: foundUser.hp || '-',
+                        foto: foundUser.foto || ''
+                    }));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert("Akses Ditolak! Plat Nomor tidak ditemukan di database resmi MLU. Hubungi Pengurus.");
+                }
+            } catch(e) {
+                alert("Gagal terhubung ke server.");
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+            }
         }
     </script>
 </body>

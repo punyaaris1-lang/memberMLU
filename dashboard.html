@@ -2,73 +2,44 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MLU - Executive Dashboard</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; --border-soft: rgba(226, 232, 240, 0.8); --danger: #EF4444; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
-
-        /* HEADER */
-        .header-member { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 45px 25px 85px 25px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(10, 34, 89, 0.15); }
-        .u-name { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -0.5px; text-transform: uppercase; }
-        
-        .u-info-row { display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
-        .u-badge { background: rgba(255, 255, 255, 0.12); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; border: 1px solid rgba(255,255,255,0.15); }
-        .u-type { background: var(--electric-blue); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.2); letter-spacing: 1px; }
-        .u-hp { font-size: 11px; font-weight: 500; opacity: 0.7; width: 100%; margin-top: 4px; }
-
-        .u-photo { width: 65px; height: 65px; border-radius: 22px; border: 2px solid rgba(255, 255, 255, 0.3); background: #F1F5F9; object-fit: cover; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-
-        /* STATUS HUB */
+        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; --danger: #EF4444; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        * { box-sizing: border-box; text-decoration: none; }
+        .header-member { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 45px 25px 85px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .u-name { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; margin: 0; text-transform: uppercase; }
+        .u-info-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .u-badge { background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; border: 1px solid rgba(255,255,255,0.15); }
+        .u-type { background: var(--electric-blue); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; }
+        .u-hp { font-size: 11px; width: 100%; margin-top: 4px; opacity: 0.8; }
+        .u-photo { width: 65px; height: 65px; border-radius: 22px; border: 2px solid rgba(255,255,255,0.3); object-fit: cover; }
         .card-overlap { padding: 0 20px; margin-top: -45px; z-index: 10; }
-        .status-hub { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 24px; padding: 20px 25px; box-shadow: 0 20px 40px rgba(10, 34, 89, 0.1); border: 1px solid rgba(255, 255, 255, 0.8); text-align: center; }
-        .hub-label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
-        .hub-val { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); text-transform: uppercase; }
-        .hub-val.pengurus { color: #D4AF37; text-shadow: 0 2px 10px rgba(212, 175, 55, 0.2); }
-
-        /* GRID */
+        .status-hub { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 24px; padding: 20px; text-align: center; box-shadow: 0 20px 40px rgba(10,34,89,0.1); }
+        .hub-label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
+        .hub-val { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); }
+        .hub-val.pengurus { color: #D4AF37; }
         .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 25px 20px; flex-grow: 1; align-content: flex-start; }
-        .grid-node { background: var(--white); border-radius: 22px; padding: 18px 10px; text-align: center; text-decoration: none; border: 1px solid var(--border-soft); transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.01); cursor: pointer; }
-        .grid-node:active { transform: scale(0.92); background: #F1F5F9; }
-        .icon-box { width: 44px; height: 44px; background: #F8FAFC; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; border: 1px solid #F1F5F9; font-size: 20px; color: var(--electric-blue); }
-        .grid-label { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; color: var(--royal-blue); text-transform: uppercase; letter-spacing: 0.3px; }
-
-        /* SOS BUTTON SPECIFIC */
-        .node-sos { background: #FEF2F2; border-color: #FCA5A5; animation: pulseBorder 2s infinite; }
-        .node-sos .icon-box { background: var(--danger); color: white; border: none; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); }
-        .node-sos .grid-label { color: var(--danger); font-weight: 900; }
-
-        /* DOCK */
+        .grid-node { background: var(--white); border-radius: 22px; padding: 18px 10px; text-align: center; border: 1px solid #E2E8F0; }
+        .icon-box { width: 44px; height: 44px; background: #F8FAFC; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 20px; color: var(--electric-blue); }
+        .grid-label { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; color: var(--royal-blue); }
+        .node-sos { background: #FEF2F2; border-color: #FCA5A5; cursor: pointer; animation: pulse 2s infinite; }
+        .node-sos .icon-box { background: var(--danger); color: white; }
+        .node-sos .grid-label { color: var(--danger); }
         .dock-container { padding: 20px 0 35px; display: flex; justify-content: center; }
-        .nav-pill { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 10px 25px; border-radius: 40px; display: flex; gap: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid var(--border-soft); }
-        .nav-tab { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #CBD5E1; }
+        .nav-pill { background: rgba(255,255,255,0.95); padding: 10px 25px; border-radius: 40px; display: flex; gap: 40px; border: 1px solid #E2E8F0; }
+        .nav-tab { display: flex; flex-direction: column; align-items: center; color: #CBD5E1; }
         .nav-tab.active { color: var(--electric-blue); }
-        .nav-tab i { font-size: 22px; margin-bottom: 4px; }
-        .nav-tab span { font-size: 9px; font-weight: 800; }
-
-        /* --- SOS FULLSCREEN ALERT MODAL --- */
-        .sos-overlay { position: fixed; inset: 0; background: rgba(239, 68, 68, 0.95); backdrop-filter: blur(15px); z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 20px; }
-        .sos-box { background: white; width: 100%; max-width: 350px; border-radius: 40px; padding: 40px 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative; overflow: hidden; animation: popIn 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
-        .sos-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: repeating-linear-gradient(45deg, var(--danger), var(--danger) 10px, white 10px, white 20px); }
-        
-        .sos-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--danger); margin: 0 0 5px; animation: blinkText 1s infinite; }
-        .sos-sub { font-size: 12px; font-weight: 800; color: var(--text-main); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .sos-profile { width: 80px; height: 80px; border-radius: 25px; border: 4px solid #FEF2F2; box-shadow: 0 10px 20px rgba(239,68,68,0.2); margin-bottom: 15px; object-fit: cover; }
-        .sos-name { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; text-transform: uppercase; line-height: 1; }
-        .sos-plat { font-size: 14px; font-weight: 800; color: var(--electric-blue); margin-bottom: 25px; }
-
-        .btn-sos-map { display: block; width: 100%; padding: 18px; background: var(--danger); color: white; text-decoration: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 15px; margin-bottom: 12px; box-shadow: 0 15px 30px rgba(239,68,68,0.4); text-transform: uppercase; }
-        .btn-sos-resolve { display: block; width: 100%; padding: 18px; background: #F1F5F9; color: var(--text-muted); border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; cursor: pointer; text-transform: uppercase; }
-
-        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes pulseBorder { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } }
-        @keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .sos-overlay { position: fixed; inset: 0; background: rgba(239,68,68,0.95); z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 20px; }
+        .sos-box { background: white; width: 100%; max-width: 350px; border-radius: 40px; padding: 40px 20px; }
+        .sos-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--danger); margin: 0 0 5px; }
+        .sos-profile { width: 80px; height: 80px; border-radius: 25px; object-fit: cover; margin: 20px 0; border: 3px solid #FEF2F2; }
+        .btn-sos-map { display: block; width: 100%; padding: 18px; background: var(--danger); color: white; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 900; margin-bottom: 12px; }
+        .btn-sos-resolve { display: block; width: 100%; padding: 18px; background: #F1F5F9; border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { box-shadow: 0 0 0 10px rgba(239,68,68,0); } }
     </style>
 </head>
 <body>
@@ -76,13 +47,11 @@
     <div id="sosAlertModal" class="sos-overlay">
         <div class="sos-box">
             <h1 class="sos-title">EMERGENCY</h1>
-            <div class="sos-sub">Anggota Membutuhkan Bantuan</div>
-            
+            <div style="font-size:12px; font-weight:800;">Anggota Membutuhkan Bantuan</div>
             <img id="sosImg" src="" class="sos-profile">
-            <div id="sosTargetName" class="sos-name">NAMA ANGGOTA</div>
-            <div id="sosTargetPlat" class="sos-plat">B 0000 XYZ</div>
-            
-            <a id="sosMapLink" href="#" target="_blank" class="btn-sos-map"><i class="fas fa-location-arrow"></i> MENUJU LOKASI GPS</a>
+            <div id="sosTargetName" style="font-family:'Space Grotesk'; font-size:22px; font-weight:900;"></div>
+            <div id="sosTargetPlat" style="font-size:14px; font-weight:800; color:var(--electric-blue); margin-bottom:20px;"></div>
+            <a id="sosMapLink" href="#" target="_blank" class="btn-sos-map"><i class="fas fa-location-arrow"></i> MENUJU LOKASI</a>
             <button class="btn-sos-resolve" onclick="resolveSOS()">TANDAI SELESAI / AMAN</button>
         </div>
     </div>
@@ -91,65 +60,50 @@
         <div class="user-meta">
             <h1 class="u-name" id="userName">...</h1>
             <div class="u-info-row">
-                <div class="u-badge" id="userPlat">...</div>
-                <div class="u-type" id="userType">RTO</div>
-                <div class="u-hp" id="userHP">...</div>
+                <div class="u-badge" id="userPlat">...</div><div class="u-type" id="userType">RTO</div><div class="u-hp" id="userHP">...</div>
             </div>
         </div>
         <img src="" class="u-photo" id="userPhoto">
     </header>
 
-    <div class="card-overlap">
-        <div class="status-hub">
-            <div class="hub-label">Status Keanggotaan</div>
-            <div class="hub-val" id="userRole">KELUARGA MLU</div>
-        </div>
-    </div>
+    <div class="card-overlap"><div class="status-hub"><div class="hub-label">Status Keanggotaan</div><div class="hub-val" id="userRole"></div></div></div>
 
     <div class="app-grid">
         <a href="pengurus.html" class="grid-node"><div class="icon-box"><i class="fas fa-sitemap"></i></div><div class="grid-label">PENGURUS</div></a>
         <a href="data_anggota.html" class="grid-node"><div class="icon-box"><i class="fas fa-users"></i></div><div class="grid-label">ANGGOTA</div></a>
         <a href="keuangan.html" class="grid-node"><div class="icon-box"><i class="fas fa-wallet"></i></div><div class="grid-label">KEUANGAN</div></a>
-        
         <a href="lokasi_fc.html" class="grid-node"><div class="icon-box"><i class="fas fa-map-marker-alt"></i></div><div class="grid-label">LOKASI FC</div></a>
         <a href="antrian.html" class="grid-node"><div class="icon-box"><i class="fas fa-charging-station"></i></div><div class="grid-label">ANTRIAN</div></a>
         <a href="plan_route.html" class="grid-node"><div class="icon-box"><i class="fas fa-route"></i></div><div class="grid-label">PLAN ROUTE</div></a>
-        
-        <a href="info_mlu.html" class="grid-node" style="grid-column: span 2; display: flex; align-items: center; text-align: left; padding: 20px;">
-            <div class="icon-box" style="margin: 0 15px 0 0; background: rgba(45, 99, 237, 0.1);"><i class="fas fa-bullhorn"></i></div>
-            <div>
-                <div class="grid-label" style="font-size: 13px; margin-bottom: 2px;">INFO MLU</div>
-                <div style="font-size: 10px; color: var(--text-muted); font-weight: 500;">Berita & Kegiatan</div>
-            </div>
+        <a href="info_mlu.html" class="grid-node" style="grid-column: span 2; display: flex; align-items: center; padding: 20px; text-align:left;">
+            <div class="icon-box" style="margin: 0 15px 0 0;"><i class="fas fa-bullhorn"></i></div>
+            <div><div class="grid-label" style="font-size: 13px;">INFO MLU</div><div style="font-size: 10px; color:#64748B;">Berita & Kegiatan</div></div>
         </a>
-
-        <div class="grid-node node-sos" onclick="triggerSOS()" id="btnSosTrigger">
-            <div class="icon-box"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="grid-label">SOS</div>
-        </div>
+        <div class="grid-node node-sos" onclick="triggerSOS()" id="btnSosTrigger"><div class="icon-box"><i class="fas fa-exclamation-triangle"></i></div><div class="grid-label">SOS</div></div>
     </div>
 
     <div class="dock-container">
         <nav class="nav-pill">
-            <a href="dashboard.html" class="nav-tab active"><i class="fas fa-home"></i><span>HOME</span></a>
-            <a href="data_anggota.html" class="nav-tab"><i class="fas fa-address-book"></i><span>MEMBER</span></a>
-            <a href="setting" class="nav-tab"><i class="fas fa-user-cog"></i><span>AKUN</span></a>
+            <a href="dashboard.html" class="nav-tab active"><i class="fas fa-home"></i></a>
+            <a href="data_anggota.html" class="nav-tab"><i class="fas fa-address-book"></i></a>
+            <a href="settings.html" class="nav-tab"><i class="fas fa-user-cog"></i></a>
         </nav>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, updateDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // Render User Profile
+        // Render Data (Menjamin foto muncul)
         const u = JSON.parse(localStorage.getItem('maka_user')) || { nama: "GUEST", plat: "-", hp: "-", type: "RTO", role: "KELUARGA MLU" };
-        const myPhoto = `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(u.nama)}`;
+        
+        // Cek jika u.foto ada isinya, pakai itu. Jika kosong, pakai UI Avatars.
+        const myPhoto = (u.foto && u.foto !== "") ? u.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(u.nama)}`;
 
-        document.getElementById('userName').innerText = u.nama.split(' ')[0];
+        document.getElementById('userName').innerText = u.namaWa || u.nama.split(' ')[0];
         document.getElementById('userPlat').innerText = u.plat;
         document.getElementById('userType').innerText = u.type;
         document.getElementById('userHP').innerText = u.hp;
@@ -159,77 +113,40 @@
         roleEl.innerText = u.role;
         if(u.role !== "KELUARGA MLU") roleEl.classList.add('pengurus');
 
-        // --- FITUR SOS: PENGIRIM (SENDER) ---
         window.triggerSOS = () => {
-            if(!confirm("⚠️ PERINGATAN: Tekan OK untuk mengirim Sinyal Darurat beserta LOKASI GPS Anda ke seluruh anggota MLU.")) return;
-
-            const btn = document.getElementById('btnSosTrigger');
-            btn.style.opacity = '0.5';
-
+            if(!confirm("Kirim Sinyal Darurat ke semua anggota?")) return;
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
                     await addDoc(collection(db, 'mlu_sos'), {
-                        nama: u.nama,
-                        plat: u.plat,
-                        foto: myPhoto,
-                        lat: pos.coords.latitude,
-                        lng: pos.coords.longitude,
-                        status: 'ACTIVE',
-                        timestamp: Date.now()
+                        nama: u.namaWa || u.nama, plat: u.plat, foto: myPhoto, // Foto Asli ikut terkirim!
+                        lat: pos.coords.latitude, lng: pos.coords.longitude, status: 'ACTIVE', timestamp: Date.now()
                     });
-                    btn.style.opacity = '1';
-                    alert("Sinyal SOS berhasil dipancarkan ke seluruh sistem!");
-                }, (err) => {
-                    alert("GAGAL MENGIRIM! Pastikan Izin Lokasi (GPS) HP Anda menyala.");
-                    btn.style.opacity = '1';
-                }, { enableHighAccuracy: true });
-            } else {
-                alert("Browser tidak mendukung fitur GPS.");
-                btn.style.opacity = '1';
-            }
+                    alert("Sinyal SOS berhasil dipancarkan!");
+                }, () => alert("Gagal! Aktifkan GPS Anda."), { enableHighAccuracy: true });
+            } else { alert("Browser tidak mendukung GPS."); }
         };
 
-        // --- FITUR SOS: PENERIMA (RECEIVER) REAL-TIME ---
         let currentActiveSosId = null;
-        const qSos = query(collection(db, 'mlu_sos'), where('status', '==', 'ACTIVE'));
-
-        onSnapshot(qSos, (snap) => {
+        onSnapshot(query(collection(db, 'mlu_sos'), where('status', '==', 'ACTIVE')), (snap) => {
             const modal = document.getElementById('sosAlertModal');
-            
-            // Jika ada data SOS yang sedang aktif
             if (!snap.empty) {
-                // Ambil data SOS yang paling baru (jika ada lebih dari 1, kita ambil index ke-0)
-                const docSnap = snap.docs[0];
-                const data = docSnap.data();
-                currentActiveSosId = docSnap.id;
-
-                // Tampilkan di UI
-                document.getElementById('sosTargetName').innerText = data.nama;
-                document.getElementById('sosTargetPlat').innerText = data.plat;
-                document.getElementById('sosImg').src = data.foto;
-                
-                // Buat link ke Google Maps
-                document.getElementById('sosMapLink').href = `http://maps.google.com/maps?daddr=$${data.lat},${data.lng}`;
-
-                // Munculkan Layar Merah
+                const d = snap.docs[0].data();
+                currentActiveSosId = snap.docs[0].id;
+                document.getElementById('sosTargetName').innerText = d.nama;
+                document.getElementById('sosTargetPlat').innerText = d.plat;
+                document.getElementById('sosImg').src = d.foto;
+                document.getElementById('sosMapLink').href = `http://maps.google.com/maps?daddr=$$${d.lat},${d.lng}`;
                 modal.style.display = 'flex';
-                
-                // Getar HP (jika didukung browser)
-                if(navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 1000]);
-
+                if(navigator.vibrate) navigator.vibrate([500,200,500,200,1000]);
             } else {
-                // Jika sudah diselesaikan, sembunyikan layar merah
                 modal.style.display = 'none';
                 currentActiveSosId = null;
             }
         });
 
-        // --- TANDAI SOS SELESAI ---
         window.resolveSOS = async () => {
-            if(confirm("Tandai status darurat ini sudah selesai / aman? Peringatan akan hilang dari semua HP anggota.")) {
-                if(currentActiveSosId) {
-                    await updateDoc(doc(db, 'mlu_sos', currentActiveSosId), { status: 'RESOLVED' });
-                }
+            if(confirm("Tandai selesai?")) {
+                if(currentActiveSosId) await updateDoc(doc(db, 'mlu_sos', currentActiveSosId), { status: 'RESOLVED' });
             }
         };
     </script>
