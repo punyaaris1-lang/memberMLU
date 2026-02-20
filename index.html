@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-light: #F8FAFC; --white: #FFFFFF; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-light); height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: var(--white); width: 90%; max-width: 380px; padding: 40px 30px; border-radius: 40px; box-shadow: 0 25px 50px rgba(10, 34, 89, 0.15); text-align: center; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-light); height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .login-card { background: var(--white); width: 90%; max-width: 380px; padding: 40px 30px; border-radius: 40px; box-shadow: 0 25px 50px rgba(10, 34, 89, 0.15); text-align: center; position: relative; }
         .brand-logo { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; }
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #64748B; margin-bottom: 30px; text-transform: uppercase; }
         .input-group { text-align: left; margin-bottom: 25px; }
@@ -17,6 +17,10 @@
         input { width: 100%; padding: 18px; border-radius: 20px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 18px; font-weight: 800; outline: none; text-transform: uppercase; text-align: center; letter-spacing: 2px; }
         input:focus { border-color: var(--electric-blue); background: var(--white); }
         .btn-main { width: 100%; padding: 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.3); }
+        
+        /* TOMBOL AJAIB DEVELOPER */
+        .btn-magic { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 20px; background: #10B981; color: white; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); }
+        
         #loader { display: none; margin-top: 15px; font-size: 12px; font-weight: 600; color: var(--electric-blue); }
     </style>
 </head>
@@ -25,22 +29,27 @@
     <div class="login-card">
         <div class="brand-logo">MLU SYSTEM</div>
         <div class="sub-tag">Secured Access Portal</div>
+        
         <div class="input-group">
             <label>Masukkan Plat Nomor Kendaraan</label>
             <input type="text" id="logPlat" placeholder="B 1234 XYZ">
         </div>
+        
         <button class="btn-main" onclick="handleLogin()">VERIFIKASI AKSES</button>
-        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Mencari database MLU...</div>
+        
+        <button class="btn-magic" id="btnSetup" onclick="setupDatabase()"><i class="fas fa-database"></i> SETUP DATABASE SERVER (KLIK 1X)</button>
+        
+        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Memproses ke Server Google...</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // DATA CADANGAN (JIKA FIREBASE KOSONG)
+        // DATA 41 ANGGOTA
         const rawMembers = [
             { n: "RENO", p: "B 4454 SWF", h: "085711164860", r: "KELUARGA MLU", t: "RTO" },
             { n: "UBAY", p: "B 4484 SWF", h: "085771739616", r: "SEKRETARIS", t: "RTO" },
@@ -85,52 +94,85 @@
             { n: "MUHAMAD ILHAM M.", p: "B 4698 SWE", h: "082310253644", r: "KELUARGA MLU", t: "RTO" }
         ];
 
+        // 1. FUNGSI UNTUK MENGISI SERVER GOOGLE (HANYA DITEKAN SEKALI OLEH BAPAK)
+        window.setupDatabase = async () => {
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('loader').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang mengisi Server Google...';
+            document.getElementById('btnSetup').style.display = 'none';
+
+            try {
+                // Cek apakah server masih kosong
+                const snap = await getDocs(collection(db, "mlu_members"));
+                if (!snap.empty) {
+                    alert("✅ DATABASE SERVER SUDAH TERISI! Silakan langsung Login.");
+                    document.getElementById('loader').style.display = 'none';
+                    return;
+                }
+
+                // Jika kosong, masukkan 41 data
+                for (const m of rawMembers) {
+                    await addDoc(collection(db, 'mlu_members'), { 
+                        namaKtp: m.n, namaWa: m.n, nama: m.n, plat: m.p, hp: m.h, role: m.r, type: m.t, foto: "" 
+                    });
+                }
+                
+                alert("🎉 SUKSES! 41 Data Anggota berhasil masuk ke Server Cloud. Sekarang sistem sudah LIVE.");
+                document.getElementById('loader').style.display = 'none';
+                
+            } catch (e) {
+                alert("Gagal koneksi ke server: " + e.message);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('btnSetup').style.display = 'block';
+            }
+        };
+
+        // 2. FUNGSI LOGIN NORMAL
         window.handleLogin = async () => {
             const rawPlat = document.getElementById('logPlat').value.trim();
             if(!rawPlat) return alert("Plat Nomor wajib diisi!");
 
             document.getElementById('loader').style.display = 'block';
+            document.getElementById('loader').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari Plat di Server...';
+            
             const searchPlat = rawPlat.replace(/\s/g, '').toUpperCase();
             let foundUser = null;
 
             try {
-                // 1. CARI DI SERVER FIREBASE DULU
                 const querySnapshot = await getDocs(collection(db, "mlu_members"));
+                
+                // Jika server benar-benar kosong (Bapak lupa klik tombol hijau)
+                if(querySnapshot.empty) {
+                    document.getElementById('loader').style.display = 'none';
+                    return alert("⛔ SERVER MASIH KOSONG! Silakan klik tombol hijau 'SETUP DATABASE SERVER' terlebih dahulu.");
+                }
+
+                // Cari plat yang cocok
                 querySnapshot.forEach((doc) => {
                     const dbPlat = (doc.data().plat || "").replace(/\s/g, '').toUpperCase();
                     if (dbPlat === searchPlat) foundUser = doc.data();
                 });
 
-                // 2. JIKA SERVER KOSONG, CARI DI DATA CADANGAN SCRIPT
-                if (!foundUser) {
-                    const fallback = rawMembers.find(m => m.p.replace(/\s/g, '').toUpperCase() === searchPlat);
-                    if(fallback) {
-                        foundUser = { plat: fallback.p, nama: fallback.n, namaKtp: fallback.n, namaWa: fallback.n, role: fallback.r, type: fallback.t, hp: fallback.h, foto: "" };
-                    }
-                }
-
-                // 3. JIKA KETEMU (DARI SERVER ATAU CADANGAN)
                 if (foundUser) {
-                    
-                    // ==========================================
-                    // GOD MODE KHUSUS PAK RIZKY (B 4248 SWF)
-                    // ==========================================
-                    if(searchPlat === 'B4248SWF') {
-                        foundUser.isSuperAdmin = true;
-                    }
+                    // Beri GOD MODE ke Pak Rizky
+                    if(searchPlat === 'B4248SWF') foundUser.isSuperAdmin = true;
 
                     localStorage.setItem('maka_user', JSON.stringify({
-                        plat: foundUser.plat, nama: foundUser.nama || foundUser.namaWa || foundUser.namaKtp,
-                        namaKtp: foundUser.namaKtp, namaWa: foundUser.namaWa, role: foundUser.role || 'KELUARGA MLU',
-                        type: foundUser.type || 'RTO', hp: foundUser.hp || '-', foto: foundUser.foto || '',
-                        isSuperAdmin: foundUser.isSuperAdmin || false // Simpan status God Mode
+                        plat: foundUser.plat, 
+                        nama: foundUser.nama || foundUser.namaWa || foundUser.namaKtp,
+                        namaKtp: foundUser.namaKtp, 
+                        namaWa: foundUser.namaWa, 
+                        role: foundUser.role || 'KELUARGA MLU',
+                        type: foundUser.type || 'RTO', 
+                        hp: foundUser.hp || '-', 
+                        foto: foundUser.foto || '',
+                        isSuperAdmin: foundUser.isSuperAdmin || false
                     }));
                     window.location.href = 'dashboard.html';
                 } else {
-                    alert("Akses Ditolak! Plat Nomor tidak ditemukan di database.");
+                    alert("❌ Akses Ditolak! Plat Nomor tidak terdaftar.");
                 }
             } catch(e) {
-                alert("Gagal terhubung ke server.");
+                alert("Gagal terhubung ke internet.");
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }
