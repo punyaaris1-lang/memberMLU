@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLU Finance - Transparency Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --income: #10B981; --expense: #EF4444; --text-main: #0F172A; --text-muted: #64748B; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; }
+        
+        .header-finance { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 25px 90px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; text-align: center; }
+        .total-balance { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; margin: 5px 0; }
+
+        .card-overlap { padding: 0 20px; margin-top: -40px; position: relative; z-index: 10; }
+        .summary-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 25px; padding: 25px; display: flex; justify-content: space-between; box-shadow: 0 20px 40px rgba(10,34,89,0.1); border: 1px solid rgba(255,255,255,0.8); }
+        .stat-box { text-align: center; width: 48%; }
+        .stat-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; margin-top: 5px; }
+
+        .list-section { padding: 30px 20px; }
+        .tx-card { background: var(--white); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #E2E8F0; position: relative; }
+        .icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .bg-in { background: #ECFDF5; color: var(--income); } .bg-out { background: #FEF2F2; color: var(--expense); }
+        
+        .tx-info { flex: 1; }
+        .tx-title { font-weight: 700; font-size: 14px; color: var(--royal-blue); }
+        .tx-meta { font-size: 11px; color: var(--text-muted); }
+        .tx-amount { font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; }
+        
+        /* FOOTNOTE AUDIT KHUSUS ADMIN */
+        .audit-trail { font-size: 9px; color: #CBD5E1; font-weight: 600; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+        .btn-del { position: absolute; right: 15px; bottom: 10px; font-size: 10px; color: var(--expense); background: none; border: none; font-weight: 800; cursor: pointer; }
+
+        .fab-admin { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: var(--royal-blue); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 10px 25px rgba(10,34,89,0.3); border: none; cursor: pointer; z-index: 1000; }
+        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
+        .btn-premium-back { background: rgba(255,255,255,0.95); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <header class="header-finance">
+        <div style="font-size:10px; font-weight:800; letter-spacing:2px; opacity:0.7; text-transform:uppercase;">Saldo Kas MLU</div>
+        <h1 class="total-balance" id="totalCash">Rp 0</h1>
+    </header>
+
+    <div class="card-overlap">
+        <div class="summary-card">
+            <div class="stat-box">
+                <div style="font-size:9px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Total Masuk</div>
+                <div class="stat-val" style="color:var(--income);" id="totalIn">Rp 0</div>
+            </div>
+            <div style="width:1px; background:#E2E8F0;"></div>
+            <div class="stat-box">
+                <div style="font-size:9px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Total Keluar</div>
+                <div class="stat-val" style="color:var(--expense);" id="totalOut">Rp 0</div>
+            </div>
+        </div>
+    </div>
+
+    <main class="list-section" id="txContainer"></main>
+
+    <button class="fab-admin" id="btnAddTx" onclick="addTx()"><i class="fas fa-plus"></i></button>
+
+    <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI</a></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+
+        // CEK JABATAN KETUM & WAKETUM
+        const u = JSON.parse(localStorage.getItem('maka_user')) || {};
+        const isAdmin = (u.role === 'KETUA UMUM' || u.role === 'WAKIL KETUA');
+
+        if (isAdmin) document.getElementById('btnAddTx').style.display = 'flex';
+
+        onSnapshot(query(collection(db, "mlu_finance"), orderBy("timestamp", "desc")), (snap) => {
+            const container = document.getElementById('txContainer');
+            let balance = 0, income = 0, expense = 0;
+            container.innerHTML = '';
+
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                const amt = d.amount || 0;
+                
+                if (d.type === 'IN') { income += amt; balance += amt; } else { expense += amt; balance -= amt; }
+
+                const isMasuk = d.type === 'IN';
+                
+                // Render Audit Footnote HANYA JIKA USER ADALAH ADMIN
+                const auditHtml = isAdmin ? `<div class="audit-trail"><i class="fas fa-user-shield"></i> Diinput oleh: ${d.actor}</div><button class="btn-del" onclick="window.delTx('${docSnap.id}')">HAPUS</button>` : '';
+
+                container.innerHTML += `
+                    <div class="tx-card">
+                        <div class="icon-box ${isMasuk ? 'bg-in' : 'bg-out'}"><i class="fas ${isMasuk ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
+                        <div class="tx-info">
+                            <div class="tx-title">${d.description}</div>
+                            <div class="tx-meta">${d.date}</div>
+                            ${auditHtml}
+                        </div>
+                        <div class="tx-amount" style="color:var(--${isMasuk ? 'income' : 'expense'})">
+                            ${isMasuk ? '+' : '-'} Rp ${amt.toLocaleString('id-ID')}
+                        </div>
+                    </div>`;
+            });
+
+            document.getElementById('totalCash').innerText = "Rp " + balance.toLocaleString('id-ID');
+            document.getElementById('totalIn').innerText = "Rp " + income.toLocaleString('id-ID');
+            document.getElementById('totalOut').innerText = "Rp " + expense.toLocaleString('id-ID');
+        });
+
+        window.addTx = async () => {
+            const type = prompt("Ketik 'IN' untuk Uang Masuk, 'OUT' untuk Keluar:").toUpperCase();
+            if(type !== 'IN' && type !== 'OUT') return alert("Tipe salah!");
+            const amount = parseInt(prompt("Jumlah Nominal (Hanya Angka):"));
+            if(!amount) return;
+            const description = prompt("Keterangan:");
+
+            await addDoc(collection(db, "mlu_finance"), {
+                type, amount, description,
+                date: new Date().toLocaleDateString('id-ID'),
+                timestamp: Date.now(),
+                actor: `${u.nama} (${u.plat})` // Catat Jejak Admin
+            });
+        };
+
+        window.delTx = async (id) => {
+            if(confirm("Hapus catatan kas ini secara permanen?")) await deleteDoc(doc(db, "mlu_finance", id));
+        };
+    </script>
+</body>
+</html>

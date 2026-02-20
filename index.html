@@ -1,245 +1,94 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KOPDAR MLU</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MLU - Portal Akses</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-light: #F4F7FA; --white: #FFFFFF; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-light); background-image: radial-gradient(circle at 0% 0%, rgba(45, 99, 237, 0.05) 0%, transparent 50%), radial-gradient(circle at 100% 100%, rgba(10, 34, 89, 0.05) 0%, transparent 50%); height: 100vh; display: flex; align-items: center; justify-content: center; }
+        
+        .login-card { background: var(--white); width: 90%; max-width: 400px; padding: 40px 30px; border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(10, 34, 89, 0.15); border: 1px solid rgba(255, 255, 255, 0.8); text-align: center; }
+        .brand-logo { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; letter-spacing: -1px; }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #64748B; margin-bottom: 30px; }
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 10px; font-weight: 800; color: var(--royal-blue); margin-left: 15px; margin-bottom: 5px; display: block; text-transform: uppercase; }
+        input, select { width: 100%; padding: 16px 20px; border-radius: 18px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-size: 14px; font-weight: 600; outline: none; transition: 0.3s; color: #0F172A; }
+        input:focus, select:focus { border-color: var(--electric-blue); background: var(--white); box-shadow: 0 0 0 4px rgba(45, 99, 237, 0.1); }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  min-height:100vh;
-  background:#02040a;
-  color:#fff;
-  font-family:'Inter',sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-/* BACKGROUND */
-.bg{
-  position:fixed;
-  inset:0;
-  background:
-    radial-gradient(circle at top, rgba(0,255,255,.18), transparent 60%),
-    linear-gradient(rgba(0,255,255,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,255,.05) 1px, transparent 1px);
-  background-size:100% 100%, 40px 40px, 40px 40px;
-  animation:grid 20s linear infinite;
-  z-index:-1;
-}
-@keyframes grid{
-  to{background-position:0 0,400px 400px,400px 400px}
-}
-
-/* INTRO */
-#intro{
-  position:fixed;
-  inset:0;
-  background:#000;
-  z-index:99;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-}
-#intro h1{
-  font-family:'Orbitron';
-  font-size:20px;
-  letter-spacing:3px;
-  color:#00ffff;
-  text-shadow:0 0 25px #00ffff;
-}
-#intro button{
-  padding:12px 30px;
-  border-radius:30px;
-  background:transparent;
-  border:1px solid #00ffff;
-  color:#00ffff;
-  font-size:13px;
-}
-
-/* CARD */
-.card{
-  width:90%;
-  max-width:380px;
-  padding:28px;
-  border-radius:26px;
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(0,255,255,.4);
-  box-shadow:0 0 45px rgba(0,255,255,.35);
-  text-align:center;
-}
-
-/* LOGO */
-.logo-wrap{
-  width:120px;
-  height:120px;
-  margin:0 auto 16px;
-  border-radius:50%;
-  border:2px solid #00ffff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  box-shadow:0 0 40px rgba(0,255,255,.9);
-  animation:logoPulse 2s infinite alternate;
-}
-.logo-wrap img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:50%;
-}
-@keyframes logoPulse{
-  from{transform:scale(1)}
-  to{transform:scale(1.08)}
-}
-
-/* TEXT */
-.title{
-  font-family:'Orbitron';
-  font-size:22px;
-  letter-spacing:2px;
-  color:#00ffff;
-  text-shadow:0 0 20px #00ffff;
-}
-.subtitle{
-  font-size:12px;
-  opacity:.7;
-  margin:10px 0 22px;
-}
-
-/* INFO BLOCK */
-.info{
-  margin:12px 0;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid rgba(0,255,255,.3);
-}
-.label{
-  font-size:11px;
-  letter-spacing:1px;
-  opacity:.6;
-}
-.value{
-  margin-top:4px;
-  font-size:15px;
-}
-
-/* BUTTON */
-.btn{
-  display:block;
-  margin-top:12px;
-  padding:12px;
-  border-radius:24px;
-  border:1px solid #00ffff;
-  color:#00ffff;
-  font-size:13px;
-  text-decoration:none;
-}
-
-/* QRIS */
-.qris{
-  width:180px;
-  margin-top:12px;
-  border-radius:12px;
-  box-shadow:0 0 20px rgba(0,255,255,.6);
-}
-
-/* FOOTER */
-.footer{
-  margin-top:18px;
-  font-size:12px;
-  opacity:.8;
-}
-</style>
+        .btn-main { width: 100%; padding: 18px; border: none; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px; box-shadow: 0 10px 25px rgba(10, 34, 89, 0.2); transition: 0.3s; letter-spacing: 1px; }
+        .btn-main:active { transform: scale(0.97); }
+    </style>
 </head>
-
 <body>
 
-<div id="intro">
-  <h1>UNDANGAN</h1>
-  <h1>MAKA LINTAS UTARA</h1>
-  <button onclick="start()">TAP TO OPEN</button>
-</div>
+    <div class="login-card">
+        <div class="brand-logo">MLU SYSTEM</div>
+        <div class="sub-tag">Secured Access Portal</div>
 
-<div class="bg"></div>
+        <div class="input-group">
+            <label>Plat Nomor Kendaraan</label>
+            <input type="text" id="logPlat" placeholder="B 1234 XYZ" style="text-transform: uppercase; font-family: 'Space Grotesk'; font-size: 18px; letter-spacing: 1px;">
+        </div>
 
-<div class="card">
+        <div class="input-group">
+            <label>Nama Anggota</label>
+            <input type="text" id="logNama" placeholder="Sesuai database MLU" style="text-transform: uppercase;">
+        </div>
 
-  <!-- LOGO -->
-  <div class="logo-wrap">
-    <img src="1763947427555.jpg" alt="Logo MLU">
-  </div>
+        <div class="input-group" style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Status</label>
+                <select id="logRole">
+                    <option value="KELUARGA MLU">Anggota (Keluarga MLU)</option>
+                    <option value="KETUA UMUM">Ketua Umum</option>
+                    <option value="WAKIL KETUA">Wakil Ketua</option>
+                    <option value="SEKRETARIS">Sekretaris</option>
+                    <option value="PEMBINA">Pembina</option>
+                    <option value="PENASEHAT">Penasehat</option>
+                    <option value="HUMAS">Humas</option>
+                    <option value="KORLAP">Korlap</option>
+                    <option value="SATGAS">Satgas</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label>Tipe Motor</label>
+                <select id="logType">
+                    <option value="RTO">MAKA RTO</option>
+                    <option value="TRANSGO">TRANSGO</option>
+                </select>
+            </div>
+        </div>
 
-  <div class="title">KOPDAR DADAKAN</div>
-  <div class="subtitle">ASSALAMUALAIKUM</div>
+        <button class="btn-main" onclick="handleLogin()">VERIFIKASI AKSES</button>
+    </div>
 
-  <div class="info">
-    <div class="label">HARI</div>
-    <div class="value">Minggu</div>
-  </div>
+    <script>
+        function handleLogin() {
+            const plat = document.getElementById('logPlat').value.trim().toUpperCase();
+            const nama = document.getElementById('logNama').value.trim().toUpperCase();
+            const role = document.getElementById('logRole').value;
+            const type = document.getElementById('logType').value;
 
-  <div class="info">
-    <div class="label">JAM</div>
-    <div class="value">17:30 WIB</div>
-  </div>
+            if(!plat || !nama) return alert("Plat Nomor dan Nama wajib diisi!");
 
-  <div class="info">
-    <div class="label">TANGGAL</div>
-    <div class="value">21 Desember</div>
-  </div>
+            // Simpan Profil ke Local Storage (Browser)
+            const userProfile = {
+                plat: plat,
+                nama: nama,
+                role: role,
+                type: type,
+                hp: "Belum Diisi" // Bisa diupdate nanti
+            };
 
-  <div class="info">
-    <div class="label">LOKASI</div>
-    <div class="value">Showroom Kelapa Gading</div>
-  </div>
-
-  <div class="info">
-    <div class="label">AGENDA</div>
-    <div class="value">FC • OD • Keluh Kesah Anggota</div>
-  </div>
-
-  <!-- KONFIRMASI -->
-  <div class="info">
-    <div class="label">KONFIRMASI KEHADIRAN</div>
-    <a class="btn" href="https://wa.me/6282125611740?text=Konfirmasi%20Kehadiran%20KOPDAR%20MLU%0ANama:%20%0AStatus:%20HADIR">
-      ✅ HADIR
-    </a>
-    <a class="btn" href="https://wa.me/6282125611740?text=Konfirmasi%20Kehadiran%20KOPDAR%20MLU%0ANama:%20%0AStatus:%20TIDAK%20HADIR">
-      ❌ TIDAK HADIR
-    </a>
-  </div>
-
-  <!-- QRIS -->
-  <div class="info">
-    <div class="label">PATUNGAN KONSUMSI (QRIS)</div>
-    <div class="value">Scan QRIS di bawah ini</div>
-    <img src="IMG-20251221-WA0002.jpg" class="qris" alt="QRIS Patungan">
-  </div>
-
-  <a class="btn" href="https://maps.app.goo.gl/YHrBtpSCgo4KitBe7">
-    📍 BUKA LOKASI
-  </a>
-
-  <div class="footer">
-    Patungan sukarela untuk konsumsi 🙏<br>
-    SALAM — <strong>MAKA LINTAS UTARA</strong>
-  </div>
-
-</div>
-
-<script>
-function start(){
-  document.getElementById('intro').style.display='none';
-}
-</script>
-
+            localStorage.setItem('maka_user', JSON.stringify(userProfile));
+            window.location.href = 'dashboard.html';
+        }
+    </script>
 </body>
 </html>
