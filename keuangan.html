@@ -30,23 +30,28 @@
         /* --- LIST SECTION --- */
         .list-section { padding: 0 20px 30px; }
         
-        /* PEMISAH BULAN (MONTH HEADER) */
         .month-divider { display: flex; justify-content: space-between; align-items: flex-end; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px dashed #CBD5E1; padding-bottom: 8px; margin: 25px 0 15px 0; letter-spacing: 1px; }
         .month-divider:first-child { margin-top: 5px; }
         .m-total { font-size: 13px; font-weight: 900; }
 
-        .tx-card { background: var(--white); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; border: 1px solid #E2E8F0; position: relative; }
-        .icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .tx-card { background: var(--white); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 15px; border: 1px solid #E2E8F0; position: relative; }
+        .icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink:0; }
         .bg-in { background: #ECFDF5; color: var(--income); } 
         .bg-out { background: #FEF2F2; color: var(--expense); }
         
         .tx-info { flex: 1; }
-        .tx-title { font-weight: 700; font-size: 14px; color: var(--royal-blue); }
-        .tx-meta { font-size: 11px; color: var(--text-muted); }
-        .tx-amount { font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; }
+        .tx-title { font-weight: 700; font-size: 14px; color: var(--royal-blue); line-height: 1.3;}
+        .tx-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
         
-        .audit-trail { font-size: 9px; color: #CBD5E1; font-weight: 600; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
-        .btn-del { position: absolute; right: 15px; bottom: 10px; font-size: 10px; color: var(--expense); background: none; border: none; font-weight: 800; cursor: pointer; padding: 5px; }
+        .tx-amount { font-family: 'Space Grotesk'; font-weight: 800; font-size: 15px; text-align:right;}
+        .tx-sub { font-size: 9px; color: var(--text-muted); font-family: 'Inter'; font-weight: 600; text-transform: uppercase;}
+        
+        .audit-trail { font-size: 9px; color: #94A3B8; font-weight: 700; margin-top: 8px; display: flex; align-items: center; gap: 4px; border-top: 1px dashed #E2E8F0; padding-top: 8px;}
+        .btn-del { position: absolute; right: 15px; bottom: 12px; font-size: 12px; color: var(--danger); background: #FEF2F2; border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-del:active { transform: scale(0.9); }
+
+        .btn-lihat-kolektif { background: rgba(45,99,237,0.1); color: var(--electric-blue); border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; font-family: 'Inter'; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-top: 5px; transition: 0.2s;}
+        .btn-lihat-kolektif:active { transform: scale(0.95); background: var(--electric-blue); color: white; }
 
         /* --- ACTION & NAV BUTTONS --- */
         .fab-admin { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: var(--royal-blue); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 10px 25px rgba(10,34,89,0.3); border: none; cursor: pointer; z-index: 1000; transition: 0.2s;}
@@ -57,7 +62,7 @@
 
         /* --- MODAL FORM --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
-        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; }
+        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; max-height: 90vh; overflow-y: auto;}
         @keyframes slideUp { to { transform: translateY(0); } }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -70,6 +75,18 @@
         .form-input:focus { border-color: var(--electric-blue); background: white; }
         
         .btn-save-modal { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--royal-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(10,34,89,0.2); }
+
+        /* KOLEKTIF AREA UI */
+        .coll-area { display: none; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .coll-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+        .k-in { padding: 12px; border-radius: 10px; border: 1px solid #CBD5E1; font-family: 'Inter'; font-size: 13px; font-weight: 600; outline: none; }
+        .k-in:focus { border-color: var(--electric-blue); }
+
+        /* LIST SHEET KOLEKTIF VIEWER */
+        .list-kol-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px dashed #E2E8F0; }
+        .list-kol-item:last-child { border-bottom: none; }
+        .lki-name { font-weight: 700; font-size: 13px; color: var(--text-main); text-transform: uppercase; }
+        .lki-amt { font-family: 'Space Grotesk'; font-weight: 800; color: var(--success); }
     </style>
 </head>
 <body>
@@ -110,27 +127,51 @@
     <div class="modal-overlay" id="txModal">
         <div class="modal-box">
             <div class="modal-header">
-                <div class="modal-title">Catat Transaksi Kas</div>
+                <div class="modal-title">Catat Transaksi</div>
                 <button class="btn-close" onclick="closeTxModal()"><i class="fas fa-times"></i></button>
             </div>
             
             <div class="form-group">
                 <label>Jenis Transaksi</label>
-                <select id="formTxType" class="form-input" style="font-weight: 800;">
-                    <option value="IN">PEMASUKAN KAS (Uang Masuk)</option>
-                    <option value="OUT">PENGELUARAN KAS (Uang Keluar)</option>
+                <select id="formTxType" class="form-input" style="font-weight: 800;" onchange="toggleFormType()">
+                    <option value="IN">PEMASUKAN KAS (1 Item)</option>
+                    <option value="IN_COLLECTIVE" style="color:var(--electric-blue); font-weight:bold;">PEMASUKAN KOLEKTIF (Banyak Donatur)</option>
+                    <option value="OUT" style="color:var(--danger);">PENGELUARAN KAS</option>
                 </select>
             </div>
+            
             <div class="form-group">
+                <label>Keterangan / Nama Acara</label>
+                <input type="text" id="formTxDesc" class="form-input" placeholder="Contoh: Iuran Bulanan / Beli Kopi">
+            </div>
+
+            <div class="form-group" id="formNormalAmount">
                 <label>Jumlah Nominal (Rp)</label>
                 <input type="number" id="formTxAmount" class="form-input" placeholder="Contoh: 150000" style="font-family:'Space Grotesk'; font-size:18px;">
             </div>
-            <div class="form-group">
-                <label>Keterangan / Rincian Transaksi</label>
-                <input type="text" id="formTxDesc" class="form-input" placeholder="Contoh: Iuran Bulanan / Beli Kopi">
+
+            <div class="coll-area" id="formCollective">
+                <label style="font-size:10px; font-weight:800; color:var(--royal-blue); margin-bottom:10px; display:block;">DAFTAR PENYUMBANG / DONATUR</label>
+                <div id="collList">
+                    </div>
+                <button type="button" style="width:100%; padding:12px; border:1px dashed var(--electric-blue); border-radius:10px; background:transparent; color:var(--electric-blue); font-weight:800; font-family:'Space Grotesk'; cursor:pointer; margin-top:5px;" onclick="addCollRow()">+ TAMBAH ORANG</button>
+                <div style="margin-top:15px; text-align:right; font-family:'Space Grotesk'; font-size:16px; font-weight:900; color:var(--success);">
+                    TOTAL: Rp <span id="collTotalDisplay">0</span>
+                </div>
             </div>
             
             <button class="btn-save-modal" id="btnSaveTx" onclick="saveTxData()">SIMPAN TRANSAKSI</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title" style="font-size:16px;">Rincian Pemasukan</div>
+                <button class="btn-close" onclick="document.getElementById('detailModal').style.display='none'"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="detailListBody" style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:16px; max-height: 40vh; overflow-y:auto;">
+                </div>
         </div>
     </div>
 
@@ -143,43 +184,36 @@
 
         // CEK JABATAN ADMIN
         const u = JSON.parse(localStorage.getItem('maka_user')) || {};
-        const isAdmin = u.isSuperAdmin || (u.role === 'KETUA UMUM' || u.role === 'WAKIL KETUA' || u.role === 'SEKRETARIS');
+        const isAdmin = u.isSuperAdmin || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
 
         if (isAdmin) document.getElementById('btnAddTx').style.display = 'flex';
 
-        // Set Tanggal Hari Ini di Header
+        // Set Tanggal Header
         const todayOptions = { day: 'numeric', month: 'long', year: 'numeric' };
         document.getElementById('lblDate').innerText = `SALDO KAS MLU PER ${new Date().toLocaleDateString('id-ID', todayOptions).toUpperCase()}`;
 
-        // --- SISTEM TABS ---
         window.switchTab = (type) => {
             if (type === 'IN') {
-                document.getElementById('tabBtnIn').classList.add('active');
-                document.getElementById('tabBtnOut').classList.remove('active');
-                document.getElementById('txInContainer').style.display = 'block';
-                document.getElementById('txOutContainer').style.display = 'none';
+                document.getElementById('tabBtnIn').classList.add('active'); document.getElementById('tabBtnOut').classList.remove('active');
+                document.getElementById('txInContainer').style.display = 'block'; document.getElementById('txOutContainer').style.display = 'none';
             } else {
-                document.getElementById('tabBtnOut').classList.add('active');
-                document.getElementById('tabBtnIn').classList.remove('active');
-                document.getElementById('txOutContainer').style.display = 'block';
-                document.getElementById('txInContainer').style.display = 'none';
+                document.getElementById('tabBtnOut').classList.add('active'); document.getElementById('tabBtnIn').classList.remove('active');
+                document.getElementById('txOutContainer').style.display = 'block'; document.getElementById('txInContainer').style.display = 'none';
             }
         };
 
         // --- AMBIL DATA REALTIME & AUTO-SORTING PER BULAN ---
         onSnapshot(query(collection(db, "mlu_finance"), orderBy("timestamp", "desc")), (snap) => {
             let balance = 0, globalIn = 0, globalOut = 0;
-            
-            // Map akan secara otomatis menyimpan data berurutan sesuai dari Snapshot (descending)
-            let groupIn = new Map();
-            let groupOut = new Map();
+            let groupIn = new Map(); let groupOut = new Map();
 
             snap.forEach(docSnap => {
                 const d = docSnap.data();
                 const amt = d.amount || 0;
-                const type = d.type;
                 
-                // Ambil Bulan & Tahun dari timestamp
+                // Pastikan Collective dibaca sebagai IN di logika global
+                const type = d.type === 'IN_COLLECTIVE' ? 'IN' : d.type; 
+                
                 const dateObj = new Date(d.timestamp);
                 const monthYear = dateObj.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
@@ -198,77 +232,163 @@
                 }
             });
 
-            // Update Global Summary
             document.getElementById('totalCash').innerText = "Rp " + balance.toLocaleString('id-ID');
             document.getElementById('totalIn').innerText = "Rp " + globalIn.toLocaleString('id-ID');
             document.getElementById('totalOut').innerText = "Rp " + globalOut.toLocaleString('id-ID');
 
-            // Fungsi Merender HTML per Group
             const renderGroupHtml = (mapData, isMasuk) => {
-                if(mapData.size === 0) return `<div style="text-align:center; padding:40px; color:#94A3B8;"><i class="fas fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i><br>Belum ada catatan ${isMasuk ? 'pemasukan' : 'pengeluaran'}.</div>`;
-                
+                if(mapData.size === 0) return `<div style="text-align:center; padding:40px; color:#94A3B8;">Belum ada catatan ${isMasuk ? 'pemasukan' : 'pengeluaran'}.</div>`;
                 let html = '';
                 const colorTotal = isMasuk ? 'var(--income)' : 'var(--expense)';
                 const sign = isMasuk ? '+' : '-';
 
                 mapData.forEach((val, monthName) => {
-                    // Header Bulan & Sub-total
-                    html += `
-                        <div class="month-divider">
-                            <span><i class="far fa-calendar-alt"></i> ${monthName}</span>
-                            <span class="m-total" style="color:${colorTotal}">TOTAL: Rp ${val.total.toLocaleString('id-ID')}</span>
-                        </div>
-                    `;
+                    html += `<div class="month-divider"><span><i class="far fa-calendar-alt"></i> ${monthName}</span><span class="m-total" style="color:${colorTotal}">TOTAL: Rp ${val.total.toLocaleString('id-ID')}</span></div>`;
 
-                    // Loop daftar di bulan tersebut
                     val.items.forEach(d => {
+                        // TAMPILAN JIKA KOLEKTIF
+                        let subHtml = '';
+                        if (d.isCollective && d.details) {
+                            const encData = encodeURIComponent(JSON.stringify(d.details));
+                            subHtml = `<button class="btn-lihat-kolektif" onclick="showCollectiveDetail('${encData}')"><i class="fas fa-users"></i> LIHAT RINCIAN (${d.details.length} ORANG)</button>`;
+                        }
+
                         const auditHtml = isAdmin ? `<div class="audit-trail"><i class="fas fa-user-shield"></i> Oleh: ${d.actor}</div><button class="btn-del" onclick="window.delTx('${d.id}')"><i class="fas fa-trash"></i></button>` : '';
+                        
                         html += `
                             <div class="tx-card">
                                 <div class="icon-box ${isMasuk ? 'bg-in' : 'bg-out'}"><i class="fas ${isMasuk ? 'fa-arrow-down' : 'fa-arrow-up'}"></i></div>
                                 <div class="tx-info">
-                                    <div class="tx-title">${d.description}</div>
+                                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                        <div class="tx-title">${d.description}</div>
+                                        <div style="text-align:right;">
+                                            <div class="tx-amount" style="color:${colorTotal}">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
+                                            <div class="tx-sub">${d.isCollective ? 'Pemasukan Kolektif' : (isMasuk ? 'Pemasukan' : 'Pengeluaran')}</div>
+                                        </div>
+                                    </div>
                                     <div class="tx-meta">${d.date}</div>
+                                    ${subHtml}
                                     ${auditHtml}
                                 </div>
-                                <div class="tx-amount" style="color:${colorTotal}">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
-                            </div>
-                        `;
+                            </div>`;
                     });
                 });
                 return html;
             };
 
-            // Injeksi ke container
             document.getElementById('txInContainer').innerHTML = renderGroupHtml(groupIn, true);
             document.getElementById('txOutContainer').innerHTML = renderGroupHtml(groupOut, false);
         });
 
-        // --- SISTEM MODAL INPUT ---
-        window.openTxModal = () => { document.getElementById('txModal').style.display = 'flex'; };
+        // --- UI FORM DINAMIS (KOLEKTIF) ---
+        window.toggleFormType = () => {
+            const type = document.getElementById('formTxType').value;
+            if (type === 'IN_COLLECTIVE') {
+                document.getElementById('formNormalAmount').style.display = 'none';
+                document.getElementById('formCollective').style.display = 'block';
+                if(document.getElementById('collList').children.length === 0) addCollRow();
+            } else {
+                document.getElementById('formNormalAmount').style.display = 'block';
+                document.getElementById('formCollective').style.display = 'none';
+            }
+        };
+
+        window.addCollRow = () => {
+            const list = document.getElementById('collList');
+            const div = document.createElement('div');
+            div.className = 'coll-row';
+            div.innerHTML = `
+                <input type="text" class="k-in c-name" placeholder="Nama Donatur" style="flex:1;">
+                <input type="number" class="k-in c-amt" placeholder="Rp Nominal" style="flex:1;" onkeyup="calcCollTotal()">
+                <button type="button" style="background:#FEF2F2; color:#EF4444; border:none; width:38px; height:38px; border-radius:10px; cursor:pointer;" onclick="this.parentElement.remove(); calcCollTotal();"><i class="fas fa-times"></i></button>
+            `;
+            list.appendChild(div);
+        };
+
+        window.calcCollTotal = () => {
+            let total = 0;
+            document.querySelectorAll('.c-amt').forEach(el => { total += parseInt(el.value) || 0; });
+            document.getElementById('collTotalDisplay').innerText = total.toLocaleString('id-ID');
+            return total;
+        };
+
+        // --- SISTEM MODAL INPUT & VIEW ---
+        window.openTxModal = () => { 
+            document.getElementById('txModal').style.display = 'flex'; 
+            document.getElementById('formTxType').value = 'IN';
+            toggleFormType();
+        };
+        
         window.closeTxModal = () => {
             document.getElementById('txModal').style.display = 'none';
             document.getElementById('formTxAmount').value = '';
             document.getElementById('formTxDesc').value = '';
+            document.getElementById('collList').innerHTML = '';
+            document.getElementById('collTotalDisplay').innerText = '0';
+        };
+
+        window.showCollectiveDetail = (encData) => {
+            const data = JSON.parse(decodeURIComponent(encData));
+            const body = document.getElementById('detailListBody');
+            body.innerHTML = '';
+            
+            data.forEach((d, i) => {
+                body.innerHTML += `
+                    <div class="list-kol-item">
+                        <div class="lki-name">${i+1}. ${d.name}</div>
+                        <div class="lki-amt">Rp ${d.amount.toLocaleString('id-ID')}</div>
+                    </div>`;
+            });
+            document.getElementById('detailModal').style.display = 'flex';
         };
 
         window.saveTxData = async () => {
-            const type = document.getElementById('formTxType').value;
-            const amount = parseInt(document.getElementById('formTxAmount').value);
+            const rawType = document.getElementById('formTxType').value;
             const description = document.getElementById('formTxDesc').value.trim();
+            if(!description) return alert("Keterangan Acara wajib diisi!");
 
-            if(!amount || !description) return alert("Nominal dan Keterangan wajib diisi!");
+            let finalAmount = 0;
+            let finalDetails = [];
+            let isCollective = false;
+            let finalType = rawType; // 'IN' atau 'OUT'
+
+            if (rawType === 'IN_COLLECTIVE') {
+                isCollective = true;
+                finalType = 'IN'; // Agar tetap terbaca pemasukan di global map
+                
+                document.querySelectorAll('.coll-row').forEach(row => {
+                    let n = row.querySelector('.c-name').value.trim();
+                    let a = parseInt(row.querySelector('.c-amt').value) || 0;
+                    if(n && a > 0) {
+                        finalDetails.push({ name: n, amount: a });
+                        finalAmount += a;
+                    }
+                });
+
+                if (finalDetails.length === 0) return alert("Daftar donatur tidak boleh kosong!");
+            } else {
+                finalAmount = parseInt(document.getElementById('formTxAmount').value);
+                if(!finalAmount) return alert("Nominal wajib diisi!");
+            }
 
             const btn = document.getElementById('btnSaveTx');
             btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
 
             try {
-                await addDoc(collection(db, "mlu_finance"), {
-                    type, amount, description,
+                let payload = {
+                    type: finalType, 
+                    amount: finalAmount, 
+                    description: description,
                     date: new Date().toLocaleDateString('id-ID'),
                     timestamp: Date.now(),
-                    actor: `${u.namaKtp || u.nama} (${u.plat})` // Menyimpan jejak siapa yang input
-                });
+                    actor: `${u.namaKtp || u.nama} (${u.plat})`,
+                    isCollective: isCollective
+                };
+
+                // Jika kolektif, masukkan detailnya ke dalam payload Firebase
+                if(isCollective) payload.details = finalDetails;
+
+                await addDoc(collection(db, "mlu_finance"), payload);
                 closeTxModal();
             } catch (e) {
                 alert("Gagal menyimpan: " + e.message);

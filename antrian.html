@@ -41,14 +41,14 @@
 
         /* --- QUEUE STATUS --- */
         .status-overlap { padding: 0 20px; margin-top: -35px; position: relative; z-index: 11; }
-        .status-card { background: var(--white); border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 20px 40px rgba(10,34,89,0.06); border: 1px solid var(--border-soft); }
+        .status-card { background: var(--white); border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 20px 40px rgba(10,34,89,0.06); border: 1px solid var(--border-soft); cursor: pointer;}
         .sc-left { border-left: 4px solid var(--electric-blue); padding-left: 12px; }
         .sc-lbl { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .sc-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--royal-blue); margin-top: 4px; }
+        .sc-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--royal-blue); margin-top: 4px; text-transform: uppercase; }
         .sc-right { text-align: right; }
         .sc-tot { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 900; color: var(--electric-blue); line-height: 1; }
 
-        /* --- SLOT BAY (FRESH DESIGN) --- */
+        /* --- SLOT BAY --- */
         .slot-container { padding: 25px 20px 10px; display: flex; flex-direction: column; gap: 15px; }
         .slot-bay { background: var(--white); border-radius: 24px; border: 1px solid var(--border-soft); padding: 15px; display: flex; align-items: center; gap: 15px; position: relative; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
         
@@ -82,7 +82,7 @@
         .btn-manage-q { background: var(--text-main); color: white; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3); display: none; }
         .btn-manage-q:active { transform: scale(0.98); }
 
-        /* --- MODERN BOTTOM SHEET (REPLACES JADUL MODALS) --- */
+        /* --- MODERN BOTTOM SHEET --- */
         .sheet-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(5px); display: none; align-items: flex-end; z-index: 20000; opacity: 0; transition: opacity 0.3s; }
         .sheet-overlay.show { display: flex; opacity: 1; }
         .bottom-sheet { width: 100%; background: var(--white); border-radius: 35px 35px 0 0; padding: 20px 25px 40px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); box-shadow: 0 -15px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
@@ -124,7 +124,7 @@
                 <span class="sub-tag">Station Monitor</span>
                 <h1 class="main-title">FC GADING</h1>
             </div>
-            <div class="admin-badge admin-only" id="adminIndicator"><i class="fas fa-shield-alt"></i> ADMIN</div>
+            <div class="admin-badge admin-only" id="adminIndicator"><i class="fas fa-shield-alt"></i> PENGURUS</div>
         </div>
 
         <div class="ramadan-widget">
@@ -189,7 +189,7 @@
     <div class="sheet-overlay" id="sheetIsiManual" onclick="closeSheet(event, this.id)">
         <div class="bottom-sheet" onclick="event.stopPropagation()">
             <div class="sheet-handle"></div>
-            <div class="sheet-title">Jalur VVIP (Bypass)</div>
+            <div class="sheet-title">Jalur Bebas Antri</div>
             <input type="text" id="manualPlat" class="sheet-input" placeholder="Ketik Plat (B 123 XX)">
             <button class="btn-hub" style="background:var(--success); color:white;" onclick="adminInsertManual()"><i class="fas fa-bolt"></i> MASUKKAN KE SLOT</button>
         </div>
@@ -222,16 +222,50 @@
         const db = getFirestore(app);
         const mainRef = doc(db, "antrian", "utama");
 
+        // --- SISTEM LOGIN SUPER APP & HAK AKSES ---
         const uData = JSON.parse(localStorage.getItem('maka_user'));
         if(!uData || !uData.plat) window.location.href = 'index.html';
 
         const myPlat = uData.plat;
         const myName = uData.namaKtp || uData.namaWa || uData.nama;
-        const myRole = uData.role || "GUEST";
-        const isSuperAdmin = uData.isSuperAdmin || myRole === 'KETUA UMUM' || myRole === 'WAKIL KETUA' || myRole === 'SEKRETARIS' || myRole === 'KORLAP';
+        const myRole = uData.role ? uData.role.toUpperCase() : "GUEST";
+        
+        const isSuperAdmin = uData.isSuperAdmin || (myRole !== 'KELUARGA MLU' && myRole !== 'GUEST' && myRole !== 'NON-MEMBER');
 
         if(isSuperAdmin) {
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+        }
+
+        // --- SISTEM GPS LOCK (Maksimal 300 Meter) ---
+        const STATION_LAT = -6.171583; 
+        const STATION_LNG = 106.899844; 
+        const MAX_DIST_KM = 0.3; 
+
+        function calculateDist(lat1, lon1, lat2, lon2) { 
+            const R = 6371; 
+            const dLat = (lat2-lat1)*Math.PI/180; 
+            const dLon = (lon2-lon1)*Math.PI/180; 
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; 
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        }
+
+        // Admin Kebal GPS. Jika bukan admin, cek lokasi!
+        if (!isSuperAdmin) {
+            if(navigator.geolocation) {
+                navigator.geolocation.watchPosition((pos) => {
+                    const dist = calculateDist(STATION_LAT, STATION_LNG, pos.coords.latitude, pos.coords.longitude);
+                    if(dist > MAX_DIST_KM) { 
+                        alert(`PERINGATAN: Anda berada di luar radius FC (${(dist).toFixed(2)} KM).\nAkses antrian dikunci.`);
+                        window.location.href = 'dashboard.html'; // Tendang ke Dashboard
+                    }
+                }, (err) => {
+                    alert("Mohon aktifkan GPS/Lokasi Anda untuk menggunakan fitur antrian.");
+                    window.location.href = 'dashboard.html';
+                }, {enableHighAccuracy: true, maximumAge: 10000});
+            } else {
+                alert("Browser Anda tidak mendukung GPS.");
+                window.location.href = 'dashboard.html';
+            }
         }
 
         let localSlots = [null, null, null]; 
@@ -307,7 +341,7 @@
                     
                     let cardClass = 'is-guest'; 
                     if (rawRole.includes("KETUM") || rawRole.includes("WAKETUM") || rawRole.includes("PEMBINA")) cardClass = 'is-vip';
-                    else if (rawRole !== "GUEST") cardClass = 'is-active';
+                    else if (rawRole !== "GUEST" && rawRole !== "NON-MEMBER") cardClass = 'is-active';
 
                     div.className = `slot-bay ${cardClass}`;
 
@@ -355,7 +389,7 @@
 
         // --- MEMBER FUNCTIONS ---
         window.selectSlot = async (i) => { 
-            if(blockedList.includes(cleanStr(myPlat))) return alert("Maaf, Plat Nomor Anda diblokir.");
+            if(blockedList.includes(cleanStr(myPlat))) return alert("Maaf, Plat Nomor Anda diblokir oleh Admin.");
             runTransaction(db, async(t)=>{ 
                 const d = (await t.get(mainRef)).data(); 
                 if(d.chargingSlots[i]) throw "SLOT PENUH!"; 
@@ -434,7 +468,7 @@
             if(!plat) return alert("Plat wajib diisi");
             runTransaction(db, async(t)=>{ 
                 const d = (await t.get(mainRef)).data(); 
-                d.chargingSlots[currentTargetSlot] = { plat: plat, userName: "BYPASS ADMIN", role: "VIP", startTime: Date.now() };
+                d.chargingSlots[currentTargetSlot] = { plat: plat, userName: "PENGISIAN MANUAL", role: "VIP", startTime: Date.now() };
                 t.update(mainRef, {chargingSlots: d.chargingSlots}); 
             }).then(() => forceCloseSheet('sheetIsiManual'));
         };
