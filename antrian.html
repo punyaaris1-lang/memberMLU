@@ -2,401 +2,208 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - VIP Station System</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLU - Smart Queue System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root {
-            --royal-blue: #0A2259;
-            --electric-blue: #2D63ED;
-            --bg-surface: #F4F7FA;
-            --white: #FFFFFF;
-            --text-main: #0F172A;
-            --text-muted: #64748B;
-            --success: #10B981;
-            --danger: #EF4444;
-            --border-soft: rgba(226, 232, 240, 0.9);
-        }
+        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; --danger: #EF4444; --success: #10B981; --gold: #D4AF37; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; }
+        * { box-sizing: border-box; outline: none; }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            margin: 0; background: var(--bg-surface);
-            font-family: 'Inter', sans-serif; color: var(--text-main);
-            padding-bottom: 140px; /* Space for Smart Island */
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* --- HERO RADAR HEADER --- */
-        .hero-radar {
-            background: linear-gradient(145deg, var(--royal-blue) 0%, #15398F 100%);
-            padding: 50px 20px 100px;
-            border-bottom-left-radius: 50px; border-bottom-right-radius: 50px;
-            position: relative; overflow: hidden; text-align: center;
-        }
+        /* --- HEADER --- */
+        .header-premium { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 25px 90px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; text-align: center; position: relative; }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--electric-blue); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; }
         
-        /* Decorative Rings */
-        .hero-radar::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%); pointer-events: none; }
-        .hero-radar::after { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; transform: translate(30%, -30%); pointer-events: none; }
+        /* ADMIN BADGE */
+        .admin-badge { display: none; background: rgba(212, 175, 55, 0.2); color: var(--gold); padding: 5px 12px; border-radius: 20px; font-size: 9px; font-weight: 800; letter-spacing: 1px; margin-top: 10px; border: 1px solid rgba(212,175,55,0.4); justify-content: center; align-items: center; gap: 5px; width: max-content; margin-inline: auto; text-transform: uppercase; }
 
-        .app-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--electric-blue); text-transform: uppercase; margin-bottom: 8px; }
-        .station-title { font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 900; margin: 0; color: var(--white); letter-spacing: -1px; }
+        /* --- STATUS CARD --- */
+        .card-overlap { padding: 0 20px; margin-top: -45px; position: relative; z-index: 10; }
+        .status-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 25px; padding: 25px; text-align: center; box-shadow: 0 20px 40px rgba(10,34,89,0.1); border: 1px solid rgba(255,255,255,0.8); }
+        .q-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        .q-total { font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; color: var(--electric-blue); margin: 5px 0; line-height: 1; }
 
-        /* --- SPLIT MONITOR OVERLAP --- */
-        .monitor-overlap { padding: 0 20px; margin-top: -60px; position: relative; z-index: 10; }
-        .monitor-hub {
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px);
-            border-radius: 35px; padding: 25px;
-            box-shadow: 0 30px 60px rgba(10, 34, 89, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            display: flex; justify-content: space-around; align-items: center;
-        }
-        .m-block { text-align: center; width: 45%; }
-        .m-divider { width: 2px; height: 50px; background: #F1F5F9; border-radius: 5px; }
-        .m-lbl { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .m-val { font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 900; color: var(--royal-blue); line-height: 1; }
-        .m-val.highlight { color: var(--electric-blue); }
+        /* --- BUTTON ACTION --- */
+        .btn-action { width: 100%; padding: 18px; border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transition: 0.3s; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-join { background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color: white; }
+        .btn-join:active { transform: scale(0.97); }
+        .btn-leave { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; display: none; }
+        .btn-leave:active { background: var(--danger); color: white; }
 
-        /* --- VIP TICKET PODS --- */
-        .pods-wrapper { padding: 30px 20px; display: flex; flex-direction: column; gap: 20px; }
+        /* --- QUEUE LIST --- */
+        .list-section { padding: 30px 20px; display: flex; flex-direction: column; gap: 15px; }
+        .q-item { background: var(--white); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid #E2E8F0; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
         
-        .pod-ticket {
-            background: var(--white); border-radius: 40px; padding: 25px;
-            position: relative; overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
-            border: 1px solid var(--border-soft);
-            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-            display: flex; align-items: center; gap: 20px;
-        }
+        .q-rank { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: var(--royal-blue); width: 35px; text-align: center; }
+        .q-item:nth-child(1) .q-rank { color: var(--success); } /* Antrian Pertama Hijau */
         
-        /* The Huge Watermark Number */
-        .pod-watermark {
-            position: absolute; right: -15px; bottom: -25px;
-            font-family: 'Space Grotesk'; font-size: 120px; font-weight: 900;
-            color: rgba(45, 99, 237, 0.03); line-height: 1; pointer-events: none;
-            transition: 0.4s;
-        }
+        .q-photo { width: 50px; height: 50px; border-radius: 16px; object-fit: cover; background: #F1F5F9; border: 2px solid #E2E8F0; }
+        .q-info { flex: 1; }
+        .q-name { font-family: 'Space Grotesk'; font-size: 15px; font-weight: 900; color: var(--text-main); text-transform: uppercase; }
+        .q-plat { font-size: 11px; font-weight: 700; color: var(--electric-blue); margin-top: 3px; letter-spacing: 1px; }
+        .q-time { font-size: 9px; font-weight: 700; color: var(--text-muted); margin-top: 5px; }
 
-        .pod-ticket.is-active { border-color: rgba(45, 99, 237, 0.3); box-shadow: 0 20px 40px rgba(45, 99, 237, 0.08); }
-        .pod-ticket.is-active .pod-watermark { color: rgba(45, 99, 237, 0.08); }
-        
-        .pod-ticket.is-me { 
-            background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%);
-            color: white; border: none; box-shadow: 0 20px 40px rgba(45, 99, 237, 0.3);
-        }
-        .pod-ticket.is-me .pod-watermark { color: rgba(255, 255, 255, 0.1); }
-        .pod-ticket.is-me .p-lbl, .pod-ticket.is-me .p-role { color: rgba(255,255,255,0.8); }
-        .pod-ticket.is-me .p-val { color: white; }
+        /* TOMBOL KICK (KHUSUS ADMIN / PEMILIK ANTRIAN) */
+        .btn-kick { background: #F1F5F9; color: var(--danger); border: none; width: 35px; height: 35px; border-radius: 12px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-kick:active { background: var(--danger); color: white; transform: scale(0.9); }
 
-        /* Content inside ticket */
-        .p-content { flex: 1; position: relative; z-index: 2; }
-        .p-lbl { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        .p-val { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: var(--royal-blue); letter-spacing: -0.5px; }
-        .p-role { font-size: 12px; font-weight: 600; color: var(--electric-blue); margin-top: 2px; }
-
-        .p-status-box { text-align: right; position: relative; z-index: 2; }
-        .p-time { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; color: var(--text-main); }
-        .pod-ticket.is-me .p-time { color: white; }
-
-        /* Action Buttons inside ticket */
-        .btn-select {
-            padding: 12px 25px; background: var(--success); color: white;
-            border: none; border-radius: 50px; font-family: 'Space Grotesk';
-            font-weight: 800; font-size: 12px; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
-        }
-        
-        .btn-kudeta {
-            padding: 8px 16px; background: #FEF2F2; color: var(--danger);
-            border: 1px solid #FCA5A5; border-radius: 50px; font-family: 'Space Grotesk';
-            font-weight: 800; font-size: 10px; cursor: pointer; margin-top: 10px; display: inline-block;
-        }
-
-        /* --- SMART ACTION ISLAND (FLOATING BOTTOM) --- */
-        .smart-island-wrapper {
-            position: fixed; bottom: 30px; left: 0; width: 100%;
-            display: flex; justify-content: center; z-index: 1000; padding: 0 20px;
-        }
-        
-        .smart-island {
-            width: 100%; max-width: 400px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
-            border-radius: 50px; padding: 8px;
-            box-shadow: 0 25px 50px rgba(10, 34, 89, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            display: flex; align-items: center; justify-content: space-between;
-            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        /* State 1: Register */
-        .btn-island-primary {
-            flex: 1; padding: 20px; border-radius: 40px; border: none;
-            background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%);
-            color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(45, 99, 237, 0.3); transition: 0.3s;
-        }
-        .btn-island-primary:active { transform: scale(0.97); }
-
-        /* State 2: Cancel Queue (Red) */
-        .btn-island-danger {
-            flex: 1; padding: 20px; border-radius: 40px; border: none;
-            background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5;
-            font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
-        }
-
-        /* Back Button Mini inside Island */
-        .btn-island-back {
-            width: 60px; height: 60px; border-radius: 50%;
-            background: #F1F5F9; color: var(--royal-blue); border: none;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; cursor: pointer; margin-right: 10px; flex-shrink: 0;
-            text-decoration: none;
-        }
-
-        /* --- CUSTOM MODAL --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.7); backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center; z-index: 20000; }
-        .modal-box { width: 85%; max-width: 350px; background: white; border-radius: 40px; padding: 35px 25px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(0.9); animation: popIn 0.3s forwards cubic-bezier(0.19, 1, 0.22, 1); }
-        @keyframes popIn { to { transform: scale(1); } }
-        
-        .modal-title { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; color: var(--royal-blue); margin-bottom: 10px; }
-        .modal-msg { font-size: 13px; color: var(--text-muted); margin-bottom: 30px; line-height: 1.6; font-weight: 500; }
-        .btn-yes { width: 100%; padding: 18px; background: var(--electric-blue); color: white; border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer; margin-bottom: 12px; box-shadow: 0 10px 25px rgba(45,99,237,0.3); }
-        .btn-no { width: 100%; padding: 18px; background: #F1F5F9; color: var(--text-muted); border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer; }
-
+        /* --- NAV BOTOOM --- */
+        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
+        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
-    <header class="hero-radar">
-        <div class="app-tag">Live Operations</div>
-        <h1 class="station-title">FC KELAPA GADING</h1>
+    <header class="header-premium">
+        <div class="sub-tag">Fast Charging Hub</div>
+        <h1 class="main-title">LIVE ANTRIAN</h1>
+        <div class="admin-badge" id="adminBadge"><i class="fas fa-shield-alt"></i> SUPERVISI ADMIN AKTIF</div>
     </header>
 
-    <div class="monitor-overlap">
-        <div class="monitor-hub">
-            <div class="m-block">
-                <div class="m-lbl">Slot Tersedia</div>
-                <div class="m-val highlight" id="vacantCount">3/3</div>
-            </div>
-            <div class="m-divider"></div>
-            <div class="m-block">
-                <div class="m-lbl">Total Antrian</div>
-                <div class="m-val" id="qCount">0</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="pods-wrapper" id="slotsContainer">
-        </div>
-
-    <div class="smart-island-wrapper">
-        <div class="smart-island" id="smartIsland">
-            <a href="dashboard.html" class="btn-island-back"><i class="fas fa-home"></i></a>
+    <div class="card-overlap">
+        <div class="status-card">
+            <div class="q-label">Total Antrian Saat Ini</div>
+            <div class="q-total" id="queueTotal">0</div>
+            <div style="font-size:11px; color:var(--text-muted); font-weight:600;" id="myStatus">Anda belum mengambil nomor antrian.</div>
             
-            <div id="actionArea" style="flex: 1;">
-                <button class="btn-island-primary" id="btnAction" onclick="handleIslandAction()">DAFTAR ANTRIAN</button>
-            </div>
+            <button class="btn-action btn-join" id="btnJoin" onclick="joinQueue()"><i class="fas fa-bolt" style="margin-right:8px;"></i> AMBIL ANTRIAN SEKARANG</button>
+            <button class="btn-action btn-leave" id="btnLeave" onclick="leaveQueue('me')"><i class="fas fa-times-circle" style="margin-right:8px;"></i> BATALKAN / SAYA SUDAH SELESAI</button>
         </div>
     </div>
 
-    <div id="customModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-title" id="mTitle">Konfirmasi</div>
-            <div class="modal-msg" id="mMsg">Pesan konfirmasi di sini.</div>
-            <button class="btn-yes" id="btnYes">LANJUTKAN</button>
-            <button class="btn-no" onclick="closeM()">BATAL</button>
-        </div>
-    </div>
+    <main class="list-section" id="queueList">
+        <div style="text-align:center; padding:30px; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> Memuat data server...</div>
+    </main>
+
+    <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const mainRef = doc(db, "antrian", "utama");
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // --- DEV MODE FALLBACK ---
-        let uData = JSON.parse(localStorage.getItem('maka_user'));
-        if (!uData) { uData = { plat: "B 1234 MLU", nama: "DRIVER MLU" }; } 
-        
-        const myPlat = uData.plat.toUpperCase().replace(/\s/g, '');
-        const myName = uData.nama;
+        // DATA PENGGUNA LOKAL
+        const u = JSON.parse(localStorage.getItem('maka_user')) || {};
+        if(!u.plat) window.location.href = 'index.html';
 
-        // Smart Island State
-        let currentIslandState = 'REGISTER'; // REGISTER, CANCEL, CHARGING
+        // CEK HAK AKSES SUPERVISI (Pengurus / Super Admin)
+        const isSupervisi = u.isSuperAdmin || (u.role && u.role !== 'KELUARGA MLU');
+        if(isSupervisi) document.getElementById('adminBadge').style.display = 'inline-flex';
 
-        onSnapshot(mainRef, (snap) => {
-            if (!snap.exists()) return;
-            const data = snap.data();
-            renderSystem(data.chargingSlots || [null, null, null], data.waitingQueue || []);
+        const myPhoto = u.foto || `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(u.nama)}`;
+        let myQueueId = null; // Simpan ID dokumen antrian saya sendiri
+
+        // RENDER ANTRIAN SECARA REAL-TIME (FI-FO)
+        onSnapshot(query(collection(db, "mlu_queue"), orderBy("timestamp", "asc")), (snap) => {
+            const list = document.getElementById('queueList');
+            const totalEl = document.getElementById('queueTotal');
+            
+            list.innerHTML = '';
+            myQueueId = null; // Reset tiap kali data berubah
+            
+            if(snap.empty) {
+                totalEl.innerText = "0";
+                list.innerHTML = '<div style="text-align:center; padding:40px; color:#94A3B8;"><i class="fas fa-battery-empty" style="font-size:30px; margin-bottom:10px;"></i><br>Stasiun sedang kosong. Silakan merapat.</div>';
+                updateMyStatus(false, 0);
+                return;
+            }
+
+            let rank = 1;
+            snap.forEach(docSnap => {
+                const d = docSnap.data();
+                const isMe = (d.plat === u.plat);
+                
+                if (isMe) myQueueId = docSnap.id;
+
+                // Logika Tombol Kick (Muncul jika itu antriannya sendiri ATAU yang login adalah Pengurus)
+                let kickBtnHtml = '';
+                if (isMe || isSupervisi) {
+                    kickBtnHtml = `<button class="btn-kick" onclick="window.leaveQueue('${docSnap.id}')" title="Selesaikan Antrian"><i class="fas fa-check"></i></button>`;
+                }
+
+                // Format Waktu
+                const dateObj = new Date(d.timestamp);
+                const timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+                list.innerHTML += `
+                    <div class="q-item" ${isMe ? 'style="border-color:var(--success); background:#ECFDF5;"' : ''}>
+                        <div class="q-rank">${rank}</div>
+                        <img src="${d.foto}" class="q-photo">
+                        <div class="q-info">
+                            <div class="q-name">${d.nama} ${isMe ? '(SAYA)' : ''}</div>
+                            <div class="q-plat">${d.plat}</div>
+                            <div class="q-time"><i class="far fa-clock"></i> Tiba pukul ${timeStr} WIB</div>
+                        </div>
+                        ${kickBtnHtml}
+                    </div>
+                `;
+                
+                if (isMe) updateMyStatus(true, rank);
+                rank++;
+            });
+
+            totalEl.innerText = snap.size;
+            if(!myQueueId) updateMyStatus(false, 0); // Jika setelah di-loop tidak ketemu antrian saya
         });
 
-        function renderSystem(slots, queue) {
-            const container = document.getElementById('slotsContainer');
-            container.innerHTML = '';
-            
-            let vacantCount = 0;
-            const totalSlots = slots.length;
-            const myQIndex = queue.findIndex(q => q.plat === myPlat);
-            const isCharging = slots.some(s => s && s.plat === myPlat);
+        // UPDATE TAMPILAN TOMBOL SESUAI STATUS
+        function updateMyStatus(isInQueue, myRank) {
+            const btnJoin = document.getElementById('btnJoin');
+            const btnLeave = document.getElementById('btnLeave');
+            const myStatus = document.getElementById('myStatus');
 
-            slots.forEach((s, i) => {
-                const isActive = s !== null;
-                const pod = document.createElement('div');
-                const isMe = isActive && s.plat === myPlat;
-                
-                pod.className = `pod-ticket ${isActive ? 'is-active' : ''} ${isMe ? 'is-me' : ''}`;
-                const waterMarkNo = `0${i+1}`;
-                
-                if (isActive) {
-                    const dur = Math.floor((Date.now() - (s.startTime || Date.now())) / 60000);
-                    let kudetaBtn = '';
-                    
-                    if (!isMe && myQIndex === 0 && dur >= 20) {
-                        kudetaBtn = `<div class="btn-kudeta" onclick="window.kudeta(${i}, '${s.plat}', ${dur})">⚡ KUDETA</div>`;
-                    }
-
-                    pod.innerHTML = `
-                        <div class="pod-watermark">${waterMarkNo}</div>
-                        <div class="p-content">
-                            <div class="p-lbl">${isMe ? 'Kendaraan Anda' : 'Occupied By'}</div>
-                            <div class="p-val">${s.plat}</div>
-                            <div class="p-role">${s.userName}</div>
-                            ${kudetaBtn}
-                        </div>
-                        <div class="p-status-box">
-                            <div class="p-time">${dur}'</div>
-                            <div class="p-lbl">Menit</div>
-                            ${isMe ? `<div style="margin-top:10px; font-size:24px;"><i class="fas fa-bolt"></i></div>` : ''}
-                        </div>
-                    `;
+            if (isInQueue) {
+                btnJoin.style.display = 'none';
+                btnLeave.style.display = 'block';
+                if(myRank === 1) {
+                    myStatus.innerHTML = '<span style="color:var(--success); font-weight:800;">GILIRAN ANDA SEKARANG!</span>';
                 } else {
-                    vacantCount++;
-                    const canSelect = myQIndex === 0;
-                    pod.innerHTML = `
-                        <div class="pod-watermark">${waterMarkNo}</div>
-                        <div class="p-content">
-                            <div class="p-lbl">Status Slot</div>
-                            <div class="p-val" style="color: #CBD5E1;">VACANT</div>
-                        </div>
-                        <div class="p-status-box">
-                            ${canSelect ? `<button class="btn-select" onclick="window.selectSlot(${i})">CONNECT</button>` : ''}
-                        </div>
-                    `;
+                    myStatus.innerHTML = `Anda berada di urutan ke-<b style="color:var(--royal-blue);">${myRank}</b>. Mohon bersabar.`;
                 }
-                container.appendChild(pod);
-            });
-
-            // Update Monitor
-            document.getElementById('vacantCount').innerText = `${vacantCount}/${totalSlots}`;
-            document.getElementById('qCount').innerText = queue.length;
-
-            // --- SMART ISLAND LOGIC ---
-            const btnAction = document.getElementById('btnAction');
-            
-            if (isCharging) {
-                currentIslandState = 'CHARGING';
-                btnAction.className = 'btn-island-primary';
-                btnAction.style.background = 'var(--success)';
-                btnAction.style.boxShadow = '0 10px 20px rgba(16, 185, 129, 0.3)';
-                btnAction.innerHTML = '<i class="fas fa-check-circle"></i> SEDANG CHARGING';
-                btnAction.onclick = () => window.stopMyCharge(slots);
-            } else if (myQIndex > -1) {
-                currentIslandState = 'CANCEL';
-                btnAction.className = 'btn-island-danger';
-                btnAction.style.background = '#FEF2F2';
-                btnAction.style.boxShadow = 'none';
-                btnAction.innerHTML = `BATALKAN ANTRIAN #${myQIndex + 1}`;
-                btnAction.onclick = () => window.cancelQueue();
             } else {
-                currentIslandState = 'REGISTER';
-                btnAction.className = 'btn-island-primary';
-                btnAction.style.background = 'linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%)';
-                btnAction.style.boxShadow = '0 10px 20px rgba(45, 99, 237, 0.3)';
-                btnAction.innerHTML = 'DAFTAR ANTRIAN';
-                btnAction.onclick = () => window.joinQueue();
+                btnJoin.style.display = 'block';
+                btnLeave.style.display = 'none';
+                myStatus.innerHTML = 'Anda belum mengambil nomor antrian.';
             }
         }
 
-        // --- CORE LOGIC (GPS Bypassed) ---
-        window.joinQueue = () => {
-            runTransaction(db, async (t) => {
-                const d = (await t.get(mainRef)).data();
-                let q = d.waitingQueue || [];
-                q.push({ plat: myPlat, userName: myName, role: "MEMBER", joinTime: Date.now() });
-                t.update(mainRef, { waitingQueue: q });
-            }).catch(e => alert("Error: " + e));
+        // FUNGSI GABUNG ANTRIAN
+        window.joinQueue = async () => {
+            const btn = document.getElementById('btnJoin');
+            btn.innerText = "MEMPROSES..."; btn.style.opacity = '0.7';
+            try {
+                await addDoc(collection(db, "mlu_queue"), {
+                    nama: u.namaKtp || u.namaWa || u.nama,
+                    plat: u.plat,
+                    foto: myPhoto,
+                    timestamp: Date.now()
+                });
+            } catch (e) { alert("Gagal mengambil antrian."); }
+            finally { btn.innerText = "AMBIL ANTRIAN SEKARANG"; btn.style.opacity = '1'; }
         };
 
-        window.cancelQueue = () => {
-            openM("Batalkan Antrian?", "Anda akan dihapus dari daftar tunggu.", () => {
-                runTransaction(db, async(t) => {
-                    const d = (await t.get(mainRef)).data();
-                    const newQ = d.waitingQueue.filter(q => q.plat !== myPlat);
-                    t.update(mainRef, { waitingQueue: newQ });
-                });
-            });
-        };
+        // FUNGSI KELUAR/HAPUS ANTRIAN (Diri Sendiri atau Oleh Admin)
+        window.leaveQueue = async (targetId) => {
+            let idToDelete = targetId;
+            
+            // Jika dipanggil dari tombol merah besar (Batalkan Antrian Saya)
+            if (targetId === 'me') idToDelete = myQueueId;
 
-        window.selectSlot = (i) => {
-            openM("Hubungkan ke Pod 0" + (i+1), "Pastikan motor sudah dicolok ke charger.", () => {
-                runTransaction(db, async (t) => {
-                    const d = (await t.get(mainRef)).data();
-                    let q = d.waitingQueue;
-                    const myIdx = q.findIndex(x => x.plat === myPlat);
-                    const me = q[myIdx];
-                    q.splice(myIdx, 1);
-                    me.startTime = Date.now();
-                    d.chargingSlots[i] = me;
-                    t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q });
-                });
-            });
-        };
+            if (!idToDelete) return;
 
-        window.stopMyCharge = (slots) => {
-            const i = slots.findIndex(s => s && s.plat === myPlat);
-            if(i > -1) {
-                openM("Selesai Charging?", "Pod akan dikosongkan.", () => {
-                    runTransaction(db, async(t) => {
-                        const d = (await t.get(mainRef)).data();
-                        d.chargingSlots[i] = null;
-                        t.update(mainRef, { chargingSlots: d.chargingSlots });
-                    });
-                });
+            if (confirm("Tandai antrian ini sudah SELESAI / DIBATALKAN?")) {
+                try {
+                    await deleteDoc(doc(db, "mlu_queue", idToDelete));
+                } catch(e) {
+                    alert("Gagal menghapus antrian.");
+                }
             }
         };
-
-        window.kudeta = (i, plat, dur) => {
-            openM("Ambil Alih Pod 0" + (i+1), `Kudeta kendaraan ${plat} (${dur} Menit).`, () => {
-                runTransaction(db, async (t) => {
-                    const d = (await t.get(mainRef)).data();
-                    let q = d.waitingQueue;
-                    const myIdx = q.findIndex(x => x.plat === myPlat);
-                    const me = q[myIdx];
-                    q.splice(myIdx, 1);
-                    me.startTime = Date.now();
-                    d.chargingSlots[i] = me;
-                    t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q });
-                });
-            });
-        };
-
-        // --- UTILS ---
-        function openM(title, msg, onConfirm) {
-            document.getElementById('mTitle').innerText = title;
-            document.getElementById('mMsg').innerText = msg;
-            document.getElementById('btnYes').onclick = () => { closeM(); onConfirm(); };
-            document.getElementById('customModal').style.display = 'flex';
-        }
-        window.closeM = () => document.getElementById('customModal').style.display = 'none';
-
     </script>
 </body>
 </html>
