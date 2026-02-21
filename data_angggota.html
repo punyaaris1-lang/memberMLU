@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLU - Live Directory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; --gold: #D4AF37; --danger: #EF4444;}
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; }
+        * { box-sizing: border-box; outline: none; }
+
+        .header-premium { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 25px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; position: sticky; top: 0; z-index: 100; }
+        .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; }
+        
+        .search-container { padding: 0 20px; margin-top: -25px; position: relative; z-index: 101; }
+        .search-box { background: var(--white); border-radius: 18px; padding: 15px 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 15px 30px rgba(10,34,89,0.1); border: 1px solid #E2E8F0; }
+        .search-box input { border: none; width: 100%; font-family: 'Inter'; font-weight: 600; font-size: 14px; color: var(--text-main); }
+
+        .member-list { padding: 25px 20px; display: flex; flex-direction: column; gap: 12px; }
+        .member-card { background: var(--white); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid #E2E8F0; position: relative; }
+        .member-photo { width: 55px; height: 55px; border-radius: 16px; object-fit: cover; border: 1px solid #E2E8F0; background: #F1F5F9; }
+        .member-info { flex: 1; min-width: 0; }
+        .m-name { font-family: 'Space Grotesk'; font-size: 15px; font-weight: 900; color: var(--royal-blue); margin-bottom: 4px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .m-name-wa { font-family: 'Inter'; font-size: 11px; font-weight: 600; color: var(--electric-blue); text-transform: uppercase; }
+        .m-plat { font-size: 11px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; letter-spacing: 1px; }
+        
+        .badge-row { display: flex; gap: 4px; flex-wrap: wrap; }
+        .badge { font-size: 8px; font-weight: 800; padding: 4px 8px; border-radius: 6px; letter-spacing: 1px; display: inline-block; }
+        .b-pengurus { background: #FFFBEB; color: var(--gold); border: 1px solid #FEF3C7; }
+        .b-anggota { background: #F1F5F9; color: var(--text-muted); border: 1px solid #E2E8F0; }
+        .b-type { background: rgba(45, 99, 237, 0.1); color: var(--electric-blue); border: 1px solid rgba(45, 99, 237, 0.2); }
+
+        .btn-wa { text-decoration: none; flex-shrink: 0; background: #ECFDF5; color: #10B981; padding: 8px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #D1FAE5; transition: 0.2s; }
+        .btn-wa:active { transform: scale(0.95); background: #D1FAE5; }
+
+        .action-bar { display: none; position: absolute; right: 10px; top: 10px; gap: 5px; }
+        .btn-act { background: #F1F5F9; border: none; width: 28px; height: 28px; border-radius: 8px; font-size: 12px; cursor: pointer; color: var(--electric-blue); }
+        .btn-act.red { color: #EF4444; background: #FEF2F2; }
+
+        .fab-admin { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: var(--electric-blue); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.4); border: none; cursor: pointer; z-index: 100; }
+        
+        #btnSync { background: #10B981; color: white; border: none; padding: 15px; border-radius: 15px; font-weight: bold; width: 100%; margin-bottom: 15px; display: none; cursor: pointer; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); font-family: 'Space Grotesk'; letter-spacing: 1px; }
+
+        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100; }
+        .btn-premium-back { background: rgba(255,255,255,0.95); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+
+        /* --- MODAL FORM EDIT/ADD --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
+        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; max-height: 90vh; overflow-y: auto; }
+        @keyframes slideUp { to { transform: translateY(0); } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); }
+        .btn-close { background: #F1F5F9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text-muted); }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .form-input { width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; }
+        .form-input:focus { border-color: var(--electric-blue); background: white; }
+        
+        .btn-save-modal { width: 100%; padding: 15px; border: none; border-radius: 16px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(45,99,237,0.3); }
+    </style>
+</head>
+<body>
+
+    <header class="header-premium">
+        <div style="font-size:10px; font-weight:800; letter-spacing:3px; opacity:0.7; text-transform:uppercase;">Live Database</div>
+        <h1 class="main-title">ANGGOTA MLU</h1>
+    </header>
+
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Cari Nama Asli, WA, atau Plat Nomor..." onkeyup="filterRender()">
+        </div>
+    </div>
+
+    <main class="member-list">
+        <button id="btnSync" onclick="window.syncInitialData()"><i class="fas fa-cloud-upload-alt"></i> SYNC DATA KE SERVER</button>
+        <div id="memberContainer"><div style="text-align:center; padding:30px; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> Memuat direktori...</div></div>
+    </main>
+
+    <button class="fab-admin" id="btnAddMember" onclick="openMemberModal()"><i class="fas fa-user-plus"></i></button>
+
+    <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI</a></div>
+
+    <div class="modal-overlay" id="memberModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Tambah Anggota</div>
+                <button class="btn-close" onclick="closeMemberModal()"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <input type="hidden" id="formId">
+            <div class="form-group">
+                <label>Plat Nomor</label>
+                <input type="text" id="formPlat" class="form-input" placeholder="Contoh: B 1234 XYZ" style="text-transform:uppercase;">
+            </div>
+            <div class="form-group">
+                <label>Nama Asli (KTP)</label>
+                <input type="text" id="formKtp" class="form-input" style="text-transform:uppercase;">
+            </div>
+            <div class="form-group">
+                <label>Nama Panggilan (WA)</label>
+                <input type="text" id="formWa" class="form-input" style="text-transform:uppercase;">
+            </div>
+            <div class="form-group">
+                <label>Nomor HP / WhatsApp</label>
+                <input type="tel" id="formHp" class="form-input" placeholder="08XX-XXXX-XXXX">
+            </div>
+            <div style="display:flex; gap:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Jabatan</label>
+                    <select id="formRole" class="form-input">
+                        <option value="KELUARGA MLU">Keluarga MLU</option>
+                        <option value="KETUA UMUM">Ketua Umum</option>
+                        <option value="WAKIL KETUA">Wakil Ketua</option>
+                        <option value="SEKRETARIS">Sekretaris</option>
+                        <option value="PEMBINA">Pembina</option>
+                        <option value="PENASEHAT">Penasehat</option>
+                        <option value="HUMAS">Humas</option>
+                        <option value="KORLAP">Korlap</option>
+                        <option value="SATGAS">Satgas</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Tipe Motor</label>
+                    <select id="formType" class="form-input">
+                        <option value="RTO">MAKA RTO</option>
+                        <option value="TRANSGO">TRANSGO</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-save-modal" id="btnSaveModal" onclick="saveMemberData()">SIMPAN DATA</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+
+        const u = JSON.parse(localStorage.getItem('maka_user')) || {};
+        const isPengurus = u.isSuperAdmin || (u.role && u.role !== 'KELUARGA MLU');
+
+        if (isPengurus) document.getElementById('btnAddMember').style.display = 'flex';
+
+        let firebaseData = [];
+
+        onSnapshot(collection(db, 'mlu_members'), (snap) => {
+            firebaseData = [];
+            if (snap.empty) {
+                if (isPengurus) document.getElementById('btnSync').style.display = 'block';
+                document.getElementById('memberContainer').innerHTML = '<div style="text-align:center; padding:30px; color:#94A3B8;">Data Kosong. Klik SYNC DATA.</div>';
+            } else {
+                document.getElementById('btnSync').style.display = 'none';
+                snap.forEach(docSnap => firebaseData.push({ id: docSnap.id, ...docSnap.data() }));
+                filterRender();
+            }
+        });
+
+        window.filterRender = () => {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('memberContainer');
+            
+            const roleWeight = { "KETUA UMUM": 1, "WAKIL KETUA": 2, "SEKRETARIS": 3, "PEMBINA": 4, "PENASEHAT": 5, "HUMAS": 6, "KORLAP": 7, "SATGAS": 8, "KELUARGA MLU": 9 };
+
+            let filtered = firebaseData.filter(m => {
+                const searchString = `${m.namaKtp || ''} ${m.namaWa || m.nama || ''} ${m.plat}`.toLowerCase();
+                return searchString.includes(query);
+            });
+            
+            filtered.sort((a, b) => {
+                const wA = roleWeight[a.role] || 99; const wB = roleWeight[b.role] || 99;
+                if (wA !== wB) return wA - wB;
+                const nameA = a.namaKtp || a.nama || ""; const nameB = b.namaKtp || b.nama || "";
+                return nameA.localeCompare(nameB);
+            });
+
+            container.innerHTML = '';
+            filtered.forEach(m => {
+                const roleClass = m.role !== "KELUARGA MLU" ? "b-pengurus" : "b-anggota";
+                const iconRole = m.role !== "KELUARGA MLU" ? '<i class="fas fa-star" style="margin-right:3px;"></i>' : '';
+                
+                const namaKtp = m.namaKtp || m.nama; 
+                const namaWa = m.namaWa || m.nama;   
+                let displayNameHtml = `${namaKtp} <span class="m-name-wa">/ ${namaWa}</span>`;
+
+                const finalPhoto = m.foto || `https://ui-avatars.com/api/?background=f1f5f9&color=0A2259&bold=true&name=${encodeURIComponent(namaKtp)}`;
+
+                // Menyimpan data ke fungsi onclick untuk modal Edit
+                const mDataStr = encodeURIComponent(JSON.stringify(m));
+
+                const actionHtml = isPengurus ? `
+                    <div class="action-bar" style="display:flex;">
+                        <button class="btn-act" onclick="openMemberModal('${mDataStr}')"><i class="fas fa-pen"></i></button>
+                        <button class="btn-act red" onclick="delMember('${m.id}')"><i class="fas fa-trash"></i></button>
+                    </div>` : '';
+
+                let hpClean = (m.hp || "").replace(/\D/g, ''); 
+                if (hpClean.startsWith('0')) hpClean = '62' + hpClean.substring(1);
+                
+                let waButtonHtml = (hpClean && hpClean.length > 8) ? 
+                    `<a href="https://wa.me/${hpClean}" target="_blank" class="btn-wa"><i class="fab fa-whatsapp" style="font-size:16px;"></i> ${m.hp}</a>` : 
+                    `<span style="font-size:11px; font-weight:700; color:var(--text-muted);">${m.hp || '-'}</span>`;
+
+                container.innerHTML += `
+                    <div class="member-card">
+                        ${actionHtml}
+                        <img src="${finalPhoto}" class="member-photo">
+                        <div class="member-info">
+                            <div class="m-name">${displayNameHtml}</div>
+                            <div class="m-plat">${m.plat}</div>
+                            <div class="badge-row">
+                                <span class="badge ${roleClass}">${iconRole}${m.role || 'KELUARGA MLU'}</span>
+                                <span class="badge b-type">${m.type || 'RTO'}</span>
+                            </div>
+                        </div>
+                        ${waButtonHtml}
+                    </div>`;
+            });
+        };
+
+        // --- SISTEM MODAL ---
+        window.openMemberModal = (encodedData = null) => {
+            const modal = document.getElementById('memberModal');
+            modal.style.display = 'flex';
+
+            if (encodedData) {
+                // Mode EDIT
+                const m = JSON.parse(decodeURIComponent(encodedData));
+                document.getElementById('modalTitle').innerText = "Edit Anggota";
+                document.getElementById('formId').value = m.id;
+                document.getElementById('formPlat').value = m.plat || "";
+                document.getElementById('formKtp').value = m.namaKtp || m.nama || "";
+                document.getElementById('formWa').value = m.namaWa || m.nama || "";
+                document.getElementById('formHp').value = m.hp || "";
+                document.getElementById('formRole').value = m.role || "KELUARGA MLU";
+                document.getElementById('formType').value = m.type || "RTO";
+            } else {
+                // Mode TAMBAH
+                document.getElementById('modalTitle').innerText = "Tambah Anggota";
+                document.getElementById('formId').value = "";
+                document.getElementById('formPlat').value = "";
+                document.getElementById('formKtp').value = "";
+                document.getElementById('formWa').value = "";
+                document.getElementById('formHp').value = "";
+                document.getElementById('formRole').value = "KELUARGA MLU";
+                document.getElementById('formType').value = "RTO";
+            }
+        };
+
+        window.closeMemberModal = () => {
+            document.getElementById('memberModal').style.display = 'none';
+        };
+
+        window.saveMemberData = async () => {
+            const id = document.getElementById('formId').value;
+            const plat = document.getElementById('formPlat').value.trim().toUpperCase();
+            const namaKtp = document.getElementById('formKtp').value.trim().toUpperCase();
+            const namaWa = document.getElementById('formWa').value.trim().toUpperCase();
+            const hp = document.getElementById('formHp').value.trim();
+            const role = document.getElementById('formRole').value;
+            const type = document.getElementById('formType').value;
+
+            if (!plat || !namaKtp) return alert("Plat Nomor dan Nama KTP wajib diisi!");
+
+            const btn = document.getElementById('btnSaveModal');
+            btn.innerText = "MENYIMPAN...";
+            btn.style.opacity = '0.7';
+
+            try {
+                if (id) {
+                    // EDIT
+                    await updateDoc(doc(db, 'mlu_members', id), {
+                        plat, namaKtp, namaWa, nama: namaWa, hp, role, type
+                    });
+                } else {
+                    // ADD
+                    await addDoc(collection(db, 'mlu_members'), {
+                        plat, namaKtp, namaWa, nama: namaWa, hp, role, type, foto: ""
+                    });
+                }
+                closeMemberModal();
+            } catch (e) {
+                alert("Gagal menyimpan: " + e.message);
+            } finally {
+                btn.innerText = "SIMPAN DATA";
+                btn.style.opacity = '1';
+            }
+        };
+
+        window.delMember = async (id) => {
+            if(confirm("Hapus anggota dari database? Ini tidak bisa dikembalikan!")) {
+                await deleteDoc(doc(db, 'mlu_members', id));
+            }
+        };
+
+        // Kalo database masih bener2 kosong
+        window.syncInitialData = async () => { /* Logika sync rawMembers dihapus untuk mempersingkat, pastikan server Bapak sudah ada datanya */ };
+    </script>
+</body>
+</html>

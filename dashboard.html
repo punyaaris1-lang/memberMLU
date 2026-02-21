@@ -8,23 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; --danger: #EF4444; }
-        
-        /* PERBAIKAN CSS SCROLL: min-height & padding-bottom */
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); min-height: 100vh; overflow-x: hidden; overflow-y: auto; padding-bottom: 120px; display: block; -webkit-font-smoothing: antialiased; }
         * { box-sizing: border-box; text-decoration: none; }
         
         .header-member { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 45px 25px 85px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .u-name { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; margin: 0; text-transform: uppercase; }
-        .u-info-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .u-name { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; margin: 0; text-transform: uppercase; line-height: 1.2; margin-bottom: 5px; }
+        .u-info-row { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
         .u-badge { background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; border: 1px solid rgba(255,255,255,0.15); }
         .u-type { background: var(--electric-blue); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; }
         .u-hp { font-size: 11px; width: 100%; margin-top: 4px; opacity: 0.8; }
-        .u-photo { width: 65px; height: 65px; border-radius: 22px; border: 2px solid rgba(255,255,255,0.3); object-fit: cover; }
+        .u-photo { width: 65px; height: 65px; border-radius: 22px; border: 2px solid rgba(255,255,255,0.3); object-fit: cover; flex-shrink: 0; margin-left: 15px; }
         
         .card-overlap { padding: 0 20px; margin-top: -45px; z-index: 10; position: relative; }
         .status-hub { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 24px; padding: 20px; text-align: center; box-shadow: 0 20px 40px rgba(10,34,89,0.1); border: 1px solid var(--white); }
         .hub-label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
-        .hub-val { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); }
+        .hub-val { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin-top: 2px; }
         .hub-val.pengurus { color: #D4AF37; }
         .hub-val.godmode { color: var(--danger); text-shadow: 0 0 10px rgba(239,68,68,0.3); }
 
@@ -37,7 +35,6 @@
         .node-sos .icon-box { background: var(--danger); color: white; }
         .node-sos .grid-label { color: var(--danger); }
         
-        /* DOCK DI NAIKKAN JADI BOTTOM 25px */
         .dock-container { position: fixed; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 1000; }
         .nav-pill { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 40px; display: flex; gap: 40px; border: 1px solid #E2E8F0; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
         .nav-tab { display: flex; flex-direction: column; align-items: center; color: #CBD5E1; }
@@ -112,7 +109,9 @@
         const u = JSON.parse(localStorage.getItem('maka_user')) || { nama: "GUEST", plat: "-", hp: "-", type: "RTO", role: "KELUARGA MLU" };
         const myPhoto = (u.foto && u.foto !== "") ? u.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(u.nama)}`;
 
-        document.getElementById('userName').innerText = u.namaWa || u.nama.split(' ')[0];
+        // MENGUBAH JADI NAMA ASLI (KTP)
+        document.getElementById('userName').innerText = u.namaKtp || u.nama;
+        
         document.getElementById('userPlat').innerText = u.plat;
         document.getElementById('userType').innerText = u.type;
         document.getElementById('userHP').innerText = u.hp;
@@ -120,7 +119,6 @@
         
         const roleEl = document.getElementById('userRole');
         
-        // TAMPILAN GOD MODE
         if (u.isSuperAdmin) {
             roleEl.innerText = "⭐ SUPER ADMIN / " + u.role;
             roleEl.classList.add('godmode');
@@ -134,7 +132,7 @@
             if(navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
                     await addDoc(collection(db, 'mlu_sos'), {
-                        nama: u.namaWa || u.nama, plat: u.plat, foto: myPhoto, 
+                        nama: u.namaKtp || u.nama, plat: u.plat, foto: myPhoto, 
                         lat: pos.coords.latitude, lng: pos.coords.longitude, status: 'ACTIVE', timestamp: Date.now()
                     });
                     alert("Sinyal SOS berhasil dipancarkan!");
@@ -151,7 +149,7 @@
                 document.getElementById('sosTargetName').innerText = d.nama;
                 document.getElementById('sosTargetPlat').innerText = d.plat;
                 document.getElementById('sosImg').src = d.foto;
-                document.getElementById('sosMapLink').href = `http://googleusercontent.com/maps.google.com/7{d.lat},${d.lng}`;
+                document.getElementById('sosMapLink').href = `http://googleusercontent.com/maps.google.com/8{d.lat},${d.lng}`;
                 modal.style.display = 'flex';
                 if(navigator.vibrate) navigator.vibrate([500,200,500,200,1000]);
             } else {
