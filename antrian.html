@@ -2,208 +2,487 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLU - Smart Queue System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MLU - Smart Charging Hub</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0A2259">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; --danger: #EF4444; --success: #10B981; --gold: #D4AF37; }
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; }
-        * { box-sizing: border-box; outline: none; }
-
-        /* --- HEADER --- */
-        .header-premium { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 25px 90px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; text-align: center; position: relative; }
-        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--electric-blue); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; }
+        :root { 
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
+            --bg-surface: #F8FAFC; --white: #FFFFFF; 
+            --text-main: #0F172A; --text-muted: #64748B; 
+            --danger: #EF4444; --success: #10B981; --gold: #F59E0B;
+            --border-soft: rgba(226, 232, 240, 0.8);
+        }
         
-        /* ADMIN BADGE */
-        .admin-badge { display: none; background: rgba(212, 175, 55, 0.2); color: var(--gold); padding: 5px 12px; border-radius: 20px; font-size: 9px; font-weight: 800; letter-spacing: 1px; margin-top: 10px; border: 1px solid rgba(212,175,55,0.4); justify-content: center; align-items: center; gap: 5px; width: max-content; margin-inline: auto; text-transform: uppercase; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* --- STATUS CARD --- */
-        .card-overlap { padding: 0 20px; margin-top: -45px; position: relative; z-index: 10; }
-        .status-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 25px; padding: 25px; text-align: center; box-shadow: 0 20px 40px rgba(10,34,89,0.1); border: 1px solid rgba(255,255,255,0.8); }
-        .q-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
-        .q-total { font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; color: var(--electric-blue); margin: 5px 0; line-height: 1; }
-
-        /* --- BUTTON ACTION --- */
-        .btn-action { width: 100%; padding: 18px; border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transition: 0.3s; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-join { background: linear-gradient(135deg, var(--success) 0%, #059669 100%); color: white; }
-        .btn-join:active { transform: scale(0.97); }
-        .btn-leave { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; display: none; }
-        .btn-leave:active { background: var(--danger); color: white; }
-
-        /* --- QUEUE LIST --- */
-        .list-section { padding: 30px 20px; display: flex; flex-direction: column; gap: 15px; }
-        .q-item { background: var(--white); border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid #E2E8F0; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        /* --- HEADER & RAMADAN WIDGET --- */
+        .header-premium { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; position: relative; z-index: 10; box-shadow: 0 15px 35px rgba(10,34,89,0.1); }
+        .head-flex { display: flex; justify-content: space-between; align-items: flex-start; }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; line-height: 1.1; }
         
-        .q-rank { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: var(--royal-blue); width: 35px; text-align: center; }
-        .q-item:nth-child(1) .q-rank { color: var(--success); } /* Antrian Pertama Hijau */
+        /* Widget Ramadan Terpadu */
+        .ramadan-widget { margin-top: 25px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.3) 100%); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); }
+        .rw-left { display: flex; align-items: center; gap: 15px; }
+        .rw-icon { font-size: 26px; color: #6EE7B7; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(110, 231, 183, 0.6)); }
+        .rw-lbl { font-size: 9px; font-weight: 800; color: #A7F3D0; text-transform: uppercase; letter-spacing: 1px; }
+        .rw-time { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; color: #fff; margin-top: 2px; }
+        .rw-target { font-size: 11px; font-weight: 800; color: #047857; background: #D1FAE5; padding: 5px 12px; border-radius: 12px; }
+
+        .admin-badge { display: none; background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 4px; box-shadow: 0 5px 10px rgba(239,68,68,0.2); }
+
+        /* --- QUEUE STATUS --- */
+        .status-overlap { padding: 0 20px; margin-top: -35px; position: relative; z-index: 11; }
+        .status-card { background: var(--white); border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 20px 40px rgba(10,34,89,0.06); border: 1px solid var(--border-soft); }
+        .sc-left { border-left: 4px solid var(--electric-blue); padding-left: 12px; }
+        .sc-lbl { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .sc-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--royal-blue); margin-top: 4px; }
+        .sc-right { text-align: right; }
+        .sc-tot { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 900; color: var(--electric-blue); line-height: 1; }
+
+        /* --- SLOT BAY (FRESH DESIGN) --- */
+        .slot-container { padding: 25px 20px 10px; display: flex; flex-direction: column; gap: 15px; }
+        .slot-bay { background: var(--white); border-radius: 24px; border: 1px solid var(--border-soft); padding: 15px; display: flex; align-items: center; gap: 15px; position: relative; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
         
-        .q-photo { width: 50px; height: 50px; border-radius: 16px; object-fit: cover; background: #F1F5F9; border: 2px solid #E2E8F0; }
-        .q-info { flex: 1; }
-        .q-name { font-family: 'Space Grotesk'; font-size: 15px; font-weight: 900; color: var(--text-main); text-transform: uppercase; }
-        .q-plat { font-size: 11px; font-weight: 700; color: var(--electric-blue); margin-top: 3px; letter-spacing: 1px; }
-        .q-time { font-size: 9px; font-weight: 700; color: var(--text-muted); margin-top: 5px; }
+        .slot-bay.is-active { border: 2px solid var(--electric-blue); box-shadow: 0 15px 30px rgba(45, 99, 237, 0.1); background: #F8FAFC; }
+        .slot-bay.is-vip { border: 2px solid var(--gold); box-shadow: 0 15px 30px rgba(245, 158, 11, 0.15); background: #FFFBEB; }
+        
+        .sb-num { width: 50px; height: 50px; border-radius: 16px; background: #F1F5F9; color: #94A3B8; font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .slot-bay.is-active .sb-num { background: var(--electric-blue); color: white; }
+        .slot-bay.is-vip .sb-num { background: var(--gold); color: white; }
 
-        /* TOMBOL KICK (KHUSUS ADMIN / PEMILIK ANTRIAN) */
-        .btn-kick { background: #F1F5F9; color: var(--danger); border: none; width: 35px; height: 35px; border-radius: 12px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-kick:active { background: var(--danger); color: white; transform: scale(0.9); }
+        .sb-info { flex: 1; min-width: 0; }
+        .sb-name { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sb-plat { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); line-height: 1; }
+        .slot-bay.is-empty .sb-plat { color: #CBD5E1; }
+        
+        .sb-timer { font-size: 10px; font-weight: 700; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
+        
+        /* TOMBOL KELOLA MODERN (3 TITIK) */
+        .btn-dots { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; color: var(--text-main); border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-dots:active { background: #E2E8F0; transform: scale(0.9); }
+        .admin-only { display: none; }
 
-        /* --- NAV BOTOOM --- */
-        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
+        .btn-action-main { padding: 10px 20px; border-radius: 14px; border: none; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; }
+        .btn-fill { background: var(--electric-blue); color: white; box-shadow: 0 5px 15px rgba(45,99,237,0.3); }
+
+        /* --- BOTTOM ACTIONS --- */
+        .action-hub { padding: 10px 20px; display: flex; flex-direction: column; gap: 12px; }
+        .btn-hub { width: 100%; padding: 18px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-cancel-me { background: #FEF2F2; color: var(--danger); border: 2px dashed #FCA5A5; display: none; }
+        .btn-cancel-me:active { background: #FCA5A5; color: white; }
+        .btn-manage-q { background: var(--text-main); color: white; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3); display: none; }
+        .btn-manage-q:active { transform: scale(0.98); }
+
+        /* --- MODERN BOTTOM SHEET (REPLACES JADUL MODALS) --- */
+        .sheet-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(5px); display: none; align-items: flex-end; z-index: 20000; opacity: 0; transition: opacity 0.3s; }
+        .sheet-overlay.show { display: flex; opacity: 1; }
+        .bottom-sheet { width: 100%; background: var(--white); border-radius: 35px 35px 0 0; padding: 20px 25px 40px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); box-shadow: 0 -15px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+        .sheet-overlay.show .bottom-sheet { transform: translateY(0); }
+        .sheet-handle { width: 50px; height: 5px; background: #E2E8F0; border-radius: 5px; margin: 0 auto 25px; }
+        
+        .sheet-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 20px; text-align: center; }
+        
+        /* MENU ITEMS IN SHEET */
+        .sheet-menu { display: flex; flex-direction: column; gap: 10px; }
+        .sm-btn { width: 100%; padding: 16px 20px; background: #F8FAFC; border: 1px solid var(--border-soft); border-radius: 16px; display: flex; align-items: center; gap: 15px; font-family: 'Inter'; font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: 0.2s; text-align: left; }
+        .sm-btn:active { background: #E2E8F0; transform: scale(0.98); }
+        .sm-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .bg-blue { background: rgba(45,99,237,0.1); color: var(--electric-blue); }
+        .bg-gold { background: rgba(245,158,11,0.1); color: var(--gold); }
+        .bg-red { background: #FEF2F2; color: var(--danger); }
+        .bg-dark { background: #F1F5F9; color: var(--text-main); }
+        
+        /* Input Manual */
+        .sheet-input { width: 100%; padding: 18px; border-radius: 16px; border: 2px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 18px; font-weight: 800; text-align: center; text-transform: uppercase; margin-bottom: 15px; outline: none; transition: 0.2s; }
+        .sheet-input:focus { border-color: var(--electric-blue); background: white; }
+
+        /* QUEUE LIST IN SHEET */
+        .q-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; margin-bottom: 10px; }
+        .qi-ctrl { display: flex; gap: 5px; }
+        .qi-btn { width: 32px; height: 32px; border-radius: 10px; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body>
 
     <header class="header-premium">
-        <div class="sub-tag">Fast Charging Hub</div>
-        <h1 class="main-title">LIVE ANTRIAN</h1>
-        <div class="admin-badge" id="adminBadge"><i class="fas fa-shield-alt"></i> SUPERVISI ADMIN AKTIF</div>
+        <div class="head-flex">
+            <div>
+                <span class="sub-tag">Station Monitor</span>
+                <h1 class="main-title">FC GADING</h1>
+            </div>
+            <div class="admin-badge admin-only" id="adminIndicator"><i class="fas fa-shield-alt"></i> ADMIN</div>
+        </div>
+
+        <div class="ramadan-widget">
+            <div class="rw-left">
+                <i class="fas fa-moon rw-icon" id="iconTimer"></i>
+                <div>
+                    <div class="rw-lbl" id="lblTimer">MENUJU BUKA PUASA</div>
+                    <div class="rw-time" id="countdown">--:--:--</div>
+                </div>
+            </div>
+            <div class="rw-target" id="timeTarget">MAGHRIB 18:10</div>
+        </div>
     </header>
 
-    <div class="card-overlap">
-        <div class="status-card">
-            <div class="q-label">Total Antrian Saat Ini</div>
-            <div class="q-total" id="queueTotal">0</div>
-            <div style="font-size:11px; color:var(--text-muted); font-weight:600;" id="myStatus">Anda belum mengambil nomor antrian.</div>
-            
-            <button class="btn-action btn-join" id="btnJoin" onclick="joinQueue()"><i class="fas fa-bolt" style="margin-right:8px;"></i> AMBIL ANTRIAN SEKARANG</button>
-            <button class="btn-action btn-leave" id="btnLeave" onclick="leaveQueue('me')"><i class="fas fa-times-circle" style="margin-right:8px;"></i> BATALKAN / SAYA SUDAH SELESAI</button>
+    <div class="status-overlap">
+        <div class="status-card" onclick="openSheet('sheetDaftarAntrian')">
+            <div class="sc-left">
+                <div class="sc-lbl">ANTRIAN BERIKUTNYA</div>
+                <div class="sc-val" id="nextQDisplay">KOSONG</div>
+            </div>
+            <div class="sc-right">
+                <div class="sc-lbl">TOTAL</div>
+                <div class="sc-tot" id="totalQDisplay">0</div>
+            </div>
         </div>
     </div>
 
-    <main class="list-section" id="queueList">
-        <div style="text-align:center; padding:30px; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> Memuat data server...</div>
-    </main>
+    <div class="slot-container" id="slotsContainer"></div>
+
+    <div class="action-hub">
+        <button id="btnCancelQ" class="btn-hub btn-cancel-me" onclick="cancelQueue()">BATALKAN ANTRIAN SAYA</button>
+        <button id="btnAdminPanel" class="btn-hub btn-manage-q admin-only" onclick="openSheet('sheetManageAntrian')"><i class="fas fa-sliders-h"></i> ATUR DAFTAR ANTRIAN</button>
+    </div>
 
     <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
 
+    <div class="sheet-overlay" id="sheetKelolaIsi" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title" id="titleKelolaIsi">Kelola Slot</div>
+            <div class="sheet-menu">
+                <button class="sm-btn" onclick="sheetPilihPindah()"><div class="sm-icon bg-blue"><i class="fas fa-exchange-alt"></i></div> Pindah ke Slot Lain</button>
+                <button class="sm-btn" onclick="adminToQueue()"><div class="sm-icon bg-gold"><i class="fas fa-undo"></i></div> Kembalikan Jadi Antrian</button>
+                <button class="sm-btn" onclick="adminKick()"><div class="sm-icon bg-red"><i class="fas fa-times"></i></div> Keluarkan (Selesai)</button>
+                <button class="sm-btn" onclick="adminBlock()"><div class="sm-icon bg-dark"><i class="fas fa-ban"></i></div> Blokir Plat Ini</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetPilihSlot" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Pindah ke Slot Mana?</div>
+            <div class="sheet-menu">
+                <button class="sm-btn" onclick="adminMoveSlot(0)"><div class="sm-icon bg-dark">1</div> Masuk Slot 1</button>
+                <button class="sm-btn" onclick="adminMoveSlot(1)"><div class="sm-icon bg-dark">2</div> Masuk Slot 2</button>
+                <button class="sm-btn" onclick="adminMoveSlot(2)"><div class="sm-icon bg-dark">3</div> Masuk Slot 3</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetIsiManual" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Jalur VVIP (Bypass)</div>
+            <input type="text" id="manualPlat" class="sheet-input" placeholder="Ketik Plat (B 123 XX)">
+            <button class="btn-hub" style="background:var(--success); color:white;" onclick="adminInsertManual()"><i class="fas fa-bolt"></i> MASUKKAN KE SLOT</button>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetManageAntrian" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Atur Daftar Antrian</div>
+            <div id="qAdminBody" style="margin-bottom: 20px;"></div>
+            <button class="sm-btn" onclick="unblockAll()"><div class="sm-icon bg-blue"><i class="fas fa-unlock"></i></div> Buka Semua Daftar Blokir</button>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetDaftarAntrian" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Daftar Tunggu</div>
+            <div id="qListBody"></div>
+        </div>
+    </div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+        const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const mainRef = doc(db, "antrian", "utama");
 
-        // DATA PENGGUNA LOKAL
-        const u = JSON.parse(localStorage.getItem('maka_user')) || {};
-        if(!u.plat) window.location.href = 'index.html';
+        const uData = JSON.parse(localStorage.getItem('maka_user'));
+        if(!uData || !uData.plat) window.location.href = 'index.html';
 
-        // CEK HAK AKSES SUPERVISI (Pengurus / Super Admin)
-        const isSupervisi = u.isSuperAdmin || (u.role && u.role !== 'KELUARGA MLU');
-        if(isSupervisi) document.getElementById('adminBadge').style.display = 'inline-flex';
+        const myPlat = uData.plat;
+        const myName = uData.namaKtp || uData.namaWa || uData.nama;
+        const myRole = uData.role || "GUEST";
+        const isSuperAdmin = uData.isSuperAdmin || myRole === 'KETUA UMUM' || myRole === 'WAKIL KETUA' || myRole === 'SEKRETARIS' || myRole === 'KORLAP';
 
-        const myPhoto = u.foto || `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(u.nama)}`;
-        let myQueueId = null; // Simpan ID dokumen antrian saya sendiri
-
-        // RENDER ANTRIAN SECARA REAL-TIME (FI-FO)
-        onSnapshot(query(collection(db, "mlu_queue"), orderBy("timestamp", "asc")), (snap) => {
-            const list = document.getElementById('queueList');
-            const totalEl = document.getElementById('queueTotal');
-            
-            list.innerHTML = '';
-            myQueueId = null; // Reset tiap kali data berubah
-            
-            if(snap.empty) {
-                totalEl.innerText = "0";
-                list.innerHTML = '<div style="text-align:center; padding:40px; color:#94A3B8;"><i class="fas fa-battery-empty" style="font-size:30px; margin-bottom:10px;"></i><br>Stasiun sedang kosong. Silakan merapat.</div>';
-                updateMyStatus(false, 0);
-                return;
-            }
-
-            let rank = 1;
-            snap.forEach(docSnap => {
-                const d = docSnap.data();
-                const isMe = (d.plat === u.plat);
-                
-                if (isMe) myQueueId = docSnap.id;
-
-                // Logika Tombol Kick (Muncul jika itu antriannya sendiri ATAU yang login adalah Pengurus)
-                let kickBtnHtml = '';
-                if (isMe || isSupervisi) {
-                    kickBtnHtml = `<button class="btn-kick" onclick="window.leaveQueue('${docSnap.id}')" title="Selesaikan Antrian"><i class="fas fa-check"></i></button>`;
-                }
-
-                // Format Waktu
-                const dateObj = new Date(d.timestamp);
-                const timeStr = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
-                list.innerHTML += `
-                    <div class="q-item" ${isMe ? 'style="border-color:var(--success); background:#ECFDF5;"' : ''}>
-                        <div class="q-rank">${rank}</div>
-                        <img src="${d.foto}" class="q-photo">
-                        <div class="q-info">
-                            <div class="q-name">${d.nama} ${isMe ? '(SAYA)' : ''}</div>
-                            <div class="q-plat">${d.plat}</div>
-                            <div class="q-time"><i class="far fa-clock"></i> Tiba pukul ${timeStr} WIB</div>
-                        </div>
-                        ${kickBtnHtml}
-                    </div>
-                `;
-                
-                if (isMe) updateMyStatus(true, rank);
-                rank++;
-            });
-
-            totalEl.innerText = snap.size;
-            if(!myQueueId) updateMyStatus(false, 0); // Jika setelah di-loop tidak ketemu antrian saya
-        });
-
-        // UPDATE TAMPILAN TOMBOL SESUAI STATUS
-        function updateMyStatus(isInQueue, myRank) {
-            const btnJoin = document.getElementById('btnJoin');
-            const btnLeave = document.getElementById('btnLeave');
-            const myStatus = document.getElementById('myStatus');
-
-            if (isInQueue) {
-                btnJoin.style.display = 'none';
-                btnLeave.style.display = 'block';
-                if(myRank === 1) {
-                    myStatus.innerHTML = '<span style="color:var(--success); font-weight:800;">GILIRAN ANDA SEKARANG!</span>';
-                } else {
-                    myStatus.innerHTML = `Anda berada di urutan ke-<b style="color:var(--royal-blue);">${myRank}</b>. Mohon bersabar.`;
-                }
-            } else {
-                btnJoin.style.display = 'block';
-                btnLeave.style.display = 'none';
-                myStatus.innerHTML = 'Anda belum mengambil nomor antrian.';
-            }
+        if(isSuperAdmin) {
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
         }
 
-        // FUNGSI GABUNG ANTRIAN
-        window.joinQueue = async () => {
-            const btn = document.getElementById('btnJoin');
-            btn.innerText = "MEMPROSES..."; btn.style.opacity = '0.7';
-            try {
-                await addDoc(collection(db, "mlu_queue"), {
-                    nama: u.namaKtp || u.namaWa || u.nama,
-                    plat: u.plat,
-                    foto: myPhoto,
-                    timestamp: Date.now()
-                });
-            } catch (e) { alert("Gagal mengambil antrian."); }
-            finally { btn.innerText = "AMBIL ANTRIAN SEKARANG"; btn.style.opacity = '1'; }
+        let localSlots = [null, null, null]; 
+        let localQueue = []; 
+        let blockedList = [];
+        let currentTargetSlot = -1;
+
+        function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
+        function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+
+        // --- WIDGET RAMADAN ---
+        function updateTimer() {
+            const now = new Date();
+            const currentTime = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const imsakTime = 4 * 3600 + 30 * 60; const maghribTime = 18 * 3600 + 10 * 60;
+            let targetTime = 0;
+
+            if (currentTime >= imsakTime && currentTime < maghribTime) {
+                targetTime = maghribTime;
+                document.getElementById('lblTimer').innerText = "MENUJU BUKA PUASA";
+                document.getElementById('timeTarget').innerText = "MAGHRIB 18:10";
+                document.getElementById('iconTimer').className = "fas fa-moon rw-icon";
+            } else {
+                targetTime = imsakTime; if (currentTime >= maghribTime) targetTime += 24 * 3600;
+                document.getElementById('lblTimer').innerText = "MENUJU BATAS SAHUR";
+                document.getElementById('timeTarget').innerText = "IMSAK 04:30";
+                document.getElementById('iconTimer').className = "fas fa-mosque rw-icon";
+            }
+
+            let diff = targetTime - currentTime;
+            let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
+            document.getElementById('countdown').innerText = `${j.toString().padStart(2, '0')}:${n.toString().padStart(2, '0')}:${d.toString().padStart(2, '0')}`;
+        }
+        setInterval(updateTimer, 1000); updateTimer();
+
+        // --- BOTTOM SHEET LOGIC ---
+        window.openSheet = (id) => { 
+            document.getElementById(id).classList.add('show'); 
+            if(id === 'sheetManageAntrian') renderQueueAdmin();
+            if(id === 'sheetDaftarAntrian') renderQueueList();
+        };
+        window.closeSheet = (e, id) => { 
+            if(e.target.id === id) document.getElementById(id).classList.remove('show'); 
+        };
+        window.forceCloseSheet = (id) => document.getElementById(id).classList.remove('show');
+
+        // --- FETCH FIREBASE ---
+        onSnapshot(mainRef, (snap) => {
+            if (!snap.exists()) return; 
+            const d = snap.data(); 
+            localSlots = d.chargingSlots || [null, null, null]; 
+            localQueue = d.waitingQueue || []; 
+            blockedList = d.blockedPlates || [];
+            updateUI();
+        });
+
+        function updateUI() {
+            const container = document.getElementById('slotsContainer'); 
+            container.innerHTML = ''; 
+            
+            let myQIndex = localQueue.findIndex(q => cleanStr(q.plat) === cleanStr(myPlat));
+            const btnCancel = document.getElementById('btnCancelQ'); 
+            if(myQIndex > -1) { btnCancel.style.display = 'flex'; btnCancel.innerHTML = `❌ BATALKAN ANTRIAN SAYA (#${myQIndex+1})`; } 
+            else { btnCancel.style.display = 'none'; }
+
+            localSlots.forEach((s, i) => {
+                const div = document.createElement('div');
+                const isActive = s !== null; 
+                
+                if (isActive) {
+                    const rawRole = s.role ? s.role.toUpperCase() : "GUEST"; 
+                    const isMe = (cleanStr(s.plat) === cleanStr(myPlat)); 
+                    
+                    let cardClass = 'is-guest'; 
+                    if (rawRole.includes("KETUM") || rawRole.includes("WAKETUM") || rawRole.includes("PEMBINA")) cardClass = 'is-vip';
+                    else if (rawRole !== "GUEST") cardClass = 'is-active';
+
+                    div.className = `slot-bay ${cardClass}`;
+
+                    const durationMin = Math.floor((Date.now() - (s.startTime || Date.now())) / 60000);
+                    let timerHTML = isMe ? `<div class="sb-timer" style="color:var(--electric-blue)"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` : `<div class="sb-timer"><i class="fas fa-clock"></i> ${durationMin} MIN RUNNING</div>`;
+                    
+                    let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
+
+                    div.innerHTML = `
+                        <div class="sb-num">${i+1}</div>
+                        <div class="sb-info">
+                            <div class="sb-name">${escapeHtml(s.userName)}</div>
+                            <div class="sb-plat">${s.plat}</div>
+                            ${timerHTML}
+                        </div>
+                        ${adminBtn}`;
+                    
+                    if(isMe) {
+                        div.onclick = () => { if(confirm("Selesai pengisian?")) stopCharging(i); }
+                        div.style.cursor = "pointer";
+                    }
+
+                } else {
+                    div.className = `slot-bay is-empty`;
+                    let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuKosong(${i})"><i class="fas fa-plus"></i></button>` : '';
+                    let actionHtml = '';
+
+                    if (localQueue.length === 0 || myQIndex === 0) {
+                        actionHtml = `<button class="btn-action-main btn-fill" onclick="selectSlot(${i})">MASUK SLOT</button>`; 
+                    } else if (myQIndex > 0) actionHtml = `<div style="font-size:11px; color:var(--text-muted); font-weight:800;">MENUNGGU GILIRAN</div>`; 
+
+                    div.innerHTML = `
+                        <div class="sb-num">${i+1}</div>
+                        <div class="sb-info"><div class="sb-plat">KOSONG</div></div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            ${actionHtml}
+                            ${adminBtn}
+                        </div>`;
+                }
+                container.appendChild(div);
+            });
+            document.getElementById('totalQDisplay').innerText = localQueue.length; 
+            document.getElementById('nextQDisplay').innerText = localQueue.length > 0 ? localQueue[0].userName : "KOSONG";
+        }
+
+        // --- MEMBER FUNCTIONS ---
+        window.selectSlot = async (i) => { 
+            if(blockedList.includes(cleanStr(myPlat))) return alert("Maaf, Plat Nomor Anda diblokir.");
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); 
+                if(d.chargingSlots[i]) throw "SLOT PENUH!"; 
+                let q = d.waitingQueue; 
+                const idx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat)); 
+                if(idx === -1 && !isSuperAdmin) throw "ANDA TIDAK ADA DI ANTRIAN!"; 
+                let me = idx > -1 ? q.splice(idx, 1)[0] : { plat: myPlat, userName: myName, role: myRole }; 
+                me.startTime = Date.now(); d.chargingSlots[i] = me; 
+                t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
+            }).catch(e => alert(e)); 
+        };
+        
+        window.stopCharging = (i) => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[i] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }); };
+        window.cancelQueue = () => { if(confirm("YAKIN INGIN BATAL?")) { runTransaction(db, async(t) => { const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); t.update(mainRef, { waitingQueue: newQ }); }); }};
+
+        // --- ADMIN COMMANDS VIA BOTTOM SHEETS ---
+        window.openMenuIsi = (idx, plat) => {
+            currentTargetSlot = idx;
+            document.getElementById('titleKelolaIsi').innerText = `Kelola Slot ${idx + 1} (${plat})`;
+            openSheet('sheetKelolaIsi');
         };
 
-        // FUNGSI KELUAR/HAPUS ANTRIAN (Diri Sendiri atau Oleh Admin)
-        window.leaveQueue = async (targetId) => {
-            let idToDelete = targetId;
-            
-            // Jika dipanggil dari tombol merah besar (Batalkan Antrian Saya)
-            if (targetId === 'me') idToDelete = myQueueId;
+        window.openMenuKosong = (idx) => {
+            currentTargetSlot = idx;
+            document.getElementById('manualPlat').value = '';
+            openSheet('sheetIsiManual');
+        };
 
-            if (!idToDelete) return;
+        window.sheetPilihPindah = () => {
+            forceCloseSheet('sheetKelolaIsi');
+            setTimeout(() => openSheet('sheetPilihSlot'), 300);
+        };
 
-            if (confirm("Tandai antrian ini sudah SELESAI / DIBATALKAN?")) {
-                try {
-                    await deleteDoc(doc(db, "mlu_queue", idToDelete));
-                } catch(e) {
-                    alert("Gagal menghapus antrian.");
-                }
+        window.adminMoveSlot = (targetIdx) => {
+            if(targetIdx === currentTargetSlot) return forceCloseSheet('sheetPilihSlot');
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); 
+                if(d.chargingSlots[targetIdx] !== null) throw "Slot Tujuan Sedang Terisi!";
+                d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot];
+                d.chargingSlots[currentTargetSlot] = null;
+                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+            }).then(() => forceCloseSheet('sheetPilihSlot')).catch(e => alert(e));
+        };
+
+        window.adminKick = () => {
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); d.chargingSlots[currentTargetSlot] = null; 
+                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+            }).then(() => forceCloseSheet('sheetKelolaIsi'));
+        };
+
+        window.adminToQueue = () => {
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot];
+                if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } 
+                t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); 
+            }).then(() => forceCloseSheet('sheetKelolaIsi'));
+        };
+
+        window.adminBlock = () => {
+            if(confirm("BLOKIR PERMANEN PLAT INI?")) {
+                runTransaction(db, async(t)=>{ 
+                    const d = (await t.get(mainRef)).data(); 
+                    let b = d.blockedPlates || [];
+                    const p = d.chargingSlots[currentTargetSlot].plat;
+                    b.push(cleanStr(p));
+                    d.chargingSlots[currentTargetSlot] = null;
+                    const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(p));
+                    t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: newQ, blockedPlates: b}); 
+                }).then(() => forceCloseSheet('sheetKelolaIsi'));
             }
         };
+
+        window.adminInsertManual = () => {
+            const plat = document.getElementById('manualPlat').value.trim().toUpperCase();
+            if(!plat) return alert("Plat wajib diisi");
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); 
+                d.chargingSlots[currentTargetSlot] = { plat: plat, userName: "BYPASS ADMIN", role: "VIP", startTime: Date.now() };
+                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+            }).then(() => forceCloseSheet('sheetIsiManual'));
+        };
+
+        // --- RENDER LIST IN SHEETS ---
+        window.renderQueueAdmin = () => {
+            const body = document.getElementById('qAdminBody'); body.innerHTML = '';
+            if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
+            localQueue.forEach((q, i) => {
+                body.innerHTML += `
+                    <div class="q-item">
+                        <div><div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900;">#${i+1} | ${q.plat}</div><div style="font-size:10px; color:#64748B;">${q.userName}</div></div>
+                        <div class="qi-ctrl">
+                            ${i > 0 ? `<button class="qi-btn" style="background:var(--electric-blue); color:white;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : ''}
+                            ${i < localQueue.length - 1 ? `<button class="qi-btn" style="background:#CBD5E1; color:white;" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : ''}
+                            <button class="qi-btn" style="background:var(--danger); color:white;" onclick="adminKickQueue('${q.plat}')"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.renderQueueList = () => {
+            const body = document.getElementById('qListBody'); body.innerHTML = '';
+            if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
+            localQueue.forEach((q, i) => {
+                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted);">${q.userName}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px;">#${i+1}</div></div>`;
+            });
+        };
+
+        window.adminReorder = (index, dir) => {
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue;
+                let temp = q[index]; q[index] = q[index + dir]; q[index + dir] = temp;
+                t.update(mainRef, {waitingQueue: q}); 
+            });
+        };
+
+        window.adminKickQueue = (plat) => {
+            if(confirm(`Keluarkan ${plat} dari antrian?`)) {
+                runTransaction(db, async(t)=>{ 
+                    const d = (await t.get(mainRef)).data(); 
+                    const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(plat));
+                    t.update(mainRef, {waitingQueue: newQ}); 
+                });
+            }
+        };
+
+        window.unblockAll = () => { if(confirm("Hapus semua daftar blokir?")) updateDoc(mainRef, {blockedPlates: []}).then(() => forceCloseSheet('sheetManageAntrian')); };
     </script>
 </body>
 </html>
