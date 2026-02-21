@@ -12,13 +12,16 @@
         .login-card { background: var(--white); width: 90%; max-width: 380px; padding: 40px 30px; border-radius: 40px; box-shadow: 0 25px 50px rgba(10, 34, 89, 0.15); text-align: center; position: relative; }
         .brand-logo { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; }
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #64748B; margin-bottom: 30px; text-transform: uppercase; }
-        .input-group { text-align: left; margin-bottom: 25px; }
-        label { font-size: 11px; font-weight: 800; color: var(--royal-blue); display: block; margin-bottom: 8px; margin-left: 10px; }
-        input { width: 100%; padding: 18px; border-radius: 20px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 18px; font-weight: 800; outline: none; text-transform: uppercase; text-align: center; letter-spacing: 2px; }
-        input:focus { border-color: var(--electric-blue); background: var(--white); }
-        .btn-main { width: 100%; padding: 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.3); }
         
-        /* TOMBOL AJAIB DEVELOPER */
+        .input-group { text-align: left; margin-bottom: 20px; }
+        label { font-size: 11px; font-weight: 800; color: var(--royal-blue); display: block; margin-bottom: 8px; margin-left: 10px; }
+        input { width: 100%; padding: 18px; border-radius: 20px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 18px; font-weight: 800; outline: none; text-align: center; letter-spacing: 2px; transition: 0.3s; }
+        input:focus { border-color: var(--electric-blue); background: var(--white); box-shadow: 0 0 0 4px rgba(45, 99, 237, 0.1); }
+        
+        #logPlat { text-transform: uppercase; }
+        #logPin { letter-spacing: 8px; font-size: 24px; color: var(--royal-blue); }
+
+        .btn-main { width: 100%; padding: 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.3); }
         .btn-magic { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 20px; background: #10B981; color: white; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); }
         
         #loader { display: none; margin-top: 15px; font-size: 12px; font-weight: 600; color: var(--electric-blue); }
@@ -31,25 +34,31 @@
         <div class="sub-tag">Secured Access Portal</div>
         
         <div class="input-group">
-            <label>Masukkan Plat Nomor Kendaraan</label>
+            <label>Plat Nomor Kendaraan</label>
             <input type="text" id="logPlat" placeholder="B 1234 XYZ">
+        </div>
+
+        <div class="input-group">
+            <label>PIN Rahasia (Angka/Huruf Bebas)</label>
+            <input type="password" id="logPin" placeholder="••••••">
+            <div style="font-size:9px; color:#94A3B8; text-align:center; margin-top:8px;">*Jika ini login pertama, PIN akan otomatis tersimpan.</div>
         </div>
         
         <button class="btn-main" onclick="handleLogin()">VERIFIKASI AKSES</button>
         
-        <button class="btn-magic" id="btnSetup" onclick="setupDatabase()"><i class="fas fa-database"></i> SETUP DATABASE SERVER (KLIK 1X)</button>
+        <button class="btn-magic" id="btnSetup" onclick="setupDatabase()" style="display:none;"><i class="fas fa-database"></i> SETUP SERVER (KLIK 1X)</button>
         
-        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Memproses ke Server Google...</div>
+        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Memproses ke Server...</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // DATA 41 ANGGOTA
+        // DATA RAW
         const rawMembers = [
             { n: "RENO", p: "B 4454 SWF", h: "085711164860", r: "KELUARGA MLU", t: "RTO" },
             { n: "UBAY", p: "B 4484 SWF", h: "085771739616", r: "SEKRETARIS", t: "RTO" },
@@ -94,69 +103,72 @@
             { n: "MUHAMAD ILHAM M.", p: "B 4698 SWE", h: "082310253644", r: "KELUARGA MLU", t: "RTO" }
         ];
 
-        // 1. FUNGSI UNTUK MENGISI SERVER GOOGLE (HANYA DITEKAN SEKALI OLEH BAPAK)
-        window.setupDatabase = async () => {
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('loader').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang mengisi Server Google...';
-            document.getElementById('btnSetup').style.display = 'none';
-
-            try {
-                // Cek apakah server masih kosong
-                const snap = await getDocs(collection(db, "mlu_members"));
-                if (!snap.empty) {
-                    alert("✅ DATABASE SERVER SUDAH TERISI! Silakan langsung Login.");
-                    document.getElementById('loader').style.display = 'none';
-                    return;
-                }
-
-                // Jika kosong, masukkan 41 data
-                for (const m of rawMembers) {
-                    await addDoc(collection(db, 'mlu_members'), { 
-                        namaKtp: m.n, namaWa: m.n, nama: m.n, plat: m.p, hp: m.h, role: m.r, type: m.t, foto: "" 
-                    });
-                }
-                
-                alert("🎉 SUKSES! 41 Data Anggota berhasil masuk ke Server Cloud. Sekarang sistem sudah LIVE.");
-                document.getElementById('loader').style.display = 'none';
-                
-            } catch (e) {
-                alert("Gagal koneksi ke server: " + e.message);
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('btnSetup').style.display = 'block';
-            }
+        // Cek Database Awal saat web dibuka
+        window.onload = async () => {
+            const snap = await getDocs(collection(db, "mlu_members"));
+            if(snap.empty) document.getElementById('btnSetup').style.display = 'block';
         };
 
-        // 2. FUNGSI LOGIN NORMAL
+        window.setupDatabase = async () => {
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('btnSetup').style.display = 'none';
+            try {
+                for (const m of rawMembers) {
+                    await addDoc(collection(db, 'mlu_members'), { 
+                        namaKtp: m.n, namaWa: m.n, nama: m.n, plat: m.p, hp: m.h, role: m.r, type: m.t, foto: "", pin: "" 
+                    });
+                }
+                alert("SUKSES! Server siap digunakan.");
+                document.getElementById('loader').style.display = 'none';
+            } catch (e) { alert("Gagal setup server."); }
+        };
+
         window.handleLogin = async () => {
             const rawPlat = document.getElementById('logPlat').value.trim();
-            if(!rawPlat) return alert("Plat Nomor wajib diisi!");
+            const rawPin = document.getElementById('logPin').value.trim();
+            
+            if(!rawPlat || !rawPin) return alert("Plat Nomor dan PIN wajib diisi!");
 
             document.getElementById('loader').style.display = 'block';
-            document.getElementById('loader').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari Plat di Server...';
-            
             const searchPlat = rawPlat.replace(/\s/g, '').toUpperCase();
+            
             let foundUser = null;
+            let foundDocId = null;
 
             try {
                 const querySnapshot = await getDocs(collection(db, "mlu_members"));
-                
-                // Jika server benar-benar kosong (Bapak lupa klik tombol hijau)
                 if(querySnapshot.empty) {
                     document.getElementById('loader').style.display = 'none';
-                    return alert("⛔ SERVER MASIH KOSONG! Silakan klik tombol hijau 'SETUP DATABASE SERVER' terlebih dahulu.");
+                    return alert("⛔ SERVER KOSONG! Klik SETUP SERVER dulu.");
                 }
 
-                // Cari plat yang cocok
                 querySnapshot.forEach((doc) => {
                     const dbPlat = (doc.data().plat || "").replace(/\s/g, '').toUpperCase();
-                    if (dbPlat === searchPlat) foundUser = doc.data();
+                    if (dbPlat === searchPlat) {
+                        foundUser = doc.data();
+                        foundDocId = doc.id;
+                    }
                 });
 
                 if (foundUser) {
-                    // Beri GOD MODE ke Pak Rizky
+                    // LOGIKA PIN KEAMANAN
+                    if (!foundUser.pin || foundUser.pin === "") {
+                        // INI LOGIN PERTAMA, SIMPAN PIN-NYA KE SERVER!
+                        await updateDoc(doc(db, "mlu_members", foundDocId), { pin: rawPin });
+                        alert("✅ BERHASIL! PIN Anda telah didaftarkan. Harap ingat PIN ini untuk login selanjutnya.");
+                    } else {
+                        // LOGIN KEDUA DST, CEK APAKAH PIN-NYA BENAR
+                        if (foundUser.pin !== rawPin) {
+                            document.getElementById('loader').style.display = 'none';
+                            return alert("❌ AKSES DITOLAK! PIN yang Anda masukkan SALAH.");
+                        }
+                    }
+
+                    // GOD MODE PAK RIZKY
                     if(searchPlat === 'B4248SWF') foundUser.isSuperAdmin = true;
 
                     localStorage.setItem('maka_user', JSON.stringify({
+                        id: foundDocId, // Simpan ID agar setting tahu doc mana
                         plat: foundUser.plat, 
                         nama: foundUser.nama || foundUser.namaWa || foundUser.namaKtp,
                         namaKtp: foundUser.namaKtp, 
