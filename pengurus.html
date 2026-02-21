@@ -2,172 +2,197 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU Executive - Struktur Pengurus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLU - Struktur Kepengurusan</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root {
-            --royal-blue: #0A2259;
-            --electric-blue: #2D63ED;
-            --bg-surface: #F8FAFC;
-            --white: #FFFFFF;
-            --text-main: #0F172A;
-            --text-muted: #64748B;
-            --premium-gold: #D4AF37;
-            --border-soft: rgba(226, 232, 240, 0.8);
+        :root { 
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; --gold: #D4AF37;
+            --bg-surface: #F8FAFC; --white: #FFFFFF; 
+            --text-main: #0F172A; --text-muted: #64748B; 
         }
-        
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            margin: 0; padding: 0; background: var(--bg-surface); color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            padding-bottom: 120px;
+            margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; 
+            /* Pola latar belakang halus agar terlihat fresh */
+            background-image: radial-gradient(circle at 10% 20%, rgba(45, 99, 237, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(10, 34, 89, 0.05) 0%, transparent 20%);
+            background-attachment: fixed;
         }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* --- PREMIUM HEADER --- */
-        .header-premium {
-            background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%);
-            padding: 50px 25px 90px 25px;
-            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
-            color: white; text-align: center;
-            box-shadow: 0 10px 30px rgba(10, 34, 89, 0.15);
+        /* --- HEADER PREMIUM --- */
+        .header-premium { 
+            background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
+            padding: 50px 25px 90px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
+            color: white; text-align: center; position: relative; overflow: hidden; box-shadow: 0 15px 40px rgba(10,34,89,0.15);
         }
-        .header-label { 
-            font-size: 10px; font-weight: 800; letter-spacing: 3px; 
-            text-transform: uppercase; opacity: 0.7; margin-bottom: 8px; display: block;
-        }
-        .main-title { 
-            font-family: 'Space Grotesk', sans-serif; font-size: 28px; 
-            font-weight: 800; margin: 0; letter-spacing: -0.5px;
-        }
-
-        /* --- CONTAINER GRID --- */
-        .container {
-            padding: 0 20px; max-width: 600px; margin: -50px auto 0;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
-            position: relative; z-index: 10;
-        }
+        /* Hiasan latar belakang header */
+        .header-premium::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 2px, transparent 2px, transparent 10px); pointer-events: none; }
         
-        .full-width { grid-column: span 2; }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .main-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; margin: 0; letter-spacing: 1px; }
 
-        /* --- EXECUTIVE CARD STYLE --- */
-        .profile-card {
-            background: var(--white);
-            border-radius: 30px;
-            overflow: hidden;
-            border: 1px solid var(--border-soft);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
-            transition: transform 0.2s ease;
-        }
-        .profile-card:active { transform: scale(0.97); }
-        
-        /* Image Container - Squircle Look */
-        .img-box {
-            width: 100%; aspect-ratio: 1/1.1;
-            overflow: hidden;
-            background: #F1F5F9;
-            display: flex; justify-content: center; align-items: flex-start;
-        }
-        .p-img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: 0.5s;
-        }
-        
-        /* Info Box */
-        .info-box {
-            padding: 15px 10px; text-align: center;
-        }
-        .p-name {
-            font-family: 'Space Grotesk', sans-serif; font-size: 15px; 
-            font-weight: 800; color: var(--royal-blue);
-            text-transform: uppercase; margin-bottom: 4px;
-        }
-        .p-role {
-            font-size: 9px; font-weight: 800;
-            letter-spacing: 1px; text-transform: uppercase;
-            padding: 4px 10px; border-radius: 50px;
-            display: inline-block;
-        }
+        /* --- LAYOUT CONTAINER --- */
+        .content-container { padding: 0 20px; margin-top: -50px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 30px; }
 
-        /* --- ROLE VARIANTS --- */
-        .role-gold { background: #FFFBEB; color: var(--premium-gold); border: 1px solid #FEF3C7; }
-        .role-blue { background: #EFF6FF; color: var(--electric-blue); border: 1px solid #DBEAFE; }
-        .role-navy { background: #F1F5F9; color: var(--royal-blue); border: 1px solid #E2E8F0; }
+        /* --- SECTION TITLES --- */
+        .section-label { text-align: center; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin: 10px 0 5px; position: relative; }
+        .section-label::after { content: ''; display: block; width: 40px; height: 3px; background: var(--electric-blue); margin: 8px auto 0; border-radius: 10px; opacity: 0.3; }
 
-        /* --- FLOATING BACK BUTTON --- */
-        .back-nav {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            z-index: 100;
+        /* --- CARD STYLES (The Core Design) --- */
+        .p-card { 
+            background: var(--white); border-radius: 28px; padding: 25px 20px; 
+            text-align: center; display: flex; flex-direction: column; align-items: center; 
+            box-shadow: 0 15px 40px rgba(10, 34, 89, 0.08); border: 1px solid rgba(255,255,255,0.7);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden;
         }
-        .btn-premium-back {
-            background: var(--white); border: 1px solid var(--border-soft);
-            color: var(--royal-blue); padding: 14px 35px; border-radius: 50px;
-            font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800;
-            cursor: pointer; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            display: flex; align-items: center; gap: 10px; transition: 0.3s;
-            text-decoration: none; text-transform: uppercase;
+        .p-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 25px 50px rgba(45, 99, 237, 0.15); border-color: rgba(45, 99, 237, 0.3); }
+
+        /* Foto dengan bentuk Squircle (Kotak tumpul) */
+        .p-photo { 
+            width: 90px; height: 90px; border-radius: 30%; object-fit: cover; 
+            margin-bottom: 15px; border: 4px solid var(--white); background: #F1F5F9;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: 0.3s;
         }
-        .btn-premium-back:active { transform: scale(0.95); background: #F8FAFC; }
+        .p-card:hover .p-photo { transform: scale(1.05); box-shadow: 0 20px 40px rgba(45, 99, 237, 0.2); }
+
+        .p-role { font-size: 10px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; background: rgba(45, 99, 237, 0.08); padding: 4px 12px; border-radius: 20px; }
+        .p-name { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin: 0; line-height: 1.2; }
+        .p-plat { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 6px; }
+
+        /* --- SPECIAL CARDS (KETUM) --- */
+        .card-ketum { 
+            background: linear-gradient(145deg, #FFFFFF 0%, #FFFBEB 100%); 
+            border: 2px solid rgba(212, 175, 55, 0.3); 
+            padding: 35px 25px; /* Lebih besar */
+        }
+        .card-ketum .p-photo { width: 110px; height: 110px; border-color: var(--gold); }
+        .card-ketum .p-role { color: var(--gold); background: rgba(212, 175, 55, 0.1); font-size: 12px; }
+        .card-ketum .p-name { font-size: 24px; }
+        /* Mahkota di atas Ketum */
+        .ketum-crown { position: absolute; top: 15px; color: var(--gold); font-size: 24px; opacity: 0.8; filter: drop-shadow(0 2px 5px rgba(212,175,55,0.3)); }
+
+        /* --- GRIDS FOR TIERS --- */
+        .tier-2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .tier-3-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; }
+        .tier-4-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        /* Responsif untuk layar kecil */
+        @media (max-width: 380px) { .tier-4-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        /* --- BACK NAV --- */
+        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100; }
+        .btn-premium-back { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-soft); color: var(--royal-blue); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: 0.3s; }
+        .btn-premium-back:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <div class="header-premium">
-        <span class="header-label">Organization Structure</span>
-        <h1 class="main-title">COMMAND CENTER</h1>
-    </div>
+    <header class="header-premium">
+        <span class="sub-tag">Leadership Core</span>
+        <h1 class="main-title">PENGURUS PUSAT MLU</h1>
+    </header>
 
-    <div class="container" id="teamContainer">
+    <div class="content-container">
+        <div id="loader" style="text-align:center; padding:40px; color:var(--text-muted); font-weight:600;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size:24px; color:var(--electric-blue); margin-bottom:10px;"></i><br>Memuat Struktur Organisasi...
         </div>
 
-    <div class="back-nav">
-        <a href="dashboard.html" class="btn-premium-back">
-            <i class="fas fa-chevron-left"></i> KEMBALI
-        </a>
+        <div id="tier1"></div>
+
+        <div id="tier2-title" style="display:none;"><div class="section-label">PIMPINAN EKSEKUTIF</div></div>
+        <div id="tier2" class="tier-2-grid"></div>
+
+        <div id="tier3-title" style="display:none;"><div class="section-label">DEWAN PENASEHAT & PEMBINA</div></div>
+        <div id="tier3" class="tier-3-grid"></div>
+
+        <div id="tier4-title" style="display:none;"><div class="section-label">DIVISI OPERASIONAL</div></div>
+        <div id="tier4" class="tier-4-grid"></div>
     </div>
 
-    <script>
-        const TEAM_DATA = [
-            { nama: "KI AHMAD", jabatan: "KETUA UMUM", foto: "akiaki.jpg", type: "gold", full: true },
-            { nama: "SANDI DAYYAN", jabatan: "WAKIL KETUA", foto: "dayan.jpg", type: "gold", full: false },
-            { nama: "DEDI UBAY", jabatan: "SEKRETARIS", foto: "ubay.jpg", type: "blue", full: false },
-            { nama: "BANG IWAN", jabatan: "PEMBINA", foto: "iwan.jpg", type: "blue", full: false },
-            { nama: "PAK AJI", jabatan: "PENASEHAT", foto: "aji.jpg", type: "blue", full: false },
-            { nama: "FERRY", jabatan: "HUMAS", foto: "ferry.jpg", type: "blue", full: false },
-            { nama: "DONI", jabatan: "HUMAS", foto: "doni.jpg", type: "blue", full: false },
-            { nama: "AMAR", jabatan: "KORLAP", foto: "amar.jpg", type: "navy", full: false },
-            { nama: "SANDI", jabatan: "KORLAP", foto: "sandi.jpg", type: "navy", full: false },
-            { nama: "SANDI JET LEE", jabatan: "SATGAS", foto: "jetlee.jpg", type: "navy", full: false },
-            { nama: "HENDRO", jabatan: "SATGAS", foto: "hendro.jpg", type: "navy", full: false }
-        ];
+    <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
 
-        const container = document.getElementById('teamContainer');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        TEAM_DATA.forEach(p => {
-            const card = document.createElement('div');
-            const roleClass = p.type === 'gold' ? 'role-gold' : (p.type === 'blue' ? 'role-blue' : 'role-navy');
-            const widthClass = p.full ? 'full-width' : '';
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+
+        // FUNGSI RENDER KARTU
+        function renderCard(containerId, data, isKetum = false, isSmall = false) {
+            const container = document.getElementById(containerId);
+            // Prioritaskan Nama KTP, kalau kosong baru Nama WA/Panggilan
+            const displayName = data.namaKtp || data.namaWa || data.nama;
+            const photoUrl = data.foto || `https://ui-avatars.com/api/?background=f1f5f9&color=0A2259&bold=true&name=${encodeURIComponent(displayName)}`;
             
-            card.className = `profile-card ${widthClass}`;
+            let cardClass = isKetum ? 'p-card card-ketum' : 'p-card';
+            let crownHtml = isKetum ? '<i class="fas fa-crown ketum-crown"></i>' : '';
             
-            card.innerHTML = `
-                <div class="img-box">
-                    <img src="${p.foto}" class="p-img" onerror="this.src='https://ui-avatars.com/api/?background=f1f5f9&color=0A2259&bold=true&name=${encodeURIComponent(p.nama)}';">
-                </div>
-                <div class="info-box">
-                    <div class="p-name">${p.nama}</div>
-                    <div class="p-role ${roleClass}">${p.jabatan}</div>
+            // Penyesuaian ukuran font untuk kartu kecil (grid 3 kolom)
+            let nameStyle = isSmall ? 'font-size:14px;' : '';
+            let roleStyle = isSmall ? 'font-size:8px; padding:3px 8px;' : '';
+            let photoStyle = isSmall ? 'width:70px; height:70px;' : '';
+
+            const html = `
+                <div class="${cardClass}">
+                    ${crownHtml}
+                    <img src="${photoUrl}" class="p-photo" style="${photoStyle}">
+                    <div class="p-role" style="${roleStyle}">${data.role}</div>
+                    <h3 class="p-name" style="${nameStyle}">${displayName}</h3>
+                    <div class="p-plat">${data.plat}</div>
                 </div>
             `;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        async function loadPengurus() {
+            const loader = document.getElementById('loader');
+            // Ambil semua anggota yang BUKAN "KELUARGA MLU"
+            const q = query(collection(db, "mlu_members"), where("role", "!=", "KELUARGA MLU"));
             
-            container.appendChild(card);
-        });
+            try {
+                const querySnapshot = await getDocs(q);
+                loader.style.display = 'none';
+                
+                if (querySnapshot.empty) {
+                    document.querySelector('.content-container').innerHTML += '<div style="text-align:center; color:var(--text-muted);">Belum ada data pengurus.</div>';
+                    return;
+                }
+
+                // Tampilkan Judul Section
+                document.getElementById('tier2-title').style.display = 'block';
+                document.getElementById('tier3-title').style.display = 'block';
+                document.getElementById('tier4-title').style.display = 'block';
+
+                querySnapshot.forEach((doc) => {
+                    const d = doc.data();
+                    const r = d.role.toUpperCase();
+
+                    // LOGIKA SORTING TIER (Hierarki Jabatan)
+                    if (r === 'KETUA UMUM') {
+                        renderCard('tier1', d, true); // isKetum = true
+                    } 
+                    else if (r === 'WAKIL KETUA' || r === 'SEKRETARIS') {
+                        renderCard('tier2', d);
+                    }
+                    else if (r === 'PEMBINA' || r === 'PENASEHAT') {
+                        renderCard('tier3', d);
+                    }
+                    else {
+                        // Sisanya (Humas, Korlap, Satgas, dll) masuk Tier 4 (Grid Kecil)
+                        renderCard('tier4', d, false, true); // isSmall = true
+                    }
+                });
+
+            } catch (e) {
+                loader.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> Gagal memuat data: ${e.message}`;
+            }
+        }
+
+        loadPengurus();
     </script>
 </body>
 </html>
