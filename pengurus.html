@@ -115,21 +115,19 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // DAFTAR NAMA FILE FOTO LOKAL (Ganti nama-nama ini sesuai nama pengurus yang punya file .jpg)
+        // DAFTAR NAMA FILE FOTO LOKAL (Sudah ditambahkan koma)
         const localPhotos = {
             "AMAR": "amar.jpg",
             "AJI": "aji.jpg",
             "DONI": "doni.jpg",
             "UBAY": "ubay.jpg",
-            "AHMAD": "akiaki.jpg"
-            "FERRY": "ferry.jpg"
-            "DAYYAN": "dayan.jpg"
-            "HENDRO": "hendro.jpg"
-            "IWAN": "iwan.jpg"
-            "JETLEE": "jetlee.jpg"
+            "AHMAD": "akiaki.jpg",
+            "FERRY": "ferry.jpg",
+            "DAYYAN": "dayan.jpg",
+            "HENDRO": "hendro.jpg",
+            "IWAN": "iwan.jpg",
+            "JETLEE": "jetlee.jpg",
             "SANDI": "sandi.jpg"
-            
-            // Tambahkan nama lain di sini jika ada
         };
 
         // FUNGSI RENDER KARTU
@@ -138,10 +136,7 @@
             const displayName = data.namaKtp || data.namaWa || data.nama || "";
             const cleanName = displayName.toUpperCase().trim();
             
-   // PRIORITAS FOTO: 
-            // 1. Cek apakah ada di daftar localPhotos.
-            // 2. Kalau tidak ada, ambil dari Firebase (data.foto).
-            // 3. Kalau tidak ada juga, pakai Inisial (ui-avatars).
+            // PRIORITAS FOTO
             let photoUrl = "";
             let defaultFallback = `https://ui-avatars.com/api/?background=f1f5f9&color=0A2259&bold=true&name=${encodeURIComponent(displayName)}`;
 
@@ -160,7 +155,6 @@
             let roleStyle = isSmall ? 'font-size:8px; padding:3px 8px;' : '';
             let photoStyle = isSmall ? 'width:70px; height:70px;' : '';
 
-            // Fitur onerror: Jika file amar.jpg ternyata belum di-upload ke folder, jangan error, ganti jadi inisial!
             const html = `
                 <div class="${cardClass}">
                     ${crownHtml}
