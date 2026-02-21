@@ -179,7 +179,7 @@
                 <div class="menu-desc">Asisten tagihan pribadi</div>
             </a>
 
-            <a href="info_mlu.html" class="menu-btn">
+            <a href="infomlu.html" class="menu-btn">
                 <div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div>
                 <div class="menu-title">Info MLU</div>
                 <div class="menu-desc">Pusat informasi & aturan</div>
@@ -189,13 +189,13 @@
     </main>
 
     <div class="dock-container">
-        <a href="lokasi_fc.html" class="nav-item">
+        <a href="lokasifc.html" class="nav-item">
             <i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI FC</span>
         </a>
         <a href="dashboard.html" class="nav-item active">
             <i class="fas fa-home"></i><span class="nav-text">HOME</span>
         </a>
-        <a href="plan_route.html" class="nav-item">
+        <a href="plan.html" class="nav-item">
             <i class="fas fa-route"></i><span class="nav-text">ROUTE PLAN</span>
         </a>
     </div>
@@ -207,7 +207,7 @@
                 <button class="btn-close" onclick="closeSosModal()"><i class="fas fa-times"></i></button>
             </div>
             
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Laporan Anda akan dikirimkan ke Group Pengurus WhatsApp beserta rincian lokasi terkini.</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Laporan Anda dapat dikirimkan ke Group Pengurus atau kontak pilihan Anda beserta rincian lokasi terkini.</p>
 
             <div class="form-group">
                 <label>Pilih Kendala Darurat</label>
@@ -226,7 +226,7 @@
                 <textarea id="sosDesc" class="form-input" rows="3" placeholder="Contoh: Depan Indomaret, dekat pom bensin..."></textarea>
             </div>
             
-            <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()"><i class="fab fa-whatsapp"></i> KIRIM S.O.S VIA WHATSAPP</button>
+            <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()"><i class="fab fa-whatsapp"></i> BAGIKAN S.O.S KE GRUP / KONTAK WA</button>
         </div>
     </div>
 
@@ -351,13 +351,16 @@
         };
 
         function executeWa(type, desc, name, plat, loc) {
-            const targetWa = "6282125611740"; 
+            // FORMAT PESAN S.O.S
             const msg = `*🚨 LAPORAN DARURAT S.O.S (MLU) 🚨*\n\n*Pelapor:* ${name} (${plat})\n*Kendala:* ${type}\n*Keterangan:* ${desc}\n\n*Titik Lokasi Saat Ini:*\n📍 ${loc}\n\n_Mohon segera direspon, anggota butuh bantuan!_`;
-            const url = `https://wa.me/${targetWa}?text=${encodeURIComponent(msg)}`;
+            
+            // TARGET KOSONG: Agar user bebas memilih mau dikirim ke Grup WA / Kontak mana saja
+            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
             
             const btn = document.getElementById('btnSendSos');
-            btn.innerHTML = '<i class="fab fa-whatsapp"></i> KIRIM S.O.S VIA WHATSAPP';
+            btn.innerHTML = '<i class="fab fa-whatsapp"></i> BAGIKAN S.O.S KE GRUP / KONTAK WA';
             btn.style.opacity = '1';
+            
             window.closeSosModal();
             window.location.href = url;
         }
