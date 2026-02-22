@@ -2,202 +2,219 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MLU Super App - Login</title>
+    
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-    <title>MLU - Portal Akses</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="logomlu.png">
+    <link rel="apple-touch-icon" href="logomlu.png">
+    <meta name="theme-color" content="#0A2259">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-light: #F8FAFC; --white: #FFFFFF; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-light); height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-        .login-card { background: var(--white); width: 90%; max-width: 380px; padding: 40px 30px; border-radius: 40px; box-shadow: 0 25px 50px rgba(10, 34, 89, 0.15); text-align: center; position: relative; }
-        .brand-logo { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; }
-        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #64748B; margin-bottom: 30px; text-transform: uppercase; }
+        :root { 
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
+            --bg-surface: #F8FAFC; --white: #FFFFFF; 
+            --text-main: #0F172A; --text-muted: #64748B; 
+            --gold: #D4AF37;
+        }
         
-        .input-group { text-align: left; margin-bottom: 20px; }
-        label { font-size: 11px; font-weight: 800; color: var(--royal-blue); display: block; margin-bottom: 8px; margin-left: 10px; }
-        input { width: 100%; padding: 18px; border-radius: 20px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 18px; font-weight: 800; outline: none; text-align: center; letter-spacing: 2px; transition: 0.3s; }
-        input:focus { border-color: var(--electric-blue); background: var(--white); box-shadow: 0 0 0 4px rgba(45, 99, 237, 0.1); }
-        
-        #logPlat { text-transform: uppercase; }
-        #logPin { letter-spacing: 8px; font-size: 24px; color: var(--royal-blue); }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-surface); font-family: 'Inter', sans-serif; overflow: hidden; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        .btn-main { width: 100%; padding: 20px; border: none; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.3); }
-        .btn-magic { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 20px; background: #10B981; color: white; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); }
+        /* --- SPLASH SCREEN (LOADING) --- */
+        #splashScreen {
+            position: fixed; inset: 0; background: linear-gradient(160deg, var(--royal-blue) 0%, #051336 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.8s ease-out;
+        }
         
-        #loader { display: none; margin-top: 15px; font-size: 12px; font-weight: 600; color: var(--electric-blue); }
+        .splash-logo { width: 150px; height: 150px; object-fit: contain; margin-bottom: 25px; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .splash-title { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: white; margin: 0; text-align: center; line-height: 1.1; letter-spacing: 2px; text-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; animation: fadeUp 1s ease-out 0.5s forwards; }
+        
+        .splash-loader { margin-top: 30px; width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.8s forwards; }
+        .splash-loader::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: var(--gold); border-radius: 10px; animation: loadingBar 2s infinite ease-in-out; }
+
+        .splash-footer { position: absolute; bottom: 40px; font-size: 11px; font-weight: 600; color: #93C5FD; text-transform: uppercase; letter-spacing: 2px; opacity: 0; animation: fadeUp 1s ease-out 1s forwards; }
+        .splash-footer i { color: #EF4444; margin: 0 3px; animation: heartbeat 1.5s infinite; }
+
+        /* --- LOGIN SCREEN --- */
+        #loginScreen {
+            display: none; flex-direction: column; min-height: 100%; background: var(--bg-surface);
+            background-image: radial-gradient(circle at 50% -20%, rgba(45, 99, 237, 0.1) 0%, transparent 50%);
+            opacity: 0; transition: opacity 0.5s ease-in; padding: 40px 25px; align-items: center; justify-content: center;
+        }
+
+        .login-card { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 40px 30px; box-shadow: 0 25px 50px rgba(10,34,89,0.08); border: 1px solid rgba(255,255,255,0.8); text-align: center; }
+        
+        .login-logo { width: 90px; height: 90px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .login-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; color: var(--royal-blue); margin: 0 0 5px 0; }
+        .login-subtitle { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 35px; }
+
+        .form-group { margin-bottom: 20px; text-align: left; position: relative;}
+        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px;}
+        .input-icon { position: absolute; left: 18px; top: 38px; color: var(--electric-blue); font-size: 16px; }
+        .form-input { width: 100%; padding: 16px 16px 16px 45px; border-radius: 16px; border: 2px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-weight: 700; font-size: 16px; color: var(--text-main); transition: 0.3s; text-transform: uppercase;}
+        .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 4px rgba(45,99,237,0.1); }
+
+        .btn-login { width: 100%; padding: 18px; border: none; border-radius: 16px; background: linear-gradient(135deg, var(--royal-blue) 0%, #15398F 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; margin-top: 15px; cursor: pointer; box-shadow: 0 15px 30px rgba(10,34,89,0.25); transition: 0.2s; letter-spacing: 1px;}
+        .btn-login:active { transform: scale(0.96); }
+
+        .error-msg { color: var(--danger); font-size: 11px; font-weight: 700; margin-top: 15px; background: #FEF2F2; padding: 10px; border-radius: 10px; display: none; }
+
+        /* ANIMATIONS */
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes fadeUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes loadingBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
     </style>
 </head>
 <body>
 
-    <div class="login-card">
-        <div class="brand-logo">MLU SYSTEM</div>
-        <div class="sub-tag">Secured Access Portal</div>
+    <div id="splashScreen">
+        <img src="logomlu.png" class="splash-logo" alt="MLU Logo">
+        <h1 class="splash-title">MLU<br>SUPER APPS</h1>
+        <div class="splash-loader"></div>
         
-        <div class="input-group">
-            <label>Plat Nomor Kendaraan</label>
-            <input type="text" id="logPlat" placeholder="B 1234 XYZ">
+        <div class="splash-footer">
+            Made with love <i class="fas fa-heart"></i> for MLU Family
         </div>
+    </div>
 
-        <div class="input-group">
-            <label>PIN Rahasia (Angka/Huruf Bebas)</label>
-            <input type="password" id="logPin" placeholder="••••••">
-            <div style="font-size:9px; color:#94A3B8; text-align:center; margin-top:8px;">*Jika ini login pertama, PIN akan otomatis tersimpan.</div>
+    <div id="loginScreen">
+        <div class="login-card">
+            <img src="logomlu.png" class="login-logo" alt="Logo">
+            <h2 class="login-title">LOGIN MEMBER</h2>
+            <div class="login-subtitle">Masukkan Plat Nomor Anda untuk masuk</div>
+
+            <div class="form-group">
+                <label>Plat Nomor Kendaraan</label>
+                <i class="fas fa-motorcycle input-icon"></i>
+                <input type="text" id="inputPlat" class="form-input" placeholder="Contoh: B 1234 XYZ" autocomplete="off">
+            </div>
+
+            <div id="errorBox" class="error-msg"></div>
+
+            <button class="btn-login" id="btnLogin" onclick="prosesLogin()">MASUK APLIKASI</button>
         </div>
         
-        <button class="btn-main" onclick="handleLogin()">VERIFIKASI AKSES</button>
-        
-        <button class="btn-magic" id="btnSetup" onclick="setupDatabase()" style="display:none;"><i class="fas fa-database"></i> SETUP SERVER (KLIK 1X)</button>
-        
-        <div id="loader"><i class="fas fa-spinner fa-spin"></i> Memproses ke Server...</div>
+        <div style="margin-top: 30px; font-size: 11px; font-weight: 600; color: var(--text-muted);">
+            &copy; 2025 Komunitas Maka Lintas Utara
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // FIREBASE MLU ASLI
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
 
-        // DATA RAW
-        const rawMembers = [
-            { n: "RENO", p: "B 4454 SWF", h: "085711164860", r: "KELUARGA MLU", t: "RTO" },
-            { n: "UBAY", p: "B 4484 SWF", h: "085771739616", r: "SEKRETARIS", t: "RTO" },
-            { n: "PURNOMO", p: "B 4773 SWF", h: "087888720198", r: "KELUARGA MLU", t: "TRANSGO" },
-            { n: "CRIS", p: "B 4933 SWG", h: "082123914054", r: "KELUARGA MLU", t: "RTO" },
-            { n: "ABDULLAH FAQIH", p: "B 4699 SWG", h: "08978608692", r: "KELUARGA MLU", t: "RTO" },
-            { n: "MAT", p: "B 4673 SWE", h: "088291040252", r: "KELUARGA MLU", t: "RTO" },
-            { n: "REHAN", p: "B 4229 SWF", h: "-", r: "KELUARGA MLU", t: "RTO" },
-            { n: "OBYZWNSKY", p: "B 4457 SWF", h: "088211503243", r: "KELUARGA MLU", t: "RTO" },
-            { n: "MALIK", p: "B 4922 SWG", h: "081398006148", r: "KELUARGA MLU", t: "RTO" },
-            { n: "AWANG THEA", p: "B 4146 SWH", h: "085714306460", r: "KELUARGA MLU", t: "RTO" },
-            { n: "SARIP", p: "B 4804 SWJ", h: "081317818752", r: "KELUARGA MLU", t: "TRANSGO" },
-            { n: "FERY", p: "B 4674 SWE", h: "082124545636", r: "HUMAS", t: "RTO" },
-            { n: "IVAN", p: "B 4105 SWI", h: "085717433722", r: "KELUARGA MLU", t: "RTO" },
-            { n: "ENDRO", p: "B 4437 SWF", h: "081386517328", r: "SATGAS", t: "RTO" },
-            { n: "NANANG", p: "B 4248 SWJ", h: "-", r: "KELUARGA MLU", t: "RTO" },
-            { n: "IW4N", p: "B 4650 SWE", h: "081398669543", r: "PEMBINA", t: "RTO" },
-            { n: "YUDIF", p: "B 4720 SWI", h: "085159680822", r: "KELUARGA MLU", t: "RTO" },
-            { n: "RIO", p: "B 4683 SWE", h: "081318321423", r: "KELUARGA MLU", t: "RTO" },
-            { n: "AGS", p: "B 4497 SWF", h: "081387477676", r: "KELUARGA MLU", t: "RTO" },
-            { n: "DZILAN", p: "B 4961 SWF", h: "081919570750", r: "KELUARGA MLU", t: "RTO" },
-            { n: "JISTER", p: "B 4713 SWG", h: "081381336088", r: "KELUARGA MLU", t: "TRANSGO" },
-            { n: "AJI", p: "B 4381 SWD", h: "082128835198", r: "PENASEHAT", t: "RTO" },
-            { n: "CAPUNG", p: "B 3687 PWG", h: "-", r: "KELUARGA MLU", t: "RTO" },
-            { n: "PAPADILO", p: "B 4236 SWG", h: "087888786276", r: "KELUARGA MLU", t: "RTO" },
-            { n: "BW", p: "B 4697 SWG", h: "089506550656", r: "KELUARGA MLU", t: "RTO" },
-            { n: "EGA", p: "B 4769 SWE", h: "087848620227", r: "KELUARGA MLU", t: "RTO" },
-            { n: "DAYYAN", p: "B 4236 SWJ", h: "085885579179", r: "WAKIL KETUA", t: "RTO" },
-            { n: "JET LEE", p: "B 4876 SWE", h: "085711546320", r: "SATGAS", t: "RTO" },
-            { n: "AHMAD", p: "B 4453 SWF", h: "081290159443", r: "KETUA UMUM", t: "RTO" },
-            { n: "ENDANG SAHARA", p: "B 4793 SWJ", h: "081314421984", r: "KELUARGA MLU", t: "TRANSGO" },
-            { n: "DONI", p: "B 4944 SWH", h: "081808138130", r: "HUMAS", t: "RTO" },
-            { n: "RIZKY", p: "B 4248 SWF", h: "085691536957", r: "KELUARGA MLU", t: "RTO" },
-            { n: "ANDRI JR", p: "B 4231 SWF", h: "087875875068", r: "KELUARGA MLU", t: "RTO" },
-            { n: "VIZAR", p: "B 4810 SWJ", h: "085810304638", r: "KELUARGA MLU", t: "RTO" },
-            { n: "NANDANG", p: "B 4958 SWT", h: "081297370884", r: "KELUARGA MLU", t: "RTO" },
-            { n: "WINDIYONO", p: "B 4237 SWF", h: "081213669925", r: "KELUARGA MLU", t: "TRANSGO" },
-            { n: "ZAKARIA", p: "B 4795 SWJ", h: "088211963922", r: "KELUARGA MLU", t: "RTO" },
-            { n: "RAMON", p: "B 4774 UWF", h: "08111007688", r: "KELUARGA MLU", t: "RTO" },
-            { n: "RICHIE", p: "B 4429 SWF", h: "088808104101", r: "KELUARGA MLU", t: "RTO" },
-            { n: "GOND'S", p: "B 4798 SWF", h: "081219139569", r: "KELUARGA MLU", t: "TRANSGO" },
-            { n: "MUHAMAD ILHAM M.", p: "B 4698 SWE", h: "082310253644", r: "KELUARGA MLU", t: "RTO" }
-        ];
+        // DAFTARKAN PWA SERVICE WORKER
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Reg Failed', err));
+            });
+        }
 
-        // Cek Database Awal saat web dibuka
-        window.onload = async () => {
-            const snap = await getDocs(collection(db, "mlu_members"));
-            if(snap.empty) document.getElementById('btnSetup').style.display = 'block';
-        };
-
-        window.setupDatabase = async () => {
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('btnSetup').style.display = 'none';
-            try {
-                for (const m of rawMembers) {
-                    await addDoc(collection(db, 'mlu_members'), { 
-                        namaKtp: m.n, namaWa: m.n, nama: m.n, plat: m.p, hp: m.h, role: m.r, type: m.t, foto: "", pin: "" 
-                    });
-                }
-                alert("SUKSES! Server siap digunakan.");
-                document.getElementById('loader').style.display = 'none';
-            } catch (e) { alert("Gagal setup server."); }
-        };
-
-        window.handleLogin = async () => {
-            const rawPlat = document.getElementById('logPlat').value.trim();
-            const rawPin = document.getElementById('logPin').value.trim();
+        // --- SISTEM SPLASH SCREEN DELAY ---
+        document.addEventListener("DOMContentLoaded", () => {
+            // Cek apakah user sudah login sebelumnya
+            const userData = localStorage.getItem('maka_user');
             
-            if(!rawPlat || !rawPin) return alert("Plat Nomor dan PIN wajib diisi!");
-
-            document.getElementById('loader').style.display = 'block';
-            const searchPlat = rawPlat.replace(/\s/g, '').toUpperCase();
-            
-            let foundUser = null;
-            let foundDocId = null;
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "mlu_members"));
-                if(querySnapshot.empty) {
-                    document.getElementById('loader').style.display = 'none';
-                    return alert("⛔ SERVER KOSONG! Klik SETUP SERVER dulu.");
-                }
-
-                querySnapshot.forEach((doc) => {
-                    const dbPlat = (doc.data().plat || "").replace(/\s/g, '').toUpperCase();
-                    if (dbPlat === searchPlat) {
-                        foundUser = doc.data();
-                        foundDocId = doc.id;
+            setTimeout(() => {
+                // Efek memudar (fade out)
+                const splash = document.getElementById('splashScreen');
+                splash.style.opacity = '0';
+                
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    
+                    if (userData) {
+                        // Jika sudah pernah login, langsung lompat ke Dashboard tanpa tampilkan form
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        // Jika belum login, tampilkan form login
+                        const loginBox = document.getElementById('loginScreen');
+                        loginBox.style.display = 'flex';
+                        
+                        // Sedikit delay agar transisi mulus
+                        setTimeout(() => {
+                            loginBox.style.opacity = '1';
+                        }, 50);
                     }
+                }, 800); // Waktu animasi fade out selesai
+            }, 3000); // DELAY SPLASH SCREEN = 3 DETIK
+        });
+
+        // --- SISTEM LOGIN FIREBASE ---
+        window.prosesLogin = async () => {
+            const rawPlat = document.getElementById('inputPlat').value;
+            const plat = rawPlat.trim().toUpperCase();
+            const errBox = document.getElementById('errorBox');
+            const btn = document.getElementById('btnLogin');
+
+            if (!plat) {
+                errBox.innerText = "⚠️ Plat Nomor wajib diisi!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMERIKSA...';
+            btn.style.opacity = '0.7';
+            errBox.style.display = 'none';
+
+            try {
+                // Cari anggota berdasarkan Plat Nomor di database
+                const q = query(collection(db, "mlu_members"), where("plat", "==", plat));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    errBox.innerHTML = `⚠️ Plat <b>${plat}</b> tidak ditemukan di sistem. Hubungi Pengurus!`;
+                    errBox.style.display = 'block';
+                    btn.innerHTML = 'MASUK APLIKASI';
+                    btn.style.opacity = '1';
+                    return;
+                }
+
+                // Jika Plat ketemu, ambil datanya
+                let userData = null;
+                let docId = null;
+                querySnapshot.forEach((doc) => {
+                    userData = doc.data();
+                    docId = doc.id;
                 });
 
-                if (foundUser) {
-                    // LOGIKA PIN KEAMANAN
-                    if (!foundUser.pin || foundUser.pin === "") {
-                        // INI LOGIN PERTAMA, SIMPAN PIN-NYA KE SERVER!
-                        await updateDoc(doc(db, "mlu_members", foundDocId), { pin: rawPin });
-                        alert("✅ BERHASIL! PIN Anda telah didaftarkan. Harap ingat PIN ini untuk login selanjutnya.");
-                    } else {
-                        // LOGIN KEDUA DST, CEK APAKAH PIN-NYA BENAR
-                        if (foundUser.pin !== rawPin) {
-                            document.getElementById('loader').style.display = 'none';
-                            return alert("❌ AKSES DITOLAK! PIN yang Anda masukkan SALAH.");
-                        }
-                    }
+                // Simpan Data Login ke HP (Session)
+                userData.id = docId;
+                localStorage.setItem('maka_user', JSON.stringify(userData));
 
-                    // GOD MODE PAK RIZKY
-                    if(searchPlat === 'B4248SWF') foundUser.isSuperAdmin = true;
-
-                    localStorage.setItem('maka_user', JSON.stringify({
-                        id: foundDocId, // Simpan ID agar setting tahu doc mana
-                        plat: foundUser.plat, 
-                        nama: foundUser.nama || foundUser.namaWa || foundUser.namaKtp,
-                        namaKtp: foundUser.namaKtp, 
-                        namaWa: foundUser.namaWa, 
-                        role: foundUser.role || 'KELUARGA MLU',
-                        type: foundUser.type || 'RTO', 
-                        hp: foundUser.hp || '-', 
-                        foto: foundUser.foto || '',
-                        isSuperAdmin: foundUser.isSuperAdmin || false
-                    }));
+                // Sukses! Arahkan ke Dashboard
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> BERHASIL!';
+                btn.style.background = 'var(--success)';
+                
+                setTimeout(() => {
                     window.location.href = 'dashboard.html';
-                } else {
-                    alert("❌ Akses Ditolak! Plat Nomor tidak terdaftar.");
-                }
-            } catch(e) {
-                alert("Gagal terhubung ke internet.");
-            } finally {
-                document.getElementById('loader').style.display = 'none';
+                }, 500);
+
+            } catch (error) {
+                errBox.innerText = "⚠️ Terjadi kesalahan koneksi. Coba lagi.";
+                errBox.style.display = 'block';
+                btn.innerHTML = 'MASUK APLIKASI';
+                btn.style.opacity = '1';
+                console.error(error);
             }
-        }
-    </script>
-    <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Service Worker Registered'));
-  }
+        };
+        
+        // Agar bisa pencet tombol "Enter" di keyboard HP
+        document.getElementById('inputPlat').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { prosesLogin(); }
+        });
     </script>
 </body>
 </html>
