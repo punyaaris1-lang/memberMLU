@@ -17,26 +17,42 @@
             --bg-surface: #F8FAFC; --white: #FFFFFF; 
             --text-main: #0F172A; --text-muted: #64748B; 
             --danger: #EF4444; --success: #10B981; --gold: #F59E0B;
-            --border-soft: rgba(226, 232, 240, 0.8);
+            --border-soft: #E2E8F0;
         }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* --- HEADER & RAMADAN WIDGET --- */
+        /* --- HEADER MEWAH --- */
         .header-premium { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; position: relative; z-index: 10; box-shadow: 0 15px 35px rgba(10,34,89,0.1); }
         .head-flex { display: flex; justify-content: space-between; align-items: flex-start; }
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; }
         .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; line-height: 1.1; }
         
-        .ramadan-widget { margin-top: 25px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.3) 100%); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); }
-        .rw-left { display: flex; align-items: center; gap: 15px; }
-        .rw-icon { font-size: 26px; color: #6EE7B7; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(110, 231, 183, 0.6)); }
-        .rw-lbl { font-size: 9px; font-weight: 800; color: #A7F3D0; text-transform: uppercase; letter-spacing: 1px; }
-        .rw-time { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; color: #fff; margin-top: 2px; }
-        .rw-target { font-size: 11px; font-weight: 800; color: #047857; background: #D1FAE5; padding: 5px 12px; border-radius: 12px; }
+        /* --- WIDGET SHOLAT FRESH --- */
+        .ramadan-widget { margin-top: 25px; border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(45deg, #065F46, #10B981, #047857); background-size: 200% 200%; animation: gradientMove 5s ease infinite; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);}
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .rw-left { display: flex; align-items: center; gap: 15px; position: relative; z-index: 2; }
+        .rw-icon { font-size: 28px; color: #FFF; animation: pulseGlow 2s infinite; filter: drop-shadow(0 0 10px rgba(255,255,255,0.6)); }
+        @keyframes pulseGlow { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
+        .rw-lbl { font-size: 9px; font-weight: 800; color: #D1FAE5; text-transform: uppercase; letter-spacing: 1px; }
+        .rw-time { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: #fff; margin-top: 2px; }
+        .rw-target { font-size: 11px; font-weight: 800; color: #065F46; background: #FFF; padding: 6px 14px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 2; }
 
         .admin-badge { display: none; background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 4px; box-shadow: 0 5px 10px rgba(239,68,68,0.2); }
+        .gps-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: var(--warning); color: white; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); z-index: 15; white-space: nowrap; }
+        .gps-badge.ok { background: var(--success); }
+        .gps-badge.err { background: var(--danger); }
+
+        /* --- POP-UP BEDUG FRESH --- */
+        .buka-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; text-align: center; }
+        .buka-box { background: white; padding: 40px 20px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 100%; max-width: 350px; transform: scale(0.8); animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popBounce { to { transform: scale(1); } }
+        .bedug-icon { font-size: 70px; margin-bottom: 15px; animation: beatDrum 0.4s infinite alternate; display: inline-block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+        @keyframes beatDrum { 0% { transform: rotate(-15deg) scale(1); } 100% { transform: rotate(15deg) scale(1.1); } }
+        .buka-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--gold); margin: 0 0 10px 0; letter-spacing: 1px; }
+        .buka-desc { color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 25px; font-weight: 600; }
+        .btn-tutup-buka { background: var(--electric-blue); color: white; border: none; padding: 16px 30px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; width: 100%; box-shadow: 0 10px 20px rgba(45,99,237,0.3); }
 
         /* --- QUEUE STATUS --- */
         .status-overlap { padding: 0 20px; margin-top: -35px; position: relative; z-index: 11; }
@@ -47,29 +63,32 @@
         .sc-right { text-align: right; }
         .sc-tot { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 900; color: var(--electric-blue); line-height: 1; }
 
-        /* --- SLOT BAY --- */
-        .slot-container { padding: 30px 20px 10px; display: flex; flex-direction: column; gap: 15px; }
+        /* --- SLOT BAY & BADGE PENGURUS --- */
+        .slot-container { padding: 40px 20px 10px; display: flex; flex-direction: column; gap: 15px; }
         .slot-bay { background: var(--white); border-radius: 24px; border: 1px solid var(--border-soft); padding: 15px; display: flex; align-items: center; gap: 15px; position: relative; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
         .slot-bay.is-active { border: 2px solid var(--electric-blue); box-shadow: 0 15px 30px rgba(45, 99, 237, 0.1); background: #F8FAFC; }
-        .slot-bay.is-vip { border: 2px solid var(--gold); box-shadow: 0 15px 30px rgba(245, 158, 11, 0.15); background: #FFFBEB; }
+        .slot-bay.is-admin { border: 2px solid var(--gold); background: #FFFBEB; }
         
         .sb-num { width: 50px; height: 50px; border-radius: 16px; background: #F1F5F9; color: #94A3B8; font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .slot-bay.is-active .sb-num { background: var(--electric-blue); color: white; }
-        .slot-bay.is-vip .sb-num { background: var(--gold); color: white; }
+        .slot-bay.is-admin .sb-num { background: var(--gold); color: white; }
 
         .sb-info { flex: 1; min-width: 0; }
-        .sb-name { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sb-name { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px;}
         .sb-plat { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); line-height: 1; }
         .slot-bay.is-empty .sb-plat { color: #CBD5E1; }
         .sb-timer { font-size: 10px; font-weight: 700; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
         
-        /* TOMBOL KELOLA MODERN */
+        .badge-pengurus { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; }
+        .badge-batre { color: var(--gold); font-size: 10px; font-weight: 900; }
+
         .btn-dots { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; color: var(--text-main); border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-dots:active { background: #E2E8F0; transform: scale(0.9); }
         .admin-only { display: none; }
 
         .btn-action-main { padding: 10px 20px; border-radius: 14px; border: none; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; }
         .btn-fill { background: var(--electric-blue); color: white; box-shadow: 0 5px 15px rgba(45,99,237,0.3); }
+        .btn-disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; box-shadow: none; }
 
         /* --- BOTTOM ACTIONS --- */
         .action-hub { padding: 10px 20px; display: flex; flex-direction: column; gap: 12px; }
@@ -95,11 +114,14 @@
         .sm-btn:active { background: #E2E8F0; transform: scale(0.98); }
         .sm-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
         .bg-blue { background: rgba(45,99,237,0.1); color: var(--electric-blue); }
-        .bg-gold { background: rgba(245,158,11,0.1); color: var(--gold); }
         .bg-red { background: #FEF2F2; color: var(--danger); }
         .bg-dark { background: #F1F5F9; color: var(--text-main); }
         
-        .sheet-input { width: 100%; padding: 18px; border-radius: 16px; border: 2px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 18px; font-weight: 800; text-align: center; text-transform: uppercase; margin-bottom: 15px; outline: none; transition: 0.2s; }
+        /* TOMBOL KUDETA KHUSUS */
+        .btn-kudeta { background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; border: none; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); justify-content: center; font-family: 'Space Grotesk'; font-weight: 900; letter-spacing: 1px; }
+        .btn-kudeta:active { transform: scale(0.96); background: #991B1B;}
+
+        .sheet-input { width: 100%; padding: 16px; border-radius: 16px; border: 2px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; text-align: center; text-transform: uppercase; margin-bottom: 12px; outline: none; transition: 0.2s; }
         .sheet-input:focus { border-color: var(--electric-blue); background: white; }
 
         .q-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; margin-bottom: 10px; }
@@ -108,8 +130,6 @@
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body>
@@ -127,12 +147,14 @@
             <div class="rw-left">
                 <i class="fas fa-moon rw-icon" id="iconTimer"></i>
                 <div>
-                    <div class="rw-lbl" id="lblTimer">MENUJU BUKA PUASA</div>
+                    <div class="rw-lbl" id="lblTimer">SINKRONISASI JADWAL...</div>
                     <div class="rw-time" id="countdown">--:--:--</div>
                 </div>
             </div>
-            <div class="rw-target" id="timeTarget">MAGHRIB 18:10</div>
+            <div class="rw-target" id="timeTarget">MEMUAT</div>
         </div>
+        
+        <div class="gps-badge" id="gpsIndicator"><i class="fas fa-spinner fa-spin"></i> MEMERIKSA LOKASI...</div>
     </header>
 
     <div class="status-overlap">
@@ -151,22 +173,41 @@
     <div class="slot-container" id="slotsContainer"></div>
 
     <div class="action-hub">
-        <button id="btnTakeQ" class="btn-hub btn-take-q" onclick="ambilAntrian()">AMBIL ANTRIAN SAYA</button>
+        <button id="btnTakeQ" class="btn-hub btn-take-q" onclick="mintaBatre('antrian', -1)">AMBIL ANTRIAN SAYA</button>
         <button id="btnCancelQ" class="btn-hub btn-cancel-me" onclick="cancelQueue()">BATALKAN ANTRIAN SAYA</button>
         <button id="btnAdminPanel" class="btn-hub btn-manage-q admin-only" onclick="openSheet('sheetManageAntrian')"><i class="fas fa-sliders-h"></i> ATUR DAFTAR ANTRIAN</button>
     </div>
 
     <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
 
+    <div class="buka-overlay" id="bukaPuasaPopup">
+        <div class="buka-box">
+            <div class="bedug-icon">🥁</div>
+            <h2 class="buka-title" id="bedugTitle">ALHAMDULILLAH</h2>
+            <p class="buka-desc" id="bedugDesc">Selamat berbuka puasa bagi wilayah Jakarta dan sekitarnya. Jangan lupa berdoa sebelum makan!</p>
+            <button class="btn-tutup-buka" onclick="document.getElementById('bukaPuasaPopup').style.display='none'">TERIMA KASIH</button>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetInputBatre" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Informasi Baterai</div>
+            <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:-10px; margin-bottom:20px;">Silakan masukkan sisa persentase baterai kendaraan Anda.</p>
+            <input type="number" id="inpMemberBatre" class="sheet-input" placeholder="Sisa Batre (%) - Contoh: 20">
+            <button class="btn-hub" style="background:var(--electric-blue); color:white;" onclick="prosesSubmitMember()">LANJUTKAN <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
     <div class="sheet-overlay" id="sheetKelolaIsi" onclick="closeSheet(event, this.id)">
         <div class="bottom-sheet" onclick="event.stopPropagation()">
             <div class="sheet-handle"></div>
             <div class="sheet-title" id="titleKelolaIsi">Kelola Slot</div>
             <div class="sheet-menu">
+                <button class="sm-btn btn-kudeta admin-only" onclick="adminKudeta()"><i class="fas fa-khanda"></i> KUDETA SLOT INI</button>
                 <button class="sm-btn" onclick="sheetPilihPindah()"><div class="sm-icon bg-blue"><i class="fas fa-exchange-alt"></i></div> Pindah ke Slot Lain</button>
-                <button class="sm-btn" onclick="adminToQueue()"><div class="sm-icon bg-gold"><i class="fas fa-undo"></i></div> Kembalikan Jadi Antrian</button>
+                <button class="sm-btn" onclick="adminToQueue()"><div class="sm-icon bg-dark"><i class="fas fa-undo"></i></div> Kembalikan Jadi Antrian</button>
                 <button class="sm-btn" onclick="adminKick()"><div class="sm-icon bg-red"><i class="fas fa-times"></i></div> Keluarkan (Selesai)</button>
-                <button class="sm-btn" onclick="adminBlock()"><div class="sm-icon bg-dark"><i class="fas fa-ban"></i></div> Blokir Plat Ini</button>
             </div>
         </div>
     </div>
@@ -183,21 +224,18 @@
         </div>
     </div>
 
-    <div class="sheet-overlay" id="sheetIsiManual" onclick="closeSheet(event, this.id)">
+    <div class="sheet-overlay" id="sheetDaftarAdmin" onclick="closeSheet(event, this.id)">
         <div class="bottom-sheet" onclick="event.stopPropagation()">
             <div class="sheet-handle"></div>
-            <div class="sheet-title">Jalur Bebas Antri</div>
-            <input type="text" id="manualPlat" class="sheet-input" placeholder="Ketik Plat (B 123 XX)">
-            <button class="btn-hub" style="background:var(--success); color:white;" onclick="adminInsertManual()"><i class="fas fa-bolt"></i> MASUKKAN KE SLOT</button>
-        </div>
-    </div>
-    
-    <div class="sheet-overlay" id="sheetInputVIP" onclick="closeSheet(event, this.id)">
-        <div class="bottom-sheet" onclick="event.stopPropagation()">
-            <div class="sheet-handle"></div>
-            <div class="sheet-title" style="color:var(--gold);"><i class="fas fa-crown"></i> Input Jalur VIP (Antrian 1)</div>
-            <input type="text" id="vipPlat" class="sheet-input" placeholder="Ketik Plat (B 123 XX)">
-            <button class="btn-hub" style="background:var(--gold); color:white;" onclick="adminInsertVIPQueue()"><i class="fas fa-crown"></i> MASUKKAN KE ANTRIAN VIP</button>
+            <div class="sheet-title"><i class="fas fa-clipboard-list"></i> Daftar via Admin</div>
+            <input type="text" id="inpAdminNama" class="sheet-input" placeholder="Nama Pengendara">
+            <input type="text" id="inpAdminPlat" class="sheet-input" placeholder="Plat Nomor (B 123 XX)">
+            <input type="number" id="inpAdminBatre" class="sheet-input" placeholder="Sisa Batre (%)">
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-hub" style="background:var(--electric-blue); color:white; flex:1; font-size:12px; padding: 15px;" onclick="adminSubmitDaftar('antrian')"><i class="fas fa-list-ol"></i> MASUK ANTRIAN</button>
+                <button class="btn-hub" style="background:var(--success); color:white; flex:1; font-size:12px; padding: 15px;" onclick="adminSubmitDaftar('slot')"><i class="fas fa-bolt"></i> MASUK SLOT</button>
+            </div>
         </div>
     </div>
 
@@ -206,8 +244,9 @@
             <div class="sheet-handle"></div>
             <div class="sheet-title">Atur Daftar Antrian</div>
             <div id="qAdminBody" style="margin-bottom: 20px;"></div>
-            <button class="sm-btn" onclick="openSheet('sheetInputVIP')" style="margin-bottom: 10px;"><div class="sm-icon bg-gold"><i class="fas fa-crown"></i></div> Tambah Antrian VIP (Urutan 1)</button>
-            <button class="sm-btn" onclick="unblockAll()"><div class="sm-icon bg-blue"><i class="fas fa-unlock"></i></div> Buka Semua Daftar Blokir</button>
+            
+            <button class="sm-btn" onclick="bukaDaftarAdmin(-1)" style="margin-bottom: 10px;"><div class="sm-icon bg-blue"><i class="fas fa-plus"></i></div> Daftar via Admin</button>
+            <button class="sm-btn" onclick="unblockAll()"><div class="sm-icon bg-dark"><i class="fas fa-unlock"></i></div> Buka Semua Daftar Blokir</button>
         </div>
     </div>
 
@@ -223,7 +262,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Antrian FC Gading
+        // KONEKSI DATABASE ANTRIAN YANG BENAR (PUNYA BAPAK YANG ASLI)
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -237,89 +276,144 @@
         const myName = uData.namaKtp || uData.namaWa || uData.nama;
         const myRole = uData.role ? uData.role.toUpperCase() : "GUEST";
         
-        // Mengecek Super Admin Tertinggi (Termasuk B 4248 SWF yang diset di index)
-        const isSuperAdmin = uData.isSuperAdmin || (myRole !== 'KELUARGA MLU' && myRole !== 'GUEST' && myRole !== 'NON-MEMBER');
+        // Cek Admin & Mode Dewa Bapak
+        let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
+        const isUserDewa = (myPlat.replace(/\s+/g, '').toUpperCase() === 'B4248SWF');
+        
+        const isSuperAdmin = uData.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (myRole !== 'KELUARGA MLU' && myRole !== 'GUEST' && myRole !== 'NON-MEMBER');
 
-        if(isSuperAdmin) {
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+        if(isSuperAdmin) { 
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); 
         }
 
+        // --- SISTEM PEMANTAUAN LOKASI ---
+        const STATION_LAT = -6.171583; const STATION_LNG = 106.899844; const MAX_DIST_KM = 0.3; 
+        let isInLocation = false; 
+
+        function calculateDist(lat1, lon1, lat2, lon2) { 
+            const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180; 
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; 
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        }
+
+        const gpsInd = document.getElementById('gpsIndicator');
+        if (isSuperAdmin) {
+            isInLocation = true; gpsInd.className = "gps-badge ok"; gpsInd.innerHTML = "<i class='fas fa-shield-alt'></i> AKSES PENUH ADMIN";
+        } else if (navigator.geolocation) {
+            navigator.geolocation.watchPosition((pos) => {
+                const dist = calculateDist(STATION_LAT, STATION_LNG, pos.coords.latitude, pos.coords.longitude);
+                if(dist <= MAX_DIST_KM) { 
+                    isInLocation = true; gpsInd.className = "gps-badge ok"; gpsInd.innerHTML = "<i class='fas fa-map-marker-alt'></i> ANDA DI LOKASI";
+                } else {
+                    isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = `<i class='fas fa-eye'></i> MODE PANTAU (${(dist).toFixed(1)} KM)`;
+                }
+                updateUI();
+            }, (err) => {
+                isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = "<i class='fas fa-eye'></i> MODE PANTAU (NO GPS)"; updateUI();
+            }, {enableHighAccuracy: true, maximumAge: 10000});
+        }
+
+        // --- API JADWAL SHOLAT KEMENAG ---
+        let jadwalSholat = null;
+        async function fetchJadwalAPI() {
+            try {
+                const now = new Date();
+                const yr = now.getFullYear(); const mo = String(now.getMonth()+1).padStart(2,'0'); const dt = String(now.getDate()).padStart(2,'0');
+                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${yr}/${mo}/${dt}`);
+                const data = await res.json();
+                if(data.status) jadwalSholat = data.data.jadwal;
+            } catch (e) { console.error("API Jadwal Gagal"); }
+        }
+        fetchJadwalAPI();
+
+        function showBedugPopup(namaWaktu) {
+            const title = document.getElementById('bedugTitle');
+            const desc = document.getElementById('bedugDesc');
+            if(namaWaktu === 'MAGHRIB') {
+                title.innerText = "ALHAMDULILLAH"; title.style.color = "var(--gold)";
+                desc.innerText = "Telah masuk waktu Maghrib untuk wilayah Jakarta dan sekitarnya. Selamat berbuka puasa!";
+            } else {
+                title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--royal-blue)";
+                desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`;
+            }
+            document.getElementById('bukaPuasaPopup').style.display = 'flex';
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const curr = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            
+            let imsakSec = 4 * 3600 + 30 * 60; let maghribSec = 18 * 3600 + 10 * 60;
+            let imsakStr = "04:30"; let maghribStr = "18:10";
+
+            if (jadwalSholat) {
+                const i = jadwalSholat.imsak.split(':'); imsakSec = i[0]*3600 + i[1]*60; imsakStr = jadwalSholat.imsak;
+                const m = jadwalSholat.maghrib.split(':'); maghribSec = m[0]*3600 + m[1]*60; maghribStr = jadwalSholat.maghrib;
+
+                const wktSholat = [ {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, {n:'ISYA', v:jadwalSholat.isya} ];
+                const nowStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+                
+                wktSholat.forEach(t => {
+                    if (nowStr === t.v) {
+                        const recKey = now.toDateString() + '_' + t.n;
+                        if(localStorage.getItem('maka_bedug_notif') !== recKey) {
+                            showBedugPopup(t.n); localStorage.setItem('maka_bedug_notif', recKey);
+                        }
+                    }
+                });
+            }
+
+            let targetTime = 0;
+            if (curr >= imsakSec && curr < maghribSec) {
+                targetTime = maghribSec;
+                document.getElementById('lblTimer').innerText = "MENUJU BUKA PUASA";
+                document.getElementById('timeTarget').innerText = "MAGHRIB " + maghribStr;
+                document.getElementById('iconTimer').className = "fas fa-moon rw-icon";
+            } else {
+                targetTime = imsakSec; if (curr >= maghribSec) targetTime += 24 * 3600;
+                document.getElementById('lblTimer').innerText = "MENUJU BATAS SAHUR";
+                document.getElementById('timeTarget').innerText = "IMSAK " + imsakStr;
+                document.getElementById('iconTimer').className = "fas fa-mosque rw-icon";
+            }
+
+            let diff = targetTime - curr;
+            let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
+            document.getElementById('countdown').innerText = `${j.toString().padStart(2, '0')}:${n.toString().padStart(2, '0')}:${d.toString().padStart(2, '0')}`;
+        }
+        setInterval(updateTimer, 1000);
+
+        // --- SISTEM FIREBASE DATA ---
         let localSlots = [null, null, null]; 
         let localQueue = []; 
         let blockedList = [];
         let currentTargetSlot = -1;
+        let memberActionType = ''; 
+        let memberActionSlotIdx = -1;
 
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
-        // --- WIDGET RAMADAN ---
-        function updateTimer() {
-            const now = new Date();
-            const currentTime = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-            const imsakTime = 4 * 3600 + 30 * 60; const maghribTime = 18 * 3600 + 10 * 60;
-            let targetTime = 0;
-
-            if (currentTime >= imsakTime && currentTime < maghribTime) {
-                targetTime = maghribTime;
-                document.getElementById('lblTimer').innerText = "MENUJU BUKA PUASA";
-                document.getElementById('timeTarget').innerText = "MAGHRIB 18:10";
-                document.getElementById('iconTimer').className = "fas fa-moon rw-icon";
-            } else {
-                targetTime = imsakTime; if (currentTime >= maghribTime) targetTime += 24 * 3600;
-                document.getElementById('lblTimer').innerText = "MENUJU BATAS SAHUR";
-                document.getElementById('timeTarget').innerText = "IMSAK 04:30";
-                document.getElementById('iconTimer').className = "fas fa-mosque rw-icon";
-            }
-
-            let diff = targetTime - currentTime;
-            let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
-            document.getElementById('countdown').innerText = `${j.toString().padStart(2, '0')}:${n.toString().padStart(2, '0')}:${d.toString().padStart(2, '0')}`;
-        }
-        setInterval(updateTimer, 1000); updateTimer();
-
-        // --- BOTTOM SHEET LOGIC ---
-        window.openSheet = (id) => { 
-            document.getElementById(id).classList.add('show'); 
-            if(id === 'sheetManageAntrian') renderQueueAdmin();
-            if(id === 'sheetDaftarAntrian') renderQueueList();
-        };
-        window.closeSheet = (e, id) => { 
-            if(e.target.id === id) document.getElementById(id).classList.remove('show'); 
-        };
+        window.openSheet = (id) => { document.getElementById(id).classList.add('show'); if(id === 'sheetManageAntrian') renderQueueAdmin(); if(id === 'sheetDaftarAntrian') renderQueueList(); };
+        window.closeSheet = (e, id) => { if(e.target.id === id) document.getElementById(id).classList.remove('show'); };
         window.forceCloseSheet = (id) => document.getElementById(id).classList.remove('show');
 
-        // --- FETCH FIREBASE ---
-        onSnapshot(mainRef, (snap) => {
-            if (!snap.exists()) return; 
-            const d = snap.data(); 
-            localSlots = d.chargingSlots || [null, null, null]; 
-            localQueue = d.waitingQueue || []; 
-            blockedList = d.blockedPlates || [];
-            updateUI();
-        });
+        onSnapshot(mainRef, (snap) => { if (!snap.exists()) return; const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; blockedList = d.blockedPlates || []; updateUI(); });
 
         function updateUI() {
-            const container = document.getElementById('slotsContainer'); 
-            container.innerHTML = ''; 
-            
+            const container = document.getElementById('slotsContainer'); container.innerHTML = ''; 
             let myQIndex = localQueue.findIndex(q => cleanStr(q.plat) === cleanStr(myPlat));
-            const btnCancel = document.getElementById('btnCancelQ'); 
-            const btnTake = document.getElementById('btnTakeQ');
+            const btnCancel = document.getElementById('btnCancelQ'); const btnTake = document.getElementById('btnTakeQ');
             
-            // TOMBOL BATAL ATAU AMBIL ANTRIAN (TANPA BLOKIR LOKASI)
             if(myQIndex > -1) { 
-                btnCancel.style.display = 'flex'; btnCancel.innerHTML = `❌ BATALKAN ANTRIAN SAYA (#${myQIndex+1})`; 
-                btnTake.style.display = 'none';
+                btnCancel.style.display = 'flex'; btnCancel.innerHTML = `❌ BATALKAN ANTRIAN SAYA (#${myQIndex+1})`; btnTake.style.display = 'none';
             } else { 
                 btnCancel.style.display = 'none'; 
                 let amIFilling = localSlots.some(s => s && cleanStr(s.plat) === cleanStr(myPlat));
-                
-                // Jika sedang tidak ngisi, selalu munculkan tombol Ambil Antrian
-                if(!amIFilling) {
+                if(!amIFilling && localQueue.length > 0) {
                     btnTake.style.display = 'flex';
-                } else {
-                    btnTake.style.display = 'none';
-                }
+                    if(!isInLocation) { btnTake.className = "btn-hub btn-disabled"; btnTake.innerText = "AMBIL ANTRIAN (HARUS DI LOKASI)"; btnTake.onclick = null; } 
+                    else { btnTake.className = "btn-hub btn-take-q"; btnTake.innerText = "AMBIL ANTRIAN SAYA"; btnTake.onclick = () => mintaBatre('antrian', -1); }
+                } else { btnTake.style.display = 'none'; }
             }
 
             localSlots.forEach((s, i) => {
@@ -327,42 +421,41 @@
                 const isActive = s !== null; 
                 
                 if (isActive) {
-                    const rawRole = s.role ? s.role.toUpperCase() : "GUEST"; 
                     const isMe = (cleanStr(s.plat) === cleanStr(myPlat)); 
+                    const isManual = (s.role === 'MANUAL' || s.role === 'KUDETA'); 
                     
-                    let cardClass = 'is-guest'; 
-                    if (rawRole.includes("KETUM") || rawRole.includes("WAKETUM") || rawRole.includes("PEMBINA") || rawRole.includes("VIP")) cardClass = 'is-vip';
-                    else if (rawRole !== "GUEST" && rawRole !== "NON-MEMBER") cardClass = 'is-active';
-
+                    let cardClass = isManual ? 'is-admin' : 'is-active'; 
                     div.className = `slot-bay ${cardClass}`;
 
                     const durationMin = Math.floor((Date.now() - (s.startTime || Date.now())) / 60000);
                     let timerHTML = isMe ? `<div class="sb-timer" style="color:var(--electric-blue)"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` : `<div class="sb-timer"><i class="fas fa-clock"></i> ${durationMin} MIN RUNNING</div>`;
                     
                     let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
+                    let batreInfo = (s.batre && s.batre !== '-') ? `<span class="badge-batre"><i class="fas fa-bolt"></i> ${s.batre}</span>` : '';
+                    
+                    let roleBadge = '';
+                    if (s.role && s.role !== 'MEMBER' && s.role !== 'GUEST' && s.role !== 'KELUARGA MLU' && s.role !== 'MANUAL' && s.role !== 'KUDETA') {
+                        roleBadge = `<span class="badge-pengurus">${s.role}</span>`;
+                    }
 
                     div.innerHTML = `
                         <div class="sb-num">${i+1}</div>
                         <div class="sb-info">
-                            <div class="sb-name">${escapeHtml(s.userName)}</div>
+                            <div class="sb-name">${escapeHtml(s.userName)} ${batreInfo} ${roleBadge}</div>
                             <div class="sb-plat">${s.plat}</div>
                             ${timerHTML}
                         </div>
                         ${adminBtn}`;
                     
-                    if(isMe) {
-                        div.onclick = () => { if(confirm("Selesai pengisian?")) stopCharging(i); }
-                        div.style.cursor = "pointer";
-                    }
-
+                    if(isMe) { div.onclick = () => { if(confirm("Selesai pengisian?")) stopCharging(i); }; div.style.cursor = "pointer"; }
                 } else {
                     div.className = `slot-bay is-empty`;
-                    let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuKosong(${i})"><i class="fas fa-plus"></i></button>` : '';
+                    let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="bukaDaftarAdmin(${i})"><i class="fas fa-plus"></i></button>` : '';
                     let actionHtml = '';
 
-                    // JIKA KOSONG DAN TIDAK ADA ANTRIAN, ATAU GILIRAN SAYA (Tanpa Cek Lokasi)
                     if (localQueue.length === 0 || myQIndex === 0) {
-                        actionHtml = `<button class="btn-action-main btn-fill" onclick="selectSlot(${i})">MASUK SLOT</button>`; 
+                        if (isInLocation) actionHtml = `<button class="btn-action-main btn-fill" onclick="mintaBatre('slot', ${i})">MASUK SLOT</button>`; 
+                        else actionHtml = `<button class="btn-action-main btn-disabled">HARUS DI LOKASI</button>`;
                     } else if (myQIndex > 0) actionHtml = `<div style="font-size:11px; color:var(--text-muted); font-weight:800;">MENUNGGU GILIRAN</div>`; 
 
                     div.innerHTML = `
@@ -379,104 +472,92 @@
             document.getElementById('nextQDisplay').innerText = localQueue.length > 0 ? localQueue[0].userName : "KOSONG";
         }
 
-        // --- MEMBER FUNCTIONS ---
-        window.ambilAntrian = () => {
+        // --- SISTEM INPUT BATRE MEMBER ---
+        window.mintaBatre = (tipeAction, slotIndex) => {
             if(blockedList.includes(cleanStr(myPlat))) return alert("Maaf, Plat Anda diblokir Admin.");
-            runTransaction(db, async(t) => {
-                const d = (await t.get(mainRef)).data();
-                let q = d.waitingQueue || [];
-                if(q.some(x => cleanStr(x.plat) === cleanStr(myPlat))) throw "Anda sudah mengantri!";
-                q.push({ plat: myPlat, userName: myName, role: myRole, time: Date.now() });
-                t.update(mainRef, { waitingQueue: q });
-            }).catch(e => alert(e));
+            memberActionType = tipeAction; memberActionSlotIdx = slotIndex;
+            document.getElementById('inpMemberBatre').value = '';
+            openSheet('sheetInputBatre');
         };
 
-        window.selectSlot = async (i) => { 
-            if(blockedList.includes(cleanStr(myPlat))) return alert("Maaf, Plat Anda diblokir Admin.");
-            runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); 
-                if(d.chargingSlots[i]) throw "SLOT PENUH!"; 
-                let q = d.waitingQueue; 
-                const idx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat)); 
-                if(idx === -1 && !isSuperAdmin) throw "ANDA TIDAK ADA DI ANTRIAN!"; 
-                let me = idx > -1 ? q.splice(idx, 1)[0] : { plat: myPlat, userName: myName, role: myRole }; 
-                me.startTime = Date.now(); d.chargingSlots[i] = me; 
-                t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-            }).catch(e => alert(e)); 
-        };
-        
-        window.stopCharging = (i) => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[i] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }); };
-        window.cancelQueue = () => { if(confirm("YAKIN INGIN BATAL?")) { runTransaction(db, async(t) => { const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); t.update(mainRef, { waitingQueue: newQ }); }); }};
+        window.prosesSubmitMember = () => {
+            const rawBatre = document.getElementById('inpMemberBatre').value.trim();
+            const batreFinal = rawBatre === "" ? "-" : rawBatre + "%";
+            forceCloseSheet('sheetInputBatre');
 
-        // --- ADMIN COMMANDS VIA BOTTOM SHEETS ---
-        window.openMenuIsi = (idx, plat) => { currentTargetSlot = idx; document.getElementById('titleKelolaIsi').innerText = `Kelola Slot ${idx + 1} (${plat})`; openSheet('sheetKelolaIsi'); };
-        window.openMenuKosong = (idx) => { currentTargetSlot = idx; document.getElementById('manualPlat').value = ''; openSheet('sheetIsiManual'); };
-        window.sheetPilihPindah = () => { forceCloseSheet('sheetKelolaIsi'); setTimeout(() => openSheet('sheetPilihSlot'), 300); };
-
-        window.adminMoveSlot = (targetIdx) => {
-            if(targetIdx === currentTargetSlot) return forceCloseSheet('sheetPilihSlot');
-            runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); 
-                if(d.chargingSlots[targetIdx] !== null) throw "Slot Tujuan Sedang Terisi!";
-                d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot];
-                d.chargingSlots[currentTargetSlot] = null;
-                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
-            }).then(() => forceCloseSheet('sheetPilihSlot')).catch(e => alert(e));
-        };
-
-        window.adminKick = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
-        window.adminToQueue = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot]; if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
-
-        window.adminBlock = () => {
-            if(confirm("BLOKIR PERMANEN PLAT INI?")) {
+            if(memberActionType === 'antrian') {
+                runTransaction(db, async(t) => {
+                    const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || [];
+                    if(q.some(x => cleanStr(x.plat) === cleanStr(myPlat))) throw "Anda sudah mengantri!";
+                    q.push({ plat: myPlat, userName: myName, role: myRole, batre: batreFinal, time: Date.now() });
+                    t.update(mainRef, { waitingQueue: q });
+                }).catch(e => alert(e));
+            } else if (memberActionType === 'slot') {
                 runTransaction(db, async(t)=>{ 
                     const d = (await t.get(mainRef)).data(); 
-                    let b = d.blockedPlates || []; const p = d.chargingSlots[currentTargetSlot].plat;
-                    b.push(cleanStr(p)); d.chargingSlots[currentTargetSlot] = null;
-                    const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(p));
-                    t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: newQ, blockedPlates: b}); 
-                }).then(() => forceCloseSheet('sheetKelolaIsi'));
+                    if(d.chargingSlots[memberActionSlotIdx]) throw "SLOT PENUH!"; 
+                    let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat)); 
+                    if(idx === -1 && !isSuperAdmin) throw "ANDA TIDAK ADA DI ANTRIAN!"; 
+                    let me = idx > -1 ? q.splice(idx, 1)[0] : { plat: myPlat, userName: myName, role: myRole }; 
+                    me.startTime = Date.now(); me.batre = batreFinal; d.chargingSlots[memberActionSlotIdx] = me; 
+                    t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
+                }).catch(e => alert(e)); 
             }
         };
 
-        window.adminInsertManual = () => {
-            const plat = document.getElementById('manualPlat').value.trim().toUpperCase();
-            if(!plat) return alert("Plat wajib diisi");
-            runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); 
-                d.chargingSlots[currentTargetSlot] = { plat: plat, userName: "PENGISIAN MANUAL", role: "VIP", startTime: Date.now() };
-                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
-            }).then(() => forceCloseSheet('sheetIsiManual'));
+        window.stopCharging = (i) => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[i] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }); };
+        window.cancelQueue = () => { if(confirm("YAKIN INGIN BATAL?")) { runTransaction(db, async(t) => { const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); t.update(mainRef, { waitingQueue: newQ }); }); }};
+
+        // --- ADMIN COMMANDS ---
+        window.openMenuIsi = (idx, plat) => { currentTargetSlot = idx; document.getElementById('titleKelolaIsi').innerText = `Kelola Slot ${idx + 1} (${plat})`; openSheet('sheetKelolaIsi'); };
+        window.sheetPilihPindah = () => { forceCloseSheet('sheetKelolaIsi'); setTimeout(() => openSheet('sheetPilihSlot'), 300); };
+        window.adminMoveSlot = (targetIdx) => { if(targetIdx === currentTargetSlot) return forceCloseSheet('sheetPilihSlot'); runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); if(d.chargingSlots[targetIdx] !== null) throw "Slot Tujuan Sedang Terisi!"; d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot]; d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetPilihSlot')).catch(e => alert(e)); };
+        window.adminKick = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
+        window.adminToQueue = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot]; if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
+
+        // FITUR KUDETA
+        window.adminKudeta = () => {
+            if(!confirm("YAKIN INGIN MENGKUDETA SLOT INI?\nPengguna ini akan dilempar ke antrian pertama, dan plat Anda akan menempati slot ini secara paksa!")) return;
+            runTransaction(db, async(t) => {
+                const d = (await t.get(mainRef)).data();
+                const victim = d.chargingSlots[currentTargetSlot];
+                if(victim) d.waitingQueue.unshift(victim);
+                d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName, role: "KUDETA", startTime: Date.now() };
+                t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue});
+            }).then(() => { forceCloseSheet('sheetKelolaIsi'); alert("KUDETA BERHASIL!"); }).catch(e => alert(e));
         };
 
-        // TAMBAH VIP KE ANTRIAN
-        window.adminInsertVIPQueue = () => {
-            const plat = document.getElementById('vipPlat').value.trim().toUpperCase();
-            if(!plat) return alert("Plat wajib diisi");
-            runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || [];
-                if(q.some(x => cleanStr(x.plat) === cleanStr(plat))) throw "Plat sudah ada di antrian!";
-                // Taruh di urutan paling depan (unshift)
-                q.unshift({ plat: plat, userName: "JALUR VIP ADMIN", role: "VIP", time: Date.now() });
-                t.update(mainRef, { waitingQueue: q }); 
-            }).then(() => { forceCloseSheet('sheetInputVIP'); document.getElementById('vipPlat').value = ''; }).catch(e => alert(e));
+        // BUKA FORM DAFTAR VIA ADMIN
+        window.bukaDaftarAdmin = (slotIndex) => {
+            currentTargetSlot = slotIndex; 
+            document.getElementById('inpAdminNama').value = ''; document.getElementById('inpAdminPlat').value = ''; document.getElementById('inpAdminBatre').value = '';
+            forceCloseSheet('sheetManageAntrian'); setTimeout(() => { openSheet('sheetDaftarAdmin'); }, 300);
         };
 
-        // --- RENDER LIST IN SHEETS ---
+        window.adminSubmitDaftar = (jalur) => {
+            const nama = document.getElementById('inpAdminNama').value.trim().toUpperCase(); const plat = document.getElementById('inpAdminPlat').value.trim().toUpperCase(); const batre = document.getElementById('inpAdminBatre').value.trim();
+            if(!nama || !plat) return alert("Nama dan Plat wajib diisi!");
+            runTransaction(db, async(t) => {
+                const d = (await t.get(mainRef)).data();
+                const newObj = { plat: plat, userName: nama, batre: batre ? batre + '%' : '-', role: "MANUAL", time: Date.now() };
+                if(jalur === 'antrian') {
+                    let q = d.waitingQueue || []; if(q.some(x => cleanStr(x.plat) === cleanStr(plat))) throw "Plat sudah ada di antrian!";
+                    q.push(newObj); t.update(mainRef, { waitingQueue: q });
+                } else if (jalur === 'slot') {
+                    let targetIdx = currentTargetSlot;
+                    if (targetIdx === -1) { targetIdx = d.chargingSlots.findIndex(s => s === null); if(targetIdx === -1) throw "Semua slot penuh! Pilih Masuk Antrian."; } 
+                    else { if(d.chargingSlots[targetIdx] !== null) throw "Slot keburu terisi!"; }
+                    newObj.startTime = Date.now(); d.chargingSlots[targetIdx] = newObj; t.update(mainRef, { chargingSlots: d.chargingSlots });
+                }
+            }).then(() => { forceCloseSheet('sheetDaftarAdmin'); }).catch(e => alert(e));
+        };
+
         window.renderQueueAdmin = () => {
             const body = document.getElementById('qAdminBody'); body.innerHTML = '';
             if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
             localQueue.forEach((q, i) => {
-                let isVip = q.role === 'VIP' ? 'color:var(--gold);' : '';
-                body.innerHTML += `
-                    <div class="q-item">
-                        <div><div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900; ${isVip}">#${i+1} | ${q.plat}</div><div style="font-size:10px; color:#64748B;">${q.userName}</div></div>
-                        <div class="qi-ctrl">
-                            ${i > 0 ? `<button class="qi-btn" style="background:var(--electric-blue); color:white;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : ''}
-                            ${i < localQueue.length - 1 ? `<button class="qi-btn" style="background:#CBD5E1; color:white;" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : ''}
-                            <button class="qi-btn" style="background:var(--danger); color:white;" onclick="adminKickQueue('${q.plat}')"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>`;
+                let batreInfo = (q.batre && q.batre !== '-') ? ` ⚡ ${q.batre}` : '';
+                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900;">#${i+1} | ${q.plat}</div><div style="font-size:10px; color:#64748B;">${q.userName}${batreInfo}</div></div><div class="qi-ctrl">${i > 0 ? `<button class="qi-btn" style="background:var(--electric-blue); color:white;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : ''}${i < localQueue.length - 1 ? `<button class="qi-btn" style="background:#CBD5E1; color:white;" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : ''}<button class="qi-btn" style="background:var(--danger); color:white;" onclick="adminKickQueue('${q.plat}')"><i class="fas fa-times"></i></button></div></div>`;
             });
         };
 
@@ -484,29 +565,13 @@
             const body = document.getElementById('qListBody'); body.innerHTML = '';
             if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
             localQueue.forEach((q, i) => {
-                let badge = q.role === 'VIP' ? `<span style="font-size:10px; background:var(--gold); color:white; padding:2px 6px; border-radius:6px; margin-left:5px;">VIP</span>` : '';
-                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat} ${badge}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted);">${q.userName}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px;">#${i+1}</div></div>`;
+                let batreInfo = (q.batre && q.batre !== '-') ? ` <span style="color:var(--gold); font-size:11px;"><i class="fas fa-bolt"></i> ${q.batre}</span>` : '';
+                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted);">${q.userName}${batreInfo}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px;">#${i+1}</div></div>`;
             });
         };
 
-        window.adminReorder = (index, dir) => {
-            runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue;
-                let temp = q[index]; q[index] = q[index + dir]; q[index + dir] = temp;
-                t.update(mainRef, {waitingQueue: q}); 
-            });
-        };
-
-        window.adminKickQueue = (plat) => {
-            if(confirm(`Keluarkan ${plat} dari antrian?`)) {
-                runTransaction(db, async(t)=>{ 
-                    const d = (await t.get(mainRef)).data(); 
-                    const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(plat));
-                    t.update(mainRef, {waitingQueue: newQ}); 
-                });
-            }
-        };
-
+        window.adminReorder = (index, dir) => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); let q = d.waitingQueue; let temp = q[index]; q[index] = q[index + dir]; q[index + dir] = temp; t.update(mainRef, {waitingQueue: q}); }); };
+        window.adminKickQueue = (plat) => { if(confirm(`Keluarkan ${plat}?`)) { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(plat)); t.update(mainRef, {waitingQueue: newQ}); }); } };
         window.unblockAll = () => { if(confirm("Hapus semua daftar blokir?")) updateDoc(mainRef, {blockedPlates: []}).then(() => forceCloseSheet('sheetManageAntrian')); };
     </script>
 </body>
