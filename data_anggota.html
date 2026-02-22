@@ -30,10 +30,7 @@
 
         .m-info { flex: 1; min-width: 0; }
         
-        /* Nama KTP Diperkecil & Bisa 2 Baris */
         .m-name { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2;}
-        
-        /* Nama WA (Terpisah) */
         .m-wa-name { font-size: 10px; font-weight: 700; color: var(--electric-blue); background: rgba(45,99,237,0.08); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 5px; text-transform: uppercase; }
 
         .m-plat { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; }
@@ -81,10 +78,10 @@
 </head>
 <body>
 
-    <header class="header-main">
+    <header class="header-main" id="mainHeader">
         <span class="sub-tag">Database Komunitas</span>
         <h1 class="main-title">DATA ANGGOTA</h1>
-    </header>
+        </header>
 
     <div class="search-box">
         <i class="fas fa-search"></i>
@@ -150,6 +147,11 @@
                     <option value="TRANSGO">TRANSGO (Roda Empat)</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label>PIN Login (4 Angka)</label>
+                <input type="text" id="formPin" class="form-input" placeholder="Bisa dikosongkan agar user buat baru" maxlength="4" inputmode="numeric">
+            </div>
             
             <button class="btn-save" id="btnSave" onclick="saveData()">SIMPAN DATA</button>
         </div>
@@ -162,10 +164,43 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // HAK AKSES ADMIN
+        // HAK AKSES ADMIN DEWA & SAKLAR ON/OFF
         const u = JSON.parse(localStorage.getItem('maka_user')) || {};
-        const isAdmin = u.isSuperAdmin || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
+        const platKu = (u.plat || "").replace(/\s+/g, '').toUpperCase();
+        
+        // Mengecek Status Saklar di Memori HP (Default ON)
+        let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
+        const isUserDewa = (platKu === 'B4248SWF');
+        
+        // Seseorang dianggap Admin JIKA: (Dia adalah Dewa DAN Saklar ON) ATAU (Dia memang pengurus di database)
+        const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
 
+        // Render Tombol Saklar Khusus Bapak
+        if (isUserDewa) {
+            const header = document.getElementById('mainHeader');
+            const btnSaklar = document.createElement('button');
+            
+            // Desain tombol saklar
+            btnSaklar.innerHTML = dewaMode === 'ON' ? '<i class="fas fa-crown"></i> MODE DEWA: ON' : '<i class="fas fa-user-shield"></i> MODE DEWA: OFF';
+            btnSaklar.style.cssText = `
+                margin-top: 15px; 
+                background: ${dewaMode === 'ON' ? 'var(--gold)' : '#64748B'}; 
+                color: white; border: none; padding: 8px 15px; border-radius: 20px; 
+                font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; 
+                cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.2s;
+            `;
+            
+            // Fungsi ketika tombol ditekan
+            btnSaklar.onclick = () => {
+                const newState = dewaMode === 'ON' ? 'OFF' : 'ON';
+                localStorage.setItem('maka_dewa_mode', newState);
+                location.reload(); // Refresh halaman agar efek langsung terasa
+            };
+            
+            header.appendChild(btnSaklar);
+        }
+
+        // Tampilkan tombol-tombol khusus Admin
         if (isAdmin) {
             document.getElementById('btnAdd').style.display = 'flex';
             const style = document.createElement('style');
@@ -233,7 +268,7 @@
                         <div class="m-info">
                             <div class="m-name">${nameKtp}</div>
                             <div class="m-wa-name"><i class="fas fa-comment-dots"></i> WA: ${nameWa}</div>
-                            <div class="m-plat">${m.plat} • ${m.type}</div>
+                            <div class="m-plat">${m.plat} • ${m.type || m.divisi || 'RTO'}</div>
                             <div class="m-role">${m.role}</div>
                         </div>
                         <div class="m-actions">
@@ -269,6 +304,7 @@
             document.getElementById('formHp').value = ''; 
             document.getElementById('formRole').value = 'KELUARGA MLU';
             document.getElementById('formType').value = 'RTO';
+            document.getElementById('formPin').value = ''; // Kosongkan PIN
             currentPhotoBase64 = "";
             document.getElementById('previewFoto').style.display = 'none';
             document.getElementById('formFoto').value = '';
@@ -285,7 +321,9 @@
             document.getElementById('formPlat').value = m.plat || ''; 
             document.getElementById('formHp').value = m.hp || ''; 
             document.getElementById('formRole').value = m.role || 'KELUARGA MLU';
-            document.getElementById('formType').value = m.type || 'RTO';
+            document.getElementById('formType').value = m.type || m.divisi || 'RTO'; // Handle type/divisi
+            document.getElementById('formPin').value = m.pin || ''; // Masukkan PIN yang sudah ada ke kolom edit
+            
             document.getElementById('modalTitleText').innerText = "Edit Anggota & Foto";
             
             if(m.foto && m.foto.length > 50) {
@@ -310,6 +348,7 @@
             const hp = document.getElementById('formHp').value.trim();
             const role = document.getElementById('formRole').value;
             const type = document.getElementById('formType').value;
+            const pin = document.getElementById('formPin').value.trim(); // Ambil nilai PIN
 
             if(!namaKtp || !namaWa || !plat) return alert("Nama KTP, Nama WA, dan Plat wajib diisi!");
 
@@ -322,6 +361,11 @@
                     plat: plat, hp: hp, role: role, type: type 
                 };
                 
+                // Masukkan PIN jika form PIN tidak dikosongkan (Atau kosongkan di database jika dihapus)
+                if (pin !== undefined) {
+                    payload.pin = pin;
+                }
+                
                 if(currentPhotoBase64 !== "") {
                     payload.foto = currentPhotoBase64;
                 }
@@ -329,7 +373,6 @@
                 if (id) {
                     await updateDoc(doc(db, "mlu_members", id), payload);
                 } else {
-                    payload.pin = ""; 
                     await addDoc(collection(db, "mlu_members"), payload);
                 }
                 closeModal();
