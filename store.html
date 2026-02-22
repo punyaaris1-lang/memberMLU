@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pasar MLU - Jual Beli Komunitas</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { 
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
+            --bg-surface: #F8FAFC; --white: #FFFFFF; 
+            --text-main: #0F172A; --text-muted: #64748B; 
+            --success: #10B981; --warning: #F59E0B; --danger: #EF4444; 
+        }
+        
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        /* --- HEADER --- */
+        .header-store { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; position: relative; box-shadow: 0 15px 35px rgba(10,34,89,0.1); }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .main-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; margin: 0; line-height: 1.1; }
+
+        /* --- TAB NAVIGATION --- */
+        .tab-wrapper { display: flex; margin: -30px 20px 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 6px; box-shadow: 0 15px 35px rgba(10,34,89,0.1); border: 1px solid rgba(226, 232, 240, 0.8); position: relative; z-index: 10; }
+        .tab-btn { flex: 1; padding: 12px 5px; text-align: center; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 12px; transition: 0.3s; }
+        .tab-btn.active { background: var(--electric-blue); color: white; box-shadow: 0 4px 10px rgba(45,99,237,0.3); }
+
+        /* Notif Dot */
+        .notif-dot { background: var(--danger); color: white; font-size: 9px; padding: 2px 6px; border-radius: 10px; position: absolute; top: -5px; right: -5px; box-shadow: 0 2px 5px rgba(239,68,68,0.5); }
+
+        /* --- PRODUCT GRID --- */
+        .product-grid { padding: 10px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .prod-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.03); border: 1px solid #E2E8F0; display: flex; flex-direction: column; position: relative; }
+        
+        .p-img-box { width: 100%; height: 160px; background: #F1F5F9; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .p-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Badges */
+        .badge-status { position: absolute; top: 10px; left: 10px; font-size: 9px; font-weight: 900; padding: 4px 8px; border-radius: 8px; color: white; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 2; }
+        .bg-pending { background: var(--warning); color: #000; }
+        .bg-approved { background: var(--success); }
+        .bg-sold { background: var(--danger); }
+
+        .seller-badge { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); color: white; font-size: 9px; padding: 4px 8px; border-radius: 8px; font-weight: 700; z-index: 2; }
+
+        .p-info { padding: 15px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
+        .p-title { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 5px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .p-price { font-family: 'Inter'; font-size: 15px; font-weight: 900; color: var(--electric-blue); margin-bottom: 5px; }
+        
+        .fee-info { font-size: 9px; color: var(--danger); font-weight: 800; margin-bottom: 10px; background: #FEF2F2; padding: 4px 8px; border-radius: 6px; border: 1px dashed #FCA5A5; display: inline-block; }
+
+        .btn-buy { background: #ECFDF5; color: var(--success); border: 1px solid #A7F3D0; padding: 10px; border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; text-decoration: none;}
+        .btn-buy:active { background: var(--success); color: white; }
+        
+        .btn-share { background: #F1F5F9; color: var(--electric-blue); border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .btn-share:active { background: var(--electric-blue); color: white; border-color: var(--electric-blue); }
+
+        .btn-admin-act { width: 100%; padding: 10px; border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 11px; border: none; cursor: pointer; margin-top: 5px;}
+        .btn-approve { background: var(--electric-blue); color: white; }
+        .btn-reject { background: #FEF2F2; color: var(--danger); border: 1px solid var(--danger); }
+
+        /* --- FAB & NAV --- */
+        .fab-jual { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: var(--success); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 10px 25px rgba(16,185,129,0.4); border: none; cursor: pointer; z-index: 1000; transition: 0.2s;}
+        .fab-jual:active { transform: scale(0.9); }
+        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
+        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+
+        /* --- MODAL FORM --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
+        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; max-height: 90vh; overflow-y: auto;}
+        @keyframes slideUp { to { transform: translateY(0); } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; }
+        .form-input:focus { border-color: var(--electric-blue); background: white; }
+        
+        .upload-area { border: 2px dashed #CBD5E1; border-radius: 16px; padding: 15px; text-align: center; background: #F8FAFC; cursor: pointer; position: relative; margin-bottom: 15px;}
+        .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .preview-img { width: 100%; max-height: 150px; border-radius: 12px; object-fit: cover; display: none; margin-top: 10px; border: 1px solid var(--electric-blue); }
+
+        .btn-save-modal { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--success); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(16,185,129,0.3); }
+
+        .rules-box { background: #EFF6FF; padding: 15px; border-radius: 12px; border: 1px dashed #93C5FD; margin-bottom: 15px; }
+        .rules-box p { font-size: 11px; color: var(--electric-blue); font-weight: 600; margin: 0; line-height: 1.5;}
+    </style>
+</head>
+<body>
+
+    <header class="header-store">
+        <div class="head-flex">
+            <div>
+                <span class="sub-tag">Forum Jual Beli Internal</span>
+                <h1 class="main-title">PASAR MLU</h1>
+            </div>
+        </div>
+    </header>
+
+    <div class="tab-wrapper">
+        <div class="tab-btn active" id="tabStore" onclick="switchTab('STORE')">PASAR UTAMA</div>
+        <div class="tab-btn" id="tabMyLapak" onclick="switchTab('LAPAK')">LAPAK SAYA</div>
+        <div class="tab-btn" id="tabApproval" onclick="switchTab('APPROVAL')" style="display:none; position:relative;">
+            APPROVAL <span class="notif-dot" id="notifApprove" style="display:none;">0</span>
+        </div>
+    </div>
+
+    <main class="product-grid" id="mainContainer">
+        </main>
+
+    <button class="fab-jual" onclick="openModal()"><i class="fas fa-camera"></i></button>
+    <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
+
+    <div class="modal-overlay" id="prodModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-store"></i> Buka Lapak</div>
+                <button onclick="closeModal()" style="background:none; border:none; font-size:18px; color:var(--text-muted); cursor:pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="rules-box">
+                <p><i class="fas fa-info-circle"></i> <b>ATURAN PASAR MLU:</b><br>1. Barang yang diposting akan direview Pengurus terlebih dahulu.<br>2. <b>Wajib menyisihkan 5%</b> dari harga jual untuk disetorkan ke Bendahara (Kas MLU) apabila barang laku terjual.</p>
+            </div>
+
+            <div class="upload-area">
+                <i class="fas fa-cloud-upload-alt" style="font-size:24px; color:var(--electric-blue); margin-bottom:5px; display:block;"></i>
+                <div style="font-size:11px; font-weight:700; color:var(--text-muted);">Tap untuk Upload Foto Barang</div>
+                <input type="file" id="formFoto" accept="image/*">
+                <img id="previewFoto" class="preview-img">
+            </div>
+
+            <div class="form-group">
+                <label>Nama / Merk Barang</label>
+                <input type="text" id="formName" class="form-input" placeholder="Contoh: Knalpot Ori NMAX">
+            </div>
+            
+            <div class="form-group">
+                <label>Harga Jual (Rp)</label>
+                <input type="number" id="formPrice" class="form-input" placeholder="Contoh: 350000" style="font-family:'Space Grotesk'; font-size:16px;" oninput="hitungFee()">
+            </div>
+            
+            <div style="text-align:right; margin-top:-10px; margin-bottom:15px; font-size:10px; font-weight:800; color:var(--danger);" id="estimasiFee">Estimasi Potongan Kas (5%): Rp 0</div>
+
+            <div class="form-group">
+                <label>Kondisi Barang</label>
+                <select id="formKondisi" class="form-input">
+                    <option value="BEKAS">Bekas (Second)</option>
+                    <option value="BARU">Baru (New)</option>
+                </select>
+            </div>
+            
+            <button class="btn-save-modal" id="btnSave" onclick="saveData()"><i class="fas fa-paper-plane"></i> POSTING JUALAN</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // GUNAKAN DATABASE UTAMA MLU
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
+
+        // HAK AKSES & DATA USER
+        const u = JSON.parse(localStorage.getItem('maka_user')) || {};
+        const myPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
+        const myName = u.namaKtp || u.nama || "MEMBER";
+        const myHp = u.hp || u.noWa || ""; 
+        
+        let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
+        const isUserDewa = (myPlat === 'B4248SWF');
+        const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
+
+        let currentTab = 'STORE'; // STORE, LAPAK, APPROVAL
+        let allProducts = [];
+        let currentPhotoBase64 = "";
+
+        if (isAdmin) {
+            document.getElementById('tabApproval').style.display = 'block';
+        }
+
+        window.switchTab = (tab) => {
+            currentTab = tab;
+            document.getElementById('tabStore').classList.remove('active');
+            document.getElementById('tabMyLapak').classList.remove('active');
+            document.getElementById('tabApproval').classList.remove('active');
+            
+            if(tab === 'STORE') document.getElementById('tabStore').classList.add('active');
+            if(tab === 'LAPAK') document.getElementById('tabMyLapak').classList.add('active');
+            if(tab === 'APPROVAL') document.getElementById('tabApproval').classList.add('active');
+            
+            renderProducts();
+        };
+
+        // KOMPRESOR FOTO BARANG
+        document.getElementById('formFoto').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    let w = img.width; let h = img.height;
+                    if (w > h) { if (w > 800) { h *= 800/w; w = 800; } } else { if (h > 800) { w *= 800/h; h = 800; } }
+                    canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
+                    currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    const preview = document.getElementById('previewFoto');
+                    preview.src = currentPhotoBase64; preview.style.display = 'block';
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        window.hitungFee = () => {
+            const price = parseInt(document.getElementById('formPrice').value) || 0;
+            const fee = price * 0.05;
+            document.getElementById('estimasiFee').innerText = `Estimasi Potongan Kas (5%): Rp ${fee.toLocaleString('id-ID')}`;
+        };
+
+        // TARIK DATA DARI FIREBASE
+        onSnapshot(query(collection(db, "mlu_pasar"), orderBy("timestamp", "desc")), (snap) => {
+            allProducts = [];
+            let pendingCount = 0;
+            snap.forEach(doc => { 
+                const data = { id: doc.id, ...doc.data() };
+                allProducts.push(data); 
+                if(data.status === 'PENDING') pendingCount++;
+            });
+            
+            if (isAdmin) {
+                const badge = document.getElementById('notifApprove');
+                badge.innerText = pendingCount;
+                badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+            }
+            
+            renderProducts();
+        });
+
+        function renderProducts() {
+            const container = document.getElementById('mainContainer'); 
+            container.innerHTML = '';
+            
+            let filteredData = [];
+            
+            if (currentTab === 'STORE') {
+                filteredData = allProducts.filter(p => p.status === 'APPROVED' && p.isSold !== true);
+            } else if (currentTab === 'LAPAK') {
+                filteredData = allProducts.filter(p => p.sellerPlat === myPlat);
+            } else if (currentTab === 'APPROVAL' && isAdmin) {
+                filteredData = allProducts.filter(p => p.status === 'PENDING');
+            }
+
+            if(filteredData.length === 0) {
+                container.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:40px; color:#94A3B8;"><i class="fas fa-box-open" style="font-size:40px; margin-bottom:10px;"></i><br>Tidak ada barang di etalase ini.</div>`;
+                return;
+            }
+
+            filteredData.forEach(p => {
+                const imgHtml = p.foto ? `<img src="${p.foto}" class="p-img">` : `<div style="font-size:40px; color:#CBD5E1; height:100%; display:flex; align-items:center; justify-content:center;"><i class="fas fa-box"></i></div>`;
+                const feeKas = p.price * 0.05;
+                
+                let badgeStatus = '';
+                if(p.status === 'PENDING') badgeStatus = `<div class="badge-status bg-pending"><i class="fas fa-clock"></i> Review Admin</div>`;
+                if(p.isSold) badgeStatus = `<div class="badge-status bg-sold"><i class="fas fa-check-circle"></i> LAKU</div>`;
+                
+                let sellerBadge = `<div class="seller-badge"><i class="fas fa-user-tag"></i> ${p.sellerName.split(' ')[0]}</div>`;
+
+                let actionHtml = '';
+                
+                // Jika di tab PASAR (Pembeli)
+                if (currentTab === 'STORE') {
+                    // Tombol Share WA Promo
+                    const textShare = encodeURIComponent(`🔥 *BARANG BARU DI PASAR MLU!* 🔥\n\n📦 *${p.name}*\n💰 Rp ${p.price.toLocaleString('id-ID')}\n👤 Penjual: ${p.sellerName.split(' ')[0]}\n\nYuk cek dan beli langsung di Aplikasi MLU Super App menu *PASAR MLU*!`);
+                    const linkShare = `https://wa.me/?text=${textShare}`;
+
+                    // Kalau ini barang orang lain, tampilkan tombol WA Chat + Share
+                    if (p.sellerPlat !== myPlat) {
+                        let noWa = p.sellerHp || "";
+                        if(noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
+                        const txtPesan = `Halo Om ${p.sellerName.split(' ')[0]}, saya ${myName} (Plat: ${myPlat}) dari aplikasi MLU. Saya minat beli barang ini:%0A%0A📦 *${p.name}*\n💰 Rp ${p.price.toLocaleString('id-ID')}%0A%0AApakah masih ada?`;
+                        const linkWa = `https://wa.me/${noWa}?text=${txtPesan}`;
+                        
+                        actionHtml = `
+                            <div style="display:flex; gap:8px;">
+                                <a href="${linkWa}" target="_blank" style="text-decoration:none; flex:1;">
+                                    <button class="btn-buy" style="width:100%;"><i class="fab fa-whatsapp"></i> Chat Penjual</button>
+                                </a>
+                                <a href="${linkShare}" target="_blank" style="text-decoration:none;">
+                                    <button class="btn-share"><i class="fas fa-share-alt"></i></button>
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        // Kalau ini barang milik dia sendiri yang kebetulan tayang di STORE
+                        actionHtml = `
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-buy" style="background:#F1F5F9; color:#94A3B8; border-color:#E2E8F0; cursor:default; flex:1;">Ini Barang Anda</button>
+                                <a href="${linkShare}" target="_blank" style="text-decoration:none;">
+                                    <button class="btn-share"><i class="fas fa-share-alt"></i></button>
+                                </a>
+                            </div>
+                        `;
+                    }
+                } 
+                // Jika di tab LAPAK SAYA (Penjual)
+                else if (currentTab === 'LAPAK') {
+                    if (!p.isSold && p.status === 'APPROVED') {
+                        actionHtml = `
+                            <div class="fee-info"><i class="fas fa-info-circle"></i> Wajib setor Kas: Rp ${feeKas.toLocaleString('id-ID')} jika laku.</div>
+                            <button class="btn-admin-act btn-approve" onclick="tandaiLaku('${p.id}')"><i class="fas fa-handshake"></i> TANDAI LAKU TERJUAL</button>
+                            <button class="btn-admin-act btn-reject" onclick="hapusBarang('${p.id}')" style="margin-top:5px;"><i class="fas fa-trash"></i> CABUT IKLAN</button>
+                        `;
+                    } else if (p.status === 'PENDING') {
+                        actionHtml = `<div style="font-size:10px; color:var(--warning); font-weight:800; text-align:center; padding:10px;">MENUNGGU PERSETUJUAN ADMIN</div><button class="btn-admin-act btn-reject" onclick="hapusBarang('${p.id}')"><i class="fas fa-trash"></i> BATALKAN</button>`;
+                    } else if (p.isSold) {
+                        actionHtml = `<div style="font-size:10px; color:var(--success); font-weight:800; text-align:center; padding:10px;">BARANG SUDAH LAKU</div>`;
+                    }
+                }
+                // Jika di tab APPROVAL (Khusus Admin)
+                else if (currentTab === 'APPROVAL') {
+                    actionHtml = `
+                        <button class="btn-admin-act btn-approve" onclick="approveBarang('${p.id}')"><i class="fas fa-check"></i> SETUJUI (TAYANGKAN)</button>
+                        <button class="btn-admin-act btn-reject" onclick="hapusBarang('${p.id}')"><i class="fas fa-times"></i> TOLAK (HAPUS)</button>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="prod-card">
+                        <div class="p-img-box">
+                            ${badgeStatus}
+                            ${sellerBadge}
+                            ${imgHtml}
+                        </div>
+                        <div class="p-info">
+                            <div>
+                                <div class="p-title">${p.name} <span style="font-size:9px; color:#94A3B8; font-weight:normal;">(${p.kondisi})</span></div>
+                                <div class="p-price">Rp ${p.price.toLocaleString('id-ID')}</div>
+                            </div>
+                            <div style="margin-top:10px;">
+                                ${actionHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- SISTEM MODAL BUKA LAPAK ---
+        window.openModal = () => { 
+            if(!myHp || myHp === "-") {
+                alert("Nomor WA Anda kosong di database. Minta admin untuk update No WA Anda agar pembeli bisa menghubungi Anda!");
+                return;
+            }
+            document.getElementById('formName').value = ''; 
+            document.getElementById('formPrice').value = ''; 
+            document.getElementById('estimasiFee').innerText = 'Estimasi Potongan Kas (5%): Rp 0';
+            currentPhotoBase64 = "";
+            document.getElementById('previewFoto').style.display = 'none';
+            document.getElementById('formFoto').value = '';
+            document.getElementById('prodModal').style.display = 'flex'; 
+        };
+
+        window.closeModal = () => { document.getElementById('prodModal').style.display = 'none'; };
+
+        window.saveData = async () => {
+            const name = document.getElementById('formName').value.trim();
+            const price = parseInt(document.getElementById('formPrice').value);
+            const kondisi = document.getElementById('formKondisi').value;
+
+            if(!name || !price || !currentPhotoBase64) return alert("Nama, Harga, dan FOTO BARANG wajib diisi!");
+
+            const btn = document.getElementById('btnSave');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMPROSES...'; btn.style.opacity = '0.7';
+
+            try {
+                // Jika Admin yg posting, otomatis APPROVED. Jika member biasa, PENDING.
+                const initialStatus = isAdmin ? 'APPROVED' : 'PENDING';
+
+                let payload = { 
+                    name: name, price: price, kondisi: kondisi,
+                    foto: currentPhotoBase64,
+                    sellerName: myName, sellerPlat: myPlat, sellerHp: myHp,
+                    status: initialStatus, isSold: false,
+                    timestamp: Date.now() 
+                };
+                
+                await addDoc(collection(db, "mlu_pasar"), payload);
+                closeModal();
+                if(!isAdmin) alert("Barang berhasil diposting! Menunggu persetujuan Admin agar tampil di Pasar Utama.");
+                else alert("Barang langsung tayang di Pasar!");
+                
+            } catch (e) {
+                alert("Gagal posting: " + e.message);
+            } finally {
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> POSTING JUALAN'; btn.style.opacity = '1';
+            }
+        };
+
+        // --- AKSI ADMIN / PENJUAL ---
+        window.approveBarang = async (id) => {
+            if(confirm("Tayangkan barang ini ke seluruh member?")) {
+                await updateDoc(doc(db, "mlu_pasar", id), { status: 'APPROVED' });
+            }
+        };
+
+        window.hapusBarang = async (id) => {
+            if(confirm("Yakin ingin menghapus / mencabut barang ini?")) {
+                await deleteDoc(doc(db, "mlu_pasar", id));
+            }
+        };
+
+        window.tandaiLaku = async (id) => {
+            if(confirm("Alhamdulillah laku! Tandai terjual?\n\nJANGAN LUPA: Silakan transfer potongan 5% ke Bendahara/Kas MLU ya Om!")) {
+                await updateDoc(doc(db, "mlu_pasar", id), { isSold: true });
+            }
+        };
+    </script>
+</body>
+</html>

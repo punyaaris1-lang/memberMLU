@@ -64,6 +64,14 @@
         .ic-antrian { background: linear-gradient(135deg, #0891B2 0%, #0369A1 100%); }
         .ic-reminder { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); } 
         .ic-info { background: linear-gradient(135deg, #8B5CF6 0%, #4338CA 100%); }
+        
+        /* WARNA IKON PASAR MLU */
+        .ic-pasar { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
+        
+        /* BANNER EXTRA */
+        .banner-btn { background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%); border: 1px dashed #BFDBFE; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 24px; padding: 20px; text-align: center; }
+        .banner-btn i { font-size: 32px; color: #93C5FD; margin-bottom: 10px; }
+        .banner-btn span { font-size: 10px; font-weight: 800; color: #60A5FA; text-transform: uppercase; letter-spacing: 1px; }
 
         .notif-dot { display: none; position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: var(--danger); border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
@@ -156,22 +164,34 @@
                 <div class="menu-title">OD Reminder</div>
                 <div class="menu-desc">Asisten tagihan pribadi</div>
             </a>
-            <a href="info_mlu.html" class="menu-btn">
+            <a href="infomlu.html" class="menu-btn">
                 <div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div>
                 <div class="menu-title">Info MLU</div>
                 <div class="menu-desc">Pusat informasi & aturan</div>
             </a>
+            
+            <a href="store.html" class="menu-btn">
+                <div class="icon-box ic-pasar"><i class="fas fa-store"></i></div>
+                <div class="menu-title">Pasar MLU</div>
+                <div class="menu-desc">Forum Jual Beli Member</div>
+            </a>
+
+            <div class="banner-btn" onclick="alert('Fitur segera hadir! Siapkan mesin dan fisikmu.')">
+                <i class="fas fa-route"></i>
+                <span>Jadwal Touring</span>
+            </div>
+            
         </div>
     </main>
 
     <div class="dock-container">
-        <a href="lokasi_fc.html" class="nav-item">
+        <a href="lokasifc.html" class="nav-item">
             <i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI FC</span>
         </a>
         <a href="dashboard.html" class="nav-item active">
             <i class="fas fa-home"></i><span class="nav-text">HOME</span>
         </a>
-        <a href="plan_route.html" class="nav-item">
+        <a href="plan.html" class="nav-item">
             <i class="fas fa-route"></i><span class="nav-text">ROUTE PLAN</span>
         </a>
     </div>
