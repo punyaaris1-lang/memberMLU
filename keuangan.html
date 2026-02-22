@@ -80,17 +80,14 @@
         
         .btn-save-modal { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--royal-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(10,34,89,0.2); }
 
-        /* KOLEKTIF AREA UI */
+        /* KOLEKTIF AREA UI (UPDATE BARU UNTUK CICILAN) */
         .coll-area { display: none; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
-        .coll-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
-        .k-in { padding: 12px; border-radius: 10px; border: 1px solid #CBD5E1; font-family: 'Inter'; font-size: 13px; font-weight: 600; outline: none; }
+        .coll-item { background: white; border: 1px solid #E2E8F0; padding: 15px; border-radius: 12px; margin-bottom: 12px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .coll-row-top { display: flex; gap: 10px; margin-bottom: 10px; padding-right: 35px; }
+        .k-in { padding: 12px; border-radius: 10px; border: 1px solid #CBD5E1; font-family: 'Inter'; font-size: 13px; font-weight: 600; outline: none; width: 100%; box-sizing: border-box; }
         .k-in:focus { border-color: var(--electric-blue); }
+        .btn-del-coll { position: absolute; top: 15px; right: 15px; background: #FEF2F2; color: var(--danger); border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        /* LIST SHEET KOLEKTIF VIEWER */
-        .list-kol-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px dashed #E2E8F0; }
-        .list-kol-item:last-child { border-bottom: none; }
-        .lki-name { font-weight: 700; font-size: 13px; color: var(--text-main); text-transform: uppercase; }
-        .lki-amt { font-family: 'Space Grotesk'; font-weight: 800; color: var(--success); }
     </style>
 </head>
 <body>
@@ -140,14 +137,14 @@
                 <label>Jenis Transaksi</label>
                 <select id="formTxType" class="form-input" style="font-weight: 800;" onchange="toggleFormType()">
                     <option value="IN">PEMASUKAN KAS (1 Item)</option>
-                    <option value="IN_COLLECTIVE" style="color:var(--electric-blue); font-weight:bold;">PEMASUKAN KOLEKTIF (Banyak Donatur)</option>
+                    <option value="IN_COLLECTIVE" style="color:var(--electric-blue); font-weight:bold;">P. KOLEKTIF (Bisa Dicicil / Banyak Orang)</option>
                     <option value="OUT" style="color:var(--danger);">PENGELUARAN KAS</option>
                 </select>
             </div>
             
             <div class="form-group">
-                <label>Keterangan / Nama Acara</label>
-                <input type="text" id="formTxDesc" class="form-input" placeholder="Contoh: Iuran Bulanan / Beli Kopi">
+                <label>Nama Transaksi / Acara</label>
+                <input type="text" id="formTxDesc" class="form-input" placeholder="Contoh: Dana Bukber 2026 / Iuran Kas">
             </div>
 
             <div class="form-group" id="formNormalAmount">
@@ -156,11 +153,11 @@
             </div>
 
             <div class="coll-area" id="formCollective">
-                <label style="font-size:10px; font-weight:800; color:var(--royal-blue); margin-bottom:10px; display:block;">DAFTAR PENYUMBANG / DONATUR</label>
+                <label style="font-size:10px; font-weight:800; color:var(--royal-blue); margin-bottom:10px; display:block;">DAFTAR PENYUMBANG & CICILAN</label>
                 <div id="collList"></div>
                 <button type="button" style="width:100%; padding:12px; border:1px dashed var(--electric-blue); border-radius:10px; background:transparent; color:var(--electric-blue); font-weight:800; font-family:'Space Grotesk'; cursor:pointer; margin-top:5px;" onclick="addCollRow()">+ TAMBAH ORANG</button>
                 <div style="margin-top:15px; text-align:right; font-family:'Space Grotesk'; font-size:16px; font-weight:900; color:var(--success);">
-                    TOTAL: Rp <span id="collTotalDisplay">0</span>
+                    TOTAL TERKUMPUL: Rp <span id="collTotalDisplay">0</span>
                 </div>
             </div>
             
@@ -174,7 +171,7 @@
                 <div class="modal-title" style="font-size:16px;">Rincian Pemasukan</div>
                 <button class="btn-close" onclick="document.getElementById('detailModal').style.display='none'"><i class="fas fa-times"></i></button>
             </div>
-            <div id="detailListBody" style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:16px; max-height: 40vh; overflow-y:auto;"></div>
+            <div id="detailListBody" style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:16px; max-height: 50vh; overflow-y:auto;"></div>
         </div>
     </div>
 
@@ -195,7 +192,6 @@
         const todayOptions = { day: 'numeric', month: 'long', year: 'numeric' };
         document.getElementById('lblDate').innerText = `SALDO KAS MLU PER ${new Date().toLocaleDateString('id-ID', todayOptions).toUpperCase()}`;
 
-        // GLOBAL MEMORY UNTUK FITUR EDIT
         window.txGlobalMap = {};
 
         window.switchTab = (type) => {
@@ -211,12 +207,12 @@
         onSnapshot(query(collection(db, "mlu_finance"), orderBy("timestamp", "desc")), (snap) => {
             let balance = 0, globalIn = 0, globalOut = 0;
             let groupIn = new Map(); let groupOut = new Map();
-            window.txGlobalMap = {}; // Reset global map tiap kali data baru masuk
+            window.txGlobalMap = {}; 
 
             snap.forEach(docSnap => {
                 const d = docSnap.data();
                 const amt = d.amount || 0;
-                window.txGlobalMap[docSnap.id] = { id: docSnap.id, ...d }; // Simpan ke memory untuk di-edit
+                window.txGlobalMap[docSnap.id] = { id: docSnap.id, ...d }; 
                 
                 const type = d.type === 'IN_COLLECTIVE' ? 'IN' : d.type; 
                 const dateObj = new Date(d.timestamp);
@@ -254,10 +250,9 @@
                         let subHtml = '';
                         if (d.isCollective && d.details) {
                             const encData = encodeURIComponent(JSON.stringify(d.details));
-                            subHtml = `<button class="btn-lihat-kolektif" onclick="showCollectiveDetail('${encData}')"><i class="fas fa-users"></i> LIHAT RINCIAN (${d.details.length} ORANG)</button>`;
+                            subHtml = `<button class="btn-lihat-kolektif" onclick="showCollectiveDetail('${encData}')"><i class="fas fa-users"></i> LIHAT RINCIAN (${d.details.length} DATA)</button>`;
                         }
 
-                        // TOMBOL EDIT & DELETE (ADMIN SAJA)
                         let actionBtns = '';
                         if (isAdmin) {
                             actionBtns = `
@@ -274,7 +269,7 @@
                                         <div class="tx-title">${d.description}</div>
                                         <div style="text-align:right;">
                                             <div class="tx-amount" style="color:${colorTotal}">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
-                                            <div class="tx-sub">${d.isCollective ? 'Pemasukan Kolektif' : (isMasuk ? 'Pemasukan' : 'Pengeluaran')}</div>
+                                            <div class="tx-sub">${d.isCollective ? 'Kolektif / Patungan' : (isMasuk ? 'Pemasukan' : 'Pengeluaran')}</div>
                                         </div>
                                     </div>
                                     <div class="tx-meta">${d.date}</div>
@@ -305,14 +300,18 @@
             }
         };
 
-        window.addCollRow = (nameVal = "", amountVal = "") => {
+        // KOTAK INPUT KOLEKTIF DIPERBARUI AGAR BISA ADA KETERANGAN CICILAN
+        window.addCollRow = (nameVal = "", amountVal = "", noteVal = "") => {
             const list = document.getElementById('collList');
             const div = document.createElement('div');
-            div.className = 'coll-row';
+            div.className = 'coll-item';
             div.innerHTML = `
-                <input type="text" class="k-in c-name" placeholder="Nama Donatur" style="flex:1;" value="${nameVal}">
-                <input type="number" class="k-in c-amt" placeholder="Rp Nominal" style="flex:1;" onkeyup="calcCollTotal()" value="${amountVal}">
-                <button type="button" style="background:#FEF2F2; color:#EF4444; border:none; width:38px; height:38px; border-radius:10px; cursor:pointer;" onclick="this.parentElement.remove(); calcCollTotal();"><i class="fas fa-times"></i></button>
+                <button type="button" class="btn-del-coll" onclick="this.parentElement.remove(); calcCollTotal();"><i class="fas fa-trash"></i></button>
+                <div class="coll-row-top">
+                    <input type="text" class="k-in c-name" placeholder="Nama" style="flex:1;" value="${nameVal}">
+                    <input type="number" class="k-in c-amt" placeholder="Rp Total" style="flex:1;" onkeyup="calcCollTotal()" value="${amountVal}">
+                </div>
+                <input type="text" class="k-in c-note" placeholder="Ket (Misal: LUNAS / Cicilan 1)" value="${noteVal}">
             `;
             list.appendChild(div);
         };
@@ -326,7 +325,7 @@
 
         // --- SISTEM MODAL (TAMBAH & EDIT) ---
         window.openTxModal = () => { 
-            document.getElementById('formEditId').value = ''; // Kosongkan ID (Mode Tambah Baru)
+            document.getElementById('formEditId').value = ''; 
             document.getElementById('modalTitleText').innerText = 'Catat Transaksi Baru';
             document.getElementById('formTxAmount').value = '';
             document.getElementById('formTxDesc').value = '';
@@ -343,24 +342,23 @@
             const data = window.txGlobalMap[id];
             if(!data) return;
 
-            document.getElementById('formEditId').value = id; // Isi ID (Mode Edit)
+            document.getElementById('formEditId').value = id;
             document.getElementById('modalTitleText').innerText = 'Edit Transaksi';
             document.getElementById('formTxDesc').value = data.description;
             
             if(data.isCollective) {
                 document.getElementById('formTxType').value = 'IN_COLLECTIVE';
                 toggleFormType();
-                document.getElementById('collList').innerHTML = ''; // Bersihkan baris lama
+                document.getElementById('collList').innerHTML = ''; 
                 
-                // Masukkan data donatur yang sudah ada
                 if(data.details && data.details.length > 0) {
-                    data.details.forEach(d => addCollRow(d.name, d.amount));
+                    data.details.forEach(d => addCollRow(d.name, d.amount, d.note || ''));
                 } else {
-                    addCollRow(); // Baris kosong jika entah kenapa datanya kosong
+                    addCollRow(); 
                 }
                 calcCollTotal();
             } else {
-                document.getElementById('formTxType').value = data.type; // IN atau OUT
+                document.getElementById('formTxType').value = data.type; 
                 toggleFormType();
                 document.getElementById('formTxAmount').value = data.amount;
             }
@@ -370,12 +368,22 @@
 
         window.closeTxModal = () => { document.getElementById('txModal').style.display = 'none'; };
 
+        // MENAMPILKAN KETERANGAN DI POPUP RINCIAN
         window.showCollectiveDetail = (encData) => {
             const data = JSON.parse(decodeURIComponent(encData));
             const body = document.getElementById('detailListBody');
             body.innerHTML = '';
             data.forEach((d, i) => {
-                body.innerHTML += `<div class="list-kol-item"><div class="lki-name">${i+1}. ${d.name}</div><div class="lki-amt">Rp ${d.amount.toLocaleString('id-ID')}</div></div>`;
+                let noteHtml = d.note ? `<div style="font-size:10px; color:var(--text-muted); margin-top:4px;"><i class="fas fa-tag"></i> ${d.note}</div>` : '';
+                body.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; padding:15px; border-bottom:1px dashed #E2E8F0;">
+                        <div>
+                            <div style="font-weight:700; font-size:13px; color:var(--text-main); text-transform:uppercase;">${i+1}. ${d.name}</div>
+                            ${noteHtml}
+                        </div>
+                        <div style="font-family:'Space Grotesk'; font-weight:800; color:var(--success);">Rp ${d.amount.toLocaleString('id-ID')}</div>
+                    </div>
+                `;
             });
             document.getElementById('detailModal').style.display = 'flex';
         };
@@ -384,18 +392,19 @@
             const editId = document.getElementById('formEditId').value;
             const rawType = document.getElementById('formTxType').value;
             const description = document.getElementById('formTxDesc').value.trim();
-            if(!description) return alert("Keterangan Acara wajib diisi!");
+            if(!description) return alert("Nama Transaksi / Acara wajib diisi!");
 
             let finalAmount = 0; let finalDetails = []; let isCollective = false; let finalType = rawType; 
 
             if (rawType === 'IN_COLLECTIVE') {
                 isCollective = true; finalType = 'IN'; 
-                document.querySelectorAll('.coll-row').forEach(row => {
+                document.querySelectorAll('.coll-item').forEach(row => {
                     let n = row.querySelector('.c-name').value.trim();
                     let a = parseInt(row.querySelector('.c-amt').value) || 0;
-                    if(n && a > 0) { finalDetails.push({ name: n, amount: a }); finalAmount += a; }
+                    let note = row.querySelector('.c-note').value.trim();
+                    if(n && a > 0) { finalDetails.push({ name: n, amount: a, note: note }); finalAmount += a; }
                 });
-                if (finalDetails.length === 0) return alert("Daftar donatur tidak boleh kosong!");
+                if (finalDetails.length === 0) return alert("Daftar donatur/penyumbang tidak boleh kosong!");
             } else {
                 finalAmount = parseInt(document.getElementById('formTxAmount').value);
                 if(!finalAmount) return alert("Nominal wajib diisi!");
@@ -406,14 +415,12 @@
 
             try {
                 if (editId) {
-                    // MODE EDIT (UPDATE)
                     await updateDoc(doc(db, "mlu_finance", editId), {
                         type: finalType, amount: finalAmount, description: description,
                         isCollective: isCollective,
                         details: isCollective ? finalDetails : []
                     });
                 } else {
-                    // MODE TAMBAH BARU (ADD)
                     let payload = {
                         type: finalType, amount: finalAmount, description: description,
                         date: new Date().toLocaleDateString('id-ID'),

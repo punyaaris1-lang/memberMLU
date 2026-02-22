@@ -31,7 +31,6 @@
             z-index: 9999; transition: opacity 0.8s ease-out;
         }
         
-        /* Teks Utama Splash Screen */
         .splash-title { font-family: 'Space Grotesk'; font-size: 42px; font-weight: 900; color: white; margin: 0; text-align: center; line-height: 1.1; letter-spacing: 2px; text-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; animation: fadeUp 1s ease-out 0.2s forwards; }
         
         .splash-loader { margin-top: 40px; width: 50px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.5s forwards; }
@@ -58,7 +57,7 @@
         .form-input { width: 100%; padding: 16px 16px 16px 45px; border-radius: 16px; border: 2px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-weight: 700; font-size: 16px; color: var(--text-main); transition: 0.3s; text-transform: uppercase;}
         .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 4px rgba(45,99,237,0.1); }
 
-        .btn-login { width: 100%; padding: 18px; border: none; border-radius: 16px; background: linear-gradient(135deg, var(--royal-blue) 0%, #15398F 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; margin-top: 15px; cursor: pointer; box-shadow: 0 15px 30px rgba(10,34,89,0.25); transition: 0.2s; letter-spacing: 1px;}
+        .btn-login { width: 100%; padding: 18px; border: none; border-radius: 16px; background: linear-gradient(135deg, var(--royal-blue) 0%, #15398F 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 15px 30px rgba(10,34,89,0.25); transition: 0.2s; letter-spacing: 1px;}
         .btn-login:active { transform: scale(0.96); }
 
         .error-msg { color: var(--danger); font-size: 11px; font-weight: 700; margin-top: 15px; background: #FEF2F2; padding: 10px; border-radius: 10px; display: none; }
@@ -97,12 +96,18 @@
         <div class="login-card">
             <img src="logomlu.png" class="login-logo" alt="Logo">
             <h2 class="login-title">LOGIN MEMBER</h2>
-            <div class="login-subtitle">Masukkan Plat Nomor Anda untuk masuk</div>
+            <div class="login-subtitle">Silakan masuk menggunakan Plat & PIN</div>
 
             <div class="form-group">
                 <label>Plat Nomor Kendaraan</label>
                 <i class="fas fa-motorcycle input-icon"></i>
-                <input type="text" id="inputPlat" class="form-input" placeholder="Contoh: B 1234 XYZ" autocomplete="off">
+                <input type="text" id="inputPlat" class="form-input" placeholder="B 1234 XYZ" autocomplete="off" maxlength="12">
+            </div>
+
+            <div class="form-group">
+                <label>PIN Keamanan (6 Digit)</label>
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="inputPin" class="form-input" placeholder="******" pattern="[0-9]*" inputmode="numeric" maxlength="6">
             </div>
 
             <div id="errorBox" class="error-msg"></div>
@@ -130,62 +135,45 @@
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        // DAFTARKAN PWA SERVICE WORKER
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Reg Failed', err));
             });
         }
 
-        // SISTEM CUSTOM INSTALL POPUP
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e; // Simpan event dari Google Chrome
+            e.preventDefault(); deferredPrompt = e; 
         });
 
         window.triggerInstall = async () => {
             if (deferredPrompt) {
-                deferredPrompt.prompt(); // Munculkan pop-up asli dari Google
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
-                deferredPrompt = null;
-                document.getElementById('installModal').style.display = 'none';
+                deferredPrompt.prompt(); 
+                await deferredPrompt.userChoice; 
+                deferredPrompt = null; document.getElementById('installModal').style.display = 'none';
             }
         };
 
-        window.closeInstall = () => {
-            document.getElementById('installModal').style.display = 'none';
-        };
+        window.closeInstall = () => { document.getElementById('installModal').style.display = 'none'; };
 
-        // --- SISTEM SPLASH SCREEN DELAY ---
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('maka_user');
             
-            // Tunda selama 4 Detik
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 splash.style.opacity = '0';
                 
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    
                     if (userData) {
                         window.location.href = 'dashboard.html';
                     } else {
                         const loginBox = document.getElementById('loginScreen');
                         loginBox.style.display = 'flex';
-                        
-                        setTimeout(() => {
-                            loginBox.style.opacity = '1';
-                            
-                            // Jika ada prompt install dari HP, tampilkan modal custom kita setelah 1 detik
+                        setTimeout(() => { 
+                            loginBox.style.opacity = '1'; 
                             if (deferredPrompt) {
-                                setTimeout(() => {
-                                    document.getElementById('installModal').style.display = 'block';
-                                }, 1000);
+                                setTimeout(() => { document.getElementById('installModal').style.display = 'block'; }, 1000);
                             }
                         }, 50);
                     }
@@ -193,15 +181,37 @@
             }, 4000);
         });
 
-        // --- SISTEM LOGIN FIREBASE ---
+        // --- SISTEM AUTO FORMAT PLAT NOMOR ---
+        document.getElementById('inputPlat').addEventListener('input', function(e) {
+            // Hapus spasi dan simbol, jadikan huruf kapital
+            let clean = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            // Regex pembelah 3 bagian: Huruf Depan - Angka - Huruf Belakang
+            let match = clean.match(/^([A-Z]{1,2})?(\d{1,4})?([A-Z]{1,3})?$/);
+            
+            if (match) {
+                let formatted = '';
+                if (match[1]) formatted += match[1];
+                if (match[2]) formatted += ' ' + match[2];
+                if (match[3]) formatted += ' ' + match[3];
+                this.value = formatted.trim(); // Pasang kembali ke kotak input dengan spasi
+            } else {
+                this.value = clean; // Fallback jika format aneh
+            }
+        });
+
+        // --- SISTEM LOGIN DENGAN VALIDASI PIN ---
         window.prosesLogin = async () => {
-            const rawPlat = document.getElementById('inputPlat').value;
-            const plat = rawPlat.trim().toUpperCase();
+            // Ambil data (otomatis sudah terformat rapi berkat fitur di atas)
+            const plat = document.getElementById('inputPlat').value.trim();
+            const pin = document.getElementById('inputPin').value.trim();
+            
             const errBox = document.getElementById('errorBox');
             const btn = document.getElementById('btnLogin');
 
-            if (!plat) {
-                errBox.innerText = "⚠️ Plat Nomor wajib diisi!"; errBox.style.display = 'block'; return;
+            if (!plat || !pin) {
+                errBox.innerText = "⚠️ Plat Nomor dan PIN wajib diisi!"; 
+                errBox.style.display = 'block'; return;
             }
 
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMERIKSA...';
@@ -219,6 +229,16 @@
                 let userData = null; let docId = null;
                 querySnapshot.forEach((doc) => { userData = doc.data(); docId = doc.id; });
 
+                // VALIDASI PIN
+                // Jika anggota belum diatur PIN-nya di database, kita pakai default "123456"
+                const dbPin = userData.pin || "123456"; 
+
+                if (pin !== dbPin) {
+                    errBox.innerHTML = `⚠️ PIN Salah! (Default: 123456)`;
+                    errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
+                }
+
+                // Jika Plat & PIN Tepat
                 userData.id = docId; localStorage.setItem('maka_user', JSON.stringify(userData));
 
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> BERHASIL!';
@@ -232,7 +252,7 @@
             }
         };
         
-        document.getElementById('inputPlat').addEventListener('keypress', function (e) {
+        document.getElementById('inputPin').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { prosesLogin(); }
         });
     </script>
