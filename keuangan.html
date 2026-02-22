@@ -80,10 +80,11 @@
         
         .btn-save-modal { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--royal-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(10,34,89,0.2); }
 
-        /* KOLEKTIF AREA UI (UPDATE BARU UNTUK CICILAN) */
+        /* KOLEKTIF AREA UI DENGAN TANGGAL */
         .coll-area { display: none; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
         .coll-item { background: white; border: 1px solid #E2E8F0; padding: 15px; border-radius: 12px; margin-bottom: 12px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .coll-row-top { display: flex; gap: 10px; margin-bottom: 10px; padding-right: 35px; }
+        .coll-row-flex { display: flex; gap: 8px; margin-bottom: 8px; padding-right: 35px; }
+        .coll-row-flex-bottom { display: flex; gap: 8px; }
         .k-in { padding: 12px; border-radius: 10px; border: 1px solid #CBD5E1; font-family: 'Inter'; font-size: 13px; font-weight: 600; outline: none; width: 100%; box-sizing: border-box; }
         .k-in:focus { border-color: var(--electric-blue); }
         .btn-del-coll { position: absolute; top: 15px; right: 15px; background: #FEF2F2; color: var(--danger); border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -155,7 +156,7 @@
             <div class="coll-area" id="formCollective">
                 <label style="font-size:10px; font-weight:800; color:var(--royal-blue); margin-bottom:10px; display:block;">DAFTAR PENYUMBANG & CICILAN</label>
                 <div id="collList"></div>
-                <button type="button" style="width:100%; padding:12px; border:1px dashed var(--electric-blue); border-radius:10px; background:transparent; color:var(--electric-blue); font-weight:800; font-family:'Space Grotesk'; cursor:pointer; margin-top:5px;" onclick="addCollRow()">+ TAMBAH ORANG</button>
+                <button type="button" style="width:100%; padding:12px; border:1px dashed var(--electric-blue); border-radius:10px; background:transparent; color:var(--electric-blue); font-weight:800; font-family:'Space Grotesk'; cursor:pointer; margin-top:5px;" onclick="addCollRow()">+ TAMBAH DATA PEMBAYARAN</button>
                 <div style="margin-top:15px; text-align:right; font-family:'Space Grotesk'; font-size:16px; font-weight:900; color:var(--success);">
                     TOTAL TERKUMPUL: Rp <span id="collTotalDisplay">0</span>
                 </div>
@@ -300,18 +301,27 @@
             }
         };
 
-        // KOTAK INPUT KOLEKTIF DIPERBARUI AGAR BISA ADA KETERANGAN CICILAN
-        window.addCollRow = (nameVal = "", amountVal = "", noteVal = "") => {
+        // KOTAK INPUT KOLEKTIF DENGAN TANGGAL
+        window.addCollRow = (nameVal = "", amountVal = "", noteVal = "", dateVal = "") => {
+            // Default tanggal adalah hari ini jika kosong
+            if (!dateVal) {
+                const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+                dateVal = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+            }
+            
             const list = document.getElementById('collList');
             const div = document.createElement('div');
             div.className = 'coll-item';
             div.innerHTML = `
                 <button type="button" class="btn-del-coll" onclick="this.parentElement.remove(); calcCollTotal();"><i class="fas fa-trash"></i></button>
-                <div class="coll-row-top">
+                <div class="coll-row-flex">
                     <input type="text" class="k-in c-name" placeholder="Nama" style="flex:1;" value="${nameVal}">
-                    <input type="number" class="k-in c-amt" placeholder="Rp Total" style="flex:1;" onkeyup="calcCollTotal()" value="${amountVal}">
+                    <input type="number" class="k-in c-amt" placeholder="Rp Nominal" style="flex:1;" onkeyup="calcCollTotal()" value="${amountVal}">
                 </div>
-                <input type="text" class="k-in c-note" placeholder="Ket (Misal: LUNAS / Cicilan 1)" value="${noteVal}">
+                <div class="coll-row-flex-bottom">
+                    <input type="date" class="k-in c-date" style="flex:0.6; padding:10px 5px;" value="${dateVal}">
+                    <input type="text" class="k-in c-note" placeholder="Ket (Misal: Cicilan 1 / Lunas)" style="flex:1;" value="${noteVal}">
+                </div>
             `;
             list.appendChild(div);
         };
@@ -352,7 +362,7 @@
                 document.getElementById('collList').innerHTML = ''; 
                 
                 if(data.details && data.details.length > 0) {
-                    data.details.forEach(d => addCollRow(d.name, d.amount, d.note || ''));
+                    data.details.forEach(d => addCollRow(d.name, d.amount, d.note || '', d.date || ''));
                 } else {
                     addCollRow(); 
                 }
@@ -368,18 +378,37 @@
 
         window.closeTxModal = () => { document.getElementById('txModal').style.display = 'none'; };
 
-        // MENAMPILKAN KETERANGAN DI POPUP RINCIAN
+        // MENAMPILKAN KETERANGAN & TANGGAL DI POPUP RINCIAN
         window.showCollectiveDetail = (encData) => {
             const data = JSON.parse(decodeURIComponent(encData));
             const body = document.getElementById('detailListBody');
             body.innerHTML = '';
+            
+            // Urutkan berdasarkan tanggal terbaru jika ada
+            data.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
             data.forEach((d, i) => {
-                let noteHtml = d.note ? `<div style="font-size:10px; color:var(--text-muted); margin-top:4px;"><i class="fas fa-tag"></i> ${d.note}</div>` : '';
+                // Format Tanggal untuk Tampilan
+                let dateStr = '-';
+                if(d.date) {
+                    const dt = new Date(d.date);
+                    dateStr = dt.toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'2-digit'});
+                }
+
+                let extraInfo = '';
+                if(d.note && d.date) {
+                    extraInfo = `<div style="font-size:10px; color:var(--text-muted); margin-top:4px;"><i class="fas fa-tag"></i> ${d.note} &nbsp;•&nbsp; <i class="far fa-calendar-alt"></i> ${dateStr}</div>`;
+                } else if (d.note) {
+                    extraInfo = `<div style="font-size:10px; color:var(--text-muted); margin-top:4px;"><i class="fas fa-tag"></i> ${d.note}</div>`;
+                } else if (d.date) {
+                    extraInfo = `<div style="font-size:10px; color:var(--text-muted); margin-top:4px;"><i class="far fa-calendar-alt"></i> ${dateStr}</div>`;
+                }
+
                 body.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; padding:15px; border-bottom:1px dashed #E2E8F0;">
                         <div>
                             <div style="font-weight:700; font-size:13px; color:var(--text-main); text-transform:uppercase;">${i+1}. ${d.name}</div>
-                            ${noteHtml}
+                            ${extraInfo}
                         </div>
                         <div style="font-family:'Space Grotesk'; font-weight:800; color:var(--success);">Rp ${d.amount.toLocaleString('id-ID')}</div>
                     </div>
@@ -402,7 +431,12 @@
                     let n = row.querySelector('.c-name').value.trim();
                     let a = parseInt(row.querySelector('.c-amt').value) || 0;
                     let note = row.querySelector('.c-note').value.trim();
-                    if(n && a > 0) { finalDetails.push({ name: n, amount: a, note: note }); finalAmount += a; }
+                    let dt = row.querySelector('.c-date').value;
+                    
+                    if(n && a > 0) { 
+                        finalDetails.push({ name: n, amount: a, note: note, date: dt }); 
+                        finalAmount += a; 
+                    }
                 });
                 if (finalDetails.length === 0) return alert("Daftar donatur/penyumbang tidak boleh kosong!");
             } else {

@@ -126,7 +126,8 @@
 
         .q-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; margin-bottom: 10px; }
         .qi-ctrl { display: flex; gap: 5px; }
-        .qi-btn { width: 32px; height: 32px; border-radius: 10px; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .qi-btn { width: 32px; height: 32px; border-radius: 10px; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .qi-btn:active { transform: scale(0.9); }
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
@@ -262,7 +263,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONEKSI DATABASE ANTRIAN YANG BENAR (PUNYA BAPAK YANG ASLI)
+        // KONEKSI DATABASE ANTRIAN YANG BENAR
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -276,7 +277,6 @@
         const myName = uData.namaKtp || uData.namaWa || uData.nama;
         const myRole = uData.role ? uData.role.toUpperCase() : "GUEST";
         
-        // Cek Admin & Mode Dewa Bapak
         let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
         const isUserDewa = (myPlat.replace(/\s+/g, '').toUpperCase() === 'B4248SWF');
         
@@ -552,12 +552,46 @@
             }).then(() => { forceCloseSheet('sheetDaftarAdmin'); }).catch(e => alert(e));
         };
 
+        // --- FITUR BARU: NAIKKAN DARI ANTRIAN LANGSUNG KE SLOT KOSONG ---
+        window.adminPromoteToSlot = (index) => {
+            runTransaction(db, async(t) => {
+                const d = (await t.get(mainRef)).data();
+                let q = d.waitingQueue || [];
+                let slots = d.chargingSlots || [null, null, null];
+                
+                // Cari slot kosong pertama
+                let emptyIdx = slots.findIndex(s => s === null);
+                if (emptyIdx === -1) throw "Semua slot sedang penuh! Keluarkan salah satu kendaraan di slot terlebih dahulu.";
+                
+                // Pindahkan user dari antrian ke slot kosong
+                let userToPromote = q.splice(index, 1)[0];
+                userToPromote.startTime = Date.now();
+                slots[emptyIdx] = userToPromote;
+                
+                t.update(mainRef, { waitingQueue: q, chargingSlots: slots });
+            }).then(() => {
+                forceCloseSheet('sheetManageAntrian');
+            }).catch(e => alert(e));
+        };
+
         window.renderQueueAdmin = () => {
             const body = document.getElementById('qAdminBody'); body.innerHTML = '';
             if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
             localQueue.forEach((q, i) => {
                 let batreInfo = (q.batre && q.batre !== '-') ? ` ⚡ ${q.batre}` : '';
-                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900;">#${i+1} | ${q.plat}</div><div style="font-size:10px; color:#64748B;">${q.userName}${batreInfo}</div></div><div class="qi-ctrl">${i > 0 ? `<button class="qi-btn" style="background:var(--electric-blue); color:white;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : ''}${i < localQueue.length - 1 ? `<button class="qi-btn" style="background:#CBD5E1; color:white;" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : ''}<button class="qi-btn" style="background:var(--danger); color:white;" onclick="adminKickQueue('${q.plat}')"><i class="fas fa-times"></i></button></div></div>`;
+                body.innerHTML += `
+                    <div class="q-item">
+                        <div>
+                            <div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900;">#${i+1} | ${q.plat}</div>
+                            <div style="font-size:10px; color:#64748B;">${q.userName}${batreInfo}</div>
+                        </div>
+                        <div class="qi-ctrl">
+                            <button class="qi-btn" style="background:var(--success); color:white;" onclick="adminPromoteToSlot(${i})" title="Masukkan ke Slot Kosong"><i class="fas fa-bolt"></i></button>
+                            ${i > 0 ? `<button class="qi-btn" style="background:var(--electric-blue); color:white;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : ''}
+                            ${i < localQueue.length - 1 ? `<button class="qi-btn" style="background:#CBD5E1; color:white;" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : ''}
+                            <button class="qi-btn" style="background:var(--danger); color:white;" onclick="adminKickQueue('${q.plat}')"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>`;
             });
         };
 
