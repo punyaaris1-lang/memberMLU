@@ -2,7 +2,7 @@
   "name": "MLU Super App",
   "short_name": "MLU",
   "description": "Aplikasi Resmi Komunitas Maka Lintas Utara",
-  "start_url": "/.index.html",
+  "start_url": "/memberMLU/index.html",
   "display": "standalone",
   "background_color": "#0A2259",
   "theme_color": "#0A2259",
