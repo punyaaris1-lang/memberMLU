@@ -38,7 +38,8 @@
         .splash-loader { margin-top: 30px; width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.8s forwards; }
         .splash-loader::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: var(--gold); border-radius: 10px; animation: loadingBar 2s infinite ease-in-out; }
 
-        .splash-footer { position: absolute; bottom: 40px; font-size: 11px; font-weight: 600; color: #93C5FD; text-transform: uppercase; letter-spacing: 2px; opacity: 0; animation: fadeUp 1s ease-out 1s forwards; }
+        /* Posisi teks "Made with love" dinaikkan agar tidak terpotong layar HP */
+        .splash-footer { position: absolute; bottom: 80px; font-size: 11px; font-weight: 600; color: #93C5FD; text-transform: uppercase; letter-spacing: 2px; opacity: 0; animation: fadeUp 1s ease-out 1s forwards; }
         .splash-footer i { color: #EF4444; margin: 0 3px; animation: heartbeat 1.5s infinite; }
 
         /* --- LOGIN SCREEN --- */
@@ -102,7 +103,7 @@
         </div>
         
         <div style="margin-top: 30px; font-size: 11px; font-weight: 600; color: var(--text-muted);">
-            &copy; 2025 Komunitas Maka Lintas Utara
+            &copy; 2026 Komunitas Maka Lintas Utara
         </div>
     </div>
 
@@ -110,12 +111,10 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // FIREBASE MLU ASLI
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        // DAFTARKAN PWA SERVICE WORKER
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Reg Failed', err));
@@ -124,11 +123,10 @@
 
         // --- SISTEM SPLASH SCREEN DELAY ---
         document.addEventListener("DOMContentLoaded", () => {
-            // Cek apakah user sudah login sebelumnya
             const userData = localStorage.getItem('maka_user');
             
+            // Timer diperpanjang jadi 4.5 Detik agar animasi tuntas dinikmati
             setTimeout(() => {
-                // Efek memudar (fade out)
                 const splash = document.getElementById('splashScreen');
                 splash.style.opacity = '0';
                 
@@ -136,20 +134,17 @@
                     splash.style.display = 'none';
                     
                     if (userData) {
-                        // Jika sudah pernah login, langsung lompat ke Dashboard tanpa tampilkan form
                         window.location.href = 'dashboard.html';
                     } else {
-                        // Jika belum login, tampilkan form login
                         const loginBox = document.getElementById('loginScreen');
                         loginBox.style.display = 'flex';
                         
-                        // Sedikit delay agar transisi mulus
                         setTimeout(() => {
                             loginBox.style.opacity = '1';
                         }, 50);
                     }
-                }, 800); // Waktu animasi fade out selesai
-            }, 3000); // DELAY SPLASH SCREEN = 3 DETIK
+                }, 800); 
+            }, 4500); // <-- UBAH KE 4500 ms (4.5 Detik)
         });
 
         // --- SISTEM LOGIN FIREBASE ---
@@ -170,7 +165,6 @@
             errBox.style.display = 'none';
 
             try {
-                // Cari anggota berdasarkan Plat Nomor di database
                 const q = query(collection(db, "mlu_members"), where("plat", "==", plat));
                 const querySnapshot = await getDocs(q);
 
@@ -182,7 +176,6 @@
                     return;
                 }
 
-                // Jika Plat ketemu, ambil datanya
                 let userData = null;
                 let docId = null;
                 querySnapshot.forEach((doc) => {
@@ -190,11 +183,9 @@
                     docId = doc.id;
                 });
 
-                // Simpan Data Login ke HP (Session)
                 userData.id = docId;
                 localStorage.setItem('maka_user', JSON.stringify(userData));
 
-                // Sukses! Arahkan ke Dashboard
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> BERHASIL!';
                 btn.style.background = 'var(--success)';
                 
@@ -211,7 +202,6 @@
             }
         };
         
-        // Agar bisa pencet tombol "Enter" di keyboard HP
         document.getElementById('inputPlat').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { prosesLogin(); }
         });
