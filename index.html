@@ -18,7 +18,7 @@
             --royal-blue: #0A2259; --electric-blue: #2D63ED; 
             --bg-surface: #F8FAFC; --white: #FFFFFF; 
             --text-main: #0F172A; --text-muted: #64748B; 
-            --gold: #D4AF37;
+            --gold: #D4AF37; --danger: #EF4444;
         }
         
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-surface); font-family: 'Inter', sans-serif; overflow: hidden; }
@@ -31,16 +31,14 @@
             z-index: 9999; transition: opacity 0.8s ease-out;
         }
         
-        .splash-logo { width: 150px; height: 150px; object-fit: contain; margin-bottom: 25px; animation: popIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        /* Teks Utama Splash Screen */
+        .splash-title { font-family: 'Space Grotesk'; font-size: 42px; font-weight: 900; color: white; margin: 0; text-align: center; line-height: 1.1; letter-spacing: 2px; text-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; animation: fadeUp 1s ease-out 0.2s forwards; }
         
-        .splash-title { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: white; margin: 0; text-align: center; line-height: 1.1; letter-spacing: 2px; text-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; animation: fadeUp 1s ease-out 0.5s forwards; }
-        
-        .splash-loader { margin-top: 30px; width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.8s forwards; }
+        .splash-loader { margin-top: 40px; width: 50px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.5s forwards; }
         .splash-loader::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: var(--gold); border-radius: 10px; animation: loadingBar 2s infinite ease-in-out; }
 
-        /* Posisi teks "Made with love" dinaikkan agar tidak terpotong layar HP */
-        .splash-footer { position: absolute; bottom: 80px; font-size: 11px; font-weight: 600; color: #93C5FD; text-transform: uppercase; letter-spacing: 2px; opacity: 0; animation: fadeUp 1s ease-out 1s forwards; }
-        .splash-footer i { color: #EF4444; margin: 0 3px; animation: heartbeat 1.5s infinite; }
+        .splash-footer { position: absolute; bottom: 80px; font-size: 11px; font-weight: 600; color: #93C5FD; text-transform: uppercase; letter-spacing: 2px; opacity: 0; animation: fadeUp 1s ease-out 0.8s forwards; text-align: center; line-height: 1.8;}
+        .splash-footer i { color: #EF4444; margin: 0 4px; animation: heartbeat 1.5s infinite; font-size: 14px;}
 
         /* --- LOGIN SCREEN --- */
         #loginScreen {
@@ -50,7 +48,6 @@
         }
 
         .login-card { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 40px 30px; box-shadow: 0 25px 50px rgba(10,34,89,0.08); border: 1px solid rgba(255,255,255,0.8); text-align: center; }
-        
         .login-logo { width: 90px; height: 90px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
         .login-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; color: var(--royal-blue); margin: 0 0 5px 0; }
         .login-subtitle { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 35px; }
@@ -66,22 +63,33 @@
 
         .error-msg { color: var(--danger); font-size: 11px; font-weight: 700; margin-top: 15px; background: #FEF2F2; padding: 10px; border-radius: 10px; display: none; }
 
+        /* --- CUSTOM INSTALL POPUP --- */
+        .install-modal {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; background: white; 
+            padding: 25px 20px; border-top-left-radius: 25px; border-top-right-radius: 25px; 
+            box-shadow: 0 -15px 40px rgba(10,34,89,0.15); z-index: 10000; text-align: center;
+            transform: translateY(100%); animation: slideUpModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .install-icon { width: 60px; height: 60px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .install-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin: 0 0 5px 0; }
+        .install-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; line-height: 1.5; }
+        .btn-install { background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%); color: white; border: none; padding: 16px; width: 100%; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(45,99,237,0.3); margin-bottom: 10px;}
+        .btn-close-install { background: transparent; color: #94A3B8; border: none; padding: 10px; width: 100%; font-size: 12px; font-weight: 700; cursor: pointer; }
+
         /* ANIMATIONS */
-        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes fadeUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         @keyframes loadingBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+        @keyframes slideUpModal { to { transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div id="splashScreen">
-        <img src="logomlu.png" class="splash-logo" alt="MLU Logo">
         <h1 class="splash-title">MLU<br>SUPER APPS</h1>
         <div class="splash-loader"></div>
-        
         <div class="splash-footer">
-            Made with love <i class="fas fa-heart"></i> for MLU Family
+            Made with love <i class="fas fa-heart"></i><br>for MLU Family
         </div>
     </div>
 
@@ -98,13 +106,20 @@
             </div>
 
             <div id="errorBox" class="error-msg"></div>
-
             <button class="btn-login" id="btnLogin" onclick="prosesLogin()">MASUK APLIKASI</button>
         </div>
         
         <div style="margin-top: 30px; font-size: 11px; font-weight: 600; color: var(--text-muted);">
             &copy; 2026 Komunitas Maka Lintas Utara
         </div>
+    </div>
+
+    <div class="install-modal" id="installModal">
+        <img src="logomlu.png" class="install-icon" alt="App Icon">
+        <h3 class="install-title">Install MLU Super App</h3>
+        <p class="install-desc">Tambahkan aplikasi ini ke layar utama HP Anda untuk akses lebih cepat tanpa buka browser.</p>
+        <button class="btn-install" onclick="triggerInstall()"><i class="fas fa-download"></i> INSTALL SEKARANG</button>
+        <button class="btn-close-install" onclick="closeInstall()">Nanti saja</button>
     </div>
 
     <script type="module">
@@ -115,17 +130,41 @@
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
+        // DAFTARKAN PWA SERVICE WORKER
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Reg Failed', err));
             });
         }
 
+        // SISTEM CUSTOM INSTALL POPUP
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e; // Simpan event dari Google Chrome
+        });
+
+        window.triggerInstall = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt(); // Munculkan pop-up asli dari Google
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+                document.getElementById('installModal').style.display = 'none';
+            }
+        };
+
+        window.closeInstall = () => {
+            document.getElementById('installModal').style.display = 'none';
+        };
+
         // --- SISTEM SPLASH SCREEN DELAY ---
         document.addEventListener("DOMContentLoaded", () => {
             const userData = localStorage.getItem('maka_user');
             
-            // Timer diperpanjang jadi 4.5 Detik agar animasi tuntas dinikmati
+            // Tunda selama 4 Detik
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 splash.style.opacity = '0';
@@ -141,10 +180,17 @@
                         
                         setTimeout(() => {
                             loginBox.style.opacity = '1';
+                            
+                            // Jika ada prompt install dari HP, tampilkan modal custom kita setelah 1 detik
+                            if (deferredPrompt) {
+                                setTimeout(() => {
+                                    document.getElementById('installModal').style.display = 'block';
+                                }, 1000);
+                            }
                         }, 50);
                     }
                 }, 800); 
-            }, 4500); // <-- UBAH KE 4500 ms (4.5 Detik)
+            }, 4000);
         });
 
         // --- SISTEM LOGIN FIREBASE ---
@@ -155,50 +201,34 @@
             const btn = document.getElementById('btnLogin');
 
             if (!plat) {
-                errBox.innerText = "⚠️ Plat Nomor wajib diisi!";
-                errBox.style.display = 'block';
-                return;
+                errBox.innerText = "⚠️ Plat Nomor wajib diisi!"; errBox.style.display = 'block'; return;
             }
 
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMERIKSA...';
-            btn.style.opacity = '0.7';
-            errBox.style.display = 'none';
+            btn.style.opacity = '0.7'; errBox.style.display = 'none';
 
             try {
                 const q = query(collection(db, "mlu_members"), where("plat", "==", plat));
                 const querySnapshot = await getDocs(q);
 
                 if (querySnapshot.empty) {
-                    errBox.innerHTML = `⚠️ Plat <b>${plat}</b> tidak ditemukan di sistem. Hubungi Pengurus!`;
-                    errBox.style.display = 'block';
-                    btn.innerHTML = 'MASUK APLIKASI';
-                    btn.style.opacity = '1';
-                    return;
+                    errBox.innerHTML = `⚠️ Plat <b>${plat}</b> tidak ditemukan. Hubungi Pengurus!`;
+                    errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
                 }
 
-                let userData = null;
-                let docId = null;
-                querySnapshot.forEach((doc) => {
-                    userData = doc.data();
-                    docId = doc.id;
-                });
+                let userData = null; let docId = null;
+                querySnapshot.forEach((doc) => { userData = doc.data(); docId = doc.id; });
 
-                userData.id = docId;
-                localStorage.setItem('maka_user', JSON.stringify(userData));
+                userData.id = docId; localStorage.setItem('maka_user', JSON.stringify(userData));
 
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> BERHASIL!';
                 btn.style.background = 'var(--success)';
                 
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 500);
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
 
             } catch (error) {
                 errBox.innerText = "⚠️ Terjadi kesalahan koneksi. Coba lagi.";
-                errBox.style.display = 'block';
-                btn.innerHTML = 'MASUK APLIKASI';
-                btn.style.opacity = '1';
-                console.error(error);
+                errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1';
             }
         };
         
