@@ -6,8 +6,8 @@
     <title>MLU Super App - Login</title>
     
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="logomlu.png">
-    <link rel="apple-touch-icon" href="logomlu.png">
+    <link rel="icon" href="logomlu2.png">
+    <link rel="apple-touch-icon" href="logomlu2.png">
     <meta name="theme-color" content="#0A2259">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
         .login-card { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 40px 30px; box-shadow: 0 25px 50px rgba(10,34,89,0.08); border: 1px solid rgba(255,255,255,0.8); text-align: center; }
         .login-logo { width: 90px; height: 90px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
         .login-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; color: var(--royal-blue); margin: 0 0 5px 0; }
-        .login-subtitle { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 35px; }
+        .login-subtitle { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 25px; line-height: 1.4; }
 
         .form-group { margin-bottom: 20px; text-align: left; position: relative;}
         .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px;}
@@ -94,9 +94,9 @@
 
     <div id="loginScreen">
         <div class="login-card">
-            <img src="logomlu.png" class="login-logo" alt="Logo">
+            <img src="logomlu2.png" class="login-logo" alt="Logo">
             <h2 class="login-title">LOGIN MEMBER</h2>
-            <div class="login-subtitle">Silakan masuk menggunakan Plat & PIN</div>
+            <div class="login-subtitle">Jika ini login pertama Anda, PIN yang diketik akan otomatis menjadi PIN Permanen.</div>
 
             <div class="form-group">
                 <label>Plat Nomor Kendaraan</label>
@@ -105,9 +105,9 @@
             </div>
 
             <div class="form-group">
-                <label>PIN Keamanan (6 Digit)</label>
+                <label>Buat / Masukkan PIN (4 Angka)</label>
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="inputPin" class="form-input" placeholder="******" pattern="[0-9]*" inputmode="numeric" maxlength="6">
+                <input type="password" id="inputPin" class="form-input" placeholder="****" pattern="[0-9]*" inputmode="numeric" maxlength="4">
             </div>
 
             <div id="errorBox" class="error-msg"></div>
@@ -120,7 +120,7 @@
     </div>
 
     <div class="install-modal" id="installModal">
-        <img src="logomlu.png" class="install-icon" alt="App Icon">
+        <img src="logomlu2.png" class="install-icon" alt="App Icon">
         <h3 class="install-title">Install MLU Super App</h3>
         <p class="install-desc">Tambahkan aplikasi ini ke layar utama HP Anda untuk akses lebih cepat tanpa buka browser.</p>
         <button class="btn-install" onclick="triggerInstall()"><i class="fas fa-download"></i> INSTALL SEKARANG</button>
@@ -129,7 +129,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
@@ -183,10 +183,7 @@
 
         // --- SISTEM AUTO FORMAT PLAT NOMOR ---
         document.getElementById('inputPlat').addEventListener('input', function(e) {
-            // Hapus spasi dan simbol, jadikan huruf kapital
             let clean = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            
-            // Regex pembelah 3 bagian: Huruf Depan - Angka - Huruf Belakang
             let match = clean.match(/^([A-Z]{1,2})?(\d{1,4})?([A-Z]{1,3})?$/);
             
             if (match) {
@@ -194,15 +191,14 @@
                 if (match[1]) formatted += match[1];
                 if (match[2]) formatted += ' ' + match[2];
                 if (match[3]) formatted += ' ' + match[3];
-                this.value = formatted.trim(); // Pasang kembali ke kotak input dengan spasi
+                this.value = formatted.trim();
             } else {
-                this.value = clean; // Fallback jika format aneh
+                this.value = clean;
             }
         });
 
-        // --- SISTEM LOGIN DENGAN VALIDASI PIN ---
+        // --- SISTEM LOGIN DENGAN AUTO-PIN ---
         window.prosesLogin = async () => {
-            // Ambil data (otomatis sudah terformat rapi berkat fitur di atas)
             const plat = document.getElementById('inputPlat').value.trim();
             const pin = document.getElementById('inputPin').value.trim();
             
@@ -211,6 +207,11 @@
 
             if (!plat || !pin) {
                 errBox.innerText = "⚠️ Plat Nomor dan PIN wajib diisi!"; 
+                errBox.style.display = 'block'; return;
+            }
+
+            if (pin.length !== 4) {
+                errBox.innerText = "⚠️ PIN harus persis 4 angka!"; 
                 errBox.style.display = 'block'; return;
             }
 
@@ -227,18 +228,27 @@
                 }
 
                 let userData = null; let docId = null;
-                querySnapshot.forEach((doc) => { userData = doc.data(); docId = doc.id; });
+                querySnapshot.forEach((docSnap) => { userData = docSnap.data(); docId = docSnap.id; });
 
-                // VALIDASI PIN
-                // Jika anggota belum diatur PIN-nya di database, kita pakai default "123456"
-                const dbPin = userData.pin || "123456"; 
-
-                if (pin !== dbPin) {
-                    errBox.innerHTML = `⚠️ PIN Salah! (Default: 123456)`;
-                    errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
+                // CEK PIN DI DATABASE
+                if (!userData.pin || userData.pin === "") {
+                    // JIKA KOSONG: Simpan PIN yang diketik ke Firebase sebagai PIN Permanen
+                    try {
+                        await updateDoc(doc(db, "mlu_members", docId), { pin: pin });
+                        userData.pin = pin; // Update data lokal agar bisa dipakai
+                    } catch (e) {
+                        errBox.innerHTML = `⚠️ Gagal menyimpan PIN baru. Coba lagi.`;
+                        errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
+                    }
+                } else {
+                    // JIKA SUDAH ADA: Cocokkan PIN
+                    if (pin !== String(userData.pin)) {
+                        errBox.innerHTML = `⚠️ PIN Salah!`;
+                        errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
+                    }
                 }
 
-                // Jika Plat & PIN Tepat
+                // JIKA PLAT DAN PIN TEMBUS
                 userData.id = docId; localStorage.setItem('maka_user', JSON.stringify(userData));
 
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> BERHASIL!';
@@ -249,6 +259,7 @@
             } catch (error) {
                 errBox.innerText = "⚠️ Terjadi kesalahan koneksi. Coba lagi.";
                 errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1';
+                console.error(error);
             }
         };
         
