@@ -24,7 +24,7 @@
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-surface); font-family: 'Inter', sans-serif; overflow: hidden; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* --- SPLASH SCREEN (LOADING) --- */
+        /* --- SPLASH SCREEN --- */
         #splashScreen { position: fixed; inset: 0; background: linear-gradient(160deg, var(--royal-blue) 0%, #051336 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease-out; }
         .splash-title { font-family: 'Space Grotesk'; font-size: 42px; font-weight: 900; color: white; margin: 0; text-align: center; line-height: 1.1; letter-spacing: 2px; text-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; animation: fadeUp 1s ease-out 0.2s forwards; }
         .splash-loader { margin-top: 40px; width: 50px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.5s forwards; }
@@ -84,7 +84,7 @@
             <div class="form-group">
                 <label>Plat Nomor Kendaraan</label>
                 <i class="fas fa-motorcycle input-icon"></i>
-                <input type="text" id="inputPlat" class="form-input" placeholder="B 1234 XYZ" autocomplete="off" maxlength="15">
+                <input type="text" id="inputPlat" class="form-input" placeholder="Sesuai Data Pengurus" autocomplete="off">
             </div>
 
             <div class="form-group">
@@ -112,7 +112,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // Konfigurasi Firebase MLU
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
@@ -164,67 +164,62 @@
                         }, 50);
                     }
                 }, 800); 
-            }, 4000); // 4 detik
+            }, 4000); 
         });
 
-        // --- SISTEM AUTO FORMAT PLAT NOMOR (TETAP ADA BIAR RAPI) ---
+        // Paksa huruf besar saat mengetik (tanpa mengubah spasi)
         document.getElementById('inputPlat').addEventListener('input', function(e) {
-            let clean = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-            let match = clean.match(/^([A-Z]{1,2})?(\d{1,4})?([A-Z]{1,3})?$/);
-            
-            if (match) {
-                let formatted = '';
-                if (match[1]) formatted += match[1];
-                if (match[2]) formatted += ' ' + match[2];
-                if (match[3]) formatted += ' ' + match[3];
-                this.value = formatted.trim();
-            } else {
-                this.value = clean;
-            }
+            this.value = this.value.toUpperCase();
         });
 
-        // --- SISTEM LOGIN SMART SEARCH DENGAN VALIDASI PIN ---
+        // --- SISTEM LOGIN PENCARIAN BRUTAL (ANTI GAGAL) ---
         window.prosesLogin = async () => {
-            // Ambil inputan dari layar
             const rawPlat = document.getElementById('inputPlat').value.trim().toUpperCase();
             const pin = document.getElementById('inputPin').value.trim();
-            
             const errBox = document.getElementById('errorBox');
             const btn = document.getElementById('btnLogin');
 
-            if (!rawPlat || !pin) {
-                errBox.innerText = "⚠️ Plat Nomor dan PIN wajib diisi!"; 
-                errBox.style.display = 'block'; return;
-            }
-
-            if (pin.length !== 4) {
-                errBox.innerText = "⚠️ PIN harus persis 4 angka!"; 
-                errBox.style.display = 'block'; return;
-            }
+            if (!rawPlat || !pin) { errBox.innerText = "⚠️ Plat Nomor dan PIN wajib diisi!"; errBox.style.display = 'block'; return; }
+            if (pin.length !== 4) { errBox.innerText = "⚠️ PIN harus persis 4 angka!"; errBox.style.display = 'block'; return; }
 
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMERIKSA...';
             btn.style.opacity = '0.7'; errBox.style.display = 'none';
 
             try {
-                // SMART SEARCH: Buat 2 variasi plat (Pakai Spasi & Tanpa Spasi)
-                const platWithSpace = rawPlat; // Contoh: "B 1234 XYZ"
-                const platNoSpace = rawPlat.replace(/\s+/g, ''); // Contoh: "B1234XYZ"
+                // MODE BRUTAL: Tarik semua isi database anggota, kita geledah manual!
+                const querySnapshot = await getDocs(collection(db, "mlu_members"));
+                
+                let userData = null; 
+                let docId = null;
 
-                // Cari ke database mencari kedua format sekaligus
-                const q = query(collection(db, "mlu_members"), where("plat", "in", [platWithSpace, platNoSpace]));
-                const querySnapshot = await getDocs(q);
+                // Geledah satu-satu ke setiap anggota
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    
+                    // Deteksi nama kolom plat apapun (plat / Plat / PLAT / plat_nomor)
+                    const platDiDatabase = data.plat || data.Plat || data.PLAT || data.plat_nomor || "";
+                    
+                    // Bersihkan spasi di inputan dan di database, lalu adu!
+                    // Cara ini menghilangkan semua spasi jadi 'B4236SWJ' == 'B4236SWJ'
+                    const platBersihDB = String(platDiDatabase).replace(/\s+/g, '').toUpperCase();
+                    const platBersihInput = rawPlat.replace(/\s+/g, '');
 
-                if (querySnapshot.empty) {
+                    // Kalau cocok persis, langsung tangkap datanya!
+                    if (platBersihDB === platBersihInput && platBersihDB !== "") {
+                        userData = data;
+                        docId = docSnap.id;
+                    }
+                });
+
+                // Kalau setelah digeledah semua tetap tidak ada
+                if (!userData) {
                     errBox.innerHTML = `⚠️ Plat <b>${rawPlat}</b> tidak ditemukan. Hubungi Pengurus!`;
                     errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
                 }
 
-                let userData = null; let docId = null;
-                querySnapshot.forEach((docSnap) => { userData = docSnap.data(); docId = docSnap.id; });
-
-                // CEK PIN DI DATABASE
+                // LANJUT CEK PIN
                 if (!userData.pin || userData.pin === "") {
-                    // JIKA KOSONG: Simpan PIN yang diketik ke Firebase sebagai PIN Permanen
+                    // JIKA PIN MASIH KOSONG, SIMPAN SEKARANG
                     try {
                         await updateDoc(doc(db, "mlu_members", docId), { pin: pin });
                         userData.pin = pin; 
@@ -233,19 +228,18 @@
                         errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
                     }
                 } else {
-                    // JIKA SUDAH ADA: Cocokkan PIN
+                    // JIKA PIN SUDAH ADA, COCOKKAN
                     if (pin !== String(userData.pin)) {
                         errBox.innerHTML = `⚠️ PIN Salah!`;
                         errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
                     }
                 }
 
-                // JIKA PLAT DAN PIN TEMBUS
+                // SUKSES
                 userData.id = docId; localStorage.setItem('maka_user', JSON.stringify(userData));
-
+                
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> BERHASIL!';
                 btn.style.background = 'var(--success)';
-                
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
 
             } catch (error) {
@@ -254,8 +248,8 @@
                 console.error(error);
             }
         };
-        
-        // Agar bisa pencet tombol "Enter" di keyboard HP
+
+        // Memudahkan login pakai enter di HP
         document.getElementById('inputPin').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { prosesLogin(); }
         });
