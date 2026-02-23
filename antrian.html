@@ -205,7 +205,7 @@
             <div class="sheet-handle"></div>
             <div class="sheet-title" id="titleKelolaIsi">Kelola Slot</div>
             <div class="sheet-menu">
-                <button class="sm-btn btn-kudeta admin-only" onclick="adminKudeta()"><i class="fas fa-khanda"></i> KUDETA SLOT INI</button>
+                <button class="sm-btn btn-kudeta admin-only" onclick="adminTriggerKudeta()"><i class="fas fa-khanda"></i> KUDETA SLOT INI</button>
                 <button class="sm-btn" onclick="sheetPilihPindah()"><div class="sm-icon bg-blue"><i class="fas fa-exchange-alt"></i></div> Pindah ke Slot Lain</button>
                 <button class="sm-btn" onclick="adminToQueue()"><div class="sm-icon bg-dark"><i class="fas fa-undo"></i></div> Kembalikan Jadi Antrian</button>
                 <button class="sm-btn" onclick="adminKick()"><div class="sm-icon bg-red"><i class="fas fa-times"></i></div> Keluarkan (Selesai)</button>
@@ -263,13 +263,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONEKSI DATABASE ANTRIAN YANG BENAR
+        // KONEKSI DATABASE
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const mainRef = doc(db, "antrian", "utama");
 
-        // --- SISTEM LOGIN SUPER APP & HAK AKSES ---
+        // --- SISTEM LOGIN & HAK AKSES ---
         const uData = JSON.parse(localStorage.getItem('maka_user'));
         if(!uData || !uData.plat) window.location.href = 'index.html';
 
@@ -279,12 +279,9 @@
         
         let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
         const isUserDewa = (myPlat.replace(/\s+/g, '').toUpperCase() === 'B4248SWF');
-        
         const isSuperAdmin = uData.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (myRole !== 'KELUARGA MLU' && myRole !== 'GUEST' && myRole !== 'NON-MEMBER');
 
-        if(isSuperAdmin) { 
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); 
-        }
+        if(isSuperAdmin) { document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); }
 
         // --- SISTEM PEMANTAUAN LOKASI ---
         const STATION_LAT = -6.171583; const STATION_LNG = 106.899844; const MAX_DIST_KM = 0.3; 
@@ -327,57 +324,40 @@
         fetchJadwalAPI();
 
         function showBedugPopup(namaWaktu) {
-            const title = document.getElementById('bedugTitle');
-            const desc = document.getElementById('bedugDesc');
-            if(namaWaktu === 'MAGHRIB') {
-                title.innerText = "ALHAMDULILLAH"; title.style.color = "var(--gold)";
-                desc.innerText = "Telah masuk waktu Maghrib untuk wilayah Jakarta dan sekitarnya. Selamat berbuka puasa!";
-            } else {
-                title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--royal-blue)";
-                desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`;
-            }
+            const title = document.getElementById('bedugTitle'); const desc = document.getElementById('bedugDesc');
+            if(namaWaktu === 'MAGHRIB') { title.innerText = "ALHAMDULILLAH"; title.style.color = "var(--gold)"; desc.innerText = "Telah masuk waktu Maghrib untuk wilayah Jakarta dan sekitarnya. Selamat berbuka puasa!"; } 
+            else { title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--royal-blue)"; desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`; }
             document.getElementById('bukaPuasaPopup').style.display = 'flex';
         }
 
         function updateTimer() {
-            const now = new Date();
-            const curr = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-            
+            const now = new Date(); const curr = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
             let imsakSec = 4 * 3600 + 30 * 60; let maghribSec = 18 * 3600 + 10 * 60;
             let imsakStr = "04:30"; let maghribStr = "18:10";
 
             if (jadwalSholat) {
                 const i = jadwalSholat.imsak.split(':'); imsakSec = i[0]*3600 + i[1]*60; imsakStr = jadwalSholat.imsak;
                 const m = jadwalSholat.maghrib.split(':'); maghribSec = m[0]*3600 + m[1]*60; maghribStr = jadwalSholat.maghrib;
-
                 const wktSholat = [ {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, {n:'ISYA', v:jadwalSholat.isya} ];
                 const nowStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
                 
                 wktSholat.forEach(t => {
                     if (nowStr === t.v) {
                         const recKey = now.toDateString() + '_' + t.n;
-                        if(localStorage.getItem('maka_bedug_notif') !== recKey) {
-                            showBedugPopup(t.n); localStorage.setItem('maka_bedug_notif', recKey);
-                        }
+                        if(localStorage.getItem('maka_bedug_notif') !== recKey) { showBedugPopup(t.n); localStorage.setItem('maka_bedug_notif', recKey); }
                     }
                 });
             }
 
             let targetTime = 0;
             if (curr >= imsakSec && curr < maghribSec) {
-                targetTime = maghribSec;
-                document.getElementById('lblTimer').innerText = "MENUJU BUKA PUASA";
-                document.getElementById('timeTarget').innerText = "MAGHRIB " + maghribStr;
-                document.getElementById('iconTimer').className = "fas fa-moon rw-icon";
+                targetTime = maghribSec; document.getElementById('lblTimer').innerText = "MENUJU BUKA PUASA"; document.getElementById('timeTarget').innerText = "MAGHRIB " + maghribStr; document.getElementById('iconTimer').className = "fas fa-moon rw-icon";
             } else {
                 targetTime = imsakSec; if (curr >= maghribSec) targetTime += 24 * 3600;
-                document.getElementById('lblTimer').innerText = "MENUJU BATAS SAHUR";
-                document.getElementById('timeTarget').innerText = "IMSAK " + imsakStr;
-                document.getElementById('iconTimer').className = "fas fa-mosque rw-icon";
+                document.getElementById('lblTimer').innerText = "MENUJU BATAS SAHUR"; document.getElementById('timeTarget').innerText = "IMSAK " + imsakStr; document.getElementById('iconTimer').className = "fas fa-mosque rw-icon";
             }
 
-            let diff = targetTime - curr;
-            let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
+            let diff = targetTime - curr; let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
             document.getElementById('countdown').innerText = `${j.toString().padStart(2, '0')}:${n.toString().padStart(2, '0')}:${d.toString().padStart(2, '0')}`;
         }
         setInterval(updateTimer, 1000);
@@ -429,9 +409,11 @@
 
                     const durationMin = Math.floor((Date.now() - (s.startTime || Date.now())) / 60000);
                     let timerHTML = isMe ? `<div class="sb-timer" style="color:var(--electric-blue)"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` : `<div class="sb-timer"><i class="fas fa-clock"></i> ${durationMin} MIN RUNNING</div>`;
-                    
                     let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
-                    let batreInfo = (s.batre && s.batre !== '-') ? `<span class="badge-batre"><i class="fas fa-bolt"></i> ${s.batre}</span>` : '';
+                    
+                    // BACA BATRE SECARA AMAN (Dari App Gelap ataupun Putih)
+                    let batreValue = s.batre || s.battery; 
+                    let batreInfo = (batreValue && batreValue !== '-' && batreValue !== 'undefined') ? `<span class="badge-batre"><i class="fas fa-bolt"></i> ${batreValue}</span>` : '';
                     
                     let roleBadge = '';
                     if (s.role && s.role !== 'MEMBER' && s.role !== 'GUEST' && s.role !== 'KELUARGA MLU' && s.role !== 'MANUAL' && s.role !== 'KUDETA') {
@@ -502,6 +484,19 @@
                     me.startTime = Date.now(); me.batre = batreFinal; d.chargingSlots[memberActionSlotIdx] = me; 
                     t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
                 }).catch(e => alert(e)); 
+            } else if (memberActionType === 'kudeta') {
+                // EKSEKUSI KUDETA SETELAH ISI BATRE
+                runTransaction(db, async(t) => {
+                    const d = (await t.get(mainRef)).data();
+                    
+                    // Pastikan pengkudeta dihapus dari antrian jika dia sedang antri
+                    let q = d.waitingQueue || [];
+                    q = q.filter(x => cleanStr(x.plat) !== cleanStr(myPlat));
+                    
+                    // Korban otomatis tertimpa (hilang dari slot & tidak masuk antrian)
+                    d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal };
+                    t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
+                }).then(() => { forceCloseSheet('sheetKelolaIsi'); alert("KUDETA BERHASIL! Korban telah ditendang dari slot."); }).catch(e => alert(e));
             }
         };
 
@@ -515,16 +510,13 @@
         window.adminKick = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
         window.adminToQueue = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot]; if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
 
-        // FITUR KUDETA
-        window.adminKudeta = () => {
-            if(!confirm("YAKIN INGIN MENGKUDETA SLOT INI?\nPengguna ini akan dilempar ke antrian pertama, dan plat Anda akan menempati slot ini secara paksa!")) return;
-            runTransaction(db, async(t) => {
-                const d = (await t.get(mainRef)).data();
-                const victim = d.chargingSlots[currentTargetSlot];
-                if(victim) d.waitingQueue.unshift(victim);
-                d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName, role: "KUDETA", startTime: Date.now() };
-                t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue});
-            }).then(() => { forceCloseSheet('sheetKelolaIsi'); alert("KUDETA BERHASIL!"); }).catch(e => alert(e));
+        // TRIGGER KUDETA (MEMANGGIL MODAL BATRE DULU)
+        window.adminTriggerKudeta = () => {
+            if(!confirm("YAKIN INGIN MENGKUDETA SLOT INI?\nPengguna ini akan dikeluarkan paksa, dan plat Anda akan menempati slot ini!")) return;
+            memberActionType = 'kudeta';
+            document.getElementById('inpMemberBatre').value = '';
+            forceCloseSheet('sheetKelolaIsi'); 
+            setTimeout(() => { openSheet('sheetInputBatre'); }, 300);
         };
 
         // BUKA FORM DAFTAR VIA ADMIN
@@ -552,33 +544,22 @@
             }).then(() => { forceCloseSheet('sheetDaftarAdmin'); }).catch(e => alert(e));
         };
 
-        // --- FITUR BARU: NAIKKAN DARI ANTRIAN LANGSUNG KE SLOT KOSONG ---
         window.adminPromoteToSlot = (index) => {
             runTransaction(db, async(t) => {
-                const d = (await t.get(mainRef)).data();
-                let q = d.waitingQueue || [];
-                let slots = d.chargingSlots || [null, null, null];
-                
-                // Cari slot kosong pertama
+                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; let slots = d.chargingSlots || [null, null, null];
                 let emptyIdx = slots.findIndex(s => s === null);
                 if (emptyIdx === -1) throw "Semua slot sedang penuh! Keluarkan salah satu kendaraan di slot terlebih dahulu.";
-                
-                // Pindahkan user dari antrian ke slot kosong
-                let userToPromote = q.splice(index, 1)[0];
-                userToPromote.startTime = Date.now();
-                slots[emptyIdx] = userToPromote;
-                
+                let userToPromote = q.splice(index, 1)[0]; userToPromote.startTime = Date.now(); slots[emptyIdx] = userToPromote;
                 t.update(mainRef, { waitingQueue: q, chargingSlots: slots });
-            }).then(() => {
-                forceCloseSheet('sheetManageAntrian');
-            }).catch(e => alert(e));
+            }).then(() => { forceCloseSheet('sheetManageAntrian'); }).catch(e => alert(e));
         };
 
         window.renderQueueAdmin = () => {
             const body = document.getElementById('qAdminBody'); body.innerHTML = '';
             if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
             localQueue.forEach((q, i) => {
-                let batreInfo = (q.batre && q.batre !== '-') ? ` ⚡ ${q.batre}` : '';
+                let b = q.batre || q.battery;
+                let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` ⚡ ${b}` : '';
                 body.innerHTML += `
                     <div class="q-item">
                         <div>
@@ -599,7 +580,8 @@
             const body = document.getElementById('qListBody'); body.innerHTML = '';
             if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
             localQueue.forEach((q, i) => {
-                let batreInfo = (q.batre && q.batre !== '-') ? ` <span style="color:var(--gold); font-size:11px;"><i class="fas fa-bolt"></i> ${q.batre}</span>` : '';
+                let b = q.batre || q.battery;
+                let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` <span style="color:var(--gold); font-size:11px;"><i class="fas fa-bolt"></i> ${b}</span>` : '';
                 body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted);">${q.userName}${batreInfo}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px;">#${i+1}</div></div>`;
             });
         };
