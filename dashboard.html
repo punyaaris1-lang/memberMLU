@@ -41,7 +41,7 @@
         .bdg-fatal { background: #000; color: var(--danger); border: 1px solid var(--danger); animation: pulseBadge 0.5s infinite; }
         @keyframes pulseBadge { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
-        /* --- IKLAN RUNNING TEXT (PASAR MLU) --- */
+        /* --- IKLAN RUNNING TEXT --- */
         .marquee-box { margin-top: 20px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; overflow: hidden; cursor: pointer; transition: 0.2s;}
         .marquee-box:active { transform: scale(0.98); background: rgba(0,0,0,0.3); }
         .mq-icon { color: var(--gold); font-size: 14px; animation: ring 2s infinite; flex-shrink: 0;}
@@ -82,7 +82,7 @@
 
         .notif-dot { display: none; position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: var(--danger); border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* --- POP-UP BEDUG FRESH --- */
+        /* --- POP-UP BEDUG & ALERTS --- */
         .buka-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; padding: 20px; text-align: center; }
         .buka-box { background: white; padding: 40px 20px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 100%; max-width: 350px; transform: scale(0.8); animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes popBounce { to { transform: scale(1); } }
@@ -111,6 +111,7 @@
         .nav-text { font-family: 'Inter'; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
         @keyframes pulseSOS { 0%, 100% { box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2); } 50% { box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); } }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
 </head>
 <body>
@@ -228,6 +229,15 @@
         </div>
     </div>
 
+    <div class="buka-overlay" id="premiumAlertModal" style="z-index: 9999999;">
+        <div class="buka-box" style="padding: 40px 25px;">
+            <div id="paIcon" style="font-size: 65px; margin-bottom: 20px; animation: floatIcon 3s ease-in-out infinite;"></div>
+            <h2 id="paTitle" style="font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0 0 10px 0; color: var(--royal-blue); letter-spacing: 1px;">TITLE</h2>
+            <p id="paDesc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 30px; font-weight: 600; padding: 0 10px; white-space: pre-wrap;">Message</p>
+            <button class="btn-tutup-buka" style="width: 100%; box-shadow: 0 10px 20px rgba(0,0,0,0.1);" onclick="document.getElementById('premiumAlertModal').style.display='none'">SIAAP, OM!</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="sosModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -258,7 +268,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // FIREBASE UTAMA (Data Member, OD, dll)
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
@@ -299,7 +308,16 @@
             document.getElementById('userPhoto').src = (uData.foto && uData.foto.length > 50) ? uData.foto : defaultPhoto;
         });
 
-        // --- SISTEM BEDUG KEMENAG (BACKGROUND CHECKER) ---
+        // FUNGSI PEMANGGIL PREMIUM ALERT
+        window.showPremiumAlert = (title, desc, iconHtml, color) => {
+            document.getElementById('paIcon').innerHTML = iconHtml;
+            document.getElementById('paIcon').style.color = color;
+            document.getElementById('paTitle').innerText = title;
+            document.getElementById('paDesc').innerText = desc;
+            document.getElementById('premiumAlertModal').style.display = 'flex';
+        }
+
+        // --- SISTEM BEDUG KEMENAG ---
         let jadwalSholat = null;
         async function fetchJadwalAPI() {
             try {
@@ -330,16 +348,11 @@
             const now = new Date();
             const currMins = now.getHours() * 60 + now.getMinutes();
             
-            const wktSholat = [ 
-                {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, 
-                {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, 
-                {n:'ISYA', v:jadwalSholat.isya} 
-            ];
+            const wktSholat = [ {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, {n:'ISYA', v:jadwalSholat.isya} ];
             
             wktSholat.forEach(t => {
                 let parts = t.v.split(':');
                 let sholatMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-                
                 if (currMins >= sholatMins && currMins <= sholatMins + 10) {
                     const recKey = now.toDateString() + '_' + t.n;
                     if(localStorage.getItem('maka_bedug_notif') !== recKey) {
@@ -350,7 +363,7 @@
             });
         }, 5000);
 
-        // --- SISTEM OD REMINDER BERLANJUT (DASHBOARD) ---
+        // --- SISTEM OD REMINDER BERLANJUT ---
         const qOD = query(collection(db, "mlu_personal_od"), where("plat", "==", myPlat), where("status", "==", "UNPAID"));
         onSnapshot(qOD, (snap) => {
             let unpaidCount = 0; let oldestDate = null;
@@ -377,14 +390,13 @@
             }
         });
 
-        // --- SISTEM PENGINGAT GARASI EV PINTAR (H-1 & HARI-H) ---
+        // --- SISTEM PENGINGAT GARASI EV PINTAR (H-1 & HARI-H DENGAN MODAL PREMIUM) ---
         const qSrv = query(collection(db, "mlu_personal_service"), where("plat", "==", myPlat));
         onSnapshot(qSrv, (snap) => {
             const today = new Date();
             const tzOffset = today.getTimezoneOffset() * 60000;
             const todayStr = new Date(today.getTime() - tzOffset).toISOString().split('T')[0];
             
-            // Hitung Besok (H-1)
             const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
             const tomorrowStr = new Date(tomorrow.getTime() - tzOffset).toISOString().split('T')[0];
             
@@ -394,22 +406,32 @@
                 const srv = doc.data();
                 const srvDate = srv.serviceDate;
                 
-                // HARI H (Sekarang waktunya Cek)
+                // HARI H 
                 if (srvDate === todayStr) {
-                    const alertKey = `ev_alert_${srvDate}_today`;
+                    const alertKey = `ev_alert_${srvDate}_today_v2`;
                     if(!localStorage.getItem(alertKey)) {
                         setTimeout(() => {
-                            alert(`🚨 PENGINGAT GARASI PINTAR 🚨\n\nHari ini jadwal rutin cek komponen motor EV Anda:\n"${srv.note || 'Cek Kampas/Ban/Komstir'}"\n\nUtamakan keselamatan di jalan ya, Om!`);
+                            showPremiumAlert(
+                                "JADWAL SERVIS MAKA", 
+                                `Hari ini adalah jadwal rutin cek komponen motor Anda:\n\n"${srv.note || 'Cek Kampas/Ban/Komstir'}"\n\nUtamakan keselamatan di jalan ya, Om!`, 
+                                "<i class='fas fa-tools'></i>", 
+                                "var(--warning)"
+                            );
                             localStorage.setItem(alertKey, '1'); 
                         }, 2000);
                     }
                 } 
-                // H-1 MALAM (Besok waktunya Cek, ingatkan di atas jam 18:00)
+                // H-1 MALAM (di atas jam 18:00)
                 else if (srvDate === tomorrowStr && currHour >= 18) {
-                    const alertKey = `ev_alert_${srvDate}_h1`;
+                    const alertKey = `ev_alert_${srvDate}_h1_v2`;
                     if(!localStorage.getItem(alertKey)) {
                         setTimeout(() => {
-                            alert(`⏰ PERSIAPAN BESOK ⏰\n\nBesok ada jadwal cek kondisi motor EV:\n"${srv.note || 'Cek Kampas/Ban/Komstir'}"\n\nJangan sampai lupa ya, Om!`);
+                            showPremiumAlert(
+                                "PERSIAPAN BESOK", 
+                                `Besok ada jadwal cek kondisi motor MAKA Anda:\n\n"${srv.note || 'Cek Kampas/Ban/Komstir'}"\n\nJangan sampai kelupaan ya, Om!`, 
+                                "<i class='fas fa-stopwatch'></i>", 
+                                "var(--electric-blue)"
+                            );
                             localStorage.setItem(alertKey, '1');
                         }, 2000);
                     }
