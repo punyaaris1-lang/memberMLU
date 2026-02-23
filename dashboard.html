@@ -16,7 +16,7 @@
             --danger: #EF4444; --success: #10B981; --warning: #F59E0B; --gold: #D4AF37;
         }
         
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; text-decoration: none; }
 
         .header-bg { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 40px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; position: relative; box-shadow: 0 15px 35px rgba(10,34,89,0.15); }
@@ -41,6 +41,16 @@
         .bdg-fatal { background: #000; color: var(--danger); border: 1px solid var(--danger); animation: pulseBadge 0.5s infinite; }
         @keyframes pulseBadge { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
+        /* --- IKLAN RUNNING TEXT (PASAR MLU) --- */
+        .marquee-box { margin-top: 20px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; overflow: hidden; cursor: pointer; transition: 0.2s;}
+        .marquee-box:active { transform: scale(0.98); background: rgba(0,0,0,0.3); }
+        .mq-icon { color: var(--gold); font-size: 14px; animation: ring 2s infinite; flex-shrink: 0;}
+        .mq-content { flex: 1; overflow: hidden; white-space: nowrap; position: relative; }
+        .mq-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; font-size: 11px; font-weight: 600; color: white; letter-spacing: 0.5px;}
+        .mq-text b { color: var(--gold); }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        @keyframes ring { 0%, 100% { transform: rotate(0); } 10%, 30%, 50% { transform: rotate(-15deg); } 20%, 40% { transform: rotate(15deg); } }
+
         .sos-container { padding: 0 20px; margin-top: -25px; position: relative; z-index: 15; margin-bottom: 25px;}
         .btn-sos { width: 100%; background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%); color: white; border: none; padding: 18px 20px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 15px 30px rgba(239, 68, 68, 0.3); cursor: pointer; transition: 0.2s; animation: pulseSOS 2s infinite; }
         .btn-sos:active { transform: scale(0.97); }
@@ -64,11 +74,8 @@
         .ic-antrian { background: linear-gradient(135deg, #0891B2 0%, #0369A1 100%); }
         .ic-reminder { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); } 
         .ic-info { background: linear-gradient(135deg, #8B5CF6 0%, #4338CA 100%); }
-        
-        /* WARNA IKON PASAR MLU */
         .ic-pasar { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
         
-        /* BANNER EXTRA */
         .banner-btn { background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%); border: 1px dashed #BFDBFE; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 24px; padding: 20px; text-align: center; }
         .banner-btn i { font-size: 32px; color: #93C5FD; margin-bottom: 10px; }
         .banner-btn span { font-size: 10px; font-weight: 800; color: #60A5FA; text-transform: uppercase; letter-spacing: 1px; }
@@ -116,8 +123,17 @@
                 <div class="p-name" id="userName">User Name</div>
                 <div class="p-plat" id="userPlat">B 1234 XYZ</div>
             </div>
-            
             <div class="od-badge-container" id="odBadgeContainer"></div>
+        </div>
+
+        <div class="marquee-box" onclick="window.location.href='store.html'">
+            <i class="fas fa-bell mq-icon"></i>
+            <div class="mq-content">
+                <div class="mq-text">
+                    🔥 <b>PASAR MLU KINI HADIR!</b> Jual beli sparepart, aksesoris, & merch khusus member. Yuk buka lapakmu sekarang atau cek barang murah dari kawan! 🛒
+                </div>
+            </div>
+            <i class="fas fa-chevron-right" style="color:white; opacity:0.5; font-size:10px;"></i>
         </div>
     </header>
 
@@ -169,18 +185,15 @@
                 <div class="menu-title">Info MLU</div>
                 <div class="menu-desc">Pusat informasi & aturan</div>
             </a>
-            
             <a href="store.html" class="menu-btn">
                 <div class="icon-box ic-pasar"><i class="fas fa-store"></i></div>
                 <div class="menu-title">Pasar MLU</div>
                 <div class="menu-desc">Forum Jual Beli Member</div>
             </a>
-
             <div class="banner-btn" onclick="alert('Fitur segera hadir! Siapkan mesin dan fisikmu.')">
                 <i class="fas fa-route"></i>
                 <span>Jadwal Touring</span>
             </div>
-            
         </div>
     </main>
 
@@ -320,15 +333,9 @@
         };
 
         function executeWa(type, desc, name, plat, loc) {
-            // MENDAPATKAN BASE URL APLIKASI SECARA DINAMIS
             const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
-            
-            // MEMBUAT SMART LINK PROFIL
             const profileLink = `${baseUrl}data_anggota.html?cari=${encodeURIComponent(plat)}`;
-
-            // FORMAT PESAN S.O.S DENGAN SMART LINK
             const msg = `*🚨 LAPORAN DARURAT S.O.S (MLU) 🚨*\n\n*Pelapor:* ${name} (${plat})\n*Kendala:* ${type}\n*Keterangan:* ${desc}\n\n*📍 Titik Lokasi:*\n${loc}\n\n*👤 Cek Profil Pelapor:*\n${profileLink}\n\n_Mohon segera direspon, anggota butuh bantuan!_`;
-            
             const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
             
             const btn = document.getElementById('btnSendSos');
