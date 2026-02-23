@@ -22,8 +22,13 @@
         .stat-box { text-align: center; width: 48%; }
         .stat-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; margin-top: 5px; }
 
+        /* --- TOMBOL QRIS BAYAR KAS --- */
+        .qris-btn-area { padding: 0 20px; margin-top: 20px; }
+        .btn-bayar-qris { width: 100%; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; border: none; padding: 18px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); transition: 0.2s; letter-spacing: 1px;}
+        .btn-bayar-qris:active { transform: scale(0.97); }
+
         /* --- TAB NAVIGATION --- */
-        .tab-wrapper { display: flex; margin: 30px 20px 15px; background: #E2E8F0; border-radius: 16px; padding: 4px; }
+        .tab-wrapper { display: flex; margin: 25px 20px 15px; background: #E2E8F0; border-radius: 16px; padding: 4px; }
         .tab-btn { flex: 1; padding: 12px; text-align: center; font-family: 'Space Grotesk'; font-size: 13px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 12px; transition: 0.3s; }
         .tab-btn.active { background: var(--white); color: var(--royal-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
@@ -75,12 +80,12 @@
         
         .form-group { margin-bottom: 15px; }
         .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; }
+        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none;}
         .form-input:focus { border-color: var(--electric-blue); background: white; }
         
         .btn-save-modal { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--royal-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(10,34,89,0.2); }
 
-        /* KOLEKTIF AREA UI DENGAN TANGGAL */
+        /* KOLEKTIF AREA UI */
         .coll-area { display: none; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
         .coll-item { background: white; border: 1px solid #E2E8F0; padding: 15px; border-radius: 12px; margin-bottom: 12px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .coll-row-flex { display: flex; gap: 8px; margin-bottom: 8px; padding-right: 35px; }
@@ -89,6 +94,15 @@
         .k-in:focus { border-color: var(--electric-blue); }
         .btn-del-coll { position: absolute; top: 15px; right: 15px; background: #FEF2F2; color: var(--danger); border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
+        /* --- QRIS POPUP MODAL STYLES --- */
+        .qris-img-container { background: #F8FAFC; border: 2px dashed #CBD5E1; padding: 20px; border-radius: 25px; margin: 0 auto 20px; width: fit-content; }
+        .qris-img-container img { width: 220px; height: auto; border-radius: 15px; display: block; }
+        .rek-manual { background: #EFF6FF; border: 1px solid #93C5FD; padding: 15px; border-radius: 16px; text-align: center; margin-top: 15px; }
+        .rek-manual .b-title { font-size: 11px; color: var(--electric-blue); font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        .rek-manual .b-number { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; letter-spacing: 1px;}
+        .rek-manual .b-name { font-size: 12px; color: var(--text-main); font-weight: 600; }
+        .btn-copy { background: white; border: 1px solid #93C5FD; color: var(--electric-blue); padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .btn-copy:active { background: var(--electric-blue); color: white; }
     </style>
 </head>
 <body>
@@ -112,6 +126,12 @@
         </div>
     </div>
 
+    <div class="qris-btn-area">
+        <button class="btn-bayar-qris" onclick="document.getElementById('qrisModal').style.display='flex'">
+            <i class="fas fa-qrcode" style="font-size: 20px;"></i> BAYAR KAS / TRANSFER
+        </button>
+    </div>
+
     <div class="tab-wrapper">
         <div class="tab-btn active" id="tabBtnIn" onclick="switchTab('IN')">Pemasukan Kas</div>
         <div class="tab-btn" id="tabBtnOut" onclick="switchTab('OUT')">Pengeluaran Kas</div>
@@ -124,6 +144,32 @@
 
     <button class="fab-admin" id="btnAddTx" onclick="openTxModal()"><i class="fas fa-plus"></i></button>
     <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
+
+    <div class="modal-overlay" id="qrisModal">
+        <div class="modal-box" style="text-align: center;">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-wallet"></i> Pembayaran Kas</div>
+                <button class="btn-close" onclick="document.getElementById('qrisModal').style.display='none'"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <p style="font-size: 13px; color: var(--text-muted); margin-top:-10px; margin-bottom: 20px; font-weight: 600;">
+                Silakan scan QR Code di bawah menggunakan aplikasi GoPay, OVO, Dana, atau M-Banking Anda.
+            </p>
+
+            <div class="qris-img-container">
+                <img src="qris-mlu.jpg" alt="QRIS MLU" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'padding:40px; color:#EF4444; font-weight:bold;\'>Gambar qris-mlu.jpg tidak ditemukan.</div>'">
+            </div>
+
+            <div class="rek-manual">
+                <div class="b-title">ATAU TRANSFER MANUAL KE REKENING:</div>
+                <div class="b-number" id="rekNumber">0987654321</div>
+                <div class="b-name">Bank BCA a.n. Bendahara MLU</div>
+                <button class="btn-copy" onclick="copyRekening()"><i class="fas fa-copy"></i> SALIN NOMOR REKENING</button>
+            </div>
+            
+            <button class="btn-save-modal" style="background:#F1F5F9; color:var(--text-main); margin-top:20px; box-shadow:none;" onclick="document.getElementById('qrisModal').style.display='none'">TUTUP</button>
+        </div>
+    </div>
 
     <div class="modal-overlay" id="txModal">
         <div class="modal-box">
@@ -192,6 +238,16 @@
         // Set Tanggal Header
         const todayOptions = { day: 'numeric', month: 'long', year: 'numeric' };
         document.getElementById('lblDate').innerText = `SALDO KAS MLU PER ${new Date().toLocaleDateString('id-ID', todayOptions).toUpperCase()}`;
+
+        // FITUR COPY REKENING
+        window.copyRekening = () => {
+            const rek = document.getElementById('rekNumber').innerText;
+            navigator.clipboard.writeText(rek).then(() => {
+                alert("Nomor Rekening berhasil disalin: " + rek);
+            }).catch(err => {
+                alert("Gagal menyalin. Silakan copy manual.");
+            });
+        };
 
         window.txGlobalMap = {};
 
@@ -303,12 +359,10 @@
 
         // KOTAK INPUT KOLEKTIF DENGAN TANGGAL
         window.addCollRow = (nameVal = "", amountVal = "", noteVal = "", dateVal = "") => {
-            // Default tanggal adalah hari ini jika kosong
             if (!dateVal) {
                 const tzOffset = (new Date()).getTimezoneOffset() * 60000;
                 dateVal = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
             }
-            
             const list = document.getElementById('collList');
             const div = document.createElement('div');
             div.className = 'coll-item';
@@ -384,11 +438,9 @@
             const body = document.getElementById('detailListBody');
             body.innerHTML = '';
             
-            // Urutkan berdasarkan tanggal terbaru jika ada
             data.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
             data.forEach((d, i) => {
-                // Format Tanggal untuk Tampilan
                 let dateStr = '-';
                 if(d.date) {
                     const dt = new Date(d.date);
