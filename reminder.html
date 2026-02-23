@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLU - Personal OD Reminder</title>
+    <title>MLU - Smart Garage Calendar</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,181 +14,176 @@
             --bg-surface: #F8FAFC; --white: #FFFFFF; 
             --text-main: #0F172A; --text-muted: #64748B; 
             --danger: #EF4444; --warning: #F59E0B; --success: #10B981;
-            --border-soft: rgba(226, 232, 240, 0.9);
         }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
         /* --- HEADER --- */
-        .header-premium { background: linear-gradient(160deg, #B91C1C 0%, #7F1D1D 100%); padding: 50px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(185, 28, 28, 0.2); }
-        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: #FCA5A5; text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .main-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; margin: 0; letter-spacing: 1px; }
+        .header-premium { background: linear-gradient(160deg, #1E293B 0%, #0F172A 100%); padding: 50px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; text-align: center; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--electric-blue); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; letter-spacing: 1px; }
 
-        /* --- STATUS CARD (DYNAMIC) --- */
-        .status-overlap { padding: 0 20px; margin-top: -40px; position: relative; z-index: 10; }
-        .status-card { background: var(--white); border-radius: 25px; padding: 25px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.08); border: 1px solid var(--white); transition: 0.3s; }
+        /* --- CALENDAR UI --- */
+        .cal-wrapper { padding: 0 20px; margin-top: -40px; position: relative; z-index: 10; }
+        .cal-card { background: var(--white); border-radius: 25px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); border: 1px solid #E2E8F0; }
         
-        /* Tema Status */
-        .sc-safe { border-top: 6px solid var(--success); }
-        .sc-warn { border-top: 6px solid var(--warning); background: #FFFBEB; }
-        .sc-danger { border-top: 6px solid var(--danger); background: #FEF2F2; animation: pulseDanger 2s infinite; }
-        .sc-fatal { background: #000; color: white; border-top: 6px solid #DC2626; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .cal-nav-btn { background: #F1F5F9; border: none; width: 35px; height: 35px; border-radius: 12px; font-size: 14px; color: var(--royal-blue); cursor: pointer; transition: 0.2s; }
+        .cal-nav-btn:active { transform: scale(0.9); background: var(--electric-blue); color: white; }
+        .cal-month-year { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); text-transform: uppercase; }
 
-        .sc-icon { font-size: 38px; margin-bottom: 10px; }
-        .sc-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
-        .sc-desc { font-size: 12px; font-weight: 600; line-height: 1.4; margin-bottom: 15px; }
+        .cal-days-header { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
         
-        .sc-danger .sc-icon, .sc-danger .sc-title { color: var(--danger); }
-        .sc-warn .sc-icon, .sc-warn .sc-title { color: var(--warning); }
-        .sc-fatal .sc-icon, .sc-fatal .sc-title { color: var(--danger); }
-        .sc-safe .sc-icon, .sc-safe .sc-title { color: var(--success); }
+        .cal-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 8px; border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; position: relative; background: #F8FAFC; border: 1px solid transparent; }
+        .cal-cell:active { transform: scale(0.95); }
+        .cal-cell.empty { background: transparent; pointer-events: none; }
+        .cal-cell.today { background: var(--electric-blue); color: white; box-shadow: 0 5px 15px rgba(45,99,237,0.3); }
+        .cal-cell.has-event { border-color: #CBD5E1; }
+        .cal-cell.is-libur { background: #FFFBEB; color: var(--warning); border: 1px dashed #FDE68A; }
+        
+        /* Event Markers */
+        .marker-container { display: flex; gap: 3px; position: absolute; bottom: 5px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .dot-od-unpaid { background: var(--danger); box-shadow: 0 0 5px var(--danger); }
+        .dot-od-paid { background: var(--success); }
+        .dot-service { background: var(--text-main); display: flex; align-items: center; justify-content: center; width: 12px; height: 12px; font-size: 8px; color: white; border-radius: 4px; }
 
-        .btn-action-main { width: 100%; padding: 18px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        .btn-add { background: var(--electric-blue); color: white; box-shadow: 0 10px 20px rgba(45,99,237,0.3); }
+        /* --- LEGEND --- */
+        .legend-box { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .leg-item { display: flex; align-items: center; gap: 4px; }
 
-        /* --- SUMMARY CHIPS --- */
-        .summary-box { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
-        .chip { background: rgba(0,0,0,0.05); padding: 8px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; color: var(--text-main); font-family: 'Inter'; }
-        .sc-fatal .chip { background: rgba(255,255,255,0.1); color: white; }
+        /* --- BOTTOM SHEET MODAL --- */
+        .sheet-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(5px); display: none; align-items: flex-end; z-index: 20000; opacity: 0; transition: opacity 0.3s; }
+        .sheet-overlay.show { display: flex; opacity: 1; }
+        .bottom-sheet { width: 100%; background: var(--white); border-radius: 35px 35px 0 0; padding: 20px 25px 40px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); box-shadow: 0 -15px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+        .sheet-overlay.show .bottom-sheet { transform: translateY(0); }
+        .sheet-handle { width: 50px; height: 5px; background: #E2E8F0; border-radius: 5px; margin: 0 auto 20px; }
+        
+        .dt-header { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; text-align: center; }
+        .dt-sub { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 20px; }
 
-        /* --- HISTORY LIST --- */
-        .section-title { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .list-container { padding: 0 20px; display: flex; flex-direction: column; gap: 12px; }
+        /* LIST EVENT HARI INI */
+        .event-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .event-card { padding: 15px; border-radius: 16px; border-left: 4px solid; background: #F8FAFC; display: flex; justify-content: space-between; align-items: center; }
+        .ec-unpaid { border-left-color: var(--danger); }
+        .ec-paid { border-left-color: var(--success); opacity: 0.7; }
+        .ec-service { border-left-color: var(--text-main); background: #F1F5F9; }
         
-        .history-card { background: var(--white); border-radius: 20px; padding: 18px; border: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; }
-        
-        /* Tema Tunggakan Aktif vs Lunas */
-        .is-unpaid { border-left: 5px solid var(--danger); box-shadow: 0 5px 15px rgba(239,68,68,0.05); }
-        .is-paid { border-left: 5px solid var(--success); opacity: 0.8; }
+        .ec-title { font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+        .ec-desc { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+        .ec-btn { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; }
 
-        .hc-top { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #E2E8F0; padding-bottom: 10px; }
-        .hc-date { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--text-main); }
-        .hc-amt { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; color: var(--royal-blue); }
-        
-        .hc-info { font-size: 11px; color: var(--text-muted); font-weight: 600; line-height: 1.5; }
-        .hc-proof { background: #F8FAFC; padding: 10px; border-radius: 12px; font-size: 10px; color: var(--electric-blue); font-weight: 700; margin-top: 5px; cursor: pointer; display: flex; align-items: center; gap: 8px; border: 1px solid #E2E8F0;}
-        
-        .btn-pay-item { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; width: 100%; padding: 12px; border-radius: 12px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; margin-top: 5px; transition: 0.2s;}
-        .btn-pay-item:active { transform: scale(0.98); background: var(--danger); color: white; }
+        /* ACTION BUTTONS */
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-sheet-act { padding: 15px; border-radius: 16px; border: none; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s; text-align:center;}
+        .btn-sheet-act:active { transform: scale(0.95); }
+        .bg-red { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; }
+        .bg-dark { background: #F1F5F9; color: var(--text-main); border: 1px solid #CBD5E1; }
 
-        /* --- MODAL FORM --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); backdrop-filter: blur(5px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
-        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; max-height: 90vh; overflow-y: auto;}
-        @keyframes slideUp { to { transform: translateY(0); } }
-        
-        .m-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .m-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); }
-        .btn-close { background: #F1F5F9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text-muted); }
-        
+        /* --- FORMS (MODAL) --- */
         .form-group { margin-bottom: 15px; }
         .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
         .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; }
         .form-input:focus { border-color: var(--electric-blue); background: white; }
+        .btn-save { width: 100%; padding: 18px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; }
 
-        .upload-area { border: 2px dashed #CBD5E1; border-radius: 16px; padding: 15px; text-align: center; background: #F8FAFC; cursor: pointer; position: relative; margin-bottom: 10px;}
-        .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-        .preview-img { width: 100%; max-height: 150px; border-radius: 12px; object-fit: contain; display: none; margin-top: 10px; border: 1px solid var(--electric-blue); }
-
-        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
+        .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-
-        @keyframes pulseDanger { 0%, 100% { box-shadow: 0 10px 25px rgba(239, 68, 68, 0.1); } 50% { box-shadow: 0 10px 40px rgba(239, 68, 68, 0.4); } }
     </style>
 </head>
 <body>
 
     <header class="header-premium">
-        <span class="sub-tag">Asisten Tagihan Pribadi</span>
-        <h1 class="main-title">KALKULATOR OD</h1>
+        <span class="sub-tag">Log Book Kendaraan (EV)</span>
+        <h1 class="main-title">GARASI PINTAR</h1>
     </header>
 
-    <div class="status-overlap" id="statusContainer">
-        <div class="status-card sc-safe">
-            <div class="sc-icon"><i class="fas fa-spinner fa-spin"></i></div>
-            <div class="sc-title">MEMUAT DATA...</div>
-            <div class="sc-desc">Mengecek catatan pembayaran Anda.</div>
+    <div class="cal-wrapper">
+        <div class="cal-card">
+            <div class="cal-header">
+                <button class="cal-nav-btn" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                <div class="cal-month-year" id="monthYearDisplay">MEMUAT...</div>
+                <button class="cal-nav-btn" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            
+            <div class="cal-days-header">
+                <div>MIN</div><div>SEN</div><div>SEL</div><div>RAB</div><div>KAM</div><div>JUM</div><div>SAB</div>
+            </div>
+            
+            <div class="cal-grid" id="calendarGrid"></div>
+
+            <div class="legend-box">
+                <div class="leg-item"><div class="dot dot-od-unpaid"></div> OD Nunggak</div>
+                <div class="leg-item"><div class="dot dot-od-paid"></div> Lunas</div>
+                <div class="leg-item"><div class="dot dot-service"><i class="fas fa-wrench" style="font-size:6px;"></i></div> Servis EV</div>
+                <div class="leg-item"><div class="dot" style="background:#FFFBEB; border:1px dashed #FDE68A; width:10px; height:10px; border-radius:3px;"></div> Libur OD</div>
+            </div>
+            <div style="text-align:center; font-size:9px; color:#94A3B8; margin-top:10px; font-family:'Inter';">
+                <i class="fas fa-robot"></i> Sistem OD Berlanjut Otomatis Aktif
+            </div>
         </div>
     </div>
 
-    <div id="activeSection" style="display:none;">
-        <div class="section-title">
-            <span style="color:var(--danger);"><i class="fas fa-exclamation-circle"></i> TAGIHAN AKTIF</span>
-        </div>
-        <div class="list-container" id="activeList"></div>
-    </div>
-
-    <div class="section-title">
-        <span><i class="fas fa-history"></i> RIWAYAT LUNAS</span>
-    </div>
-    <div class="list-container" id="historyList">
-        <div style="text-align:center; padding:20px; color:#94A3B8; font-size:12px;">Belum ada riwayat lunas.</div>
+    <div style="padding: 30px 20px; margin-bottom: 50px;">
+        <div style="font-family:'Space Grotesk'; font-weight:800; font-size:14px; margin-bottom:15px; color:var(--royal-blue);">TAGIHAN & AGENDA</div>
+        <div id="upcomingList"></div>
     </div>
 
     <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
 
-    <div class="modal-overlay" id="modalAdd">
-        <div class="modal-box">
-            <div class="m-head">
-                <div class="m-title">Tambah Tanggal OD</div>
-                <button class="btn-close" onclick="closeModal('modalAdd')"><i class="fas fa-times"></i></button>
+    <div class="sheet-overlay" id="dateSheet" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="dt-header" id="selDateTitle">25 Feb 2026</div>
+            <div class="dt-sub" id="selDateSub">Kelola agenda di tanggal ini</div>
+
+            <div class="event-list" id="dayEventList"></div>
+
+            <div class="action-grid">
+                <button class="btn-sheet-act bg-red" onclick="openForm('OD')"><i class="fas fa-file-invoice-dollar" style="font-size:20px;"></i> CATAT OD BARU</button>
+                <button class="btn-sheet-act bg-dark" onclick="openForm('SERVIS')"><i class="fas fa-tools" style="font-size:20px;"></i> REMINDER SERVIS</button>
             </div>
-            
-            <div class="form-group">
-                <label>Tanggal OD</label>
-                <input type="date" id="formDueDate" class="form-input" style="font-family:'Space Grotesk';">
-            </div>
-            <div class="form-group">
-                <label>Nominal Tagihan (Opsional)</label>
-                <input type="number" id="formAmount" class="form-input" placeholder="Misal: 50000">
-            </div>
-            <div class="form-group">
-                <label>Catatan Tambahan (Opsional)</label>
-                <input type="text" id="formNote" class="form-input" placeholder="Misal: Kurang setoran harian">
-            </div>
-            
-            <button class="btn-action-main btn-add" id="btnSaveAdd" onclick="saveNewOD()"><i class="fas fa-plus"></i> SIMPAN KE DAFTAR</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalPay">
-        <div class="modal-box">
-            <div class="m-head">
-                <div class="m-title">Konfirmasi Pembayaran</div>
-                <button class="btn-close" onclick="closeModal('modalPay')"><i class="fas fa-times"></i></button>
-            </div>
+    <div class="sheet-overlay" id="formSheet" style="z-index: 21000;" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="dt-header" id="formTitle">Formulir</div>
             
+            <input type="hidden" id="formType">
+
+            <div class="form-group" id="grpNominal">
+                <label>Nominal OD Harian (Rp)</label>
+                <input type="number" id="inpAmount" class="form-input" placeholder="Contoh: 50000">
+            </div>
+            <div class="form-group">
+                <label id="lblKet">Keterangan</label>
+                <input type="text" id="inpNote" class="form-input" placeholder="Misal: Ganti Kampas Rem / Ban">
+            </div>
+
+            <button class="btn-save" id="btnSaveData" style="background:var(--electric-blue); color:white;" onclick="saveData()">SIMPAN AGENDA</button>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="paySheet" style="z-index: 22000;" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="dt-header">Lunasi OD</div>
             <input type="hidden" id="payId">
-            <div style="text-align:center; margin-bottom:15px; font-family:'Space Grotesk'; font-size:16px; color:var(--danger);" id="payTargetDate"></div>
-
-            <div class="form-group">
-                <label>Metode / Keterangan Pembayaran</label>
-                <input type="text" id="payMethod" class="form-input" placeholder="Misal: Lunas via transfer BCA ke Admin">
+            <div class="form-group" style="margin-top:20px;">
+                <label>Metode Pembayaran</label>
+                <input type="text" id="payMethod" class="form-input" placeholder="Via Transfer / Cash ke Admin">
             </div>
-
-            <div class="upload-area">
-                <i class="fas fa-receipt" style="font-size:24px; color:var(--electric-blue); margin-bottom:5px; display:block;"></i>
-                <div style="font-size:11px; font-weight:700; color:var(--text-muted);">Tap upload bukti struk (Opsional tapi disarankan)</div>
-                <input type="file" id="payPhoto" accept="image/*">
-                <img id="previewPayPhoto" class="preview-img">
-            </div>
-            
-            <button class="btn-action-main btn-pay" id="btnSavePay" style="background:var(--success); color:white;" onclick="confirmPayment()"><i class="fas fa-check-circle"></i> TANDAI LUNAS</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalView">
-        <div class="modal-box" style="background:transparent; box-shadow:none; max-width:400px; padding:0;">
-            <div style="background:white; padding:10px; border-radius:20px; position:relative; text-align:center;">
-                <button class="btn-close" style="position:absolute; top:-10px; right:-10px; background:var(--danger); color:white; z-index:10;" onclick="closeModal('modalView')"><i class="fas fa-times"></i></button>
-                <img id="viewImage" src="" style="width:100%; border-radius:12px; max-height:75vh; object-fit:contain;">
-            </div>
+            <button class="btn-save" style="background:var(--success); color:white;" onclick="confirmPayOD()"><i class="fas fa-check-circle"></i> TANDAI LUNAS</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, doc, query, where, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // FIREBASE MLU ASLI
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
@@ -197,239 +192,329 @@
         const u = JSON.parse(localStorage.getItem('maka_user'));
         if(!u || !u.plat) window.location.href = 'index.html';
         const myPlat = u.plat;
+        const myRole = (u.role || "").toUpperCase();
 
-        let unpaidODs = [];
-        let proofBase64 = "";
+        // STATE KALENDER
+        let currDate = new Date();
+        let currMonth = currDate.getMonth();
+        let currYear = currDate.getFullYear();
+        let selectedDateStr = ""; 
 
-        // MESIN KOMPRESOR STRUK
-        document.getElementById('payPhoto').addEventListener('change', function(e) {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                    let w = img.width; let h = img.height;
-                    if (w > h) { if (w > 800) { h *= 800/w; w = 800; } } else { if (h > 800) { w *= 800/h; h = 800; } }
-                    canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
-                    proofBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    document.getElementById('previewPayPhoto').src = proofBase64;
-                    document.getElementById('previewPayPhoto').style.display = 'block';
-                }
-                img.src = event.target.result;
-            }
-            reader.readAsDataURL(file);
-        });
+        // STATE DATA
+        let odData = [];
+        let serviceData = [];
+        let eventMap = {}; 
+        let isGeneratingOD = false; 
 
-        // TARIK DATA DARI FIREBASE
-        const q = query(collection(db, "mlu_personal_od"), where("plat", "==", myPlat));
-        
-        onSnapshot(q, (snap) => {
-            unpaidODs = [];
-            let paidODs = [];
+        const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-            snap.forEach(docSnap => {
-                let d = docSnap.data();
-                d.id = docSnap.id;
-                if (d.status === 'UNPAID') unpaidODs.push(d);
-                else paidODs.push(d);
-            });
-
-            // Urutkan UNPAID dari tanggal paling lama ke terbaru
-            unpaidODs.sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
-            // Urutkan PAID dari yang paling baru dilunasi
-            paidODs.sort((a,b) => b.paidAt - a.paidAt);
-
-            renderStatusCard();
-            renderLists(paidODs);
-        });
-
-        function renderStatusCard() {
-            const container = document.getElementById('statusContainer');
-            
-            if (unpaidODs.length === 0) {
-                container.innerHTML = `
-                    <div class="status-card sc-safe">
-                        <div class="sc-icon"><i class="fas fa-shield-check"></i></div>
-                        <div class="sc-title">TIDAK ADA TUNGGAKAN</div>
-                        <div class="sc-desc" style="color:var(--text-muted);">Catatan OD Anda kosong atau sudah lunas semua.</div>
-                        <button class="btn-action-main btn-add" onclick="openModal('modalAdd')"><i class="fas fa-plus"></i> TAMBAH TANGGAL OD BARU</button>
-                    </div>`;
-                document.getElementById('activeSection').style.display = 'none';
-                return;
-            }
-
-            // HITUNG AKUMULASI
-            document.getElementById('activeSection').style.display = 'block';
-            let totalAmt = 0;
-            unpaidODs.forEach(od => totalAmt += (Number(od.amount) || 0));
-
-            // CEK OD PALING LAMA (Index 0 karena sudah di-sort)
-            const oldestOD = unpaidODs[0];
-            const today = new Date(); today.setHours(0,0,0,0);
-            const dueDate = new Date(oldestOD.dueDate); dueDate.setHours(0,0,0,0);
-            const diffDays = Math.ceil((today - dueDate) / (1000 * 60 * 60 * 24)); 
-
-            let theme = ''; let icon = ''; let title = ''; let desc = '';
-
-            if (diffDays <= 0) {
-                theme = 'sc-safe'; icon = 'fa-calendar-exclamation'; 
-                title = 'BELUM JATUH TEMPO'; 
-                desc = `Harap siapkan dana pembayaran untuk menghindari sanksi kunci motor.`;
-            } else if (diffDays >= 1 && diffDays <= 3) {
-                theme = 'sc-warn'; icon = 'fa-exclamation-triangle'; 
-                title = `PERINGATAN: TELAT ${diffDays} HARI`; 
-                desc = `Batas maksimal telat adalah 3 hari. Segera lunasi sebelum unit <b>dikunci otomatis!</b>`;
-            } else if (diffDays > 3 && diffDays <= 8) {
-                theme = 'sc-danger'; icon = 'fa-lock'; 
-                title = `WARNING: MOTOR TERKUNCI!`; 
-                desc = `Tunggakan terlama sudah <b>${diffDays} Hari</b>. Akses motor dikunci pusat! Segera bayar.`;
+        // FUNGSI CEK LIBUR BERDASARKAN ROLE
+        function isLibur(dateStr) {
+            let d = parseInt(dateStr.split('-')[2]);
+            if (myRole.includes('TRANSGO')) {
+                return (d === 29 || d === 30 || d === 31);
             } else {
-                theme = 'sc-fatal'; icon = 'fa-skull-crossbones'; 
-                title = `CRITICAL: TARIK PAKSA!`; 
-                desc = `Tunggakan mencapai <b>${diffDays} Hari</b>. Anda masuk daftar penarikan paksa unit!`;
+                return (d === 14 || d === 28 || d === 31);
             }
-
-            let formatTotal = totalAmt > 0 ? `Rp ${totalAmt.toLocaleString('id-ID')}` : 'Belum dihitung';
-
-            container.innerHTML = `
-                <div class="status-card ${theme}">
-                    <div class="sc-icon"><i class="fas ${icon}"></i></div>
-                    <div class="sc-title">${title}</div>
-                    
-                    <div class="summary-box">
-                        <div class="chip"><i class="fas fa-list-ol"></i> ${unpaidODs.length} Titik OD</div>
-                        <div class="chip"><i class="fas fa-money-bill-wave"></i> ${formatTotal}</div>
-                    </div>
-
-                    <div class="sc-desc">${desc}</div>
-                    <button class="btn-action-main btn-add" onclick="openModal('modalAdd')" style="font-size:12px; padding:15px;"><i class="fas fa-plus"></i> TAMBAH TANGGAL OD LAGI</button>
-                </div>`;
         }
 
-        function renderLists(paidODs) {
-            const activeList = document.getElementById('activeList');
-            const historyList = document.getElementById('historyList');
-            activeList.innerHTML = ''; historyList.innerHTML = '';
+        // --- FETCH FIREBASE ---
+        const qOD = query(collection(db, "mlu_personal_od"), where("plat", "==", myPlat));
+        const qSrv = query(collection(db, "mlu_personal_service"), where("plat", "==", myPlat));
 
-            // RENDER TAGIHAN AKTIF
-            unpaidODs.forEach(d => {
-                const dateStr = new Date(d.dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                const amtStr = d.amount ? `Rp ${d.amount.toLocaleString('id-ID')}` : '-';
-                
-                activeList.innerHTML += `
-                    <div class="history-card is-unpaid">
-                        <button style="position:absolute; top:10px; right:10px; background:transparent; border:none; color:#CBD5E1; cursor:pointer;" onclick="deleteOD('${d.id}')"><i class="fas fa-trash"></i></button>
-                        <div class="hc-top" style="border:none; padding:0;">
-                            <div>
-                                <div class="hc-date">OD Tgl: ${dateStr}</div>
-                                <div class="hc-amt">${amtStr}</div>
-                            </div>
-                        </div>
-                        ${d.note ? `<div class="hc-info"><i class="fas fa-comment-dots"></i> ${d.note}</div>` : ''}
-                        <button class="btn-pay-item" onclick="openPayModal('${d.id}', '${dateStr}')">LUNASI TAGIHAN INI SEKARANG</button>
-                    </div>
-                `;
+        onSnapshot(qOD, (snap) => {
+            odData = [];
+            let hasUnpaid = false;
+            let maxUnpaidDate = "2000-01-01";
+            let latestAmount = 0;
+            let latestNote = "Setoran Harian OD";
+
+            snap.forEach(d => { 
+                let data = { id: d.id, ...d.data() };
+                odData.push(data); 
+                if (data.status === 'UNPAID') {
+                    hasUnpaid = true;
+                    if (data.dueDate > maxUnpaidDate) {
+                        maxUnpaidDate = data.dueDate;
+                        latestAmount = data.amount || 0;
+                        latestNote = data.note || "Setoran Harian OD";
+                    }
+                }
             });
 
-            // RENDER RIWAYAT LUNAS
-            if(paidODs.length === 0) {
-                historyList.innerHTML = '<div style="text-align:center; padding:20px; color:#94A3B8; font-size:12px;">Belum ada riwayat lunas.</div>';
-            } else {
-                paidODs.forEach(d => {
-                    const dateStr = new Date(d.dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                    let proofHtml = d.proofBase64 ? `<div class="hc-proof" onclick="viewProof('${d.proofBase64}')"><i class="fas fa-image"></i> Lihat Bukti Transfer</div>` : '';
+            // 1. Render UI Terlebih Dahulu Agar Tidak Stuck Loading
+            buildEventMap();
 
-                    historyList.innerHTML += `
-                        <div class="history-card is-paid">
-                            <button style="position:absolute; top:10px; right:10px; background:transparent; border:none; color:#CBD5E1; cursor:pointer;" onclick="deleteOD('${d.id}')"><i class="fas fa-trash"></i></button>
-                            <div class="hc-top">
-                                <div class="hc-date" style="color:var(--text-muted); font-size:14px;"><del>OD: ${dateStr}</del></div>
-                                <div class="hc-badge badge-paid"><i class="fas fa-check"></i> LUNAS</div>
+            // 2. Eksekusi Auto-Generate di Background
+            const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+            const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+
+            if (hasUnpaid && maxUnpaidDate < todayStr && !isGeneratingOD) {
+                let docsToAdd = [];
+                let d = new Date(maxUnpaidDate);
+                d.setDate(d.getDate() + 1);
+                
+                while(d.toISOString().split('T')[0] <= todayStr) {
+                    let loopDateStr = d.toISOString().split('T')[0];
+                    let isAlreadyExist = odData.some(od => od.dueDate === loopDateStr);
+                    
+                    if (!isLibur(loopDateStr) && !isAlreadyExist) {
+                        docsToAdd.push({
+                            plat: myPlat,
+                            dueDate: loopDateStr,
+                            amount: latestAmount,
+                            note: latestNote,
+                            status: 'UNPAID',
+                            timestamp: Date.now()
+                        });
+                    }
+                    d.setDate(d.getDate() + 1);
+                }
+
+                if (docsToAdd.length > 0) {
+                    isGeneratingOD = true;
+                    Promise.all(docsToAdd.map(docData => addDoc(collection(db, "mlu_personal_od"), docData)))
+                        .then(() => { setTimeout(() => { isGeneratingOD = false; }, 1000); })
+                        .catch((e) => { console.error(e); isGeneratingOD = false; });
+                }
+            }
+        });
+
+        onSnapshot(qSrv, (snap) => {
+            serviceData = [];
+            snap.forEach(d => { serviceData.push({ id: d.id, ...d.data() }); });
+            buildEventMap();
+        });
+
+        function buildEventMap() {
+            eventMap = {};
+            odData.forEach(d => {
+                if(!eventMap[d.dueDate]) eventMap[d.dueDate] = { od: [], service: [] };
+                eventMap[d.dueDate].od.push(d);
+            });
+            serviceData.forEach(d => {
+                if(!eventMap[d.serviceDate]) eventMap[d.serviceDate] = { od: [], service: [] };
+                eventMap[d.serviceDate].service.push(d);
+            });
+            renderCalendar();
+            renderUpcoming();
+        }
+
+        // --- RENDER KALENDER ---
+        function renderCalendar() {
+            document.getElementById('monthYearDisplay').innerText = `${monthNames[currMonth]} ${currYear}`;
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            const firstDay = new Date(currYear, currMonth, 1).getDay();
+            const daysInMonth = new Date(currYear, currMonth + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div class="cal-cell empty"></div>`; }
+
+            const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+            const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                let m = String(currMonth + 1).padStart(2, '0');
+                let d = String(i).padStart(2, '0');
+                let dateStr = `${currYear}-${m}-${d}`;
+
+                let isToday = (dateStr === todayStr) ? 'today' : '';
+                let hasEventCls = eventMap[dateStr] ? 'has-event' : '';
+                let liburCls = isLibur(dateStr) ? 'is-libur' : '';
+                
+                let markersHtml = '';
+                if(eventMap[dateStr]) {
+                    markersHtml = `<div class="marker-container">`;
+                    let hasUnpaidOD = eventMap[dateStr].od.some(x => x.status === 'UNPAID');
+                    let hasPaidOD = eventMap[dateStr].od.some(x => x.status === 'PAID');
+                    let hasService = eventMap[dateStr].service.length > 0;
+
+                    if(hasUnpaidOD) markersHtml += `<div class="dot dot-od-unpaid"></div>`;
+                    if(hasPaidOD && !hasUnpaidOD) markersHtml += `<div class="dot dot-od-paid"></div>`;
+                    if(hasService) markersHtml += `<div class="dot dot-service"><i class="fas fa-wrench"></i></div>`;
+                    markersHtml += `</div>`;
+                }
+
+                grid.innerHTML += `<div class="cal-cell ${isToday} ${hasEventCls} ${liburCls}" onclick="clickDate('${dateStr}', ${i})">${i}${markersHtml}</div>`;
+            }
+        }
+
+        window.changeMonth = (dir) => {
+            currMonth += dir;
+            if(currMonth > 11) { currMonth = 0; currYear++; }
+            if(currMonth < 0) { currMonth = 11; currYear--; }
+            renderCalendar();
+        };
+
+        // --- INTERAKSI KLIK TANGGAL ---
+        window.clickDate = (dateStr, dayNum) => {
+            selectedDateStr = dateStr;
+            document.getElementById('selDateTitle').innerText = `${dayNum} ${monthNames[currMonth]} ${currYear}`;
+            
+            let liburTxt = isLibur(dateStr) ? "<span style='color:var(--warning); font-weight:800;'><i class='fas fa-umbrella-beach'></i> Hari Libur OD</span>" : "Kelola agenda di tanggal ini";
+            document.getElementById('selDateSub').innerHTML = liburTxt;
+            
+            const list = document.getElementById('dayEventList');
+            list.innerHTML = '';
+
+            let evs = eventMap[dateStr];
+            if(!evs) {
+                list.innerHTML = `<div style="text-align:center; font-size:12px; color:#94A3B8; padding:10px;">Tidak ada agenda terdaftar.</div>`;
+            } else {
+                evs.od.forEach(o => {
+                    let st = o.status === 'UNPAID';
+                    let cls = st ? 'ec-unpaid' : 'ec-paid';
+                    let btn = st ? `<button class="ec-btn" onclick="openPayModal('${o.id}')">LUNASI</button>` : `<div style="font-size:10px; color:var(--success); font-weight:800;"><i class="fas fa-check"></i> LUNAS</div>`;
+                    
+                    list.innerHTML += `
+                        <div class="event-card ${cls}">
+                            <div>
+                                <div class="ec-title"><i class="fas fa-file-invoice"></i> OD/Tagihan</div>
+                                <div class="ec-desc">Rp ${o.amount ? o.amount.toLocaleString('id-ID') : 0} - ${o.note || '-'}</div>
                             </div>
-                            <div class="hc-info">
-                                <div style="color:var(--success); font-weight:800; font-size:12px; margin-bottom:4px;">${d.paymentMethod}</div>
-                                <div>Nominal: ${d.amount ? 'Rp '+d.amount.toLocaleString('id-ID') : '-'}</div>
+                            <div style="display:flex; flex-direction:column; gap:5px; align-items:flex-end;">
+                                ${btn}
+                                <i class="fas fa-trash" style="color:#CBD5E1; font-size:12px; cursor:pointer;" onclick="deleteData('mlu_personal_od', '${o.id}')"></i>
                             </div>
-                            ${proofHtml}
+                        </div>
+                    `;
+                });
+
+                evs.service.forEach(s => {
+                    list.innerHTML += `
+                        <div class="event-card ec-service">
+                            <div>
+                                <div class="ec-title"><i class="fas fa-tools"></i> Jadwal Cek Garasi</div>
+                                <div class="ec-desc">${s.note || 'Cek Kampas/Ban'}</div>
+                            </div>
+                            <i class="fas fa-trash" style="color:#94A3B8; cursor:pointer;" onclick="deleteData('mlu_personal_service', '${s.id}')"></i>
                         </div>
                     `;
                 });
             }
+            document.getElementById('dateSheet').classList.add('show');
+        };
+
+        // --- RENDER UPCOMING (MENAMPILKAN SEMUA TUNGGAKAN LAMA) ---
+        function renderUpcoming() {
+            const list = document.getElementById('upcomingList');
+            list.innerHTML = '';
+            
+            const tzOffset = (new Date()).getTimezoneOffset() * 60000;
+            const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
+            let upc = [];
+
+            // Tangkap SEMUA OD yang Nunggak (Walau tanggal sudah lewat)
+            odData.forEach(d => { 
+                if(d.status === 'UNPAID') upc.push({ type: 'OD', date: d.dueDate, data: d }); 
+            });
+            // Untuk Servis, hanya yang hari ini dan mendatang
+            serviceData.forEach(d => { 
+                if(d.serviceDate >= todayStr) upc.push({ type: 'SRV', date: d.serviceDate, data: d }); 
+            });
+
+            // Urutkan dari terlama ke terbaru
+            upc.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            if(upc.length === 0) {
+                list.innerHTML = `<div style="background:#F1F5F9; padding:20px; border-radius:16px; text-align:center; font-size:12px; color:var(--text-muted); font-weight:600;"><i class="fas fa-check-circle" style="font-size:24px; color:var(--success); display:block; margin-bottom:10px;"></i> Garasi & Setoran Aman!</div>`;
+                return;
+            }
+
+            // Tampilkan max 5 item agar rapi
+            upc.slice(0, 5).forEach(item => {
+                let dt = new Date(item.date).toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+                let badgeNunggak = (item.type === 'OD' && item.date < todayStr) ? `<span style="background:var(--danger); color:white; padding:2px 6px; border-radius:4px; font-size:8px; margin-left:5px; vertical-align:middle;">NUNGGAK</span>` : '';
+
+                if(item.type === 'OD') {
+                    list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px dashed #E2E8F0; align-items:center;"><div style="font-size:13px; font-weight:800; display:flex; align-items:center;"><i class="fas fa-circle" style="color:var(--danger); font-size:8px; margin-right:8px;"></i> OD / Tagihan ${badgeNunggak}</div><div style="font-family:'Space Grotesk'; font-weight:800; color:var(--danger);">${dt}</div></div>`;
+                } else {
+                    list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px dashed #E2E8F0; align-items:center;"><div style="font-size:13px; font-weight:800;"><i class="fas fa-wrench" style="color:var(--text-main); font-size:10px; margin-right:8px;"></i> Cek Garasi EV</div><div style="font-family:'Space Grotesk'; font-weight:800; color:var(--text-main);">${dt}</div></div>`;
+                }
+            });
+
+            if(upc.length > 5) {
+                list.innerHTML += `<div style="text-align:center; padding:10px; font-size:10px; color:var(--text-muted); font-weight:800;">+ ${upc.length - 5} Tagihan/Agenda lainnya</div>`;
+            }
         }
 
-        // --- FUNGSI UI MODAL ---
-        window.openModal = (id) => document.getElementById(id).style.display = 'flex';
-        window.closeModal = (id) => {
-            document.getElementById(id).style.display = 'none';
-            if(id === 'modalAdd') {
-                document.getElementById('formDueDate').value = '';
-                document.getElementById('formAmount').value = '';
-                document.getElementById('formNote').value = '';
+        // --- SISTEM MODAL UI ---
+        window.closeSheet = (e, id) => { if(e.target.id === id) document.getElementById(id).classList.remove('show'); };
+        
+        window.openForm = (type) => {
+            if(type === 'OD' && isLibur(selectedDateStr)) {
+                if(!confirm("Tanggal ini adalah Jadwal Libur OD Anda. Yakin tetap ingin membuat tagihan manual di tanggal ini?")) return;
             }
-            if(id === 'modalPay') {
-                document.getElementById('payMethod').value = '';
-                document.getElementById('payPhoto').value = '';
-                document.getElementById('previewPayPhoto').style.display = 'none';
-                proofBase64 = "";
+
+            document.getElementById('formType').value = type;
+            document.getElementById('formTitle').innerText = type === 'OD' ? "Tambah Tagihan OD" : "Reminder Servis EV";
+            
+            if(type === 'OD') {
+                document.getElementById('grpNominal').style.display = 'block';
+                document.getElementById('lblKet').innerText = "Keterangan OD";
+                document.getElementById('inpNote').placeholder = "Misal: Nunggak setoran";
+            } else {
+                document.getElementById('grpNominal').style.display = 'none'; 
+                document.getElementById('lblKet').innerText = "Bagian Yang Dicek";
+                document.getElementById('inpNote').placeholder = "Misal: Kampas Rem, Ban, Komstir";
             }
+            
+            document.getElementById('inpAmount').value = '';
+            document.getElementById('inpNote').value = '';
+            
+            document.getElementById('formSheet').classList.add('show');
         };
 
-        window.openPayModal = (id, dateStr) => {
+        window.openPayModal = (id) => {
             document.getElementById('payId').value = id;
-            document.getElementById('payTargetDate').innerText = `PELUNASAN OD TGL: ${dateStr}`;
-            openModal('modalPay');
-        };
+            document.getElementById('paySheet').classList.add('show');
+        }
 
-        window.viewProof = (src) => {
-            document.getElementById('viewImage').src = src;
-            openModal('modalView');
-        };
+        // --- CRUD FIREBASE ---
+        window.saveData = async () => {
+            const type = document.getElementById('formType').value;
+            const amt = type === 'OD' ? (parseInt(document.getElementById('inpAmount').value) || 0) : 0;
+            const note = document.getElementById('inpNote').value.trim();
+            const btn = document.getElementById('btnSaveData');
 
-        // --- FIREBASE ACTIONS ---
-        window.saveNewOD = async () => {
-            const dueDate = document.getElementById('formDueDate').value;
-            const amount = parseInt(document.getElementById('formAmount').value) || 0;
-            const note = document.getElementById('formNote').value.trim();
-
-            if(!dueDate) return alert("Tanggal OD wajib diisi!");
-
-            const btn = document.getElementById('btnSaveAdd');
             btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
 
             try {
-                await addDoc(collection(db, "mlu_personal_od"), {
-                    plat: myPlat, dueDate: dueDate, amount: amount, note: note,
-                    status: 'UNPAID', timestamp: Date.now()
-                });
-                closeModal('modalAdd');
-            } catch(e) { alert("Gagal menyimpan: " + e.message); } 
-            finally { btn.innerHTML = '<i class="fas fa-plus"></i> SIMPAN KE DAFTAR'; btn.style.opacity = '1'; }
+                if (type === 'OD') {
+                    await addDoc(collection(db, "mlu_personal_od"), {
+                        plat: myPlat, dueDate: selectedDateStr, amount: amt, note: note, status: 'UNPAID', timestamp: Date.now()
+                    });
+                } else {
+                    await addDoc(collection(db, "mlu_personal_service"), {
+                        plat: myPlat, serviceDate: selectedDateStr, note: note, timestamp: Date.now()
+                    });
+                }
+                document.getElementById('formSheet').classList.remove('show');
+                clickDate(selectedDateStr, parseInt(selectedDateStr.split('-')[2])); 
+            } catch(e) { alert("Error: " + e); }
+            finally { btn.innerText = "SIMPAN AGENDA"; btn.style.opacity = '1'; }
         };
 
-        window.confirmPayment = async () => {
+        window.confirmPayOD = async () => {
             const id = document.getElementById('payId').value;
-            let method = document.getElementById('payMethod').value.trim();
-            if(!method && proofBase64 === "") return alert("Mohon isi keterangan metode bayar atau upload bukti struk.");
-            if(!method) method = "Upload Bukti Struk";
-
-            const btn = document.getElementById('btnSavePay');
-            btn.innerText = "MEMPROSES..."; btn.style.opacity = '0.7';
-
+            const method = document.getElementById('payMethod').value || "Cash/Transfer";
             try {
-                await updateDoc(doc(db, "mlu_personal_od", id), {
-                    status: 'PAID', paymentMethod: method, proofBase64: proofBase64, paidAt: Date.now()
-                });
-                closeModal('modalPay');
-            } catch(e) { alert("Gagal menyimpan konfirmasi: " + e.message); } 
-            finally { btn.innerHTML = '<i class="fas fa-check-circle"></i> TANDAI LUNAS'; btn.style.opacity = '1'; }
+                await updateDoc(doc(db, "mlu_personal_od", id), { status: 'PAID', paymentMethod: method, paidAt: Date.now() });
+                document.getElementById('paySheet').classList.remove('show');
+                clickDate(selectedDateStr, parseInt(selectedDateStr.split('-')[2]));
+            } catch(e) { alert(e); }
         };
 
-        window.deleteOD = async (id) => {
-            if(confirm("Hapus catatan ini secara permanen dari HP Anda?")) {
-                await deleteDoc(doc(db, "mlu_personal_od", id));
+        window.deleteData = async (colName, id) => {
+            if(confirm("Hapus agenda ini?")) {
+                await deleteDoc(doc(db, colName, id));
+                clickDate(selectedDateStr, parseInt(selectedDateStr.split('-')[2]));
             }
         };
+
+        // Init OnLoad
+        renderCalendar();
     </script>
 </body>
 </html>
