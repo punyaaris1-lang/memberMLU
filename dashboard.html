@@ -94,6 +94,16 @@
         .form-input:focus { border-color: var(--danger); background: white; }
         .btn-send-sos { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--danger); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); display: flex; justify-content: center; align-items: center; gap: 10px; }
 
+        /* --- POP-UP BEDUG FRESH --- */
+        .buka-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; padding: 20px; text-align: center; }
+        .buka-box { background: white; padding: 40px 20px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 100%; max-width: 350px; transform: scale(0.8); animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popBounce { to { transform: scale(1); } }
+        .bedug-icon { font-size: 70px; margin-bottom: 15px; animation: beatDrum 0.4s infinite alternate; display: inline-block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+        @keyframes beatDrum { 0% { transform: rotate(-15deg) scale(1); } 100% { transform: rotate(15deg) scale(1.1); } }
+        .buka-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--gold); margin: 0 0 10px 0; letter-spacing: 1px; }
+        .buka-desc { color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 25px; font-weight: 600; }
+        .btn-tutup-buka { background: var(--electric-blue); color: white; border: none; padding: 16px 30px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; width: 100%; box-shadow: 0 10px 20px rgba(45,99,237,0.3); }
+
         .dock-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(226, 232, 240, 0.8); padding: 12px 30px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 99999; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #CBD5E1; transition: 0.3s; }
         .nav-item.active { color: var(--electric-blue); }
@@ -209,6 +219,15 @@
         </a>
     </div>
 
+    <div class="buka-overlay" id="bukaPuasaPopup">
+        <div class="buka-box">
+            <div class="bedug-icon">🥁</div>
+            <h2 class="buka-title" id="bedugTitle">ALHAMDULILLAH</h2>
+            <p class="buka-desc" id="bedugDesc">Selamat berbuka puasa bagi wilayah Jakarta dan sekitarnya. Jangan lupa berdoa sebelum makan!</p>
+            <button class="btn-tutup-buka" onclick="document.getElementById('bukaPuasaPopup').style.display='none'">TERIMA KASIH</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="sosModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -279,6 +298,60 @@
             document.getElementById('userPhoto').src = (uData.foto && uData.foto.length > 50) ? uData.foto : defaultPhoto;
         });
 
+        // --- SISTEM BEDUG KEMENAG (BACKGROUND CHECKER) ---
+        let jadwalSholat = null;
+        async function fetchJadwalAPI() {
+            try {
+                const now = new Date();
+                const yr = now.getFullYear(); const mo = String(now.getMonth()+1).padStart(2,'0'); const dt = String(now.getDate()).padStart(2,'0');
+                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${yr}/${mo}/${dt}`);
+                const data = await res.json();
+                if(data.status) jadwalSholat = data.data.jadwal;
+            } catch (e) { console.error("API Jadwal Gagal"); }
+        }
+        fetchJadwalAPI();
+
+        function showBedugPopup(namaWaktu) {
+            const title = document.getElementById('bedugTitle');
+            const desc = document.getElementById('bedugDesc');
+            if(namaWaktu === 'MAGHRIB') {
+                title.innerText = "ALHAMDULILLAH"; title.style.color = "var(--gold)";
+                desc.innerText = "Telah masuk waktu Maghrib untuk wilayah Jakarta dan sekitarnya. Selamat berbuka puasa!";
+            } else {
+                title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--royal-blue)";
+                desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`;
+            }
+            document.getElementById('bukaPuasaPopup').style.display = 'flex';
+        }
+
+        // Pengecekan waktu otomatis setiap 5 detik di background
+        setInterval(() => {
+            if (!jadwalSholat) return;
+            const now = new Date();
+            const currMins = now.getHours() * 60 + now.getMinutes();
+            
+            const wktSholat = [ 
+                {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, 
+                {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, 
+                {n:'ISYA', v:jadwalSholat.isya} 
+            ];
+            
+            wktSholat.forEach(t => {
+                let parts = t.v.split(':');
+                let sholatMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                
+                // Toleransi 10 Menit
+                if (currMins >= sholatMins && currMins <= sholatMins + 10) {
+                    const recKey = now.toDateString() + '_' + t.n;
+                    if(localStorage.getItem('maka_bedug_notif') !== recKey) {
+                        showBedugPopup(t.n); 
+                        localStorage.setItem('maka_bedug_notif', recKey);
+                    }
+                }
+            });
+        }, 5000);
+
+        // --- SISTEM OD REMINDER ---
         const qOD = query(collection(db, "mlu_personal_od"), where("plat", "==", myPlat), where("status", "==", "UNPAID"));
         onSnapshot(qOD, (snap) => {
             let unpaidCount = 0; let oldestDate = null;

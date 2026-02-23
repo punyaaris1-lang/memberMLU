@@ -263,7 +263,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONEKSI DATABASE
+        // KONEKSI DATABASE ANTRIAN YANG BENAR (PUNYA BAPAK YANG ASLI)
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -331,33 +331,43 @@
         }
 
         function updateTimer() {
-            const now = new Date(); const curr = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const now = new Date(); 
+            const currSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const currMins = now.getHours() * 60 + now.getMinutes();
+            
             let imsakSec = 4 * 3600 + 30 * 60; let maghribSec = 18 * 3600 + 10 * 60;
             let imsakStr = "04:30"; let maghribStr = "18:10";
 
             if (jadwalSholat) {
                 const i = jadwalSholat.imsak.split(':'); imsakSec = i[0]*3600 + i[1]*60; imsakStr = jadwalSholat.imsak;
                 const m = jadwalSholat.maghrib.split(':'); maghribSec = m[0]*3600 + m[1]*60; maghribStr = jadwalSholat.maghrib;
-                const wktSholat = [ {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, {n:'ISYA', v:jadwalSholat.isya} ];
-                const nowStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
                 
+                const wktSholat = [ {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, {n:'ISYA', v:jadwalSholat.isya} ];
+                
+                // CEK JADWAL SHOLAT DENGAN TOLERANSI 10 MENIT
                 wktSholat.forEach(t => {
-                    if (nowStr === t.v) {
+                    let parts = t.v.split(':');
+                    let sholatMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                    
+                    if (currMins >= sholatMins && currMins <= sholatMins + 10) {
                         const recKey = now.toDateString() + '_' + t.n;
-                        if(localStorage.getItem('maka_bedug_notif') !== recKey) { showBedugPopup(t.n); localStorage.setItem('maka_bedug_notif', recKey); }
+                        if(localStorage.getItem('maka_bedug_notif') !== recKey) { 
+                            showBedugPopup(t.n); 
+                            localStorage.setItem('maka_bedug_notif', recKey); 
+                        }
                     }
                 });
             }
 
             let targetTime = 0;
-            if (curr >= imsakSec && curr < maghribSec) {
+            if (currSec >= imsakSec && currSec < maghribSec) {
                 targetTime = maghribSec; document.getElementById('lblTimer').innerText = "MENUJU BUKA PUASA"; document.getElementById('timeTarget').innerText = "MAGHRIB " + maghribStr; document.getElementById('iconTimer').className = "fas fa-moon rw-icon";
             } else {
-                targetTime = imsakSec; if (curr >= maghribSec) targetTime += 24 * 3600;
+                targetTime = imsakSec; if (currSec >= maghribSec) targetTime += 24 * 3600;
                 document.getElementById('lblTimer').innerText = "MENUJU BATAS SAHUR"; document.getElementById('timeTarget').innerText = "IMSAK " + imsakStr; document.getElementById('iconTimer').className = "fas fa-mosque rw-icon";
             }
 
-            let diff = targetTime - curr; let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
+            let diff = targetTime - currSec; let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
             document.getElementById('countdown').innerText = `${j.toString().padStart(2, '0')}:${n.toString().padStart(2, '0')}:${d.toString().padStart(2, '0')}`;
         }
         setInterval(updateTimer, 1000);
@@ -411,7 +421,7 @@
                     let timerHTML = isMe ? `<div class="sb-timer" style="color:var(--electric-blue)"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` : `<div class="sb-timer"><i class="fas fa-clock"></i> ${durationMin} MIN RUNNING</div>`;
                     let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
                     
-                    // BACA BATRE SECARA AMAN (Dari App Gelap ataupun Putih)
+                    // ANTI-UNDEFINED BATRE (Sync dengan Aplikasi Hitam)
                     let batreValue = s.batre || s.battery; 
                     let batreInfo = (batreValue && batreValue !== '-' && batreValue !== 'undefined') ? `<span class="badge-batre"><i class="fas fa-bolt"></i> ${batreValue}</span>` : '';
                     
@@ -471,7 +481,8 @@
                 runTransaction(db, async(t) => {
                     const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || [];
                     if(q.some(x => cleanStr(x.plat) === cleanStr(myPlat))) throw "Anda sudah mengantri!";
-                    q.push({ plat: myPlat, userName: myName, role: myRole, batre: batreFinal, time: Date.now() });
+                    // Simpan variabel batre DAN battery untuk cross-compatibility
+                    q.push({ plat: myPlat, userName: myName, role: myRole, batre: batreFinal, battery: batreFinal, time: Date.now() });
                     t.update(mainRef, { waitingQueue: q });
                 }).catch(e => alert(e));
             } else if (memberActionType === 'slot') {
@@ -481,7 +492,9 @@
                     let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat)); 
                     if(idx === -1 && !isSuperAdmin) throw "ANDA TIDAK ADA DI ANTRIAN!"; 
                     let me = idx > -1 ? q.splice(idx, 1)[0] : { plat: myPlat, userName: myName, role: myRole }; 
-                    me.startTime = Date.now(); me.batre = batreFinal; d.chargingSlots[memberActionSlotIdx] = me; 
+                    me.startTime = Date.now(); 
+                    me.batre = batreFinal; me.battery = batreFinal; 
+                    d.chargingSlots[memberActionSlotIdx] = me; 
                     t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
                 }).catch(e => alert(e)); 
             } else if (memberActionType === 'kudeta') {
@@ -493,8 +506,8 @@
                     let q = d.waitingQueue || [];
                     q = q.filter(x => cleanStr(x.plat) !== cleanStr(myPlat));
                     
-                    // Korban otomatis tertimpa (hilang dari slot & tidak masuk antrian)
-                    d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal };
+                    // Korban otomatis tertimpa (hilang dari slot & ditendang dari antrian)
+                    d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal, battery: batreFinal };
                     t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
                 }).then(() => { forceCloseSheet('sheetKelolaIsi'); alert("KUDETA BERHASIL! Korban telah ditendang dari slot."); }).catch(e => alert(e));
             }
@@ -531,7 +544,9 @@
             if(!nama || !plat) return alert("Nama dan Plat wajib diisi!");
             runTransaction(db, async(t) => {
                 const d = (await t.get(mainRef)).data();
-                const newObj = { plat: plat, userName: nama, batre: batre ? batre + '%' : '-', role: "MANUAL", time: Date.now() };
+                const bVal = batre ? batre + '%' : '-';
+                const newObj = { plat: plat, userName: nama, batre: bVal, battery: bVal, role: "MANUAL", time: Date.now() };
+                
                 if(jalur === 'antrian') {
                     let q = d.waitingQueue || []; if(q.some(x => cleanStr(x.plat) === cleanStr(plat))) throw "Plat sudah ada di antrian!";
                     q.push(newObj); t.update(mainRef, { waitingQueue: q });
@@ -544,6 +559,7 @@
             }).then(() => { forceCloseSheet('sheetDaftarAdmin'); }).catch(e => alert(e));
         };
 
+        // FITUR BARU ADMIN: TENDANG DARI ANTRIAN KE SLOT
         window.adminPromoteToSlot = (index) => {
             runTransaction(db, async(t) => {
                 const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; let slots = d.chargingSlots || [null, null, null];
