@@ -117,7 +117,7 @@
         .bg-red { background: #FEF2F2; color: var(--danger); }
         .bg-dark { background: #F1F5F9; color: var(--text-main); }
         
-        /* TOMBOL KUDETA KHUSUS */
+        /* TOMBOL KUDETA KHUSUS ADMIN */
         .btn-kudeta { background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; border: none; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); justify-content: center; font-family: 'Space Grotesk'; font-weight: 900; letter-spacing: 1px; }
         .btn-kudeta:active { transform: scale(0.96); background: #991B1B;}
 
@@ -263,7 +263,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONEKSI DATABASE ANTRIAN YANG BENAR (PUNYA BAPAK YANG ASLI)
+        // KONEKSI DATABASE ANTRIAN YANG BENAR
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -418,7 +418,19 @@
                     div.className = `slot-bay ${cardClass}`;
 
                     const durationMin = Math.floor((Date.now() - (s.startTime || Date.now())) / 60000);
-                    let timerHTML = isMe ? `<div class="sb-timer" style="color:var(--electric-blue)"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` : `<div class="sb-timer"><i class="fas fa-clock"></i> ${durationMin} MIN RUNNING</div>`;
+                    
+                    // --- TOMBOL KUDETA USER BIASA (Muncul Otomatis) ---
+                    let userKudetaBtn = '';
+                    if (!isMe) { 
+                        if (myQIndex === 0 && durationMin >= 20) {
+                            userKudetaBtn = `<button style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:6px; font-family:'Space Grotesk'; font-size:9px; font-weight:900; cursor:pointer; margin-left:8px; box-shadow:0 2px 5px rgba(239,68,68,0.3);" onclick="event.stopPropagation(); userTriggerKudeta(${i}, '${escapeHtml(s.plat)}')">⚡ KUDETA</button>`;
+                        } else if (myQIndex === 1 && durationMin >= 25) {
+                            userKudetaBtn = `<button style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:6px; font-family:'Space Grotesk'; font-size:9px; font-weight:900; cursor:pointer; margin-left:8px; box-shadow:0 2px 5px rgba(239,68,68,0.3);" onclick="event.stopPropagation(); userTriggerKudeta(${i}, '${escapeHtml(s.plat)}')">⚡ KUDETA</button>`;
+                        }
+                    }
+
+                    let timerHTML = isMe ? `<div class="sb-timer" style="color:var(--electric-blue)"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` : `<div class="sb-timer"><i class="fas fa-clock"></i> ${durationMin} MIN RUNNING ${userKudetaBtn}</div>`;
+                    
                     let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
                     
                     // ANTI-UNDEFINED BATRE (Sync dengan Aplikasi Hitam)
@@ -464,7 +476,34 @@
             document.getElementById('nextQDisplay').innerText = localQueue.length > 0 ? localQueue[0].userName : "KOSONG";
         }
 
-        // --- SISTEM INPUT BATRE MEMBER ---
+        // --- SISTEM KUDETA INSTAN USER BIASA (TANPA FORM BATRE) ---
+        window.userTriggerKudeta = (idx, plat) => {
+            if(!confirm(`YAKIN INGIN MENGKUDETA SLOT INI (${plat})?\nPengguna ini sudah melewati batas waktu dan akan dikeluarkan paksa.`)) return;
+            
+            runTransaction(db, async(t) => {
+                const d = (await t.get(mainRef)).data();
+                let q = d.waitingQueue || [];
+                
+                const myIdx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat));
+                if(myIdx === -1) throw "Anda tidak ada di antrian!";
+                
+                // Cabut dari antrian beserta data batrenya
+                let me = q.splice(myIdx, 1)[0]; 
+                
+                me.userName = me.userName + " 👑";
+                me.role = "KUDETA";
+                me.startTime = Date.now();
+                
+                // Tindih slot korban
+                d.chargingSlots[idx] = me;
+                
+                t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
+            }).then(() => { 
+                alert("KUDETA BERHASIL! Anda langsung menempati slot."); 
+            }).catch(e => alert(e));
+        };
+
+        // --- SISTEM INPUT BATRE MEMBER (UNTUK AMBIL ANTRIAN BIASA) ---
         window.mintaBatre = (tipeAction, slotIndex) => {
             if(blockedList.includes(cleanStr(myPlat))) return alert("Maaf, Plat Anda diblokir Admin.");
             memberActionType = tipeAction; memberActionSlotIdx = slotIndex;
@@ -498,15 +537,11 @@
                     t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
                 }).catch(e => alert(e)); 
             } else if (memberActionType === 'kudeta') {
-                // EKSEKUSI KUDETA SETELAH ISI BATRE
+                // LOGIKA INI DIPAKAI OLEH ADMIN KARENA ADMIN MINTA INPUT BATRE DULU
                 runTransaction(db, async(t) => {
                     const d = (await t.get(mainRef)).data();
-                    
-                    // Pastikan pengkudeta dihapus dari antrian jika dia sedang antri
                     let q = d.waitingQueue || [];
                     q = q.filter(x => cleanStr(x.plat) !== cleanStr(myPlat));
-                    
-                    // Korban otomatis tertimpa (hilang dari slot & ditendang dari antrian)
                     d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal, battery: batreFinal };
                     t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
                 }).then(() => { forceCloseSheet('sheetKelolaIsi'); alert("KUDETA BERHASIL! Korban telah ditendang dari slot."); }).catch(e => alert(e));
@@ -523,7 +558,7 @@
         window.adminKick = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
         window.adminToQueue = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot]; if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
 
-        // TRIGGER KUDETA (MEMANGGIL MODAL BATRE DULU)
+        // TRIGGER KUDETA DARI MENU ADMIN
         window.adminTriggerKudeta = () => {
             if(!confirm("YAKIN INGIN MENGKUDETA SLOT INI?\nPengguna ini akan dikeluarkan paksa, dan plat Anda akan menempati slot ini!")) return;
             memberActionType = 'kudeta';
