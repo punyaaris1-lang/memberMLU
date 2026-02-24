@@ -10,16 +10,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
         :root {
             --royal-blue: #0A2259;
             --electric-blue: #2D63ED;
-            --bg-surface: #F8FAFC;
+            --bg-surface: #F0F4F8;
             --white: #FFFFFF;
             --text-main: #0F172A;
             --text-muted: #64748B;
             --success: #10B981;
             --warning: #F59E0B;
-            --border-soft: rgba(226, 232, 240, 0.9);
+            --danger: #EF4444;
+            --border-soft: rgba(45, 99, 237, 0.15);
+            
+            --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
+            --glow-green: 0 10px 25px rgba(16, 185, 129, 0.25);
         }
 
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; overflow: hidden; background: var(--bg-surface); }
@@ -32,37 +37,38 @@
         /* --- FLOATING HEADER --- */
         .map-header {
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            padding: 40px 20px 20px; text-align: center; pointer-events: none;
-            background: linear-gradient(180deg, rgba(10,34,89,0.8) 0%, transparent 100%);
+            padding: 40px 20px 30px; text-align: center; pointer-events: none;
+            background: linear-gradient(180deg, rgba(10,34,89,0.85) 0%, transparent 100%);
         }
         .main-title { 
             font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 900; 
             color: var(--white); margin: 0; letter-spacing: -0.5px;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
         }
         .live-tag { 
             font-size: 10px; font-weight: 800; color: var(--electric-blue);
-            background: var(--white); padding: 4px 12px; border-radius: 50px;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
+            padding: 6px 14px; border-radius: 50px; border: 1px solid rgba(45,99,237,0.3);
             display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); letter-spacing: 2px; text-transform: uppercase;
+            box-shadow: var(--glow-blue); letter-spacing: 2px; text-transform: uppercase;
         }
-        .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; }
+        .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; box-shadow: 0 0 8px var(--success); }
 
         /* --- PREMIUM MARKER PIN --- */
         .marker-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 120px !important; transform: translate(-50%, -100%); }
         
         .pin-tooltip {
-            background: var(--white); color: var(--royal-blue);
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); color: var(--royal-blue);
             font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 800;
             padding: 6px 12px; border-radius: 12px; margin-bottom: 8px;
-            white-space: nowrap; box-shadow: 0 10px 25px rgba(10,34,89,0.15);
-            border: 1px solid var(--border-soft); text-transform: uppercase;
+            white-space: nowrap; box-shadow: 0 10px 25px rgba(45,99,237,0.15);
+            border: 1px solid rgba(45,99,237,0.3); text-transform: uppercase;
         }
 
         .pin-body {
             width: 34px; height: 34px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%);
-            border: 3px solid var(--white); box-shadow: 0 8px 15px rgba(45, 99, 237, 0.4);
+            background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%);
+            border: 3px solid var(--white); box-shadow: var(--glow-blue);
             display: flex; align-items: center; justify-content: center; color: white; font-size: 13px;
         }
         
@@ -71,14 +77,14 @@
         .user-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgba(16, 185, 129, 0.4); animation: pulseOuter 2s infinite; }
         .user-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--success); border: 3px solid var(--white); position: relative; z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-        /* --- INFO CARD (SMART RECOMMENDATION OSRM) --- */
+        /* --- INFO CARD GLASSMORPHISM --- */
         .info-card {
             position: fixed; bottom: 100px; left: 50%; transform: translate(-50%, 150%);
             width: 90%; max-width: 400px; z-index: 1500;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
             border-radius: 35px; padding: 25px;
-            box-shadow: 0 25px 50px rgba(10, 34, 89, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 -10px 40px rgba(45, 99, 237, 0.15);
+            border: 1px solid rgba(45, 99, 237, 0.2);
             transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
         .info-card.active { transform: translate(-50%, 0); }
@@ -90,37 +96,37 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 14px; cursor: pointer; border: none; transition: 0.2s;
         }
-        .btn-close:active { transform: scale(0.9); }
+        .btn-close:active { transform: scale(0.9); background: #E2E8F0; }
 
         .routing-info { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-        .card-dist { font-size: 10px; font-weight: 800; color: var(--electric-blue); background: #EFF6FF; padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; }
-        .card-eta { font-size: 10px; font-weight: 800; color: var(--warning); background: #FFFBEB; padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; }
-        .card-near { font-size: 10px; font-weight: 800; color: var(--success); background: #ECFDF5; padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; display: none; }
+        .card-dist { font-size: 10px; font-weight: 800; color: var(--electric-blue); background: rgba(45,99,237,0.1); padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; border: 1px solid rgba(45,99,237,0.2);}
+        .card-eta { font-size: 10px; font-weight: 800; color: var(--warning); background: #FFFBEB; padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; border: 1px solid #FDE68A;}
+        .card-near { font-size: 10px; font-weight: 800; color: var(--success); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; display: none; border: 1px solid rgba(16,185,129,0.3);}
 
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 900; color: var(--royal-blue); margin: 0 0 6px; line-height: 1.1; text-transform: uppercase; }
-        .card-addr { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
+        .card-addr { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; font-weight: 600; display: none; }
 
         .btn-nav-map {
             display: flex; align-items: center; justify-content: center; gap: 10px;
             width: 100%; padding: 16px; border-radius: 20px;
-            background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%);
+            background: var(--electric-blue);
             color: var(--white); font-family: 'Space Grotesk', sans-serif; font-weight: 800;
-            font-size: 14px; text-decoration: none; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.3);
-            transition: 0.3s;
+            font-size: 14px; text-decoration: none; box-shadow: var(--glow-blue);
+            transition: 0.3s; letter-spacing: 1px;
         }
         .btn-nav-map:active { transform: scale(0.97); }
 
-        /* --- FLOATING BACK BUTTON --- */
+        /* --- FLOATING BACK BUTTON GLASS --- */
         .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 85%; max-width: 350px; }
         .btn-premium-back {
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-soft);
-            color: var(--royal-blue); padding: 16px; border-radius: 50px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2);
+            color: var(--electric-blue); padding: 16px; border-radius: 50px;
             font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800;
-            cursor: pointer; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            cursor: pointer; box-shadow: var(--glow-blue);
             display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;
             transition: 0.3s;
         }
-        .btn-premium-back:active { transform: scale(0.95); background: #F1F5F9; }
+        .btn-premium-back:active { transform: scale(0.95); background: #F8FAFC; }
 
         /* Animations */
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -147,9 +153,9 @@
         </div>
 
         <div class="card-title" id="fcName">Station Name</div>
-        <div class="card-addr" id="fcAddr">Jl. Alamat Lengkap Stasiun, Jakarta</div>
+        <div class="card-addr" id="fcAddr"></div>
         <a href="#" id="btnMaps" target="_blank" class="btn-nav-map">
-            <i class="fas fa-location-arrow"></i> BUKA DI GOOGLE MAPS
+            <i class="fas fa-location-arrow"></i> BUKA NAVIGASI GOOGLE
         </a>
     </div>
 
@@ -231,7 +237,7 @@
                     let nearestStation = null;
 
                     results.data.forEach(row => {
-                        let lat = null, lng = null, name = "FC Station", addr = "Alamat tidak tersedia";
+                        let lat = null, lng = null, name = "FC Station", addr = ""; // Default addr dikosongkan
 
                         // Parsing CSV
                         const keys = Object.keys(row);
@@ -291,13 +297,20 @@
 
         async function showInfo(name, addr, lat, lng, isNearest) {
             document.getElementById('fcName').innerText = name;
-            document.getElementById('fcAddr').innerText = addr;
+            
+            const addrEl = document.getElementById('fcAddr');
+            if (addr) {
+                addrEl.innerText = addr;
+                addrEl.style.display = 'block';
+            } else {
+                addrEl.style.display = 'none';
+            }
             
             const distLabel = document.getElementById('fcDist');
             const etaLabel = document.getElementById('fcEta');
             const nearLabel = document.getElementById('lblNear');
             
-            // Set Google Maps Navigation URL (Arahkan Rute Langsung)
+            // Set Google Maps Navigation URL (Format Routing)
             document.getElementById('btnMaps').href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
             nearLabel.style.display = isNearest ? 'inline-block' : 'none';

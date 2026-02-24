@@ -7,30 +7,62 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --income: #10B981; --expense: #EF4444; --text-main: #0F172A; --text-muted: #64748B; }
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; }
-        * { box-sizing: border-box; outline: none; }
+        /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
+        :root { 
+            --royal-blue: #0A2259; 
+            --electric-blue: #2D63ED; 
+            --bg-surface: #F0F4F8; /* Light gray-blue background */
+            --white: #FFFFFF; 
+            --income: #10B981; 
+            --expense: #EF4444; 
+            --text-main: #0F172A; 
+            --text-muted: #64748B; 
+            
+            --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
+            --glow-red: 0 10px 25px rgba(239, 68, 68, 0.25);
+            --glow-green: 0 10px 25px rgba(16, 185, 129, 0.25);
+            --glow-gold: 0 10px 25px rgba(212, 175, 55, 0.25);
+        }
         
-        /* --- HEADER --- */
-        .header-finance { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 25px 90px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; text-align: center; }
-        .date-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; opacity: 0.8; text-transform: uppercase; }
-        .total-balance { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; margin: 5px 0; letter-spacing: -1px; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        /* --- HEADER GLOWING --- */
+        .header-finance { 
+            background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
+            padding: 50px 25px 90px; 
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
+            color: white; text-align: center; position: relative;
+            box-shadow: var(--glow-blue); border-bottom: 2px solid rgba(45,99,237,0.3);
+        }
+        .date-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; opacity: 0.9; text-transform: uppercase; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
+        .total-balance { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; margin: 5px 0; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
 
-        /* --- SUMMARY CARD --- */
+        /* --- SUMMARY CARD GLASSMORPHISM --- */
         .card-overlap { padding: 0 20px; margin-top: -40px; position: relative; z-index: 10; }
-        .summary-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 25px; padding: 25px; display: flex; justify-content: space-between; box-shadow: 0 20px 40px rgba(10,34,89,0.1); border: 1px solid rgba(255,255,255,0.8); }
+        .summary-card { 
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(15px);
+            border-radius: 25px; padding: 25px; display: flex; justify-content: space-between; 
+            box-shadow: 0 10px 30px rgba(45,99,237,0.1); border: 1px solid rgba(255,255,255,0.8); 
+        }
         .stat-box { text-align: center; width: 48%; }
-        .stat-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; margin-top: 5px; }
+        .stat-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; margin-top: 5px; }
 
-        /* --- TOMBOL QRIS BAYAR KAS --- */
+        /* --- TOMBOL QRIS BAYAR KAS GLOWING --- */
         .qris-btn-area { padding: 0 20px; margin-top: 20px; }
-        .btn-bayar-qris { width: 100%; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; border: none; padding: 18px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); transition: 0.2s; letter-spacing: 1px;}
+        .btn-bayar-qris { 
+            width: 100%; background: linear-gradient(135deg, #10B981 0%, #059669 100%); 
+            color: white; border: none; padding: 18px; border-radius: 20px; 
+            font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; 
+            cursor: pointer; box-shadow: var(--glow-green); transition: 0.2s; letter-spacing: 1px;
+        }
         .btn-bayar-qris:active { transform: scale(0.97); }
 
-        /* --- TAB NAVIGATION --- */
-        .tab-wrapper { display: flex; margin: 25px 20px 15px; background: #E2E8F0; border-radius: 16px; padding: 4px; }
+        /* --- TAB NAVIGATION GLASS --- */
+        .tab-wrapper { display: flex; margin: 25px 20px 15px; background: rgba(226, 232, 240, 0.6); backdrop-filter: blur(5px); border-radius: 16px; padding: 4px; border: 1px solid rgba(255,255,255,0.5); }
         .tab-btn { flex: 1; padding: 12px; text-align: center; font-family: 'Space Grotesk'; font-size: 13px; font-weight: 800; color: var(--text-muted); cursor: pointer; border-radius: 12px; transition: 0.3s; }
-        .tab-btn.active { background: var(--white); color: var(--royal-blue); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .tab-btn.active { background: var(--white); color: var(--royal-blue); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 
         /* --- LIST SECTION --- */
         .list-section { padding: 0 20px 30px; }
@@ -39,19 +71,23 @@
         .month-divider:first-child { margin-top: 5px; }
         .m-total { font-size: 13px; font-weight: 900; }
 
-        .tx-card { background: var(--white); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 15px; border: 1px solid #E2E8F0; position: relative; }
+        .tx-card { 
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 15px; 
+            border: 1px solid rgba(255,255,255,0.8); position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        }
         .icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink:0; }
-        .bg-in { background: #ECFDF5; color: var(--income); } 
-        .bg-out { background: #FEF2F2; color: var(--expense); }
+        .bg-in { background: rgba(16, 185, 129, 0.1); color: var(--income); box-shadow: inset 0 0 10px rgba(16,185,129,0.1); } 
+        .bg-out { background: rgba(239, 68, 68, 0.1); color: var(--expense); box-shadow: inset 0 0 10px rgba(239,68,68,0.1); }
         
         .tx-info { flex: 1; padding-bottom: 15px; }
-        .tx-title { font-weight: 700; font-size: 14px; color: var(--royal-blue); line-height: 1.3;}
-        .tx-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        .tx-title { font-weight: 800; font-size: 14px; color: var(--royal-blue); line-height: 1.3;}
+        .tx-meta { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 4px; }
         
-        .tx-amount { font-family: 'Space Grotesk'; font-weight: 800; font-size: 15px; text-align:right;}
-        .tx-sub { font-size: 9px; color: var(--text-muted); font-family: 'Inter'; font-weight: 600; text-transform: uppercase;}
+        .tx-amount { font-family: 'Space Grotesk'; font-weight: 900; font-size: 15px; text-align:right;}
+        .tx-sub { font-size: 9px; color: var(--text-muted); font-family: 'Inter'; font-weight: 700; text-transform: uppercase;}
         
-        .audit-trail { font-size: 9px; color: #94A3B8; font-weight: 700; margin-top: 8px; display: flex; align-items: center; gap: 4px; border-top: 1px dashed #E2E8F0; padding-top: 8px;}
+        .audit-trail { font-size: 9px; color: #94A3B8; font-weight: 800; margin-top: 8px; display: flex; align-items: center; gap: 4px; border-top: 1px dashed #E2E8F0; padding-top: 8px;}
         
         /* ACTION BUTTONS IN CARD */
         .btn-edit { position: absolute; right: 48px; bottom: 12px; font-size: 12px; color: var(--electric-blue); background: #EFF6FF; border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
@@ -60,18 +96,23 @@
         .btn-del:active { transform: scale(0.9); }
 
         .btn-lihat-kolektif { background: rgba(45,99,237,0.1); color: var(--electric-blue); border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; font-family: 'Inter'; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-top: 5px; transition: 0.2s;}
-        .btn-lihat-kolektif:active { transform: scale(0.95); background: var(--electric-blue); color: white; }
+        .btn-lihat-kolektif:active { transform: scale(0.95); background: var(--electric-blue); color: white; box-shadow: var(--glow-blue); }
 
         /* --- ACTION & NAV BUTTONS --- */
-        .fab-admin { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: var(--royal-blue); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 10px 25px rgba(10,34,89,0.3); border: none; cursor: pointer; z-index: 1000; transition: 0.2s;}
+        .fab-admin { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--electric-blue), var(--royal-blue)); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--glow-blue); border: none; cursor: pointer; z-index: 1000; transition: 0.2s;}
         .fab-admin:active { transform: scale(0.9); }
         
         .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
-        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--glow-blue); }
 
-        /* --- MODAL FORM --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
-        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; max-height: 90vh; overflow-y: auto;}
+        /* --- MODAL FORM GLASSMORPHISM --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.7); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
+        .modal-box { 
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); width: 100%; max-width: 500px; 
+            border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; 
+            transform: translateY(100%); animation: slideUp 0.3s forwards; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(45,99,237,0.15); border-top: 1px solid rgba(45,99,237,0.2);
+        }
         @keyframes slideUp { to { transform: translateY(0); } }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -80,14 +121,14 @@
         
         .form-group { margin-bottom: 15px; }
         .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none;}
-        .form-input:focus { border-color: var(--electric-blue); background: white; }
+        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; transition: 0.2s;}
+        .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 15px rgba(45,99,237,0.1);}
         
-        .btn-save-modal { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--royal-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(10,34,89,0.2); }
+        .btn-save-modal { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; margin-top: 10px; cursor: pointer; box-shadow: var(--glow-blue); letter-spacing: 1px;}
 
         /* KOLEKTIF AREA UI */
-        .coll-area { display: none; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
-        .coll-item { background: white; border: 1px solid #E2E8F0; padding: 15px; border-radius: 12px; margin-bottom: 12px; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .coll-area { display: none; background: rgba(248, 250, 252, 0.8); border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .coll-item { background: white; border: 1px solid #E2E8F0; padding: 15px; border-radius: 12px; margin-bottom: 12px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .coll-row-flex { display: flex; gap: 8px; margin-bottom: 8px; padding-right: 35px; }
         .coll-row-flex-bottom { display: flex; gap: 8px; }
         .k-in { padding: 12px; border-radius: 10px; border: 1px solid #CBD5E1; font-family: 'Inter'; font-size: 13px; font-weight: 600; outline: none; width: 100%; box-sizing: border-box; }
@@ -95,13 +136,13 @@
         .btn-del-coll { position: absolute; top: 15px; right: 15px; background: #FEF2F2; color: var(--danger); border: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         /* --- QRIS POPUP MODAL STYLES --- */
-        .qris-img-container { background: #F8FAFC; border: 2px dashed #CBD5E1; padding: 20px; border-radius: 25px; margin: 0 auto 20px; width: fit-content; }
-        .qris-img-container img { width: 220px; height: auto; border-radius: 15px; display: block; }
+        .qris-img-container { background: #F8FAFC; border: 2px dashed #93C5FD; padding: 20px; border-radius: 25px; margin: 0 auto 20px; width: fit-content; box-shadow: inset 0 0 15px rgba(45,99,237,0.05);}
+        .qris-img-container img { width: 220px; height: auto; border-radius: 15px; display: block; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .rek-manual { background: #EFF6FF; border: 1px solid #93C5FD; padding: 15px; border-radius: 16px; text-align: center; margin-top: 15px; }
-        .rek-manual .b-title { font-size: 11px; color: var(--electric-blue); font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
-        .rek-manual .b-number { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; letter-spacing: 1px;}
-        .rek-manual .b-name { font-size: 12px; color: var(--text-main); font-weight: 600; }
-        .btn-copy { background: white; border: 1px solid #93C5FD; color: var(--electric-blue); padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .rek-manual .b-title { font-size: 11px; color: var(--electric-blue); font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
+        .rek-manual .b-number { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; letter-spacing: 2px;}
+        .rek-manual .b-name { font-size: 12px; color: var(--text-main); font-weight: 700; }
+        .btn-copy { background: white; border: 1px solid #93C5FD; color: var(--electric-blue); padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(45,99,237,0.1);}
         .btn-copy:active { background: var(--electric-blue); color: white; }
     </style>
 </head>
@@ -162,7 +203,7 @@
 
             <div class="rek-manual">
                 <div class="b-title">ATAU TRANSFER MANUAL KE REKENING:</div>
-                <div class="b-number" id="rekNumber">09xxxxx</div>
+                <div class="b-number" id="rekNumber">0987654321</div>
                 <div class="b-name">Bank BCA a.n. Bendahara MLU</div>
                 <button class="btn-copy" onclick="copyRekening()"><i class="fas fa-copy"></i> SALIN NOMOR REKENING</button>
             </div>
@@ -202,7 +243,7 @@
             <div class="coll-area" id="formCollective">
                 <label style="font-size:10px; font-weight:800; color:var(--royal-blue); margin-bottom:10px; display:block;">DAFTAR PENYUMBANG & CICILAN</label>
                 <div id="collList"></div>
-                <button type="button" style="width:100%; padding:12px; border:1px dashed var(--electric-blue); border-radius:10px; background:transparent; color:var(--electric-blue); font-weight:800; font-family:'Space Grotesk'; cursor:pointer; margin-top:5px;" onclick="addCollRow()">+ TAMBAH DATA PEMBAYARAN</button>
+                <button type="button" style="width:100%; padding:12px; border:1px dashed var(--electric-blue); border-radius:10px; background:rgba(45,99,237,0.05); color:var(--electric-blue); font-weight:800; font-family:'Space Grotesk'; cursor:pointer; margin-top:5px; transition:0.2s;" onmouseover="this.style.background='rgba(45,99,237,0.1)'" onmouseout="this.style.background='rgba(45,99,237,0.05)'" onclick="addCollRow()">+ TAMBAH DATA PEMBAYARAN</button>
                 <div style="margin-top:15px; text-align:right; font-family:'Space Grotesk'; font-size:16px; font-weight:900; color:var(--success);">
                     TOTAL TERKUMPUL: Rp <span id="collTotalDisplay">0</span>
                 </div>
@@ -218,7 +259,7 @@
                 <div class="modal-title" style="font-size:16px;">Rincian Pemasukan</div>
                 <button class="btn-close" onclick="document.getElementById('detailModal').style.display='none'"><i class="fas fa-times"></i></button>
             </div>
-            <div id="detailListBody" style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:16px; max-height: 50vh; overflow-y:auto;"></div>
+            <div id="detailListBody" style="background:rgba(248, 250, 252, 0.8); border:1px solid #E2E8F0; border-radius:16px; max-height: 50vh; overflow-y:auto;"></div>
         </div>
     </div>
 
@@ -459,10 +500,10 @@
                 body.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; padding:15px; border-bottom:1px dashed #E2E8F0;">
                         <div>
-                            <div style="font-weight:700; font-size:13px; color:var(--text-main); text-transform:uppercase;">${i+1}. ${d.name}</div>
+                            <div style="font-weight:800; font-size:13px; color:var(--text-main); text-transform:uppercase;">${i+1}. ${d.name}</div>
                             ${extraInfo}
                         </div>
-                        <div style="font-family:'Space Grotesk'; font-weight:800; color:var(--success);">Rp ${d.amount.toLocaleString('id-ID')}</div>
+                        <div style="font-family:'Space Grotesk'; font-weight:900; color:var(--success);">Rp ${d.amount.toLocaleString('id-ID')}</div>
                     </div>
                 `;
             });

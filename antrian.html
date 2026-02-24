@@ -12,66 +12,94 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
         :root { 
-            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
-            --bg-surface: #F8FAFC; --white: #FFFFFF; 
-            --text-main: #0F172A; --text-muted: #64748B; 
-            --danger: #EF4444; --success: #10B981; --gold: #F59E0B;
-            --border-soft: #E2E8F0;
+            --royal-blue: #0A2259; 
+            --electric-blue: #2D63ED; 
+            --bg-surface: #F0F4F8; /* Light gray-blue background */
+            --white: #FFFFFF; 
+            --text-main: #0F172A; 
+            --text-muted: #64748B; 
+            --danger: #EF4444; 
+            --success: #10B981; 
+            --gold: #D4AF37;
+            
+            --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
+            --glow-red: 0 10px 25px rgba(239, 68, 68, 0.25);
+            --glow-green: 0 10px 25px rgba(16, 185, 129, 0.25);
+            --glow-gold: 0 10px 25px rgba(212, 175, 55, 0.25);
         }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* --- HEADER MEWAH --- */
-        .header-premium { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 50px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; position: relative; z-index: 10; box-shadow: 0 15px 35px rgba(10,34,89,0.1); }
+        /* --- HEADER MEWAH GLOWING --- */
+        .header-premium { 
+            background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
+            padding: 50px 20px 80px; 
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
+            color: white; position: relative; z-index: 10; 
+            box-shadow: var(--glow-blue); border-bottom: 2px solid rgba(45,99,237,0.3);
+        }
         .head-flex { display: flex; justify-content: space-between; align-items: flex-start; }
-        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
         .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; line-height: 1.1; }
         
-        /* --- WIDGET SHOLAT FRESH --- */
-        .ramadan-widget { margin-top: 25px; border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(45deg, #065F46, #10B981, #047857); background-size: 200% 200%; animation: gradientMove 5s ease infinite; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);}
-        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        /* --- WIDGET SHOLAT GLOWING --- */
+        .ramadan-widget { 
+            margin-top: 25px; border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; 
+            background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: var(--glow-green); position: relative; overflow: hidden; backdrop-filter: blur(5px);
+        }
         .rw-left { display: flex; align-items: center; gap: 15px; position: relative; z-index: 2; }
-        .rw-icon { font-size: 28px; color: #FFF; animation: pulseGlow 2s infinite; filter: drop-shadow(0 0 10px rgba(255,255,255,0.6)); }
+        .rw-icon { font-size: 28px; color: var(--success); animation: pulseGlow 2s infinite; filter: drop-shadow(0 0 8px rgba(16,185,129,0.5)); }
         @keyframes pulseGlow { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
-        .rw-lbl { font-size: 9px; font-weight: 800; color: #D1FAE5; text-transform: uppercase; letter-spacing: 1px; }
-        .rw-time { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: #fff; margin-top: 2px; }
-        .rw-target { font-size: 11px; font-weight: 800; color: #065F46; background: #FFF; padding: 6px 14px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 2; }
+        .rw-lbl { font-size: 9px; font-weight: 800; color: #CBD5E1; text-transform: uppercase; letter-spacing: 1px; }
+        .rw-time { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: #fff; margin-top: 2px; text-shadow: 0 0 10px rgba(16,185,129,0.4);}
+        .rw-target { font-size: 11px; font-weight: 800; color: white; background: var(--success); padding: 6px 14px; border-radius: 12px; box-shadow: 0 4px 10px rgba(16,185,129,0.4); position: relative; z-index: 2; }
 
-        .admin-badge { display: none; background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 4px; box-shadow: 0 5px 10px rgba(239,68,68,0.2); }
-        .gps-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: var(--warning); color: white; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); z-index: 15; white-space: nowrap; }
-        .gps-badge.ok { background: var(--success); }
-        .gps-badge.err { background: var(--danger); }
+        .admin-badge { display: none; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 4px; box-shadow: var(--glow-red); }
+        .gps-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: var(--warning); color: white; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; box-shadow: 0 5px 15px rgba(245,158,11,0.3); z-index: 15; white-space: nowrap; }
+        .gps-badge.ok { background: var(--success); box-shadow: var(--glow-green); }
+        .gps-badge.err { background: var(--danger); box-shadow: var(--glow-red); }
 
-        /* --- POP-UP BEDUG FRESH --- */
+        /* --- POP-UP BEDUG --- */
         .buka-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; text-align: center; }
-        .buka-box { background: white; padding: 40px 20px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 100%; max-width: 350px; transform: scale(0.8); animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .buka-box { background: white; padding: 40px 20px; border-radius: 35px; box-shadow: var(--glow-gold); border: 1px solid rgba(212,175,55,0.3); width: 100%; max-width: 350px; transform: scale(0.8); animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes popBounce { to { transform: scale(1); } }
-        .bedug-icon { font-size: 70px; margin-bottom: 15px; animation: beatDrum 0.4s infinite alternate; display: inline-block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+        .bedug-icon { font-size: 70px; margin-bottom: 15px; animation: beatDrum 0.4s infinite alternate; display: inline-block; filter: drop-shadow(0 10px 15px rgba(212,175,55,0.3)); color: var(--gold);}
         @keyframes beatDrum { 0% { transform: rotate(-15deg) scale(1); } 100% { transform: rotate(15deg) scale(1.1); } }
-        .buka-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--gold); margin: 0 0 10px 0; letter-spacing: 1px; }
+        .buka-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--gold); margin: 0 0 10px 0; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(212,175,55,0.2);}
         .buka-desc { color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 25px; font-weight: 600; }
-        .btn-tutup-buka { background: var(--electric-blue); color: white; border: none; padding: 16px 30px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; width: 100%; box-shadow: 0 10px 20px rgba(45,99,237,0.3); }
+        .btn-tutup-buka { background: var(--electric-blue); color: white; border: none; padding: 16px 30px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; width: 100%; box-shadow: var(--glow-blue); }
 
-        /* --- QUEUE STATUS --- */
+        /* --- QUEUE STATUS GLASS --- */
         .status-overlap { padding: 0 20px; margin-top: -35px; position: relative; z-index: 11; }
-        .status-card { background: var(--white); border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 20px 40px rgba(10,34,89,0.06); border: 1px solid var(--border-soft); cursor: pointer;}
+        .status-card { 
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(15px);
+            border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; 
+            box-shadow: 0 10px 25px rgba(45,99,237,0.1); border: 1px solid rgba(45,99,237,0.15); cursor: pointer;
+        }
         .sc-left { border-left: 4px solid var(--electric-blue); padding-left: 12px; }
         .sc-lbl { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         .sc-val { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--royal-blue); margin-top: 4px; text-transform: uppercase; }
         .sc-right { text-align: right; }
-        .sc-tot { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 900; color: var(--electric-blue); line-height: 1; }
+        .sc-tot { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 900; color: var(--electric-blue); line-height: 1; text-shadow: 0 0 10px rgba(45,99,237,0.2);}
 
-        /* --- SLOT BAY & BADGE PENGURUS --- */
+        /* --- SLOT BAY GLASSMORPHISM --- */
         .slot-container { padding: 40px 20px 10px; display: flex; flex-direction: column; gap: 15px; }
-        .slot-bay { background: var(--white); border-radius: 24px; border: 1px solid var(--border-soft); padding: 15px; display: flex; align-items: center; gap: 15px; position: relative; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
-        .slot-bay.is-active { border: 2px solid var(--electric-blue); box-shadow: 0 15px 30px rgba(45, 99, 237, 0.1); background: #F8FAFC; }
-        .slot-bay.is-admin { border: 2px solid var(--gold); background: #FFFBEB; }
+        .slot-bay { 
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            border-radius: 24px; border: 1px solid rgba(255,255,255,0.6); padding: 15px; 
+            display: flex; align-items: center; gap: 15px; position: relative; transition: 0.3s; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03); 
+        }
+        .slot-bay.is-active { border: 1px solid rgba(45,99,237,0.3); box-shadow: var(--glow-blue); background: rgba(45,99,237,0.03); }
+        .slot-bay.is-admin { border: 1px solid rgba(212,175,55,0.4); box-shadow: var(--glow-gold); background: rgba(212,175,55,0.03); }
         
         .sb-num { width: 50px; height: 50px; border-radius: 16px; background: #F1F5F9; color: #94A3B8; font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .slot-bay.is-active .sb-num { background: var(--electric-blue); color: white; }
-        .slot-bay.is-admin .sb-num { background: var(--gold); color: white; }
+        .slot-bay.is-active .sb-num { background: var(--electric-blue); color: white; box-shadow: 0 5px 15px rgba(45,99,237,0.4);}
+        .slot-bay.is-admin .sb-num { background: var(--gold); color: white; box-shadow: 0 5px 15px rgba(212,175,55,0.4);}
 
         .sb-info { flex: 1; min-width: 0; }
         .sb-name { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px;}
@@ -79,58 +107,63 @@
         .slot-bay.is-empty .sb-plat { color: #CBD5E1; }
         .sb-timer { font-size: 10px; font-weight: 700; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
         
-        .badge-pengurus { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; }
-        .badge-batre { color: var(--gold); font-size: 10px; font-weight: 900; }
+        .badge-pengurus { background: rgba(212,175,55,0.1); color: var(--gold); border: 1px solid rgba(212,175,55,0.3); font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; }
+        .badge-batre { color: var(--electric-blue); font-size: 10px; font-weight: 900; }
 
-        .btn-dots { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; color: var(--text-main); border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-dots:active { background: #E2E8F0; transform: scale(0.9); }
+        .btn-dots { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; color: var(--text-main); border: 1px solid transparent; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-dots:active { background: rgba(45,99,237,0.1); border-color: var(--electric-blue); color: var(--electric-blue); transform: scale(0.9); }
         .admin-only { display: none; }
 
         .btn-action-main { padding: 10px 20px; border-radius: 14px; border: none; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; }
-        .btn-fill { background: var(--electric-blue); color: white; box-shadow: 0 5px 15px rgba(45,99,237,0.3); }
+        .btn-fill { background: var(--electric-blue); color: white; box-shadow: var(--glow-blue); }
         .btn-disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; box-shadow: none; }
 
         /* --- BOTTOM ACTIONS --- */
         .action-hub { padding: 10px 20px; display: flex; flex-direction: column; gap: 12px; }
         .btn-hub { width: 100%; padding: 18px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
-        .btn-take-q { background: var(--success); color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); display: none; }
+        .btn-take-q { background: var(--success); color: white; box-shadow: var(--glow-green); display: none; }
         .btn-take-q:active { transform: scale(0.98); }
-        .btn-cancel-me { background: #FEF2F2; color: var(--danger); border: 2px dashed #FCA5A5; display: none; }
-        .btn-cancel-me:active { background: #FCA5A5; color: white; }
+        .btn-cancel-me { background: rgba(239,68,68,0.05); color: var(--danger); border: 2px dashed rgba(239,68,68,0.4); display: none; }
+        .btn-cancel-me:active { background: var(--danger); color: white; box-shadow: var(--glow-red);}
         .btn-manage-q { background: var(--text-main); color: white; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3); display: none; }
         .btn-manage-q:active { transform: scale(0.98); }
 
-        /* --- MODERN BOTTOM SHEET --- */
+        /* --- MODERN BOTTOM SHEET GLASS --- */
         .sheet-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(5px); display: none; align-items: flex-end; z-index: 20000; opacity: 0; transition: opacity 0.3s; }
         .sheet-overlay.show { display: flex; opacity: 1; }
-        .bottom-sheet { width: 100%; background: var(--white); border-radius: 35px 35px 0 0; padding: 20px 25px 40px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); box-shadow: 0 -15px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; }
+        .bottom-sheet { 
+            width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+            border-radius: 35px 35px 0 0; border-top: 1px solid rgba(45,99,237,0.2);
+            padding: 20px 25px 40px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); 
+            box-shadow: 0 -10px 40px rgba(45,99,237,0.15); max-height: 90vh; overflow-y: auto; 
+        }
         .sheet-overlay.show .bottom-sheet { transform: translateY(0); }
-        .sheet-handle { width: 50px; height: 5px; background: #E2E8F0; border-radius: 5px; margin: 0 auto 25px; }
+        .sheet-handle { width: 50px; height: 5px; background: #CBD5E1; border-radius: 5px; margin: 0 auto 25px; }
         
         .sheet-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 20px; text-align: center; }
         
         .sheet-menu { display: flex; flex-direction: column; gap: 10px; }
-        .sm-btn { width: 100%; padding: 16px 20px; background: #F8FAFC; border: 1px solid var(--border-soft); border-radius: 16px; display: flex; align-items: center; gap: 15px; font-family: 'Inter'; font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: 0.2s; text-align: left; }
-        .sm-btn:active { background: #E2E8F0; transform: scale(0.98); }
+        .sm-btn { width: 100%; padding: 16px 20px; background: rgba(255,255,255,0.8); border: 1px solid rgba(226,232,240,0.8); border-radius: 16px; display: flex; align-items: center; gap: 15px; font-family: 'Inter'; font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: 0.2s; text-align: left; }
+        .sm-btn:active { background: rgba(45,99,237,0.05); border-color: rgba(45,99,237,0.3); transform: scale(0.98); }
         .sm-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
         .bg-blue { background: rgba(45,99,237,0.1); color: var(--electric-blue); }
-        .bg-red { background: #FEF2F2; color: var(--danger); }
+        .bg-red { background: rgba(239,68,68,0.1); color: var(--danger); }
         .bg-dark { background: #F1F5F9; color: var(--text-main); }
         
-        /* TOMBOL KUDETA KHUSUS ADMIN */
-        .btn-kudeta { background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; border: none; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); justify-content: center; font-family: 'Space Grotesk'; font-weight: 900; letter-spacing: 1px; }
+        /* TOMBOL KUDETA KHUSUS */
+        .btn-kudeta { background: linear-gradient(135deg, var(--danger), #B91C1C); color: white; border: none; box-shadow: var(--glow-red); justify-content: center; font-family: 'Space Grotesk'; font-weight: 900; letter-spacing: 1px; }
         .btn-kudeta:active { transform: scale(0.96); background: #991B1B;}
 
-        .sheet-input { width: 100%; padding: 16px; border-radius: 16px; border: 2px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; text-align: center; text-transform: uppercase; margin-bottom: 12px; outline: none; transition: 0.2s; }
-        .sheet-input:focus { border-color: var(--electric-blue); background: white; }
+        .sheet-input { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; text-align: center; text-transform: uppercase; margin-bottom: 12px; outline: none; transition: 0.2s; }
+        .sheet-input:focus { border-color: var(--electric-blue); box-shadow: 0 0 15px rgba(45,99,237,0.1); background: white; }
 
-        .q-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; margin-bottom: 10px; }
+        .q-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; background: white; border: 1px solid rgba(45,99,237,0.15); border-radius: 16px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
         .qi-ctrl { display: flex; gap: 5px; }
         .qi-btn { width: 32px; height: 32px; border-radius: 10px; border: none; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .qi-btn:active { transform: scale(0.9); }
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
-        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--royal-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--glow-blue); }
     </style>
 </head>
 <body>
@@ -196,7 +229,7 @@
             <div class="sheet-title">Informasi Baterai</div>
             <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:-10px; margin-bottom:20px;">Silakan masukkan sisa persentase baterai kendaraan Anda.</p>
             <input type="number" id="inpMemberBatre" class="sheet-input" placeholder="Sisa Batre (%) - Contoh: 20">
-            <button class="btn-hub" style="background:var(--electric-blue); color:white;" onclick="prosesSubmitMember()">LANJUTKAN <i class="fas fa-arrow-right"></i></button>
+            <button class="btn-hub btn-fill" onclick="prosesSubmitMember()">LANJUTKAN <i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
 
@@ -234,8 +267,8 @@
             <input type="number" id="inpAdminBatre" class="sheet-input" placeholder="Sisa Batre (%)">
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-hub" style="background:var(--electric-blue); color:white; flex:1; font-size:12px; padding: 15px;" onclick="adminSubmitDaftar('antrian')"><i class="fas fa-list-ol"></i> MASUK ANTRIAN</button>
-                <button class="btn-hub" style="background:var(--success); color:white; flex:1; font-size:12px; padding: 15px;" onclick="adminSubmitDaftar('slot')"><i class="fas fa-bolt"></i> MASUK SLOT</button>
+                <button class="btn-hub btn-fill" style="flex:1; font-size:12px; padding: 15px;" onclick="adminSubmitDaftar('antrian')"><i class="fas fa-list-ol"></i> MASUK ANTRIAN</button>
+                <button class="btn-hub" style="background:var(--success); color:white; flex:1; font-size:12px; padding: 15px; box-shadow:var(--glow-green);" onclick="adminSubmitDaftar('slot')"><i class="fas fa-bolt"></i> MASUK SLOT</button>
             </div>
         </div>
     </div>
@@ -263,7 +296,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONEKSI DATABASE ANTRIAN YANG BENAR
+        // KONEKSI DATABASE ANTRIAN YANG BENAR (PUNYA BAPAK YANG ASLI)
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -326,7 +359,7 @@
         function showBedugPopup(namaWaktu) {
             const title = document.getElementById('bedugTitle'); const desc = document.getElementById('bedugDesc');
             if(namaWaktu === 'MAGHRIB') { title.innerText = "ALHAMDULILLAH"; title.style.color = "var(--gold)"; desc.innerText = "Telah masuk waktu Maghrib untuk wilayah Jakarta dan sekitarnya. Selamat berbuka puasa!"; } 
-            else { title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--royal-blue)"; desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`; }
+            else { title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--electric-blue)"; desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`; }
             document.getElementById('bukaPuasaPopup').style.display = 'flex';
         }
 
@@ -423,9 +456,9 @@
                     let userKudetaBtn = '';
                     if (!isMe) { 
                         if (myQIndex === 0 && durationMin >= 20) {
-                            userKudetaBtn = `<button style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:6px; font-family:'Space Grotesk'; font-size:9px; font-weight:900; cursor:pointer; margin-left:8px; box-shadow:0 2px 5px rgba(239,68,68,0.3);" onclick="event.stopPropagation(); userTriggerKudeta(${i}, '${escapeHtml(s.plat)}')">⚡ KUDETA</button>`;
+                            userKudetaBtn = `<button style="background:rgba(239,68,68,0.1); color:var(--danger); border:1px solid var(--danger); padding:4px 8px; border-radius:6px; font-family:'Space Grotesk'; font-size:9px; font-weight:900; cursor:pointer; margin-left:8px; box-shadow:var(--glow-red);" onclick="event.stopPropagation(); userTriggerKudeta(${i}, '${escapeHtml(s.plat)}')">⚡ KUDETA</button>`;
                         } else if (myQIndex === 1 && durationMin >= 25) {
-                            userKudetaBtn = `<button style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:6px; font-family:'Space Grotesk'; font-size:9px; font-weight:900; cursor:pointer; margin-left:8px; box-shadow:0 2px 5px rgba(239,68,68,0.3);" onclick="event.stopPropagation(); userTriggerKudeta(${i}, '${escapeHtml(s.plat)}')">⚡ KUDETA</button>`;
+                            userKudetaBtn = `<button style="background:rgba(239,68,68,0.1); color:var(--danger); border:1px solid var(--danger); padding:4px 8px; border-radius:6px; font-family:'Space Grotesk'; font-size:9px; font-weight:900; cursor:pointer; margin-left:8px; box-shadow:var(--glow-red);" onclick="event.stopPropagation(); userTriggerKudeta(${i}, '${escapeHtml(s.plat)}')">⚡ KUDETA</button>`;
                         }
                     }
 
@@ -433,7 +466,7 @@
                     
                     let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
                     
-                    // ANTI-UNDEFINED BATRE (Sync dengan Aplikasi Hitam)
+                    // ANTI-UNDEFINED BATRE
                     let batreValue = s.batre || s.battery; 
                     let batreInfo = (batreValue && batreValue !== '-' && batreValue !== 'undefined') ? `<span class="badge-batre"><i class="fas fa-bolt"></i> ${batreValue}</span>` : '';
                     
@@ -614,14 +647,14 @@
                 body.innerHTML += `
                     <div class="q-item">
                         <div>
-                            <div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900;">#${i+1} | ${q.plat}</div>
-                            <div style="font-size:10px; color:#64748B;">${q.userName}${batreInfo}</div>
+                            <div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900; color:var(--royal-blue);">#${i+1} | ${q.plat}</div>
+                            <div style="font-size:10px; color:var(--text-muted);">${q.userName}${batreInfo}</div>
                         </div>
                         <div class="qi-ctrl">
-                            <button class="qi-btn" style="background:var(--success); color:white;" onclick="adminPromoteToSlot(${i})" title="Masukkan ke Slot Kosong"><i class="fas fa-bolt"></i></button>
-                            ${i > 0 ? `<button class="qi-btn" style="background:var(--electric-blue); color:white;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : ''}
-                            ${i < localQueue.length - 1 ? `<button class="qi-btn" style="background:#CBD5E1; color:white;" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : ''}
-                            <button class="qi-btn" style="background:var(--danger); color:white;" onclick="adminKickQueue('${q.plat}')"><i class="fas fa-times"></i></button>
+                            <button class="qi-btn" style="background:var(--success); color:white; box-shadow:var(--glow-green);" onclick="adminPromoteToSlot(${i})" title="Masukkan ke Slot Kosong"><i class="fas fa-bolt"></i></button>
+                            ${i > 0 ? `<button class="qi-btn" style="background:var(--electric-blue); color:white; box-shadow:var(--glow-blue);" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : ''}
+                            ${i < localQueue.length - 1 ? `<button class="qi-btn" style="background:#E2E8F0; color:var(--text-main);" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : ''}
+                            <button class="qi-btn" style="background:transparent; color:var(--danger); border:1px solid var(--danger); box-shadow:var(--glow-red);" onclick="adminKickQueue('${q.plat}')"><i class="fas fa-times"></i></button>
                         </div>
                     </div>`;
             });
@@ -632,8 +665,8 @@
             if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8;'>Antrian Kosong</p>";
             localQueue.forEach((q, i) => {
                 let b = q.batre || q.battery;
-                let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` <span style="color:var(--gold); font-size:11px;"><i class="fas fa-bolt"></i> ${b}</span>` : '';
-                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted);">${q.userName}${batreInfo}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px;">#${i+1}</div></div>`;
+                let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` <span style="color:var(--gold); font-size:11px; text-shadow:0 0 5px rgba(212,175,55,0.4);"><i class="fas fa-bolt"></i> ${b}</span>` : '';
+                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted);">${q.userName}${batreInfo}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px; box-shadow:var(--glow-blue); font-weight:900;">#${i+1}</div></div>`;
             });
         };
 
