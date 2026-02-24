@@ -432,10 +432,16 @@
             } else { 
                 btnCancel.style.display = 'none'; 
                 let amIFilling = localSlots.some(s => s && cleanStr(s.plat) === cleanStr(myPlat));
-                if(!amIFilling && localQueue.length > 0) {
+                
+                // FIX LOGIKA TOMBOL AMBIL ANTRIAN: SELALU TAMPIL KALAU BELUM NGANTRI DAN GAK DI SLOT
+                if(!amIFilling) {
                     btnTake.style.display = 'flex';
-                    if(!isInLocation) { btnTake.className = "btn-hub btn-disabled"; btnTake.innerText = "AMBIL ANTRIAN (HARUS DI LOKASI)"; btnTake.onclick = null; } 
-                    else { btnTake.className = "btn-hub btn-take-q"; btnTake.innerText = "AMBIL ANTRIAN SAYA"; btnTake.onclick = () => mintaBatre('antrian', -1); }
+                    if(!isInLocation && !isSuperAdmin) { 
+                        btnTake.className = "btn-hub btn-disabled"; btnTake.innerText = "AMBIL ANTRIAN (HARUS DI LOKASI)"; btnTake.onclick = null; 
+                    } 
+                    else { 
+                        btnTake.className = "btn-hub btn-take-q"; btnTake.innerText = "AMBIL ANTRIAN SAYA"; btnTake.onclick = () => mintaBatre('antrian', -1); 
+                    }
                 } else { btnTake.style.display = 'none'; }
             }
 
@@ -491,7 +497,7 @@
                     let actionHtml = '';
 
                     if (localQueue.length === 0 || myQIndex === 0) {
-                        if (isInLocation) actionHtml = `<button class="btn-action-main btn-fill" onclick="mintaBatre('slot', ${i})">MASUK SLOT</button>`; 
+                        if (isInLocation || isSuperAdmin) actionHtml = `<button class="btn-action-main btn-fill" onclick="mintaBatre('slot', ${i})">MASUK SLOT</button>`; 
                         else actionHtml = `<button class="btn-action-main btn-disabled">HARUS DI LOKASI</button>`;
                     } else if (myQIndex > 0) actionHtml = `<div style="font-size:11px; color:var(--text-muted); font-weight:800;">MENUNGGU GILIRAN</div>`; 
 
