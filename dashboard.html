@@ -100,10 +100,7 @@
         .sf-item span.hl2 { color: var(--danger); font-weight: 700; }
         .sf-time { font-size: 7px; color: var(--text-muted); font-weight: 800; margin-top: 3px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
 
-        @keyframes seamlessScroll { 
-            0% { transform: translateY(0); } 
-            100% { transform: translateY(-50%); } 
-        }
+        @keyframes seamlessScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
         /* --- 8 MENU GRID UTUH --- */
         .menu-container { padding: 0 20px; position: relative; z-index: 10; margin-bottom: 20px;}
@@ -135,6 +132,21 @@
         }
         .floating-sos i { animation: tilt-shaking 0.5s infinite alternate; }
         .floating-sos::after { content: 'U.R.C'; position: absolute; bottom: -18px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 9px; color: var(--danger); }
+
+        /* --- MODAL FORM SOS --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.9); z-index: 99999; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; box-shadow: 0 -10px 40px rgba(239,68,68,0.2); border-top: 2px solid rgba(239,68,68,0.3);}
+        @keyframes slideUp { to { transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--danger); display: flex; align-items: center; gap: 10px;}
+        .btn-close { background: #F1F5F9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text-muted); transition:0.2s;}
+        .btn-close:active { transform: scale(0.9); background: #E2E8F0;}
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; }
+        .form-input:focus { border-color: var(--danger); background: white; box-shadow: 0 0 15px rgba(239,68,68,0.15);}
+        .btn-send-sos { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--danger); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: var(--glow-red); display: flex; justify-content: center; align-items: center; gap: 10px; transition:0.2s;}
+        .btn-send-sos:active { transform: scale(0.95); }
 
         /* --- DOCK NAV --- */
         .dock-container { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(45, 99, 237, 0.2); padding: 10px 30px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 10px 30px rgba(45, 99, 237, 0.15); }
@@ -266,9 +278,35 @@
         </div>
     </main>
 
-    <a href="tel:119" class="floating-sos" onclick="alert('Membuka Panggilan Darurat URC / Broadcast Lokasi!'); return false;">
+    <a href="#" class="floating-sos" onclick="openSosModal(); return false;">
         <i class="fas fa-ambulance"></i>
     </a>
+
+    <div class="modal-overlay" id="sosModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-broadcast-tower"></i> Laporan S.O.S</div>
+                <button class="btn-close" onclick="closeSosModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Laporan Anda dapat dikirimkan ke Group Pengurus atau kontak pilihan Anda beserta rincian lokasi terkini.</p>
+            <div class="form-group">
+                <label>Pilih Kendala Darurat</label>
+                <select id="sosType" class="form-input">
+                    <option value="Unit Mogok / Trouble">Unit Mogok / Trouble</option>
+                    <option value="Ban Bocor / Kempes">Ban Bocor / Kempes</option>
+                    <option value="Kecelakaan Lalu Lintas">Kecelakaan Lalu Lintas</option>
+                    <option value="Kehabisan Baterai di Jalan">Kehabisan Baterai di Jalan</option>
+                    <option value="Tindak Kriminal / Begal">Tindak Kriminal / Begal</option>
+                    <option value="Lainnya">Lainnya...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Keterangan Tambahan / Patokan Lokasi</label>
+                <textarea id="sosDesc" class="form-input" rows="3" placeholder="Contoh: Depan Indomaret, dekat pom bensin..."></textarea>
+            </div>
+            <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()"><i class="fab fa-whatsapp"></i> BAGIKAN S.O.S</button>
+        </div>
+    </div>
 
     <div class="dock-container">
         <a href="lokasi_fc.html" class="nav-item"><i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI</span></a>
@@ -286,8 +324,9 @@
         const TEKS_INFO_PENTING = "⚠️ INFO PENTING: Kopdar Gabungan MLU diadakan minggu depan. Pastikan iuran kas sudah lunas. Tetap solid!";
         document.getElementById('infoPentingText').innerText = TEKS_INFO_PENTING;
 
-        const STATION_LAT = -6.2285953; 
-        const STATION_LNG = 106.819502;
+        // PERBAIKAN: KORDINAT FC KELAPA GADING (Silakan ganti dgn titik yg lebih akurat)
+        const STATION_LAT = -6.155823; 
+        const STATION_LNG = 106.903823;
 
         // Init Firebase App Putih (Untuk Profil, Info Kiri, & Radar Kanan)
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
@@ -330,7 +369,7 @@
             document.getElementById('userPhoto').src = (uData.foto && uData.foto.length > 50) ? uData.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(myName)}`;
             
             cekJarakFC();
-            initRadarLive(); // Tarik & Kirim Lokasi Radar
+            initRadarLive(); 
         });
 
         // 1. KONEKSI REALTIME FC GADING (BANNER TENGAH)
@@ -338,12 +377,17 @@
             if (!snap.exists()) return;
             const d = snap.data();
             
-            let slots = d.chargingSlots || [null, null, null, null, null];
-            let dis = d.disabledSlots || [false, false, false, false, false];
+            let slots = d.chargingSlots || [];
+            let dis = d.disabledSlots || [];
             let qLen = (d.waitingQueue || []).length;
             
+            // PERBAIKAN: Baca jumlah slot secara dinamis sesuai setting Firebase (FC Gading = 3)
+            let totalSlots = slots.length > 0 ? slots.length : 3; 
             let emptySlots = 0;
-            for(let i=0; i<5; i++) { if(slots[i] === null && !dis[i]) emptySlots++; }
+            
+            for(let i=0; i<totalSlots; i++) { 
+                if(slots[i] === null && !(dis && dis[i])) emptySlots++; 
+            }
 
             const rightContainer = document.getElementById('fcStatusRight');
             
@@ -380,8 +424,6 @@
         // =========================================================================
         // 3. LOGIKA TARIK DATA REALTIME UNTUK KOTAK KIRI (INFO UANG KAS & PASAR)
         // =========================================================================
-        
-        // A. Tarik Data Uang Kas
         onSnapshot(collection(db, "mlu_finance"), (snap) => {
             let balance = 0;
             snap.forEach(doc => {
@@ -392,10 +434,9 @@
                 else balance -= amt;
             });
             stateKasTotal = balance;
-            renderInfoFeedLive(); // Refresh kotak Kiri
+            renderInfoFeedLive(); 
         });
 
-        // B. Tarik Data Pasar MLU (Ambil 2 terbaru)
         onSnapshot(query(collection(db, "mlu_store"), orderBy("timestamp", "desc")), (snap) => {
             stateStoreCount = snap.size;
             stateStoreTitles = [];
@@ -404,10 +445,9 @@
                 if(count < 2) stateStoreTitles.push(doc.data().title);
                 count++;
             });
-            renderInfoFeedLive(); // Refresh kotak Kiri
+            renderInfoFeedLive(); 
         });
 
-        // Render Kotak Kiri
         function renderInfoFeedLive() {
             const tgl = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short'});
             
@@ -423,7 +463,6 @@
                 <div class="sf-item">${txtPasar}<span class="sf-time"><i class="fas fa-shopping-cart" style="color:var(--electric-blue)"></i> Market</span></div>
             </div>`;
             
-            // Masukkan didobel agar animasi loop translateY(-50%) sangat mulus tanpa putus
             document.getElementById('feedInfoBox').innerHTML = blockInfo + blockInfo; 
         }
 
@@ -431,7 +470,6 @@
         // 4. LOGIKA RADAR MEMBER FIREBASE (KOTAK KANAN)
         // =========================================================================
         async function initRadarLive() {
-            // A. Kirim Lokasi Kita ke Firebase
             if (navigator.geolocation && uData.plat) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
                     try {
@@ -439,7 +477,6 @@
                         const data = await res.json();
                         const area = data.address.suburb || data.address.village || "Lokasi Anda";
                         
-                        // Simpan ke DB
                         const radarRef = doc(db, "live_radar", uData.plat.replace(/\s/g, ''));
                         await setDoc(radarRef, {
                             nama: myName,
@@ -450,7 +487,6 @@
                 });
             }
 
-            // B. Baca Lokasi Member Lain dari Firebase (Realtime 5 Terakhir)
             const qRadar = query(collection(db, "live_radar"), orderBy("timestamp", "desc"), limit(5));
             onSnapshot(qRadar, (snap) => {
                 let radarList = [];
@@ -463,17 +499,59 @@
                 if(radarList.length === 0) radarList.push(`<div class="sf-item">Belum ada aktivitas member.</div>`);
 
                 let blockAct = `<div class="sf-block">${radarList.join('')}</div>`;
-                document.getElementById('feedActivityBox').innerHTML = blockAct + blockAct; // Dobel untuk animasi loop mulus
+                document.getElementById('feedActivityBox').innerHTML = blockAct + blockAct; 
             });
         }
 
-        // Fungsi Hitung "Berapa menit yang lalu"
         function hitungWaktuLalu(timestamp) {
             const selisihDetik = Math.floor((Date.now() - timestamp) / 1000);
             if (selisihDetik < 60) return "Baru saja";
             if (selisihDetik < 3600) return Math.floor(selisihDetik/60) + " mnt lalu";
             if (selisihDetik < 86400) return Math.floor(selisihDetik/3600) + " jam lalu";
             return Math.floor(selisihDetik/86400) + " hari lalu";
+        }
+
+        // =========================================================================
+        // 5. PERBAIKAN: FUNGSI S.O.S (Form Modal & WhatsApp Share) DIKEMBALIKAN
+        // =========================================================================
+        window.openSosModal = () => { document.getElementById('sosModal').style.display = 'flex'; };
+        window.closeSosModal = () => { document.getElementById('sosModal').style.display = 'none'; };
+
+        window.sendSos = () => {
+            const btn = document.getElementById('btnSendSos');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari Lokasi...';
+            btn.style.opacity = '0.7';
+
+            const sosType = document.getElementById('sosType').value;
+            const sosDesc = document.getElementById('sosDesc').value.trim() || "Tidak ada keterangan";
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+                        executeWa(sosType, sosDesc, myName, uData.plat, mapsLink);
+                    },
+                    (error) => { executeWa(sosType, sosDesc, myName, uData.plat, "(Lokasi GPS tidak diizinkan)"); }
+                );
+            } else {
+                executeWa(sosType, sosDesc, myName, uData.plat, "(Perangkat tidak mendukung GPS)");
+            }
+        };
+
+        function executeWa(type, desc, name, plat, loc) {
+            const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
+            const profileLink = `${baseUrl}data_anggota.html?cari=${encodeURIComponent(plat)}`;
+            const msg = `*🚨 LAPORAN DARURAT S.O.S (MLU) 🚨*\n\n*Pelapor:* ${name} (${plat})\n*Kendala:* ${type}\n*Keterangan:* ${desc}\n\n*📍 Titik Lokasi:*\n${loc}\n\n*👤 Cek Profil Pelapor:*\n${profileLink}\n\n_Mohon segera direspon, anggota butuh bantuan!_`;
+            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            
+            const btn = document.getElementById('btnSendSos');
+            btn.innerHTML = '<i class="fab fa-whatsapp"></i> BAGIKAN S.O.S';
+            btn.style.opacity = '1';
+            
+            window.closeSosModal();
+            window.location.href = url;
         }
     </script>
 </body>
