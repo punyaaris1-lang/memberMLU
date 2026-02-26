@@ -12,8 +12,7 @@
         :root { 
             --royal-blue: #0A2259; 
             --electric-blue: #2D63ED; 
-            --bg-surface: #F0F4F8; /* Sedikit lebih abu/biru muda agar putihnya lebih pop-out */
-            --white: #FFFFFF; 
+            --bg-surface: #F0F4F8; 
             --text-main: #0F172A; 
             --text-muted: #64748B; 
             --danger: #EF4444; 
@@ -21,162 +20,133 @@
             --warning: #F59E0B; 
             --gold: #D4AF37;
             
-            /* EFEK GLOWING UNTUK TEMA TERANG */
             --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
             --glow-blue-intense: 0 0 20px rgba(45, 99, 237, 0.4);
             --glow-red: 0 10px 30px rgba(239, 68, 68, 0.3);
             --glow-gold: 0 10px 25px rgba(212, 175, 55, 0.3);
             --glow-success: 0 10px 25px rgba(16, 185, 129, 0.3);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
         }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; text-decoration: none; }
 
-        /* --- HEADER GLOWING --- */
+        /* --- HEADER & PROFILE --- */
         .header-bg { 
             background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
-            padding: 40px 20px 80px; 
-            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
-            position: relative; 
-            box-shadow: var(--glow-blue); /* Bayangan bawah biru menyala */
+            padding: 35px 20px 35px; 
+            border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; 
+            position: relative; box-shadow: var(--glow-blue); 
             border-bottom: 2px solid rgba(45, 99, 237, 0.3);
         }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; color: white; }
-        .greeting { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; line-height: 1.1; text-shadow: 0 2px 10px rgba(255,255,255,0.2); }
-        .date-text { font-size: 10px; font-weight: 800; color: #93C5FD; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; text-shadow: 0 0 10px rgba(147, 197, 253, 0.5); }
-        .btn-settings { color: white; opacity: 0.9; font-size: 26px; transition: transform 0.3s; cursor: pointer; filter: drop-shadow(0 0 8px rgba(255,255,255,0.4)); }
-        .btn-settings:active { transform: rotate(90deg) scale(0.9); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white; }
+        .greeting { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; line-height: 1.1; text-shadow: 0 2px 10px rgba(255,255,255,0.2); }
+        .date-text { font-size: 10px; font-weight: 800; color: #93C5FD; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+        .btn-settings { color: white; opacity: 0.9; font-size: 24px; cursor: pointer; }
 
-        /* PROFILE CARD GLASSMORPHISM */
         .profile-card { 
-            background: rgba(255,255,255,0.15); 
-            border: 1px solid rgba(255,255,255,0.3); 
-            backdrop-filter: blur(15px); 
-            padding: 15px 20px; border-radius: 20px; 
-            display: flex; align-items: center; gap: 15px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); 
+            backdrop-filter: blur(15px); padding: 12px 15px; border-radius: 18px; 
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-        .p-photo { width: 55px; height: 55px; border-radius: 16px; object-fit: cover; border: 2px solid white; background: #E2E8F0; box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
-        .p-info { flex: 1; color: white; }
-        .p-role { font-size: 9px; font-weight: 800; background: var(--gold); color: #000; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-bottom: 4px; text-transform: uppercase; box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-        .p-name { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
-        .p-plat { font-size: 11px; font-weight: 600; color: #E2E8F0; margin-top: 2px; font-family: 'Inter'; letter-spacing: 1px;}
-
-        /* OD BADGE GLOWING */
-        .od-badge-container { display: none; text-align: center; }
-        .od-badge { font-size: 9px; font-weight: 800; padding: 6px 10px; border-radius: 10px; text-transform: uppercase; line-height: 1.3; font-family: 'Inter'; white-space: nowrap;}
-        .bdg-safe { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; box-shadow: 0 0 10px rgba(253, 230, 138, 0.5); }
-        .bdg-warn { background: #FFFBEB; color: var(--warning); border: 1px solid var(--warning); animation: pulseBadge 2s infinite; }
-        .bdg-danger { background: var(--danger); color: white; border: 1px solid #991B1B; animation: pulseBadge 1s infinite; box-shadow: var(--glow-red); }
-        .bdg-fatal { background: #000; color: var(--danger); border: 1px solid var(--danger); animation: pulseBadge 0.5s infinite; box-shadow: 0 0 15px rgba(255,0,0,0.8); }
-        @keyframes pulseBadge { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        .p-left { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden;}
+        .p-photo { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 2px solid white; background: #E2E8F0; }
+        .p-info { color: white; overflow: hidden; }
+        .p-role { font-size: 9px; font-weight: 800; background: var(--gold); color: #000; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 2px; }
+        .p-name { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+        .p-plat { font-size: 10px; font-weight: 600; color: #E2E8F0; margin-top: 2px; }
+        .p-divider { width: 1px; height: 35px; background: rgba(255,255,255,0.2); margin: 0 10px; }
+        .p-weather { display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; min-width: 50px;}
+        .pw-icon { font-size: 16px; color: #FCD34D; margin-bottom: 2px;}
+        .pw-temp { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; line-height: 1; }
+        .pw-loc { font-size: 8px; font-weight: 800; color: #93C5FD; letter-spacing: 1px; margin-top: 2px; }
 
         /* --- IKLAN RUNNING TEXT --- */
-        .marquee-box { margin-top: 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 8px 15px; display: flex; align-items: center; gap: 10px; overflow: hidden; cursor: pointer; transition: 0.2s;}
-        .marquee-box:active { transform: scale(0.98); background: rgba(255,255,255,0.2); }
-        .mq-icon { color: var(--gold); font-size: 14px; animation: ring 2s infinite; flex-shrink: 0; filter: drop-shadow(0 0 5px var(--gold)); }
-        .mq-content { flex: 1; overflow: hidden; white-space: nowrap; position: relative; }
-        .mq-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; font-size: 11px; font-weight: 600; color: white; letter-spacing: 0.5px;}
-        .mq-text b { color: var(--gold); }
+        .marquee-box { margin: 15px 20px; background: white; border: 1px solid rgba(45,99,237,0.1); border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
+        .mq-icon { color: var(--danger); font-size: 12px; animation: ring 2s infinite; }
+        .mq-content { flex: 1; overflow: hidden; white-space: nowrap; }
+        .mq-text { display: inline-block; padding-left: 100%; animation: marquee 18s linear infinite; font-size: 10px; font-weight: 700; color: var(--text-main); }
+
+        /* --- DASHBOARD WIDGETS --- */
+        .dash-container { padding: 0 20px; margin-bottom: 20px; }
+        
+        /* FC GADING COMPACT BANNER */
+        .fc-banner { background: var(--royal-blue); border-radius: 12px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--glow-blue); border: 1px solid rgba(45,99,237,0.3); cursor: pointer; margin-bottom: 12px;}
+        .fc-left { display: flex; flex-direction: column; }
+        .fc-title { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: #D4FF00; letter-spacing: 1px; }
+        .fc-dist { font-size: 9px; font-weight: 600; color: #93C5FD; margin-top: 2px; }
+        .fc-right { text-align: right; }
+        .fc-val { font-family: 'Teko', sans-serif; font-size: 22px; line-height: 1; color: white; display: flex; align-items: baseline; gap: 4px; justify-content: flex-end;}
+        .fc-lbl { font-family: 'Inter'; font-size: 9px; font-weight: 800; color: #93C5FD; letter-spacing: 1px; }
+
+        /* ========================================================= */
+        /* SPLIT FEED: DUA KOLOM BERSEBELAHAN (INFO MLU & RADAR) */
+        /* ========================================================= */
+        .split-feed-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .sf-box { background: white; border-radius: 12px; border: 1px solid rgba(45,99,237,0.1); box-shadow: 0 5px 15px rgba(45,99,237,0.05); display: flex; flex-direction: column; overflow: hidden; height: 110px; position: relative; }
+        .sf-header { background: rgba(45, 99, 237, 0.05); padding: 8px 10px; font-family: 'Space Grotesk'; font-size: 10px; font-weight: 900; color: var(--royal-blue); text-transform: uppercase; border-bottom: 1px solid rgba(45,99,237,0.1); display: flex; align-items: center; gap: 6px; z-index: 5; letter-spacing: 0.5px;}
+        
+        .sf-body { position: relative; flex: 1; overflow: hidden; }
+        .sf-body::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 10px; background: linear-gradient(180deg, white, transparent); z-index: 2; pointer-events: none;}
+        .sf-body::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 10px; background: linear-gradient(0deg, white, transparent); z-index: 2; pointer-events: none;}
+        
+        .sf-scroll-container { display: flex; flex-direction: column; animation: seamlessScroll 15s linear infinite; }
+        .sf-block { display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+        
+        .sf-item { font-size: 9.5px; color: var(--text-main); line-height: 1.3; font-weight: 500; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
+        .sf-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .sf-item b { color: var(--royal-blue); font-weight: 800; }
+        .sf-item span.hl { color: var(--success); font-weight: 700; }
+        .sf-item span.hl2 { color: var(--danger); font-weight: 700; }
+        .sf-time { font-size: 7px; color: var(--text-muted); font-weight: 800; margin-top: 3px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        @keyframes seamlessScroll { 
+            0% { transform: translateY(0); } 
+            100% { transform: translateY(-50%); } 
+        }
+
+        /* --- 8 MENU GRID UTUH --- */
+        .menu-container { padding: 0 20px; position: relative; z-index: 10; margin-bottom: 20px;}
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .menu-btn { background: rgba(255, 255, 255, 0.9); border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid rgba(45, 99, 237, 0.15); box-shadow: 0 5px 15px rgba(45, 99, 237, 0.05); transition: 0.2s; cursor: pointer; }
+        .menu-btn:active { transform: scale(0.95); border-color: var(--electric-blue); }
+        
+        .icon-box { width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px; color: white; }
+        .ic-anggota { background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%); }
+        .ic-pengurus { background: linear-gradient(135deg, var(--gold) 0%, #B48500 100%); }
+        .ic-keuangan { background: linear-gradient(135deg, var(--success) 0%, #059669 100%); }
+        .ic-antrian { background: linear-gradient(135deg, #0891B2 0%, #0369A1 100%); }
+        .ic-reminder { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); }
+        .ic-info { background: linear-gradient(135deg, #8B5CF6 0%, #4338CA 100%); }
+        .ic-pasar { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
+        .ic-tour { background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%); }
+        
+        .menu-title { font-family: 'Space Grotesk'; font-size: 12px; font-weight: 900; color: var(--royal-blue); margin-bottom: 2px; }
+        .menu-desc { font-size: 8px; font-weight: 600; color: var(--text-muted); line-height: 1.2; }
+
+        /* --- FLOATING SOS BUTTON --- */
+        .floating-sos {
+            position: fixed; bottom: 100px; right: 20px; width: 55px; height: 55px;
+            background: linear-gradient(135deg, var(--danger), #991B1B);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #fff; text-decoration: none; z-index: 10000;
+            border: 2px solid #FCA5A5; box-shadow: var(--glow-red), inset 0 0 15px rgba(255,255,255,0.4);
+            animation: pulseSOS 1.5s infinite; cursor: pointer;
+        }
+        .floating-sos i { animation: tilt-shaking 0.5s infinite alternate; }
+        .floating-sos::after { content: 'U.R.C'; position: absolute; bottom: -18px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 9px; color: var(--danger); }
+
+        /* --- DOCK NAV --- */
+        .dock-container { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(45, 99, 237, 0.2); padding: 10px 30px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 10px 30px rgba(45, 99, 237, 0.15); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #94A3B8; transition: 0.3s; }
+        .nav-item.active { color: var(--electric-blue); }
+        .nav-item i { font-size: 18px; margin-bottom: 2px; }
+        .nav-text { font-family: 'Inter'; font-size: 8px; font-weight: 800; text-transform: uppercase; }
+
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
         @keyframes ring { 0%, 100% { transform: rotate(0); } 10%, 30%, 50% { transform: rotate(-15deg); } 20%, 40% { transform: rotate(15deg); } }
-
-        /* --- SOS BUTTON GLOWING RED --- */
-        .sos-container { padding: 0 20px; margin-top: -25px; position: relative; z-index: 15; margin-bottom: 25px;}
-        .btn-sos { 
-            width: 100%; background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%); 
-            color: white; border: 1px solid #FCA5A5; padding: 18px 20px; border-radius: 20px; 
-            display: flex; align-items: center; justify-content: space-between; 
-            box-shadow: var(--glow-red); cursor: pointer; transition: 0.2s; animation: pulseSOS 2s infinite; 
-        }
-        .btn-sos:active { transform: scale(0.97); }
-        .sos-left { display: flex; align-items: center; gap: 15px; }
-        .sos-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; backdrop-filter: blur(5px); }
-        .sos-text { text-align: left; }
-        .sos-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; letter-spacing: 1px; line-height: 1; margin-bottom: 2px; text-shadow: 0 2px 5px rgba(0,0,0,0.3);}
-        .sos-desc { font-size: 10px; font-weight: 600; color: #FCA5A5; text-transform: uppercase;}
-
-        /* --- MENU GRID WHITE GLOW --- */
-        .menu-container { padding: 0 20px; position: relative; z-index: 10; }
-        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        
-        .menu-btn { 
-            background: rgba(255, 255, 255, 0.8); 
-            backdrop-filter: blur(10px);
-            border-radius: 24px; padding: 20px 15px; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; text-align: center; 
-            border: 1px solid rgba(45, 99, 237, 0.15); /* Soft blue border */
-            box-shadow: 0 8px 25px rgba(45, 99, 237, 0.08); /* Blue tinted shadow */
-            transition: 0.3s; position: relative; overflow: hidden; cursor: pointer;
-        }
-        .menu-btn:active { transform: scale(0.95); box-shadow: var(--glow-blue-intense); border-color: var(--electric-blue); }
-        
-        /* Ikon menu dengan shadow menyala sesuai warna */
-        .icon-box { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px; color: white; position: relative; z-index: 2;}
-        .ic-anggota { background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%); box-shadow: var(--glow-blue); }
-        .ic-pengurus { background: linear-gradient(135deg, var(--gold) 0%, #B48500 100%); box-shadow: var(--glow-gold); }
-        .ic-keuangan { background: linear-gradient(135deg, var(--success) 0%, #059669 100%); box-shadow: var(--glow-success); }
-        .ic-antrian { background: linear-gradient(135deg, #0891B2 0%, #0369A1 100%); box-shadow: 0 10px 25px rgba(8, 145, 178, 0.3); }
-        .ic-reminder { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3); } 
-        .ic-info { background: linear-gradient(135deg, #8B5CF6 0%, #4338CA 100%); box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3); }
-        .ic-pasar { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); box-shadow: 0 10px 25px rgba(236, 72, 153, 0.3); }
-        
-        .menu-title { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: var(--royal-blue); margin-bottom: 4px; }
-        .menu-desc { font-size: 10px; font-weight: 600; color: var(--text-muted); line-height: 1.3; }
-
-        .banner-btn { 
-            background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%); 
-            border: 1px dashed var(--electric-blue); 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            border-radius: 24px; padding: 20px; text-align: center;
-            box-shadow: inset 0 0 20px rgba(45,99,237,0.05);
-        }
-        .banner-btn i { font-size: 32px; color: #93C5FD; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(147, 197, 253, 0.6)); }
-        .banner-btn span { font-size: 10px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 1px; }
-
-        .notif-dot { display: none; position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; background: var(--danger); border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 0 10px rgba(239,68,68,0.8); z-index: 5;}
-
-        /* --- POP-UP BEDUG & PREMIUM ALERTS --- */
-        .buka-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 999999; padding: 20px; text-align: center; }
-        .buka-box { background: white; padding: 40px 20px; border-radius: 35px; box-shadow: 0 20px 50px rgba(45,99,237,0.3); border: 1px solid rgba(45,99,237,0.2); width: 100%; max-width: 350px; transform: scale(0.8); animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes popBounce { to { transform: scale(1); } }
-        
-        .bedug-icon { font-size: 70px; margin-bottom: 15px; animation: beatDrum 0.4s infinite alternate; display: inline-block; filter: drop-shadow(0 10px 15px rgba(212,175,55,0.4)); }
-        @keyframes beatDrum { 0% { transform: rotate(-15deg) scale(1); } 100% { transform: rotate(15deg) scale(1.1); } }
-        .buka-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--gold); margin: 0 0 10px 0; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(212,175,55,0.2); }
-        .buka-desc { color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 25px; font-weight: 600; }
-        .btn-tutup-buka { background: var(--electric-blue); color: white; border: none; padding: 16px 30px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; width: 100%; box-shadow: var(--glow-blue); }
-
-        /* SOS MODAL GLOWING */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.9); z-index: 99999; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; box-shadow: 0 -10px 40px rgba(239,68,68,0.2); border-top: 2px solid rgba(239,68,68,0.3);}
-        @keyframes slideUp { to { transform: translateY(0); } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--danger); display: flex; align-items: center; gap: 10px; text-shadow: 0 2px 10px rgba(239,68,68,0.2);}
-        .btn-close { background: #F1F5F9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text-muted); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; transition: 0.2s;}
-        .form-input:focus { border-color: var(--danger); background: white; box-shadow: 0 0 15px rgba(239,68,68,0.15);}
-        .btn-send-sos { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--danger); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: var(--glow-red); display: flex; justify-content: center; align-items: center; gap: 10px; }
-
-        /* DOCK NAV WHITE GLOW */
-        .dock-container { 
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; 
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); 
-            border: 1px solid rgba(45, 99, 237, 0.2); padding: 12px 30px; border-radius: 50px; 
-            display: flex; justify-content: space-around; align-items: center; z-index: 99999; 
-            box-shadow: 0 15px 35px rgba(45, 99, 237, 0.15); 
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #94A3B8; transition: 0.3s; }
-        .nav-item.active { color: var(--electric-blue); text-shadow: 0 0 10px rgba(45,99,237,0.3); }
-        .nav-item i { font-size: 20px; margin-bottom: 4px; }
-        .nav-item.active i { filter: drop-shadow(0 0 5px rgba(45,99,237,0.5)); }
-        .nav-text { font-family: 'Inter'; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        @keyframes pulseSOS { 0%, 100% { box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3); } 50% { box-shadow: 0 10px 40px rgba(239, 68, 68, 0.6); border: 1px solid #FFF;} }
-        @keyframes floatIcon { 0%, 100% { transform: translateY(0); filter: drop-shadow(0 10px 15px rgba(45,99,237,0.4));} 50% { transform: translateY(-10px); filter: drop-shadow(0 20px 20px rgba(45,99,237,0.6));} }
+        @keyframes pulseSOS { 0%, 100% { box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); } 50% { box-shadow: 0 10px 30px rgba(239, 68, 68, 0.7); border: 2px solid #FFF;} }
+        @keyframes tilt-shaking { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
     </style>
 </head>
 <body>
@@ -187,43 +157,68 @@
                 <div class="date-text" id="displayDate">HARI INI</div>
                 <div class="greeting" id="greetingText">Halo, Kawan!</div>
             </div>
-            <a href="settings.html" class="btn-settings">
-                <i class="fas fa-cog"></i>
-            </a>
+            <a href="settings.html" class="btn-settings"><i class="fas fa-cog"></i></a>
         </div>
 
         <div class="profile-card">
-            <img src="" id="userPhoto" class="p-photo">
-            <div class="p-info">
-                <div class="p-role" id="userRole">GUEST</div>
-                <div class="p-name" id="userName">User Name</div>
-                <div class="p-plat" id="userPlat">B 1234 XYZ</div>
-            </div>
-            <div class="od-badge-container" id="odBadgeContainer"></div>
-        </div>
-
-        <div class="marquee-box" onclick="window.location.href='store.html'">
-            <i class="fas fa-bell mq-icon"></i>
-            <div class="mq-content">
-                <div class="mq-text">
-                    🔥 <b>PASAR MLU KINI HADIR!</b> Jual beli sparepart, aksesoris, & merch khusus member. Yuk buka lapakmu sekarang atau cek barang murah dari kawan! 🛒
+            <div class="p-left">
+                <img src="" id="userPhoto" class="p-photo" onerror="this.src='https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=MLU';">
+                <div class="p-info">
+                    <div class="p-role" id="userRole">GUEST</div>
+                    <div class="p-name" id="userName">User Name</div>
+                    <div class="p-plat" id="userPlat">B 1234 XYZ</div>
                 </div>
             </div>
-            <i class="fas fa-chevron-right" style="color:white; opacity:0.5; font-size:10px;"></i>
+            <div class="p-divider"></div>
+            <div class="p-weather">
+                <i class="fas fa-cloud-sun pw-icon"></i>
+                <div class="pw-temp">28&deg;</div>
+                <div class="pw-loc">GADING</div>
+            </div>
         </div>
     </header>
 
-    <div class="sos-container">
-        <button class="btn-sos" onclick="openSosModal()">
-            <div class="sos-left">
-                <div class="sos-icon"><i class="fas fa-exclamation-triangle" style="text-shadow: 0 0 10px #FFF;"></i></div>
-                <div class="sos-text">
-                    <div class="sos-title">DARURAT S.O.S</div>
-                    <div class="sos-desc">Tekan jika butuh bantuan di jalan</div>
+    <div class="marquee-box">
+        <i class="fas fa-bullhorn mq-icon"></i>
+        <div class="mq-content">
+            <div class="mq-text" id="infoPentingText">Memuat Informasi...</div>
+        </div>
+    </div>
+
+    <div class="dash-container">
+        
+        <div class="fc-banner" onclick="window.location.href='antrian.html'">
+            <div class="fc-left">
+                <div class="fc-title"><i class="fas fa-bolt" style="color:var(--electric-blue); text-shadow:0 0 5px rgba(255,255,255,0.5);"></i> FC GADING</div>
+                <div class="fc-dist" id="fcDistInfo"><i class="fas fa-map-marker-alt"></i> Menghitung jarak...</div>
+            </div>
+            <div class="fc-right" id="fcStatusRight">
+                <span class="fc-lbl">STATUS</span>
+                <div class="fc-val" style="color:#aaa; font-size:16px;">Memuat...</div>
+            </div>
+        </div>
+
+        <div class="split-feed-container">
+            
+            <div class="sf-box">
+                <div class="sf-header"><i class="fas fa-bullhorn" style="color:var(--warning);"></i> INFO MLU</div>
+                <div class="sf-body">
+                    <div class="sf-scroll-container" id="feedInfoBox">
+                        <div style="text-align:center; padding:10px; font-size:10px; color:#aaa;">Memuat Data...</div>
+                    </div>
                 </div>
             </div>
-            <i class="fas fa-chevron-right" style="opacity: 0.5;"></i>
-        </button>
+
+            <div class="sf-box">
+                <div class="sf-header"><i class="fas fa-satellite-dish" style="color:var(--danger);"></i> AKTIVITAS</div>
+                <div class="sf-body">
+                    <div class="sf-scroll-container" id="feedActivityBox">
+                        <div style="text-align:center; padding:10px; font-size:10px; color:#aaa;">Memuat Radar...</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <main class="menu-container">
@@ -249,10 +244,7 @@
                 <div class="menu-desc">Monitor Stasiun FC Gading</div>
             </a>
             <a href="reminder.html" class="menu-btn">
-                <div class="icon-box ic-reminder">
-                    <i class="fas fa-bell"></i>
-                    <div class="notif-dot" id="odMenuDot"></div>
-                </div>
+                <div class="icon-box ic-reminder"><i class="fas fa-bell"></i></div>
                 <div class="menu-title">Garasi Pintar</div>
                 <div class="menu-desc">Log Book EV & OD</div>
             </a>
@@ -266,280 +258,222 @@
                 <div class="menu-title">Pasar MLU</div>
                 <div class="menu-desc">Forum Jual Beli Member</div>
             </a>
-            <div class="banner-btn" onclick="alert('Fitur segera hadir! Siapkan mesin dan fisikmu.')">
-                <i class="fas fa-route"></i>
-                <span>Jadwal Touring</span>
+            <div class="menu-btn" onclick="alert('Siapkan mesin dan fisikmu. Segera Hadir!')">
+                <div class="icon-box ic-tour"><i class="fas fa-route"></i></div>
+                <div class="menu-title">Jadwal Touring</div>
+                <div class="menu-desc">Rute & agenda riding</div>
             </div>
         </div>
     </main>
 
+    <a href="tel:119" class="floating-sos" onclick="alert('Membuka Panggilan Darurat URC / Broadcast Lokasi!'); return false;">
+        <i class="fas fa-ambulance"></i>
+    </a>
+
     <div class="dock-container">
-        <a href="lokasi_fc.html" class="nav-item">
-            <i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI FC</span>
-        </a>
-        <a href="dashboard.html" class="nav-item active">
-            <i class="fas fa-home"></i><span class="nav-text">HOME</span>
-        </a>
-        <a href="plan_route.html" class="nav-item">
-            <i class="fas fa-route"></i><span class="nav-text">ROUTE PLAN</span>
-        </a>
-    </div>
-
-    <div class="buka-overlay" id="bukaPuasaPopup">
-        <div class="buka-box">
-            <div class="bedug-icon">🥁</div>
-            <h2 class="buka-title" id="bedugTitle">ALHAMDULILLAH</h2>
-            <p class="buka-desc" id="bedugDesc">Selamat berbuka puasa bagi wilayah Jakarta dan sekitarnya. Jangan lupa berdoa sebelum makan!</p>
-            <button class="btn-tutup-buka" onclick="document.getElementById('bukaPuasaPopup').style.display='none'">TERIMA KASIH</button>
-        </div>
-    </div>
-
-    <div class="buka-overlay" id="premiumAlertModal" style="z-index: 9999999;">
-        <div class="buka-box" style="padding: 40px 25px;">
-            <div id="paIcon" style="font-size: 65px; margin-bottom: 20px; animation: floatIcon 3s ease-in-out infinite;"></div>
-            <h2 id="paTitle" style="font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0 0 10px 0; color: var(--royal-blue); letter-spacing: 1px; text-shadow: 0 2px 10px rgba(10,34,89,0.1);">TITLE</h2>
-            <p id="paDesc" style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 30px; font-weight: 600; padding: 0 10px; white-space: pre-wrap;">Message</p>
-            <button class="btn-tutup-buka" style="width: 100%; box-shadow: var(--glow-blue);" onclick="document.getElementById('premiumAlertModal').style.display='none'">SIAAP, OM!</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="sosModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div class="modal-title"><i class="fas fa-broadcast-tower"></i> Laporan S.O.S</div>
-                <button class="btn-close" onclick="closeSosModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Laporan Anda dapat dikirimkan ke Group Pengurus atau kontak pilihan Anda beserta rincian lokasi terkini.</p>
-            <div class="form-group">
-                <label>Pilih Kendala Darurat</label>
-                <select id="sosType" class="form-input">
-                    <option value="Unit Mogok / Trouble">Unit Mogok / Trouble</option>
-                    <option value="Ban Bocor / Kempes">Ban Bocor / Kempes</option>
-                    <option value="Kecelakaan Lalu Lintas">Kecelakaan Lalu Lintas</option>
-                    <option value="Kehabisan Baterai di Jalan">Kehabisan Baterai di Jalan</option>
-                    <option value="Tindak Kriminal / Begal">Tindak Kriminal / Begal</option>
-                    <option value="Lainnya">Lainnya...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Keterangan Tambahan / Patokan Lokasi</label>
-                <textarea id="sosDesc" class="form-input" rows="3" placeholder="Contoh: Depan Indomaret, dekat pom bensin..."></textarea>
-            </div>
-            <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()"><i class="fab fa-whatsapp"></i> BAGIKAN S.O.S KE GRUP / KONTAK WA</button>
-        </div>
+        <a href="lokasi_fc.html" class="nav-item"><i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI</span></a>
+        <a href="dashboard.html" class="nav-item active"><i class="fas fa-home"></i><span class="nav-text">HOME</span></a>
+        <a href="plan_route.html" class="nav-item"><i class="fas fa-route"></i><span class="nav-text">RUTE</span></a>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, collection, setDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // =========================================================================
+        // PENGATURAN TEKS INFO PENTING 
+        // =========================================================================
+        const TEKS_INFO_PENTING = "⚠️ INFO PENTING: Kopdar Gabungan MLU diadakan minggu depan. Pastikan iuran kas sudah lunas. Tetap solid!";
+        document.getElementById('infoPentingText').innerText = TEKS_INFO_PENTING;
+
+        const STATION_LAT = -6.2285953; 
+        const STATION_LNG = 106.819502;
+
+        // Init Firebase App Putih (Untuk Profil, Info Kiri, & Radar Kanan)
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        const uData = JSON.parse(localStorage.getItem('maka_user'));
-        if (!uData || !uData.plat) window.location.href = 'index.html';
+        // Init Firebase App FC Gading
+        const fcConfig = { apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" };
+        const appFC = initializeApp(fcConfig, "AppFC");
+        const dbFC = getFirestore(appFC);
+        const fcRef = doc(dbFC, "antrian", "utama");
 
-        const myPlat = uData.plat;
+        const uData = JSON.parse(localStorage.getItem('maka_user')) || { namaKtp: "Kawan", plat: "B 0000 MLU", role: "MEMBER" };
+        const myName = uData.namaKtp || uData.namaWa || uData.nama || "Kawan";
+
+        // Variabel Global Info Feed Kiri
+        let stateKasTotal = 0;
+        let stateStoreCount = 0;
+        let stateStoreTitles = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            const myName = uData.namaKtp || uData.namaWa || uData.nama || "Kawan";
-            const myRole = uData.role || "KELUARGA MLU";
-            
             const hour = new Date().getHours();
-            let greeting = "Selamat Malam,";
-            if (hour >= 4 && hour < 10) greeting = "Selamat Pagi,";
-            else if (hour >= 10 && hour < 15) greeting = "Selamat Siang,";
-            else if (hour >= 15 && hour < 18) greeting = "Selamat Sore,";
-
-            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', dateOptions);
-
+            let greeting = (hour < 10) ? "Selamat Pagi," : (hour < 15) ? "Selamat Siang," : (hour < 18) ? "Selamat Sore," : "Selamat Malam,";
+            
+            document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('greetingText').innerText = greeting;
             document.getElementById('userName').innerText = myName;
-            document.getElementById('userPlat').innerText = myPlat;
-            document.getElementById('userRole').innerText = myRole;
+            document.getElementById('userPlat').innerText = uData.plat;
+            document.getElementById('userRole').innerText = uData.role;
 
-            const roleBadge = document.getElementById('userRole');
-            if (myRole.includes("KETUM") || myRole.includes("WAKETUM") || myRole.includes("PEMBINA")) {
-                roleBadge.style.background = "var(--gold)"; roleBadge.style.color = "#000";
-            } else if (myRole === "KELUARGA MLU" || myRole === "GUEST") {
-                roleBadge.style.background = "rgba(255,255,255,0.2)"; roleBadge.style.color = "#FFF";
+            const rBadge = document.getElementById('userRole');
+            if (uData.role.includes("KETUM") || uData.role.includes("WAKETUM") || uData.role.includes("PEMBINA")) {
+                rBadge.style.background = "var(--gold)"; rBadge.style.color = "#000";
+            } else if (uData.role === "KELUARGA MLU" || uData.role === "GUEST") {
+                rBadge.style.background = "rgba(255,255,255,0.2)"; rBadge.style.color = "#FFF";
             } else {
-                roleBadge.style.background = "var(--electric-blue)"; roleBadge.style.color = "#FFF";
+                rBadge.style.background = "var(--electric-blue)"; rBadge.style.color = "#FFF";
             }
 
-            const defaultPhoto = `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(myName)}`;
-            document.getElementById('userPhoto').src = (uData.foto && uData.foto.length > 50) ? uData.foto : defaultPhoto;
+            document.getElementById('userPhoto').src = (uData.foto && uData.foto.length > 50) ? uData.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(myName)}`;
+            
+            cekJarakFC();
+            initRadarLive(); // Tarik & Kirim Lokasi Radar
         });
 
-        window.showPremiumAlert = (title, desc, iconHtml, color) => {
-            document.getElementById('paIcon').innerHTML = iconHtml;
-            document.getElementById('paIcon').style.color = color;
-            document.getElementById('paTitle').innerText = title;
-            document.getElementById('paDesc').innerText = desc;
-            document.getElementById('premiumAlertModal').style.display = 'flex';
-        }
-
-        // --- SISTEM BEDUG KEMENAG ---
-        let jadwalSholat = null;
-        async function fetchJadwalAPI() {
-            try {
-                const now = new Date();
-                const yr = now.getFullYear(); const mo = String(now.getMonth()+1).padStart(2,'0'); const dt = String(now.getDate()).padStart(2,'0');
-                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${yr}/${mo}/${dt}`);
-                const data = await res.json();
-                if(data.status) jadwalSholat = data.data.jadwal;
-            } catch (e) { console.error("API Jadwal Gagal"); }
-        }
-        fetchJadwalAPI();
-
-        function showBedugPopup(namaWaktu) {
-            const title = document.getElementById('bedugTitle');
-            const desc = document.getElementById('bedugDesc');
-            if(namaWaktu === 'MAGHRIB') {
-                title.innerText = "ALHAMDULILLAH"; title.style.color = "var(--gold)";
-                desc.innerText = "Telah masuk waktu Maghrib untuk wilayah Jakarta dan sekitarnya. Selamat berbuka puasa!";
-            } else {
-                title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--royal-blue)";
-                desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`;
-            }
-            document.getElementById('bukaPuasaPopup').style.display = 'flex';
-        }
-
-        setInterval(() => {
-            if (!jadwalSholat) return;
-            const now = new Date();
-            const currMins = now.getHours() * 60 + now.getMinutes();
+        // 1. KONEKSI REALTIME FC GADING (BANNER TENGAH)
+        onSnapshot(fcRef, (snap) => {
+            if (!snap.exists()) return;
+            const d = snap.data();
             
-            const wktSholat = [ {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, {n:'ISYA', v:jadwalSholat.isya} ];
+            let slots = d.chargingSlots || [null, null, null, null, null];
+            let dis = d.disabledSlots || [false, false, false, false, false];
+            let qLen = (d.waitingQueue || []).length;
             
-            wktSholat.forEach(t => {
-                let parts = t.v.split(':');
-                let sholatMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-                if (currMins >= sholatMins && currMins <= sholatMins + 10) {
-                    const recKey = now.toDateString() + '_' + t.n;
-                    if(localStorage.getItem('maka_bedug_notif') !== recKey) {
-                        showBedugPopup(t.n); 
-                        localStorage.setItem('maka_bedug_notif', recKey);
-                    }
-                }
-            });
-        }, 5000);
+            let emptySlots = 0;
+            for(let i=0; i<5; i++) { if(slots[i] === null && !dis[i]) emptySlots++; }
 
-        // --- SISTEM OD REMINDER BERLANJUT ---
-        const qOD = query(collection(db, "mlu_personal_od"), where("plat", "==", myPlat), where("status", "==", "UNPAID"));
-        onSnapshot(qOD, (snap) => {
-            let unpaidCount = 0; let oldestDate = null;
-            snap.forEach(doc => {
-                unpaidCount++;
-                let dDate = new Date(doc.data().dueDate);
-                if(!oldestDate || dDate < oldestDate) oldestDate = dDate;
-            });
-
-            const badgeBox = document.getElementById('odBadgeContainer');
-            const menuDot = document.getElementById('odMenuDot');
-
-            if(unpaidCount > 0) {
-                menuDot.style.display = 'block'; badgeBox.style.display = 'block'; 
-                const today = new Date(); today.setHours(0,0,0,0); oldestDate.setHours(0,0,0,0);
-                const diffDays = Math.ceil((today - oldestDate) / (1000 * 60 * 60 * 24));
-
-                if(diffDays <= 0) badgeBox.innerHTML = `<div class="od-badge bdg-safe"><i class="fas fa-file-invoice"></i><br>${unpaidCount} Tagihan</div>`;
-                else if (diffDays <= 3) badgeBox.innerHTML = `<div class="od-badge bdg-warn"><i class="fas fa-exclamation-triangle"></i><br>Telat ${diffDays} Hari</div>`;
-                else if (diffDays <= 8) badgeBox.innerHTML = `<div class="od-badge bdg-danger"><i class="fas fa-lock"></i><br>KUNCI!</div>`;
-                else badgeBox.innerHTML = `<div class="od-badge bdg-fatal"><i class="fas fa-skull"></i><br>TARIK!</div>`;
+            const rightContainer = document.getElementById('fcStatusRight');
+            
+            if(qLen > 0) {
+                rightContainer.innerHTML = `
+                    <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                        <span class="fc-val" style="color:var(--warning);">${qLen} <span style="font-size:12px; font-family:'Inter'; color:#aaa;">Antri</span></span>
+                        <span class="fc-lbl">~${qLen * 30} MNT TUNGGU</span>
+                    </div>`;
             } else {
-                menuDot.style.display = 'none'; badgeBox.style.display = 'none';
+                rightContainer.innerHTML = `
+                    <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                        <span class="fc-val" style="color:#D4FF00;">0${emptySlots} <span style="font-size:12px; font-family:'Inter'; color:#aaa;">Slot</span></span>
+                        <span class="fc-lbl" style="color:var(--success);">KOSONG</span>
+                    </div>`;
             }
         });
 
-        // --- SISTEM PENGINGAT GARASI EV PINTAR ---
-        const qSrv = query(collection(db, "mlu_personal_service"), where("plat", "==", myPlat));
-        onSnapshot(qSrv, (snap) => {
-            const today = new Date();
-            const tzOffset = today.getTimezoneOffset() * 60000;
-            const todayStr = new Date(today.getTime() - tzOffset).toISOString().split('T')[0];
-            
-            const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
-            const tomorrowStr = new Date(tomorrow.getTime() - tzOffset).toISOString().split('T')[0];
-            
-            const currHour = today.getHours();
-
-            snap.forEach(doc => {
-                const srv = doc.data();
-                const srvDate = srv.serviceDate;
-                
-                if (srvDate === todayStr) {
-                    const alertKey = `ev_alert_${srvDate}_today_v2`;
-                    if(!localStorage.getItem(alertKey)) {
-                        setTimeout(() => {
-                            showPremiumAlert(
-                                "JADWAL SERVIS EV", 
-                                `Hari ini adalah jadwal rutin cek komponen motor Anda:\n\n"${srv.note || 'Cek Kampas/Ban/Komstir'}"\n\nUtamakan keselamatan di jalan ya, Om!`, 
-                                "<i class='fas fa-tools'></i>", 
-                                "var(--warning)"
-                            );
-                            localStorage.setItem(alertKey, '1'); 
-                        }, 2000);
-                    }
-                } 
-                else if (srvDate === tomorrowStr && currHour >= 18) {
-                    const alertKey = `ev_alert_${srvDate}_h1_v2`;
-                    if(!localStorage.getItem(alertKey)) {
-                        setTimeout(() => {
-                            showPremiumAlert(
-                                "PERSIAPAN BESOK", 
-                                `Besok ada jadwal cek kondisi motor EV Anda:\n\n"${srv.note || 'Cek Kampas/Ban/Komstir'}"\n\nJangan sampai kelupaan ya, Om!`, 
-                                "<i class='fas fa-stopwatch'></i>", 
-                                "var(--electric-blue)"
-                            );
-                            localStorage.setItem(alertKey, '1');
-                        }, 2000);
-                    }
-                }
-            });
-        });
-
-        window.openSosModal = () => { document.getElementById('sosModal').style.display = 'flex'; };
-        window.closeSosModal = () => { document.getElementById('sosModal').style.display = 'none'; };
-
-        window.sendSos = () => {
-            const btn = document.getElementById('btnSendSos');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari Lokasi...';
-            btn.style.opacity = '0.7';
-
-            const sosType = document.getElementById('sosType').value;
-            const sosDesc = document.getElementById('sosDesc').value.trim() || "Tidak ada keterangan";
-            const myName = uData.namaKtp || uData.namaWa || uData.nama;
-
+        // 2. CEK JARAK LOKASI USER KE FC GADING
+        function cekJarakFC() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
-                        executeWa(sosType, sosDesc, myName, myPlat, mapsLink);
-                    },
-                    (error) => { executeWa(sosType, sosDesc, myName, myPlat, "(Lokasi GPS tidak diizinkan)"); }
-                );
-            } else {
-                executeWa(sosType, sosDesc, myName, myPlat, "(Perangkat tidak mendukung GPS)");
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    const lat = pos.coords.latitude; const lon = pos.coords.longitude;
+                    const p = 0.017453292519943295, c = Math.cos;
+                    const a = 0.5 - c((STATION_LAT - lat) * p)/2 + c(lat * p) * c(STATION_LAT * p) * (1 - c((STATION_LNG - lon) * p))/2;
+                    const distKm = 12742 * Math.asin(Math.sqrt(a)); 
+                    const estMenit = Math.ceil((distKm / 25) * 60); 
+                    
+                    document.getElementById('fcDistInfo').innerHTML = `<i class="fas fa-route"></i> ~${distKm.toFixed(1)} KM (${estMenit} mnt jalan)`;
+                }, () => {}, {timeout: 10000});
             }
-        };
+        }
 
-        function executeWa(type, desc, name, plat, loc) {
-            const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
-            const profileLink = `${baseUrl}data_anggota.html?cari=${encodeURIComponent(plat)}`;
-            const msg = `*🚨 LAPORAN DARURAT S.O.S (MLU) 🚨*\n\n*Pelapor:* ${name} (${plat})\n*Kendala:* ${type}\n*Keterangan:* ${desc}\n\n*📍 Titik Lokasi:*\n${loc}\n\n*👤 Cek Profil Pelapor:*\n${profileLink}\n\n_Mohon segera direspon, anggota butuh bantuan!_`;
-            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        // =========================================================================
+        // 3. LOGIKA TARIK DATA REALTIME UNTUK KOTAK KIRI (INFO UANG KAS & PASAR)
+        // =========================================================================
+        
+        // A. Tarik Data Uang Kas
+        onSnapshot(collection(db, "mlu_finance"), (snap) => {
+            let balance = 0;
+            snap.forEach(doc => {
+                const d = doc.data();
+                const amt = d.amount || 0;
+                const type = d.type === 'IN_COLLECTIVE' ? 'IN' : d.type;
+                if(type === 'IN') balance += amt;
+                else balance -= amt;
+            });
+            stateKasTotal = balance;
+            renderInfoFeedLive(); // Refresh kotak Kiri
+        });
+
+        // B. Tarik Data Pasar MLU (Ambil 2 terbaru)
+        onSnapshot(query(collection(db, "mlu_store"), orderBy("timestamp", "desc")), (snap) => {
+            stateStoreCount = snap.size;
+            stateStoreTitles = [];
+            let count = 0;
+            snap.forEach(doc => {
+                if(count < 2) stateStoreTitles.push(doc.data().title);
+                count++;
+            });
+            renderInfoFeedLive(); // Refresh kotak Kiri
+        });
+
+        // Render Kotak Kiri
+        function renderInfoFeedLive() {
+            const tgl = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short'});
             
-            const btn = document.getElementById('btnSendSos');
-            btn.innerHTML = '<i class="fab fa-whatsapp"></i> BAGIKAN S.O.S KE GRUP / KONTAK WA';
-            btn.style.opacity = '1';
+            let txtPasar = "";
+            if(stateStoreCount > 0) {
+                txtPasar = `Ada <b>${stateStoreCount} item</b> di Pasar MLU (${stateStoreTitles.join(', ')}...).`;
+            } else {
+                txtPasar = `Belum ada barang di Pasar MLU. Jadilah yang pertama jualan!`;
+            }
+
+            let blockInfo = `<div class="sf-block">
+                <div class="sf-item">Total kas MLU saat ini: <b>Rp. ${stateKasTotal.toLocaleString('id-ID')}</b>.<span class="sf-time"><i class="fas fa-wallet" style="color:var(--success)"></i> Info Keuangan</span></div>
+                <div class="sf-item">${txtPasar}<span class="sf-time"><i class="fas fa-shopping-cart" style="color:var(--electric-blue)"></i> Market</span></div>
+            </div>`;
             
-            window.closeSosModal();
-            window.location.href = url;
+            // Masukkan didobel agar animasi loop translateY(-50%) sangat mulus tanpa putus
+            document.getElementById('feedInfoBox').innerHTML = blockInfo + blockInfo; 
+        }
+
+        // =========================================================================
+        // 4. LOGIKA RADAR MEMBER FIREBASE (KOTAK KANAN)
+        // =========================================================================
+        async function initRadarLive() {
+            // A. Kirim Lokasi Kita ke Firebase
+            if (navigator.geolocation && uData.plat) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    try {
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+                        const data = await res.json();
+                        const area = data.address.suburb || data.address.village || "Lokasi Anda";
+                        
+                        // Simpan ke DB
+                        const radarRef = doc(db, "live_radar", uData.plat.replace(/\s/g, ''));
+                        await setDoc(radarRef, {
+                            nama: myName,
+                            lokasi: area,
+                            timestamp: Date.now()
+                        }, { merge: true });
+                    } catch (e) { console.log("Gagal update radar"); }
+                });
+            }
+
+            // B. Baca Lokasi Member Lain dari Firebase (Realtime 5 Terakhir)
+            const qRadar = query(collection(db, "live_radar"), orderBy("timestamp", "desc"), limit(5));
+            onSnapshot(qRadar, (snap) => {
+                let radarList = [];
+                snap.forEach(doc => {
+                    let d = doc.data();
+                    let timeText = hitungWaktuLalu(d.timestamp);
+                    radarList.push(`<div class="sf-item"><b>${d.nama}</b> terpantau di sekitar <span class="hl">${d.lokasi}</span>.<span class="sf-time"><i class="fas fa-map-marker-alt" style="color:var(--electric-blue)"></i> ${timeText}</span></div>`);
+                });
+
+                if(radarList.length === 0) radarList.push(`<div class="sf-item">Belum ada aktivitas member.</div>`);
+
+                let blockAct = `<div class="sf-block">${radarList.join('')}</div>`;
+                document.getElementById('feedActivityBox').innerHTML = blockAct + blockAct; // Dobel untuk animasi loop mulus
+            });
+        }
+
+        // Fungsi Hitung "Berapa menit yang lalu"
+        function hitungWaktuLalu(timestamp) {
+            const selisihDetik = Math.floor((Date.now() - timestamp) / 1000);
+            if (selisihDetik < 60) return "Baru saja";
+            if (selisihDetik < 3600) return Math.floor(selisihDetik/60) + " mnt lalu";
+            if (selisihDetik < 86400) return Math.floor(selisihDetik/3600) + " jam lalu";
+            return Math.floor(selisihDetik/86400) + " hari lalu";
         }
     </script>
 </body>
