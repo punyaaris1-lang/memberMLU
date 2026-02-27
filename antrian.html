@@ -296,7 +296,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONEKSI DATABASE ANTRIAN YANG BENAR (PUNYA BAPAK YANG ASLI)
+        // KONEKSI DATABASE ANTRIAN
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -425,15 +425,14 @@
         function updateUI() {
             const container = document.getElementById('slotsContainer'); container.innerHTML = ''; 
             let myQIndex = localQueue.findIndex(q => cleanStr(q.plat) === cleanStr(myPlat));
+            let amIFilling = localSlots.some(s => s && cleanStr(s.plat) === cleanStr(myPlat));
+            
             const btnCancel = document.getElementById('btnCancelQ'); const btnTake = document.getElementById('btnTakeQ');
             
             if(myQIndex > -1) { 
                 btnCancel.style.display = 'flex'; btnCancel.innerHTML = `❌ BATALKAN ANTRIAN SAYA (#${myQIndex+1})`; btnTake.style.display = 'none';
             } else { 
                 btnCancel.style.display = 'none'; 
-                let amIFilling = localSlots.some(s => s && cleanStr(s.plat) === cleanStr(myPlat));
-                
-                // FIX LOGIKA TOMBOL AMBIL ANTRIAN: SELALU TAMPIL KALAU BELUM NGANTRI DAN GAK DI SLOT
                 if(!amIFilling) {
                     btnTake.style.display = 'flex';
                     if(!isInLocation && !isSuperAdmin) { 
@@ -458,7 +457,7 @@
 
                     const durationMin = Math.floor((Date.now() - (s.startTime || Date.now())) / 60000);
                     
-                    // --- TOMBOL KUDETA USER BIASA (Muncul Otomatis) ---
+                    // --- TOMBOL KUDETA USER BIASA ---
                     let userKudetaBtn = '';
                     if (!isMe) { 
                         if (myQIndex === 0 && durationMin >= 20) {
@@ -472,7 +471,6 @@
                     
                     let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
                     
-                    // ANTI-UNDEFINED BATRE
                     let batreValue = s.batre || s.battery; 
                     let batreInfo = (batreValue && batreValue !== '-' && batreValue !== 'undefined') ? `<span class="badge-batre"><i class="fas fa-bolt"></i> ${batreValue}</span>` : '';
                     
@@ -492,14 +490,26 @@
                     
                     if(isMe) { div.onclick = () => { if(confirm("Selesai pengisian?")) stopCharging(i); }; div.style.cursor = "pointer"; }
                 } else {
+                    // SLOT KOSONG
                     div.className = `slot-bay is-empty`;
                     let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="bukaDaftarAdmin(${i})"><i class="fas fa-plus"></i></button>` : '';
                     let actionHtml = '';
 
-                    if (localQueue.length === 0 || myQIndex === 0) {
+                    // PERBAIKAN LOGIKA: "ONE-CLICK SLOT TRANSFER DARI ANTRIAN"
+                    // Jika user ada di antrian (urutan ke berapa pun), dia bisa langsung klik masuk slot kosong
+                    // Tanpa harus keluar antrian dulu
+                    if (myQIndex > -1) {
+                        actionHtml = `<button class="btn-action-main btn-fill" style="background:var(--success); box-shadow:var(--glow-green);" onclick="pindahDariAntrianKeSlot(${i})"><i class="fas fa-bolt"></i> MASUK SLOT</button>`; 
+                    } 
+                    // Jika user belum ngantri dan belum ngecas
+                    else if (localQueue.length === 0 && !amIFilling) {
                         if (isInLocation || isSuperAdmin) actionHtml = `<button class="btn-action-main btn-fill" onclick="mintaBatre('slot', ${i})">MASUK SLOT</button>`; 
                         else actionHtml = `<button class="btn-action-main btn-disabled">HARUS DI LOKASI</button>`;
-                    } else if (myQIndex > 0) actionHtml = `<div style="font-size:11px; color:var(--text-muted); font-weight:800;">MENUNGGU GILIRAN</div>`; 
+                    } 
+                    // Jika ada antrian lain dan user belum masuk antrian
+                    else if (localQueue.length > 0 && !amIFilling) {
+                        actionHtml = `<button class="btn-action-main btn-disabled">ANTRIAN BERJALAN</button>`;
+                    }
 
                     div.innerHTML = `
                         <div class="sb-num">${i+1}</div>
@@ -515,7 +525,26 @@
             document.getElementById('nextQDisplay').innerText = localQueue.length > 0 ? localQueue[0].userName : "KOSONG";
         }
 
-        // --- SISTEM KUDETA INSTAN USER BIASA (TANPA FORM BATRE) ---
+        // --- SISTEM PINDAH LANGSUNG DARI ANTRIAN KE SLOT (USER BIASA) ---
+        window.pindahDariAntrianKeSlot = (slotIndex) => {
+            runTransaction(db, async(t) => {
+                const d = (await t.get(mainRef)).data();
+                if(d.chargingSlots[slotIndex] !== null) throw "Mohon maaf, Slot ini baru saja terisi!";
+                
+                let q = d.waitingQueue || [];
+                const myIdx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat));
+                if(myIdx === -1) throw "Data antrian Anda tidak ditemukan.";
+                
+                // Pindahkan langsung tanpa minta batre (karena batre udah diisi pas masuk antrian)
+                let me = q.splice(myIdx, 1)[0];
+                me.startTime = Date.now();
+                d.chargingSlots[slotIndex] = me;
+                
+                t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q });
+            }).catch(e => alert(e));
+        };
+
+        // --- SISTEM KUDETA INSTAN USER BIASA ---
         window.userTriggerKudeta = (idx, plat) => {
             if(!confirm(`YAKIN INGIN MENGKUDETA SLOT INI (${plat})?\nPengguna ini sudah melewati batas waktu dan akan dikeluarkan paksa.`)) return;
             
@@ -526,23 +555,17 @@
                 const myIdx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat));
                 if(myIdx === -1) throw "Anda tidak ada di antrian!";
                 
-                // Cabut dari antrian beserta data batrenya
                 let me = q.splice(myIdx, 1)[0]; 
-                
                 me.userName = me.userName + " 👑";
                 me.role = "KUDETA";
                 me.startTime = Date.now();
                 
-                // Tindih slot korban
                 d.chargingSlots[idx] = me;
-                
                 t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
-            }).then(() => { 
-                alert("KUDETA BERHASIL! Anda langsung menempati slot."); 
-            }).catch(e => alert(e));
+            }).then(() => { alert("KUDETA BERHASIL! Anda langsung menempati slot."); }).catch(e => alert(e));
         };
 
-        // --- SISTEM INPUT BATRE MEMBER (UNTUK AMBIL ANTRIAN BIASA) ---
+        // --- SISTEM INPUT BATRE MEMBER (BARU DAFTAR) ---
         window.mintaBatre = (tipeAction, slotIndex) => {
             if(blockedList.includes(cleanStr(myPlat))) return alert("Maaf, Plat Anda diblokir Admin.");
             memberActionType = tipeAction; memberActionSlotIdx = slotIndex;
@@ -559,7 +582,6 @@
                 runTransaction(db, async(t) => {
                     const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || [];
                     if(q.some(x => cleanStr(x.plat) === cleanStr(myPlat))) throw "Anda sudah mengantri!";
-                    // Simpan variabel batre DAN battery untuk cross-compatibility
                     q.push({ plat: myPlat, userName: myName, role: myRole, batre: batreFinal, battery: batreFinal, time: Date.now() });
                     t.update(mainRef, { waitingQueue: q });
                 }).catch(e => alert(e));
@@ -576,7 +598,6 @@
                     t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
                 }).catch(e => alert(e)); 
             } else if (memberActionType === 'kudeta') {
-                // LOGIKA INI DIPAKAI OLEH ADMIN KARENA ADMIN MINTA INPUT BATRE DULU
                 runTransaction(db, async(t) => {
                     const d = (await t.get(mainRef)).data();
                     let q = d.waitingQueue || [];
@@ -597,7 +618,6 @@
         window.adminKick = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
         window.adminToQueue = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot]; if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
 
-        // TRIGGER KUDETA DARI MENU ADMIN
         window.adminTriggerKudeta = () => {
             if(!confirm("YAKIN INGIN MENGKUDETA SLOT INI?\nPengguna ini akan dikeluarkan paksa, dan plat Anda akan menempati slot ini!")) return;
             memberActionType = 'kudeta';
@@ -606,7 +626,6 @@
             setTimeout(() => { openSheet('sheetInputBatre'); }, 300);
         };
 
-        // BUKA FORM DAFTAR VIA ADMIN
         window.bukaDaftarAdmin = (slotIndex) => {
             currentTargetSlot = slotIndex; 
             document.getElementById('inpAdminNama').value = ''; document.getElementById('inpAdminPlat').value = ''; document.getElementById('inpAdminBatre').value = '';
@@ -633,7 +652,6 @@
             }).then(() => { forceCloseSheet('sheetDaftarAdmin'); }).catch(e => alert(e));
         };
 
-        // FITUR BARU ADMIN: TENDANG DARI ANTRIAN KE SLOT
         window.adminPromoteToSlot = (index) => {
             runTransaction(db, async(t) => {
                 const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; let slots = d.chargingSlots || [null, null, null];
