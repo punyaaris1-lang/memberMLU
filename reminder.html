@@ -486,7 +486,7 @@
         }
 
         // ================================================================
-        // FITUR BARU: ADMIN MONITOR (AUTO LOOKUP NAMA)
+        // ADMIN MONITOR (FITUR CARI NAMA TANPA SPASI)
         // ================================================================
         window.openAdminMonitor = async () => {
             if(!isSuperAdmin) return;
@@ -494,14 +494,13 @@
             document.getElementById('monitorList').innerHTML = "";
             document.getElementById('monitorLoading').style.display = "block";
 
-            // 1. Tarik SEMUA data unpaid
+            // 1. Tarik Data Hutang
             const qAllUnpaid = query(collection(db, "mlu_personal_od"), where("status", "==", "UNPAID"));
             
             try {
                 const snap = await getDocs(qAllUnpaid);
                 let mapDebtors = {};
 
-                // 2. Kelompokkan
                 snap.forEach(doc => {
                     let d = doc.data();
                     let plat = d.plat || "Tanpa Plat";
@@ -509,42 +508,42 @@
                     mapDebtors[plat] += (d.amount || 0);
                 });
 
-                // 3. Convert ke Array & Sortir
                 let sortedList = Object.keys(mapDebtors).map(plat => {
                     return { plat: plat, total: mapDebtors[plat] };
                 }).sort((a, b) => b.total - a.total);
 
-                // 4. AUTO-LOOKUP NAMA DARI DATABASE MEMBERS (ASYNC PARALLEL)
-                const promises = sortedList.map(async (item) => {
-                    const clean = item.plat.replace(/\s/g, ''); // Hapus spasi untuk jadi ID
-                    const docRef = doc(db, "members", clean);
-                    const docSnap = await getDoc(docRef);
-                    let realName = "Tanpa Nama";
-                    
-                    if (docSnap.exists()) {
-                        let m = docSnap.data();
-                        realName = m.namaKtp || m.namaWa || m.nama || "Tanpa Nama";
+                // 2. Tarik Data SEMUA MEMBER untuk Kamus Nama (TANPA SPASI)
+                const membersSnap = await getDocs(collection(db, "members"));
+                let memberMap = {};
+                
+                membersSnap.forEach(doc => {
+                    let m = doc.data();
+                    // Normalisasi: Hapus spasi, upper case
+                    let cleanPlat = m.plat ? m.plat.replace(/\s/g, '').toUpperCase() : "";
+                    if(cleanPlat) {
+                        memberMap[cleanPlat] = m.namaKtp || m.namaWa || m.nama || "Member";
                     }
-                    return { ...item, name: realName };
                 });
-
-                // Tunggu semua nama ketemu
-                const finalResults = await Promise.all(promises);
 
                 document.getElementById('monitorLoading').style.display = "none";
                 
                 const container = document.getElementById('monitorList');
-                if (finalResults.length === 0) {
+                if (sortedList.length === 0) {
                     container.innerHTML = `<div style="text-align:center; color:var(--success); font-weight:bold; margin-top:20px;">Tidak ada tunggakan.</div>`;
                 } else {
-                    finalResults.forEach((item, index) => {
+                    sortedList.forEach((item, index) => {
                         let rankClass = index < 3 ? "top" : "";
+                        
+                        // Kunci Sukses: Hapus spasi dari Plat Hutang saat mencari di kamus
+                        let lookupKey = item.plat.replace(/\s/g, '').toUpperCase();
+                        let realName = memberMap[lookupKey] || "Belum Terdaftar";
+
                         container.innerHTML += `
                             <div class="mon-item">
                                 <div class="mon-left">
                                     <div class="mon-rank ${rankClass}">#${index+1}</div>
                                     <div class="mon-info">
-                                        <div class="mon-name">${item.name}</div>
+                                        <div class="mon-name">${realName}</div>
                                         <div class="mon-plat">${item.plat}</div>
                                     </div>
                                 </div>
