@@ -13,13 +13,14 @@
         :root { 
             --royal-blue: #0A2259; 
             --electric-blue: #2D63ED; 
-            --bg-surface: #F0F4F8; /* Light gray-blue background */
+            --bg-surface: #F0F4F8; 
             --white: #FFFFFF; 
             --text-main: #0F172A; 
             --text-muted: #64748B; 
             --danger: #EF4444; 
             --warning: #F59E0B; 
             --success: #10B981;
+            --gold: #D4AF37;
             
             --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
             --glow-red: 0 10px 25px rgba(239, 68, 68, 0.25);
@@ -40,7 +41,7 @@
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: #93C5FD; text-transform: uppercase; margin-bottom: 5px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
         .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
 
-        /* --- CALENDAR UI GLASSMORPHISM --- */
+        /* --- CALENDAR UI --- */
         .cal-wrapper { padding: 0 20px; margin-top: -40px; position: relative; z-index: 10; }
         .cal-card { 
             background: rgba(255,255,255,0.85); backdrop-filter: blur(15px);
@@ -63,7 +64,7 @@
         .cal-cell.has-event { border-color: rgba(45,99,237,0.2); background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .cal-cell.is-libur { background: #FFFBEB; color: var(--warning); border: 1px dashed #FDE68A; }
         
-        /* Event Markers Glowing */
+        /* Event Markers */
         .marker-container { display: flex; gap: 3px; position: absolute; bottom: 5px; }
         .dot { width: 6px; height: 6px; border-radius: 50%; }
         .dot-od-unpaid { background: var(--danger); box-shadow: 0 0 8px rgba(239,68,68,0.8); }
@@ -74,7 +75,7 @@
         .legend-box { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
         .leg-item { display: flex; align-items: center; gap: 4px; }
 
-        /* --- BOTTOM SHEET MODAL GLASS --- */
+        /* --- BOTTOM SHEET --- */
         .sheet-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(5px); display: none; align-items: flex-end; z-index: 20000; opacity: 0; transition: opacity 0.3s; }
         .sheet-overlay.show { display: flex; opacity: 1; }
         .bottom-sheet { 
@@ -89,7 +90,7 @@
         .dt-header { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; text-align: center; }
         .dt-sub { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 20px; }
 
-        /* LIST EVENT HARI INI */
+        /* LIST EVENT */
         .event-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         .event-card { padding: 15px; border-radius: 16px; border-left: 4px solid; background: rgba(248, 250, 252, 0.8); display: flex; justify-content: space-between; align-items: center; border-right: 1px solid rgba(226,232,240,0.8); border-top: 1px solid rgba(226,232,240,0.8); border-bottom: 1px solid rgba(226,232,240,0.8); box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
         .ec-unpaid { border-left-color: var(--danger); }
@@ -99,27 +100,42 @@
         .ec-title { font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
         .ec-desc { font-size: 10px; color: var(--text-muted); font-weight: 600; }
         .ec-btn { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-red); transition: 0.2s; }
-        .ec-btn:active { transform: scale(0.95); }
-
+        
         /* ACTION BUTTONS */
         .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn-sheet-act { padding: 15px; border-radius: 16px; border: none; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s; text-align:center;}
-        .btn-sheet-act:active { transform: scale(0.95); }
         .bg-red { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
         .bg-dark { background: rgba(15,23,42,0.05); color: var(--text-main); border: 1px solid rgba(15,23,42,0.2); }
 
-        /* --- FORMS (MODAL) --- */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; transition: 0.2s;}
-        .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 15px rgba(45,99,237,0.1);}
-        .btn-save { width: 100%; padding: 18px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: var(--glow-blue); letter-spacing: 1px;}
+        /* --- FAB ADMIN MONITOR --- */
+        .fab-admin { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: var(--royal-blue); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--glow-blue); border: none; cursor: pointer; z-index: 1000; transition: 0.2s;}
+        .fab-admin:active { transform: scale(0.9); }
+        .admin-only { display: none; }
+
+        /* LIST MONITOR ADMIN */
+        .monitor-list { display: flex; flex-direction: column; gap: 10px; }
+        .mon-item { background: white; padding: 15px; border-radius: 16px; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .mon-left { display: flex; align-items: center; gap: 15px; flex: 1; }
+        .mon-rank { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: #CBD5E1; min-width: 25px;}
+        .mon-rank.top { color: var(--gold); text-shadow: 0 0 10px rgba(212,175,55,0.4); }
+        
+        .mon-info { display: flex; flex-direction: column; }
+        .mon-name { font-weight: 800; font-size: 13px; color: var(--text-main); text-transform: uppercase; }
+        .mon-plat { font-size: 10px; font-weight: 700; color: var(--text-muted); margin-top: 2px;}
+        
+        .mon-total { font-family: 'Space Grotesk'; font-weight: 900; color: var(--danger); font-size: 14px; text-align: right; }
 
         /* UPCOMING LIST GLASS */
         .upc-item { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); display:flex; justify-content:space-between; padding:15px; border: 1px solid rgba(45,99,237,0.15); border-radius: 16px; margin-bottom: 8px; box-shadow: 0 5px 15px rgba(45,99,237,0.05); align-items:center; }
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--glow-blue); }
+        
+        /* FORMS */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; }
+        .btn-save { width: 100%; padding: 18px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: var(--glow-blue); letter-spacing: 1px;}
     </style>
 </head>
 <body>
@@ -149,9 +165,6 @@
                 <div class="leg-item"><div class="dot dot-service"><i class="fas fa-wrench" style="font-size:6px;"></i></div> Servis EV</div>
                 <div class="leg-item"><div class="dot" style="background:#FFFBEB; border:1px dashed #FDE68A; width:10px; height:10px; border-radius:3px;"></div> Libur OD</div>
             </div>
-            <div style="text-align:center; font-size:9px; color:#94A3B8; margin-top:10px; font-family:'Inter';">
-                <i class="fas fa-robot"></i> Sistem OD Berlanjut Otomatis Aktif
-            </div>
         </div>
     </div>
 
@@ -160,6 +173,10 @@
         <div id="upcomingList"></div>
     </div>
 
+    <button class="fab-admin admin-only" onclick="openAdminMonitor()">
+        <i class="fas fa-eye"></i>
+    </button>
+
     <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
 
     <div class="sheet-overlay" id="dateSheet" onclick="closeSheet(event, this.id)">
@@ -167,9 +184,7 @@
             <div class="sheet-handle"></div>
             <div class="dt-header" id="selDateTitle">25 Feb 2026</div>
             <div class="dt-sub" id="selDateSub">Kelola agenda di tanggal ini</div>
-
             <div class="event-list" id="dayEventList"></div>
-
             <div class="action-grid">
                 <button class="btn-sheet-act bg-red" onclick="openForm('OD')"><i class="fas fa-file-invoice-dollar" style="font-size:20px;"></i> CATAT OD BARU</button>
                 <button class="btn-sheet-act bg-dark" onclick="openForm('SERVIS')"><i class="fas fa-tools" style="font-size:20px;"></i> REMINDER SERVIS</button>
@@ -181,9 +196,7 @@
         <div class="bottom-sheet" onclick="event.stopPropagation()">
             <div class="sheet-handle"></div>
             <div class="dt-header" id="formTitle">Formulir</div>
-            
             <input type="hidden" id="formType">
-
             <div class="form-group" id="grpNominal">
                 <label>Nominal OD Harian (Rp)</label>
                 <input type="number" id="inpAmount" class="form-input" placeholder="Contoh: 50000">
@@ -192,7 +205,6 @@
                 <label id="lblKet">Keterangan</label>
                 <input type="text" id="inpNote" class="form-input" placeholder="Misal: Ganti Kampas Rem / Ban">
             </div>
-
             <button class="btn-save" id="btnSaveData" style="background:var(--electric-blue); color:white;" onclick="saveData()">SIMPAN AGENDA</button>
         </div>
     </div>
@@ -210,9 +222,24 @@
         </div>
     </div>
 
+    <div class="sheet-overlay" id="adminMonitorSheet" style="z-index: 23000;" onclick="closeSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="dt-header" style="color:var(--danger);"><i class="fas fa-eye"></i> PANTAU TUNGGAKAN</div>
+            <div class="dt-sub">Top User dengan Total OD Tertinggi (Global)</div>
+            
+            <div id="monitorLoading" style="text-align:center; padding:20px; color:#94A3B8;">Mengambil Data & Mencari Nama...</div>
+            <div class="monitor-list" id="monitorList"></div>
+            
+            <div style="margin-top:20px; text-align:center; font-size:10px; color:var(--text-muted);">
+                Data ini rahasia dan hanya terlihat oleh Pengurus/Admin.
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // FIREBASE MLU ASLI
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
@@ -222,6 +249,12 @@
         if(!u || !u.plat) window.location.href = 'index.html';
         const myPlat = u.plat;
         const myRole = (u.role || "").toUpperCase();
+        const isSuperAdmin = u.isSuperAdmin || (myRole !== 'KELUARGA MLU' && myRole !== 'GUEST' && myRole !== 'NON-MEMBER');
+
+        // AKTIFKAN TOMBOL ADMIN JIKA BERHAK
+        if(isSuperAdmin) { 
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); 
+        }
 
         // STATE KALENDER
         let currDate = new Date();
@@ -229,7 +262,7 @@
         let currYear = currDate.getFullYear();
         let selectedDateStr = ""; 
 
-        // STATE DATA
+        // STATE DATA PERSONAL
         let odData = [];
         let serviceData = [];
         let eventMap = {}; 
@@ -237,17 +270,13 @@
 
         const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-        // FUNGSI CEK LIBUR BERDASARKAN ROLE
         function isLibur(dateStr) {
             let d = parseInt(dateStr.split('-')[2]);
-            if (myRole.includes('TRANSGO')) {
-                return (d === 29 || d === 30 || d === 31);
-            } else {
-                return (d === 14 || d === 28 || d === 31);
-            }
+            if (myRole.includes('TRANSGO')) return (d === 29 || d === 30 || d === 31);
+            else return (d === 14 || d === 28 || d === 31);
         }
 
-        // --- FETCH FIREBASE ---
+        // --- FETCH DATA PERSONAL ---
         const qOD = query(collection(db, "mlu_personal_od"), where("plat", "==", myPlat));
         const qSrv = query(collection(db, "mlu_personal_service"), where("plat", "==", myPlat));
 
@@ -271,10 +300,8 @@
                 }
             });
 
-            // 1. Render UI Terlebih Dahulu Agar Tidak Stuck Loading
             buildEventMap();
 
-            // 2. Eksekusi Auto-Generate di Background
             const tzOffset = (new Date()).getTimezoneOffset() * 60000;
             const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
 
@@ -376,7 +403,6 @@
             renderCalendar();
         };
 
-        // --- INTERAKSI KLIK TANGGAL ---
         window.clickDate = (dateStr, dayNum) => {
             selectedDateStr = dateStr;
             document.getElementById('selDateTitle').innerText = `${dayNum} ${monthNames[currMonth]} ${currYear}`;
@@ -425,7 +451,6 @@
             document.getElementById('dateSheet').classList.add('show');
         };
 
-        // --- RENDER UPCOMING (MENAMPILKAN SEMUA TUNGGAKAN LAMA) ---
         function renderUpcoming() {
             const list = document.getElementById('upcomingList');
             list.innerHTML = '';
@@ -434,16 +459,9 @@
             const todayStr = (new Date(Date.now() - tzOffset)).toISOString().split('T')[0];
             let upc = [];
 
-            // Tangkap SEMUA OD yang Nunggak (Walau tanggal sudah lewat)
-            odData.forEach(d => { 
-                if(d.status === 'UNPAID') upc.push({ type: 'OD', date: d.dueDate, data: d }); 
-            });
-            // Untuk Servis, hanya yang hari ini dan mendatang
-            serviceData.forEach(d => { 
-                if(d.serviceDate >= todayStr) upc.push({ type: 'SRV', date: d.serviceDate, data: d }); 
-            });
+            odData.forEach(d => { if(d.status === 'UNPAID') upc.push({ type: 'OD', date: d.dueDate, data: d }); });
+            serviceData.forEach(d => { if(d.serviceDate >= todayStr) upc.push({ type: 'SRV', date: d.serviceDate, data: d }); });
 
-            // Urutkan dari terlama ke terbaru
             upc.sort((a,b) => new Date(a.date) - new Date(b.date));
 
             if(upc.length === 0) {
@@ -451,7 +469,6 @@
                 return;
             }
 
-            // Tampilkan max 5 item agar rapi
             upc.slice(0, 5).forEach(item => {
                 let dt = new Date(item.date).toLocaleDateString('id-ID', {day:'numeric', month:'short'});
                 let badgeNunggak = (item.type === 'OD' && item.date < todayStr) ? `<span style="background:var(--danger); color:white; padding:2px 6px; border-radius:4px; font-size:8px; margin-left:5px; vertical-align:middle; box-shadow:var(--glow-red);">NUNGGAK</span>` : '';
@@ -468,17 +485,89 @@
             }
         }
 
-        // --- SISTEM MODAL UI ---
+        // ================================================================
+        // FITUR BARU: ADMIN MONITOR (AUTO LOOKUP NAMA)
+        // ================================================================
+        window.openAdminMonitor = async () => {
+            if(!isSuperAdmin) return;
+            document.getElementById('adminMonitorSheet').classList.add('show');
+            document.getElementById('monitorList').innerHTML = "";
+            document.getElementById('monitorLoading').style.display = "block";
+
+            // 1. Tarik SEMUA data unpaid
+            const qAllUnpaid = query(collection(db, "mlu_personal_od"), where("status", "==", "UNPAID"));
+            
+            try {
+                const snap = await getDocs(qAllUnpaid);
+                let mapDebtors = {};
+
+                // 2. Kelompokkan
+                snap.forEach(doc => {
+                    let d = doc.data();
+                    let plat = d.plat || "Tanpa Plat";
+                    if(!mapDebtors[plat]) mapDebtors[plat] = 0;
+                    mapDebtors[plat] += (d.amount || 0);
+                });
+
+                // 3. Convert ke Array & Sortir
+                let sortedList = Object.keys(mapDebtors).map(plat => {
+                    return { plat: plat, total: mapDebtors[plat] };
+                }).sort((a, b) => b.total - a.total);
+
+                // 4. AUTO-LOOKUP NAMA DARI DATABASE MEMBERS (ASYNC PARALLEL)
+                const promises = sortedList.map(async (item) => {
+                    const clean = item.plat.replace(/\s/g, ''); // Hapus spasi untuk jadi ID
+                    const docRef = doc(db, "members", clean);
+                    const docSnap = await getDoc(docRef);
+                    let realName = "Tanpa Nama";
+                    
+                    if (docSnap.exists()) {
+                        let m = docSnap.data();
+                        realName = m.namaKtp || m.namaWa || m.nama || "Tanpa Nama";
+                    }
+                    return { ...item, name: realName };
+                });
+
+                // Tunggu semua nama ketemu
+                const finalResults = await Promise.all(promises);
+
+                document.getElementById('monitorLoading').style.display = "none";
+                
+                const container = document.getElementById('monitorList');
+                if (finalResults.length === 0) {
+                    container.innerHTML = `<div style="text-align:center; color:var(--success); font-weight:bold; margin-top:20px;">Tidak ada tunggakan.</div>`;
+                } else {
+                    finalResults.forEach((item, index) => {
+                        let rankClass = index < 3 ? "top" : "";
+                        container.innerHTML += `
+                            <div class="mon-item">
+                                <div class="mon-left">
+                                    <div class="mon-rank ${rankClass}">#${index+1}</div>
+                                    <div class="mon-info">
+                                        <div class="mon-name">${item.name}</div>
+                                        <div class="mon-plat">${item.plat}</div>
+                                    </div>
+                                </div>
+                                <div class="mon-total">Rp ${item.total.toLocaleString('id-ID')}</div>
+                            </div>
+                        `;
+                    });
+                }
+
+            } catch (e) {
+                document.getElementById('monitorLoading').innerText = "Gagal memuat data.";
+                console.error(e);
+            }
+        };
+
         window.closeSheet = (e, id) => { if(e.target.id === id) document.getElementById(id).classList.remove('show'); };
         
         window.openForm = (type) => {
             if(type === 'OD' && isLibur(selectedDateStr)) {
                 if(!confirm("Tanggal ini adalah Jadwal Libur OD Anda. Yakin tetap ingin membuat tagihan manual di tanggal ini?")) return;
             }
-
             document.getElementById('formType').value = type;
             document.getElementById('formTitle').innerText = type === 'OD' ? "Tambah Tagihan OD" : "Reminder Servis EV";
-            
             if(type === 'OD') {
                 document.getElementById('grpNominal').style.display = 'block';
                 document.getElementById('lblKet').innerText = "Keterangan OD";
@@ -488,10 +577,8 @@
                 document.getElementById('lblKet').innerText = "Bagian Yang Dicek";
                 document.getElementById('inpNote').placeholder = "Misal: Kampas Rem, Ban, Komstir";
             }
-            
             document.getElementById('inpAmount').value = '';
             document.getElementById('inpNote').value = '';
-            
             document.getElementById('formSheet').classList.add('show');
         };
 
@@ -500,7 +587,6 @@
             document.getElementById('paySheet').classList.add('show');
         }
 
-        // --- CRUD FIREBASE ---
         window.saveData = async () => {
             const type = document.getElementById('formType').value;
             const amt = type === 'OD' ? (parseInt(document.getElementById('inpAmount').value) || 0) : 0;
@@ -542,7 +628,6 @@
             }
         };
 
-        // Init OnLoad
         renderCalendar();
     </script>
 </body>
