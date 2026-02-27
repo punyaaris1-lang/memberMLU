@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLU - Super App Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root { 
+            --royal-blue: #0A2259; 
+            --electric-blue: #2D63ED; 
+            --bg-surface: #F0F4F8; 
+            --text-main: #0F172A; 
+            --text-muted: #64748B; 
+            --danger: #EF4444; 
+            --success: #10B981; 
+            --warning: #F59E0B; 
+            --gold: #D4AF37;
+            
+            --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
+            --glow-red: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+        
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; -webkit-font-smoothing: antialiased; overflow-x: hidden; touch-action: manipulation; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; text-decoration: none; }
+
+        /* --- HEADER & PROFILE --- */
+        .header-bg { 
+            background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
+            padding: 35px 20px 35px; 
+            border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; 
+            position: relative; box-shadow: var(--glow-blue); 
+            border-bottom: 2px solid rgba(45, 99, 237, 0.3);
+        }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white; }
+        .greeting { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; line-height: 1.1; text-shadow: 0 2px 10px rgba(255,255,255,0.2); }
+        .date-text { font-size: 10px; font-weight: 800; color: #93C5FD; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+        .btn-settings { color: white; opacity: 0.9; font-size: 24px; cursor: pointer; }
+
+        .profile-card { 
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); 
+            backdrop-filter: blur(15px); padding: 12px 15px; border-radius: 18px; 
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .p-left { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden;}
+        .p-photo { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 2px solid white; background: #E2E8F0; }
+        .p-info { color: white; overflow: hidden; }
+        .p-role { font-size: 9px; font-weight: 800; background: var(--gold); color: #000; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 2px; }
+        .p-name { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+        .p-plat { font-size: 10px; font-weight: 600; color: #E2E8F0; margin-top: 2px; }
+        .p-divider { width: 1px; height: 35px; background: rgba(255,255,255,0.2); margin: 0 10px; }
+        
+        .p-fc-status { display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; min-width: 60px; cursor: pointer; transition: 0.2s;}
+        .p-fc-status:active { transform: scale(0.9); }
+        .pfc-title { font-size: 9px; font-weight: 800; color: #93C5FD; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; margin-bottom: 2px;}
+        .pfc-val { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; line-height: 1; display: flex; flex-direction: column; align-items: center;}
+
+        /* --- MARQUEE --- */
+        .marquee-box { margin: 15px 20px; background: white; border: 1px solid rgba(45,99,237,0.1); border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
+        .mq-icon { color: var(--danger); font-size: 12px; animation: ring 2s infinite; }
+        .mq-content { flex: 1; overflow: hidden; white-space: nowrap; }
+        .mq-text { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; font-size: 11px; font-weight: 700; color: var(--text-main); }
+        .mq-text span.hi-blue { color: var(--electric-blue); font-weight: 900; margin-left: 15px;}
+        .mq-text span.hi-green { color: var(--success); font-weight: 900; margin-left: 15px;}
+
+        /* --- DASHBOARD WIDGETS --- */
+        .dash-container { padding: 0 20px; margin-bottom: 20px; }
+        
+        /* PETA (RADAR MEMBER) */
+        .map-section { background: white; border-radius: 16px; box-shadow: 0 5px 20px rgba(45,99,237,0.1); border: 1px solid rgba(45,99,237,0.15); position: relative; overflow: hidden; min-height: 335px;}
+        .map-header { position: absolute; top: 12px; left: 12px; z-index: 400; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); padding: 6px 12px; border-radius: 10px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 900; color: var(--royal-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;}
+        .map-header i { color: var(--danger); animation: pulseBadge 2s infinite; }
+        
+        .btn-refresh-map { position: absolute; top: 12px; right: 12px; z-index: 400; background: rgba(255,255,255,0.95); border: 1px solid rgba(45,99,237,0.2); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--electric-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; font-size: 14px;}
+        .btn-refresh-map:active { transform: scale(0.9) rotate(45deg); background: var(--electric-blue); color: white;}
+        
+        #mapContainer { height: 260px; width: 100%; z-index: 1; background: #E2E8F0; } /* Tambah background biar gak putih polos pas loading */
+        
+        .radar-text-box { background: rgba(248, 250, 252, 0.9); padding: 10px 15px; border-top: 1px solid #E2E8F0; height: 75px; overflow: hidden; position: relative; }
+        .radar-text-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 10px; background: linear-gradient(180deg, rgba(248,250,252,1), transparent); z-index: 2; pointer-events: none;}
+        .radar-text-box::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 10px; background: linear-gradient(0deg, rgba(248,250,252,1), transparent); z-index: 2; pointer-events: none;}
+        
+        .sf-scroll-container { display: flex; flex-direction: column; animation: seamlessScroll 35s linear infinite; }
+        .sf-block { display: flex; flex-direction: column; gap: 8px; padding-top: 5px; }
+        .sf-item { font-size: 10px; color: var(--text-main); line-height: 1.4; font-weight: 500; display: flex; align-items: flex-start; gap: 8px;}
+        .sf-item i { color: var(--electric-blue); font-size: 12px; margin-top: 2px;}
+        .sf-item b { color: var(--royal-blue); font-weight: 800; }
+        .sf-item span.hl { color: var(--success); font-weight: 700; }
+        .sf-time { font-size: 8px; color: var(--text-muted); font-weight: 800; display: block; margin-top: 2px;}
+
+        /* --- 8 MENU GRID --- */
+        .menu-container { padding: 0 20px; position: relative; z-index: 10; margin-bottom: 20px;}
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .menu-btn { background: rgba(255, 255, 255, 0.9); border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid rgba(45, 99, 237, 0.15); box-shadow: 0 5px 15px rgba(45, 99, 237, 0.05); transition: 0.2s; cursor: pointer; }
+        .menu-btn:active { transform: scale(0.95); border-color: var(--electric-blue); }
+        .icon-box { width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px; color: white; }
+        .ic-anggota { background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%); }
+        .ic-pengurus { background: linear-gradient(135deg, var(--gold) 0%, #B48500 100%); }
+        .ic-keuangan { background: linear-gradient(135deg, var(--success) 0%, #059669 100%); }
+        .ic-antrian { background: linear-gradient(135deg, #0891B2 0%, #0369A1 100%); }
+        .ic-reminder { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); }
+        .ic-info { background: linear-gradient(135deg, #8B5CF6 0%, #4338CA 100%); }
+        .ic-pasar { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
+        .ic-tour { background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%); }
+        .menu-title { font-family: 'Space Grotesk'; font-size: 12px; font-weight: 900; color: var(--royal-blue); margin-bottom: 2px; }
+        .menu-desc { font-size: 8px; font-weight: 600; color: var(--text-muted); line-height: 1.2; }
+
+        /* --- FLOATING CHAT BUTTON (BIRU) --- */
+        .chat-fab {
+            position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--electric-blue), var(--royal-blue));
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: #fff; z-index: 10000; cursor: pointer;
+            box-shadow: var(--glow-blue); border: 2px solid rgba(255,255,255,0.2);
+            transition: 0.3s;
+        }
+        .chat-fab:active { transform: scale(0.9); }
+        .chat-badge { position: absolute; top: 0; right: 0; background: var(--danger); width: 15px; height: 15px; border-radius: 50%; border: 2px solid white; display: none; }
+
+        /* --- FLOATING SOS BUTTON (MERAH) --- */
+        .floating-sos {
+            position: fixed; bottom: 165px; right: 20px; width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--danger), #991B1B);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: #fff; text-decoration: none; z-index: 10000;
+            border: 2px solid #FCA5A5; box-shadow: var(--glow-red), inset 0 0 15px rgba(255,255,255,0.4);
+            animation: pulseSOS 1.5s infinite; cursor: pointer;
+        }
+        .floating-sos i { animation: tilt-shaking 0.5s infinite alternate; }
+        .floating-sos::after { content: 'U.R.C'; position: absolute; bottom: -15px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 9px; color: var(--danger); left: 50%; transform: translateX(-50%); }
+
+        /* --- SLIDING CHAT DRAWER --- */
+        .chat-drawer {
+            position: fixed; top: 0; right: 0; bottom: 0; width: 85%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+            z-index: 20000; box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; border-left: 1px solid rgba(45,99,237,0.2);
+        }
+        .chat-drawer.open { transform: translateX(0); }
+        .chat-header {
+            padding: 15px 20px; background: linear-gradient(135deg, var(--royal-blue), var(--electric-blue));
+            color: white; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .chat-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; }
+        .btn-close-chat { background: rgba(255,255,255,0.2); border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 14px; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #F0F4F8; }
+        
+        /* Bubble Chat & Reply */
+        .msg-bubble { max-width: 80%; padding: 10px 12px; border-radius: 12px; font-size: 12px; line-height: 1.4; position: relative; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; user-select: none; }
+        .msg-bubble:active { transform: scale(0.98); }
+        .msg-left { align-self: flex-start; background: white; border-bottom-left-radius: 2px; color: var(--text-main); border: 1px solid #E2E8F0; }
+        .msg-right { align-self: flex-end; background: var(--electric-blue); border-bottom-right-radius: 2px; color: white; border: 1px solid var(--electric-blue); }
+        
+        .msg-reply-context {
+            background: rgba(0,0,0,0.05); border-left: 3px solid rgba(0,0,0,0.2); 
+            padding: 5px 8px; border-radius: 4px; margin-bottom: 5px; font-size: 10px; 
+            display: flex; flex-direction: column; opacity: 0.8;
+        }
+        .msg-reply-sender { font-weight: 800; font-size: 9px; margin-bottom: 2px; text-transform: uppercase;}
+        .msg-reply-text { font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;}
+
+        .msg-sender { font-size: 9px; font-weight: 800; margin-bottom: 2px; display: block; opacity: 0.8; text-transform: uppercase;}
+        .msg-time { font-size: 8px; font-weight: 600; float: right; margin-left: 8px; margin-top: 4px; opacity: 0.7; }
+        .chat-img { width: 100%; border-radius: 8px; margin-top: 5px; cursor: zoom-in; }
+
+        /* Input Area & Reply Preview */
+        .chat-footer { background: white; border-top: 1px solid #E2E8F0; }
+        .reply-bar { 
+            background: #F1F5F9; padding: 8px 15px; border-bottom: 1px solid #E2E8F0; 
+            display: none; justify-content: space-between; align-items: center; animation: slideUpSmall 0.2s;
+        }
+        @keyframes slideUpSmall { from{ transform:translateY(10px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+        .reply-info { display: flex; flex-direction: column; font-size: 11px; border-left: 3px solid var(--electric-blue); padding-left: 8px; }
+        .reply-to-name { font-weight: 800; color: var(--electric-blue); text-transform: uppercase; }
+        
+        .chat-input-area { padding: 10px 15px; display: flex; gap: 10px; align-items: center; }
+        .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #E2E8F0; outline: none; font-family: 'Inter'; font-size: 13px; background: #F8FAFC; }
+        .chat-input:focus { border-color: var(--electric-blue); background: white; }
+        
+        .btn-icon { background: #F1F5F9; color: var(--text-muted); border: 1px solid #E2E8F0; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition:0.2s;}
+        .btn-icon:active { transform: scale(0.9); background: #E2E8F0;}
+        .btn-send { background: var(--electric-blue); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: var(--glow-blue); transition:0.2s;}
+        .btn-send:active { transform: scale(0.9); }
+
+        /* Image Viewer Overlay */
+        .img-viewer { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 30000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .img-viewer img { max-width: 100%; max-height: 90vh; border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .img-viewer-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+
+        /* --- DOCK NAV --- */
+        .dock-container { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(45, 99, 237, 0.2); padding: 10px 30px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 10px 30px rgba(45, 99, 237, 0.15); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #94A3B8; transition: 0.3s; }
+        .nav-item.active { color: var(--electric-blue); }
+        .nav-item i { font-size: 18px; margin-bottom: 2px; }
+        .nav-text { font-family: 'Inter'; font-size: 8px; font-weight: 800; text-transform: uppercase; }
+
+        /* PIN MAP LEAFLET */
+        .custom-pin { display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; border: none; transition: transform 0.3s ease; }
+        .custom-pin:hover, .custom-pin:active { transform: scale(1.3) translateY(-5px); z-index: 9999 !important; }
+        .pin-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--electric-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background: white; transition: 0.3s; }
+        .pin-name { background: rgba(10, 34, 89, 0.85); color: white; font-family: 'Inter'; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; margin-top: -6px; z-index: 2; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
+
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        @keyframes seamlessScroll { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes pulseBadge { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        @keyframes pulseSOS { 0%, 100% { box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); } 50% { box-shadow: 0 10px 30px rgba(239, 68, 68, 0.7); border: 2px solid #FFF;} }
+        @keyframes tilt-shaking { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
+    </style>
+</head>
+<body>
+
+    <header class="header-bg">
+        <div class="top-bar">
+            <div>
+                <div class="date-text" id="displayDate">HARI INI</div>
+                <div class="greeting" id="greetingText">Halo, Kawan!</div>
+            </div>
+            <a href="settings.html" class="btn-settings"><i class="fas fa-cog"></i></a>
+        </div>
+
+        <div class="profile-card">
+            <div class="p-left">
+                <img src="" id="userPhoto" class="p-photo" onerror="this.src='https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=MLU';">
+                <div class="p-info">
+                    <div class="p-role" id="userRole">GUEST</div>
+                    <div class="p-name" id="userName">User Name</div>
+                    <div class="p-plat" id="userPlat">B 1234 XYZ</div>
+                </div>
+            </div>
+            <div class="p-divider"></div>
+            <div class="p-fc-status" onclick="window.location.href='antrian.html'">
+                <div class="pfc-title"><i class="fas fa-bolt"></i> FC GADING</div>
+                <div class="pfc-val" id="profileFcStatus"><span style="color:#aaa; font-size:10px;">Memuat...</span></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="marquee-box">
+        <i class="fas fa-bullhorn mq-icon"></i>
+        <div class="mq-content">
+            <div class="mq-text" id="runningTextCombined">Memuat Informasi Penting, Uang Kas, dan Pasar MLU...</div>
+        </div>
+    </div>
+
+    <div class="dash-container">
+        <div class="map-section">
+            <div class="map-header"><i class="fas fa-satellite-dish"></i> RADAR MEMBER</div>
+            <button class="btn-refresh-map" onclick="refreshMap()" title="Lihat Semua Member"><i class="fas fa-expand-arrows-alt"></i></button>
+            <div id="mapContainer"></div>
+            <div class="radar-text-box">
+                <div class="sf-scroll-container" id="feedActivityBox">
+                    <div style="text-align:center; padding:10px; font-size:10px; color:#aaa;">Memuat Data Radar...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="menu-container">
+        <div class="menu-grid">
+            <a href="data_anggota.html" class="menu-btn">
+                <div class="icon-box ic-anggota"><i class="fas fa-users"></i></div>
+                <div class="menu-title">Data Anggota</div>
+                <div class="menu-desc">Database keluarga MLU</div>
+            </a>
+            <a href="pengurus.html" class="menu-btn">
+                <div class="icon-box ic-pengurus"><i class="fas fa-sitemap"></i></div>
+                <div class="menu-title">Pengurus</div>
+                <div class="menu-desc">Struktur komando pusat</div>
+            </a>
+            <a href="keuangan.html" class="menu-btn">
+                <div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div>
+                <div class="menu-title">Uang Kas</div>
+                <div class="menu-desc">Laporan finansial & donasi</div>
+            </a>
+            <a href="antrian.html" class="menu-btn">
+                <div class="icon-box ic-antrian"><i class="fas fa-charging-station"></i></div>
+                <div class="menu-title">Live Antrian</div>
+                <div class="menu-desc">Monitor Stasiun FC Gading</div>
+            </a>
+            <a href="reminder.html" class="menu-btn">
+                <div class="icon-box ic-reminder"><i class="fas fa-bell"></i></div>
+                <div class="menu-title">Garasi Pintar</div>
+                <div class="menu-desc">Log Book EV & OD</div>
+            </a>
+            <a href="info_mlu.html" class="menu-btn">
+                <div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div>
+                <div class="menu-title">Info MLU</div>
+                <div class="menu-desc">Pusat informasi & aturan</div>
+            </a>
+            <a href="store.html" class="menu-btn">
+                <div class="icon-box ic-pasar"><i class="fas fa-store"></i></div>
+                <div class="menu-title">Pasar MLU</div>
+                <div class="menu-desc">Forum Jual Beli Member</div>
+            </a>
+            <div class="menu-btn" onclick="alert('Siapkan mesin dan fisikmu. Segera Hadir!')">
+                <div class="icon-box ic-tour"><i class="fas fa-route"></i></div>
+                <div class="menu-title">Jadwal Touring</div>
+                <div class="menu-desc">Rute & agenda riding</div>
+            </div>
+        </div>
+    </main>
+
+    <a href="#" class="floating-sos" onclick="openSosModal(); return false;">
+        <i class="fas fa-ambulance"></i>
+    </a>
+
+    <button class="chat-fab" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+        <div class="chat-badge" id="chatBadge"></div>
+    </button>
+
+    <div class="chat-drawer" id="chatDrawer">
+        <div class="chat-header">
+            <div class="chat-title"><i class="fas fa-comments"></i> MLU Community Chat</div>
+            <button class="btn-close-chat" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="chat-messages" id="msgContainer">
+            <div style="text-align:center; color:#94A3B8; font-size:12px; margin-top:20px;">Belum ada percakapan. Mulai sapa kawan!</div>
+        </div>
+        
+        <div class="chat-footer">
+            <div class="reply-bar" id="replyBar">
+                <div class="reply-info">
+                    <div class="reply-to-name" id="replyToName">Nama Pengirim</div>
+                    <div style="color:#64748B;" id="replyToText">Isi pesan...</div>
+                </div>
+                <button onclick="cancelReply()" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-weight:bold;">X</button>
+            </div>
+            
+            <div class="chat-input-area">
+                <button class="btn-icon" onclick="triggerPhoto()"><i class="fas fa-image"></i></button>
+                <input type="file" id="chatPhotoInput" accept="image/*" hidden>
+                <input type="text" id="chatInput" class="chat-input" placeholder="Tulis pesan..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="img-viewer" id="imgViewer">
+        <button class="img-viewer-close" onclick="document.getElementById('imgViewer').style.display='none'"><i class="fas fa-times"></i></button>
+        <img id="imgViewerSrc" src="">
+    </div>
+
+    <div class="modal-overlay" id="sosModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-broadcast-tower"></i> Laporan S.O.S</div>
+                <button class="btn-close" onclick="closeSosModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Laporan Anda dapat dikirimkan ke Group Pengurus atau kontak pilihan Anda beserta rincian lokasi terkini.</p>
+            <div class="form-group">
+                <label>Pilih Kendala Darurat</label>
+                <select id="sosType" class="form-input">
+                    <option value="Unit Mogok / Trouble">Unit Mogok / Trouble</option>
+                    <option value="Ban Bocor / Kempes">Ban Bocor / Kempes</option>
+                    <option value="Kecelakaan Lalu Lintas">Kecelakaan Lalu Lintas</option>
+                    <option value="Kehabisan Baterai di Jalan">Kehabisan Baterai di Jalan</option>
+                    <option value="Tindak Kriminal / Begal">Tindak Kriminal / Begal</option>
+                    <option value="Lainnya">Lainnya...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Keterangan Tambahan / Patokan Lokasi</label>
+                <textarea id="sosDesc" class="form-input" rows="3" placeholder="Contoh: Depan Indomaret, dekat pom bensin..."></textarea>
+            </div>
+            <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()"><i class="fab fa-whatsapp"></i> BAGIKAN S.O.S</button>
+        </div>
+    </div>
+
+    <div class="dock-container">
+        <a href="lokasi_fc.html" class="nav-item"><i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI</span></a>
+        <a href="dashboard.html" class="nav-item active"><i class="fas fa-home"></i><span class="nav-text">HOME</span></a>
+        <a href="plan_route.html" class="nav-item"><i class="fas fa-route"></i><span class="nav-text">RUTE</span></a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, collection, setDoc, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const INFO_PENTING = "Kopdar Gabungan MLU diadakan minggu depan. Pastikan iuran kas sudah lunas. Tetap solid!";
+        const STATION_LAT = -6.159389; const STATION_LNG = 106.901416;
+
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+
+        const fcConfig = { apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" };
+        const appFC = initializeApp(fcConfig, "AppFC"); const dbFC = getFirestore(appFC); const fcRef = doc(dbFC, "antrian", "utama");
+
+        const uData = JSON.parse(localStorage.getItem('maka_user')) || { namaKtp: "Kawan", plat: "B 0000 MLU", role: "MEMBER" };
+        const myName = uData.namaKtp || uData.namaWa || uData.nama || "Kawan";
+        const myPlat = uData.plat;
+        const myPhoto = (uData.foto && uData.foto.length > 50) ? uData.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(myName)}`;
+
+        let kasTotal = 0; let pasarText = "Belum ada barang baru.";
+        let map; let radarMarkers = {};
+        
+        let currentReply = null;
+        let selectedPhotoBase64 = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const hour = new Date().getHours();
+            let greeting = (hour < 10) ? "Selamat Pagi," : (hour < 15) ? "Selamat Siang," : (hour < 18) ? "Selamat Sore," : "Selamat Malam,";
+            
+            document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('greetingText').innerText = greeting;
+            document.getElementById('userName').innerText = myName;
+            document.getElementById('userPlat').innerText = uData.plat;
+            document.getElementById('userRole').innerText = uData.role;
+
+            const rBadge = document.getElementById('userRole');
+            if (uData.role.includes("KETUM") || uData.role.includes("WAKETUM") || uData.role.includes("PEMBINA")) {
+                rBadge.style.background = "var(--gold)"; rBadge.style.color = "#000";
+            } else if (uData.role === "KELUARGA MLU" || uData.role === "GUEST") {
+                rBadge.style.background = "rgba(255,255,255,0.2)"; rBadge.style.color = "#FFF";
+            } else {
+                rBadge.style.background = "var(--electric-blue)"; rBadge.style.color = "#FFF";
+            }
+
+            document.getElementById('userPhoto').src = myPhoto;
+            
+            cekJarakFC();
+            initMap(); 
+            initDataListeners(); 
+            initChatSystem(); 
+        });
+
+        // =========================================================================
+        // 1. SISTEM LIVE CHAT (REPLY SWIPE & FOTO GALERI)
+        // =========================================================================
+        window.toggleChat = () => {
+            document.getElementById('chatDrawer').classList.toggle('open');
+            document.getElementById('chatBadge').style.display = 'none';
+        };
+
+        window.triggerPhoto = () => document.getElementById('chatPhotoInput').click();
+
+        document.getElementById('chatPhotoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    let w = img.width; let h = img.height;
+                    if(w > 600) { h *= 600/w; w = 600; }
+                    canvas.width = w; canvas.height = h; ctx.drawImage(img,0,0,w,h);
+                    selectedPhotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                    sendMessage(); 
+                }
+                img.src = evt.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        window.sendMessage = async () => {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if(!msg && !selectedPhotoBase64) return;
+
+            try {
+                let payload = {
+                    senderName: myName, senderPlat: myPlat, message: msg, timestamp: Date.now()
+                };
+                if(selectedPhotoBase64) { payload.image = selectedPhotoBase64; selectedPhotoBase64 = null; }
+                if(currentReply) { payload.replyTo = { name: currentReply.senderName, text: currentReply.message || "[Foto]" }; cancelReply(); }
+
+                await addDoc(collection(db, "mlu_chat"), payload);
+                input.value = "";
+            } catch(e) { alert("Gagal kirim pesan"); }
+        };
+
+        window.setupReply = (name, text) => {
+            currentReply = { senderName: name, message: text };
+            document.getElementById('replyToName').innerText = name;
+            document.getElementById('replyToText').innerText = text;
+            document.getElementById('replyBar').style.display = 'flex';
+            document.getElementById('chatInput').focus();
+        };
+
+        window.cancelReply = () => {
+            currentReply = null;
+            document.getElementById('replyBar').style.display = 'none';
+        };
+
+        // SWIPE LOGIC
+        let touchStartX = 0;
+        window.handleTouchStart = (e, el) => { touchStartX = e.touches[0].clientX; };
+        window.handleTouchEnd = (e, el, name, msg) => {
+            let touchEndX = e.changedTouches[0].clientX;
+            if (touchEndX - touchStartX > 80) { // Swipe Kanan > 80px
+                setupReply(name, msg);
+                el.style.transform = 'translateX(20px)';
+                setTimeout(() => el.style.transform = 'translateX(0)', 200);
+            }
+        };
+
+        function initChatSystem() {
+            const qChat = query(collection(db, "mlu_chat"), orderBy("timestamp", "asc"), limit(50));
+            onSnapshot(qChat, (snap) => {
+                const container = document.getElementById('msgContainer');
+                container.innerHTML = "";
+                
+                if(snap.empty) { container.innerHTML = `<div style="text-align:center; color:#94A3B8; font-size:12px; margin-top:20px;">Belum ada percakapan.</div>`; return; }
+
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    const isMe = (d.senderPlat === myPlat);
+                    const timeStr = new Date(d.timestamp).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+                    const bubbleClass = isMe ? 'msg-right' : 'msg-left';
+                    const senderHtml = isMe ? '' : `<span class="msg-sender">${d.senderName} (${d.senderPlat})</span>`;
+                    
+                    let replyHtml = '';
+                    if(d.replyTo) {
+                        replyHtml = `<div class="msg-reply-context"><span class="msg-reply-sender">${d.replyTo.name}</span><span class="msg-reply-text">${d.replyTo.text}</span></div>`;
+                    }
+
+                    let contentHtml = d.message;
+                    if(d.image) {
+                        contentHtml += `<img src="${d.image}" class="chat-img" onclick="document.getElementById('imgViewerSrc').src=this.src; document.getElementById('imgViewer').style.display='flex'">`;
+                    }
+
+                    container.innerHTML += `
+                        <div class="msg-bubble ${bubbleClass}" 
+                             ontouchstart="handleTouchStart(event, this)" 
+                             ontouchend="handleTouchEnd(event, this, '${d.senderName}', '${d.message || '[Foto]}')">
+                            ${replyHtml}${senderHtml}${contentHtml}<span class="msg-time">${timeStr}</span>
+                        </div>`;
+                });
+                
+                container.scrollTop = container.scrollHeight;
+                
+                if(!document.getElementById('chatDrawer').classList.contains('open')) {
+                    document.getElementById('chatBadge').style.display = 'block';
+                }
+            });
+        }
+
+        // =========================================================================
+        // 2. KONEKSI PETA & DATA LAINNYA
+        // =========================================================================
+        function initMap() {
+            map = L.map('mapContainer', { zoomControl: false }).setView([-6.159389, 106.901416], 13);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+
+            setTimeout(() => { map.invalidateSize(); }, 500);
+
+            if (navigator.geolocation && uData.plat) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const lat = pos.coords.latitude; const lng = pos.coords.longitude;
+                    map.setView([lat, lng], 14);
+                    try {
+                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                        const data = await res.json();
+                        const area = data.address.suburb || data.address.village || "Lokasi Anda";
+                        const radarRef = doc(db, "live_radar", uData.plat.replace(/\s/g, ''));
+                        await setDoc(radarRef, { nama: myName, foto: myPhoto, lat: lat, lng: lng, lokasi: area, timestamp: Date.now() }, { merge: true });
+                    } catch (e) {}
+                });
+            }
+        }
+
+        window.refreshMap = () => {
+            let bounds = new L.LatLngBounds(); let count = 0;
+            for (let id in radarMarkers) { bounds.extend(radarMarkers[id].getLatLng()); count++; }
+            if (count > 0 && bounds.isValid()) map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
+        };
+
+        function initDataListeners() {
+            onSnapshot(collection(db, "live_radar"), (snap) => {
+                for(let id in radarMarkers) { map.removeLayer(radarMarkers[id]); }
+                radarMarkers = {};
+                let radarListHTML = [];
+                snap.forEach(doc => {
+                    let d = doc.data();
+                    let timeText = hitungWaktuLalu(d.timestamp);
+                    let textLokasi = d.lokasi ? d.lokasi : "Titik terpantau";
+                    radarListHTML.push(`<div class="sf-item"><i class="fas fa-map-marker-alt"></i><div class="sf-text-box"><b>${d.nama}</b> terpantau di sekitar <span class="hl">${textLokasi}</span>.<span class="sf-time">${timeText}</span></div></div>`);
+                    if(d.lat && d.lng) {
+                        let latOffset = (Math.random() - 0.5) * 0.0006; let lngOffset = (Math.random() - 0.5) * 0.0006;
+                        let f = d.foto || `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(d.nama)}`;
+                        let customIcon = L.divIcon({ className: 'custom-pin', html: `<img src="${f}" class="pin-img"><div class="pin-name">${d.nama.split(' ')[0]}</div>`, iconSize: [40, 40], iconAnchor: [20, 40] });
+                        radarMarkers[doc.id] = L.marker([d.lat + latOffset, d.lng + lngOffset], { icon: customIcon, zIndexOffset: Math.floor(Math.random() * 1000) }).addTo(map);
+                    }
+                });
+                if(radarListHTML.length === 0) radarListHTML.push(`<div class="sf-item">Belum ada aktivitas member.</div>`);
+                let blockAct = `<div class="sf-block">${radarListHTML.join('')}</div>`;
+                document.getElementById('feedActivityBox').innerHTML = blockAct + blockAct; 
+            });
+
+            onSnapshot(fcRef, (snap) => {
+                if (!snap.exists()) return;
+                const d = snap.data();
+                let slots = d.chargingSlots || []; let dis = d.disabledSlots || []; let qLen = (d.waitingQueue || []).length;
+                let emptySlots = 0; for(let i=0; i<3; i++) { if(slots[i] === null && !(dis && dis[i])) emptySlots++; }
+                const fcContainer = document.getElementById('profileFcStatus');
+                if(qLen > 0) fcContainer.innerHTML = `<span style="color:var(--warning); font-size:16px;">${qLen}</span><span style="font-size:8px; font-weight:800; color:#aaa;">ANTRI</span>`;
+                else fcContainer.innerHTML = `<span style="color:var(--success); font-size:16px;">0${emptySlots}</span><span style="font-size:8px; font-weight:800; color:#aaa;">SLOT</span>`;
+            });
+
+            onSnapshot(collection(db, "mlu_finance"), (snap) => {
+                let balance = 0; snap.forEach(doc => { const amt = doc.data().amount || 0; if((doc.data().type === 'IN_COLLECTIVE' ? 'IN' : doc.data().type) === 'IN') balance += amt; else balance -= amt; });
+                kasTotal = balance; updateMarqueeText();
+            });
+            onSnapshot(query(collection(db, "mlu_store"), orderBy("timestamp", "desc")), (snap) => {
+                let titles = []; let count = 0; snap.forEach(doc => { if(count < 2) titles.push(doc.data().title); count++; });
+                pasarText = snap.size > 0 ? `${snap.size} Item Tersedia (${titles.join(', ')}...)` : "Belum ada item jualan.";
+                updateMarqueeText();
+            });
+        }
+
+        function updateMarqueeText() {
+            const tgl = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+            document.getElementById('runningTextCombined').innerHTML = `⚠️ <b>INFO MLU:</b> ${INFO_PENTING} <span class="hi-green"><i class="fas fa-wallet"></i> KAS PER ${tgl.toUpperCase()}: Rp ${kasTotal.toLocaleString('id-ID')}</span> <span class="hi-blue"><i class="fas fa-shopping-cart"></i> PASAR: ${pasarText}</span>`;
+        }
+
+        function hitungWaktuLalu(timestamp) {
+            const diff = Math.floor((Date.now() - timestamp) / 1000);
+            if (diff < 60) return "Baru saja";
+            if (diff < 3600) return Math.floor(diff/60) + " mnt lalu";
+            if (diff < 86400) return Math.floor(diff/3600) + " jam lalu";
+            return Math.floor(diff/86400) + " hari lalu";
+        }
+
+        function cekJarakFC() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    // Logic GPS utk SOS
+                });
+            }
+        }
+
+        window.openSosModal = () => { document.getElementById('sosModal').style.display = 'flex'; };
+        window.closeSosModal = () => { document.getElementById('sosModal').style.display = 'none'; };
+
+        window.sendSos = () => {
+            const btn = document.getElementById('btnSendSos');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari Lokasi...';
+            btn.style.opacity = '0.7';
+
+            const sosType = document.getElementById('sosType').value;
+            const sosDesc = document.getElementById('sosDesc').value.trim() || "Tidak ada keterangan";
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+                        executeWa(sosType, sosDesc, myName, uData.plat, mapsLink);
+                    },
+                    (error) => { executeWa(sosType, sosDesc, myName, uData.plat, "(Lokasi GPS tidak diizinkan)"); }
+                );
+            } else {
+                executeWa(sosType, sosDesc, myName, uData.plat, "(Perangkat tidak mendukung GPS)");
+            }
+        };
+
+        function executeWa(type, desc, name, plat, loc) {
+            const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
+            const profileLink = `${baseUrl}data_anggota.html?cari=${encodeURIComponent(plat)}`;
+            const msg = `*🚨 LAPORAN DARURAT S.O.S (MLU) 🚨*\n\n*Pelapor:* ${name} (${plat})\n*Kendala:* ${type}\n*Keterangan:* ${desc}\n\n*📍 Titik Lokasi:*\n${loc}\n\n*👤 Cek Profil Pelapor:*\n${profileLink}\n\n_Mohon segera direspon, anggota butuh bantuan!_`;
+            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            
+            const btn = document.getElementById('btnSendSos');
+            btn.innerHTML = '<i class="fab fa-whatsapp"></i> BAGIKAN S.O.S';
+            btn.style.opacity = '1';
+            
+            window.closeSosModal();
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
