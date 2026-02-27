@@ -486,7 +486,7 @@
         }
 
         // ================================================================
-        // ADMIN MONITOR (FITUR CARI NAMA TANPA SPASI)
+        // ADMIN MONITOR (DIAGNOSTIC & FIX COLLECTION NAME)
         // ================================================================
         window.openAdminMonitor = async () => {
             if(!isSuperAdmin) return;
@@ -512,17 +512,17 @@
                     return { plat: plat, total: mapDebtors[plat] };
                 }).sort((a, b) => b.total - a.total);
 
-                // 2. Tarik Data SEMUA MEMBER untuk Kamus Nama (TANPA SPASI)
-                const membersSnap = await getDocs(collection(db, "members"));
-                let memberMap = {};
+                // 2. Tarik Data SEMUA MEMBER (PASTIKAN NAMA COLLECTION BENAR: mlu_members)
+                // KOREKSI UTAMA: Menggunakan "mlu_members" sesuai file data_anggota.html
+                const membersSnap = await getDocs(collection(db, "mlu_members"));
                 
+                let memberMap = {};
                 membersSnap.forEach(doc => {
                     let m = doc.data();
-                    // Normalisasi: Hapus spasi, upper case
-                    let cleanPlat = m.plat ? m.plat.replace(/\s/g, '').toUpperCase() : "";
-                    if(cleanPlat) {
-                        memberMap[cleanPlat] = m.namaKtp || m.namaWa || m.nama || "Member";
-                    }
+                    let realName = m.namaKtp || m.namaWa || m.nama || "Member";
+                    
+                    // Normalisasi Key untuk Pencarian (Hapus Spasi)
+                    if(m.plat) memberMap[m.plat.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()] = realName;
                 });
 
                 document.getElementById('monitorLoading').style.display = "none";
@@ -534,17 +534,22 @@
                     sortedList.forEach((item, index) => {
                         let rankClass = index < 3 ? "top" : "";
                         
-                        // Kunci Sukses: Hapus spasi dari Plat Hutang saat mencari di kamus
-                        let lookupKey = item.plat.replace(/\s/g, '').toUpperCase();
-                        let realName = memberMap[lookupKey] || "Belum Terdaftar";
+                        // CARI NAMA DI KAMUS
+                        let cleanTarget = item.plat.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                        let foundName = memberMap[cleanTarget];
+
+                        // JIKA TETAP TIDAK KETEMU, TAMPILKAN PLATNYA SEBAGAI PENGGANTI NAMA
+                        // (Supaya tidak muncul "Tanpa Nama" lagi)
+                        let displayTitle = foundName ? foundName : item.plat;
+                        let displaySub = foundName ? item.plat : "Data Nama Tidak Ditemukan";
 
                         container.innerHTML += `
                             <div class="mon-item">
                                 <div class="mon-left">
                                     <div class="mon-rank ${rankClass}">#${index+1}</div>
                                     <div class="mon-info">
-                                        <div class="mon-name">${realName}</div>
-                                        <div class="mon-plat">${item.plat}</div>
+                                        <div class="mon-name">${displayTitle}</div>
+                                        <div class="mon-plat">${displaySub}</div>
                                     </div>
                                 </div>
                                 <div class="mon-total">Rp ${item.total.toLocaleString('id-ID')}</div>
