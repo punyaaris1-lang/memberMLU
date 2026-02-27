@@ -62,11 +62,10 @@
         .pw-temp { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; line-height: 1; }
         .pw-loc { font-size: 8px; font-weight: 800; color: #93C5FD; letter-spacing: 1px; margin-top: 2px; }
 
-        /* --- IKLAN RUNNING TEXT (GABUNGAN INFO) --- */
+        /* --- IKLAN RUNNING TEXT --- */
         .marquee-box { margin: 15px 20px; background: white; border: 1px solid rgba(45,99,237,0.1); border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
         .mq-icon { color: var(--danger); font-size: 12px; animation: ring 2s infinite; }
         .mq-content { flex: 1; overflow: hidden; white-space: nowrap; }
-        /* Durasi diperlambat jadi 25s karena teksnya panjang */
         .mq-text { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; font-size: 11px; font-weight: 700; color: var(--text-main); }
         .mq-text span.hi-blue { color: var(--electric-blue); font-weight: 900; margin-left: 15px;}
         .mq-text span.hi-green { color: var(--success); font-weight: 900; margin-left: 15px;}
@@ -80,7 +79,7 @@
         .fc-title { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: #D4FF00; letter-spacing: 1px; }
         .fc-dist { font-size: 9px; font-weight: 600; color: #93C5FD; margin-top: 2px; }
         .fc-right { text-align: right; }
-        .fc-val { font-family: 'Teko', sans-serif; font-size: 22px; line-height: 1; color: white; display: flex; align-items: baseline; gap: 4px; justify-content: flex-end;}
+        .fc-val { font-family: 'Teko', sans-serif; font-size: 24px; line-height: 1; color: white; display: flex; align-items: baseline; gap: 4px; justify-content: flex-end;}
         .fc-lbl { font-family: 'Inter'; font-size: 9px; font-weight: 800; color: #93C5FD; letter-spacing: 1px; }
 
         /* ========================================================= */
@@ -92,9 +91,15 @@
         
         #mapContainer { height: 180px; width: 100%; border-radius: 12px; z-index: 1; }
         
-        /* CSS Untuk Pin Foto Member di Map */
-        .custom-pin { display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; border: none; }
-        .pin-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--electric-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background: white; }
+        /* CSS PIN MAP ANTI-NUMPUK */
+        .custom-pin { display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; border: none; transition: transform 0.3s ease; }
+        
+        /* Efek Hover/Klik: Maju ke depan & membesar agar gampang diklik kalau berdekatan */
+        .custom-pin:hover, .custom-pin:active { transform: scale(1.3) translateY(-5px); z-index: 9999 !important; }
+
+        .pin-img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--electric-blue); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.4); background: white; transition: 0.3s; }
+        .custom-pin:hover .pin-img { border-color: var(--gold); }
+        
         .pin-name { background: rgba(10, 34, 89, 0.85); color: white; font-family: 'Inter'; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 6px; margin-top: -6px; z-index: 2; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.3);}
 
         /* --- 8 MENU GRID --- */
@@ -303,9 +308,9 @@
         // =========================================================================
         const INFO_PENTING = "Kopdar Gabungan MLU diadakan minggu depan. Pastikan iuran kas sudah lunas. Tetap solid!";
         
-        // KORDINAT FC KELAPA GADING
-        const STATION_LAT = -6.155823; 
-        const STATION_LNG = 106.903823;
+        // KORDINAT FC KELAPA GADING YANG BENAR (Maka Motors Kelapa Gading)
+        const STATION_LAT = -6.159389; 
+        const STATION_LNG = 106.901416;
 
         // Init Firebase App Putih
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
@@ -322,13 +327,8 @@
         const myName = uData.namaKtp || uData.namaWa || uData.nama || "Kawan";
         const myPhoto = (uData.foto && uData.foto.length > 50) ? uData.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(myName)}`;
 
-        // Variabel Data Gabungan untuk Running Text
-        let kasTotal = 0;
-        let pasarText = "Belum ada barang baru.";
-        
-        // Variabel Peta Leaflet
-        let map;
-        let radarMarkers = {}; // Menyimpan pin berdasarkan ID plat
+        let kasTotal = 0; let pasarText = "Belum ada barang baru.";
+        let map; let radarMarkers = {};
 
         document.addEventListener('DOMContentLoaded', () => {
             const hour = new Date().getHours();
@@ -352,61 +352,51 @@
             document.getElementById('userPhoto').src = myPhoto;
             
             cekJarakFC();
-            initMap(); // Nyalakan Peta
-            initDataListeners(); // Tarik Data Keuangan, Pasar, dan Live Radar
+            initMap(); 
+            initDataListeners(); 
         });
 
         // =========================================================================
-        // 1. KONEKSI PETA (LEAFLET.JS) & FIREBASE RADAR
+        // 1. KONEKSI PETA & FIREBASE RADAR DENGAN "SCATTERING LOGIC"
         // =========================================================================
         function initMap() {
-            // Setting awal peta di Jakarta (Tugu Monas sebagai center default)
             map = L.map('mapContainer', { zoomControl: false }).setView([-6.1754, 106.8272], 11);
-            
-            // Menggunakan Tile Peta Gratis dari OpenStreetMap
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors',
-                maxZoom: 18
-            }).addTo(map);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 18 }).addTo(map);
 
-            // Minta Izin GPS User & Update Map Center
             if (navigator.geolocation && uData.plat) {
                 navigator.geolocation.getCurrentPosition(async (pos) => {
                     const lat = pos.coords.latitude;
                     const lng = pos.coords.longitude;
-                    
-                    // Geser peta ke lokasi user
                     map.setView([lat, lng], 13);
                     
                     try {
-                        // Simpan koordinat user ke Firebase
                         const radarRef = doc(db, "live_radar", uData.plat.replace(/\s/g, ''));
                         await setDoc(radarRef, {
-                            nama: myName,
-                            foto: myPhoto,
-                            lat: lat,
-                            lng: lng,
-                            timestamp: Date.now()
+                            nama: myName, foto: myPhoto, lat: lat, lng: lng, timestamp: Date.now()
                         }, { merge: true });
                     } catch (e) { console.log("Gagal update radar GPS"); }
                 });
             }
         }
 
-        // Listener Firebase untuk Memasang Pin Foto Member di Peta
         function listenToRadar() {
             onSnapshot(collection(db, "live_radar"), (snap) => {
-                // Hapus semua marker lama sebelum digambar ulang
                 for(let id in radarMarkers) { map.removeLayer(radarMarkers[id]); }
                 radarMarkers = {};
 
                 snap.forEach(doc => {
                     let d = doc.data();
-                    // Hanya tampilkan member yang kordinatnya ada
                     if(d.lat && d.lng) {
+                        // LOGIKA SCATTERING: Geser koordinat sedikit (sekitar ~30 meter secara acak)
+                        // Agar kalau ada 5 orang di FC Gading, fotonya menumpuk membentuk lingkaran/kerumunan
+                        let latOffset = (Math.random() - 0.5) * 0.0006;
+                        let lngOffset = (Math.random() - 0.5) * 0.0006;
+                        
+                        let finalLat = d.lat + latOffset;
+                        let finalLng = d.lng + lngOffset;
+
                         let f = d.foto || `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(d.nama)}`;
                         
-                        // Buat Custom Icon HTML dengan Foto + Nama
                         let customIcon = L.divIcon({
                             className: 'custom-pin',
                             html: `<img src="${f}" class="pin-img"><div class="pin-name">${d.nama.split(' ')[0]}</div>`,
@@ -414,8 +404,11 @@
                             iconAnchor: [20, 40]
                         });
                         
-                        // Pasang di Peta
-                        radarMarkers[doc.id] = L.marker([d.lat, d.lng], {icon: customIcon}).addTo(map);
+                        // Z-index diacak agar tumpukannya terlihat natural
+                        radarMarkers[doc.id] = L.marker([finalLat, finalLng], {
+                            icon: customIcon, 
+                            zIndexOffset: Math.floor(Math.random() * 1000)
+                        }).addTo(map);
                     }
                 });
             });
@@ -425,16 +418,22 @@
         // 2. LOGIKA KONEKSI DATA LAINNYA (FC, KAS, PASAR)
         // =========================================================================
         function initDataListeners() {
-            // A. Panggil Peta
             listenToRadar();
 
-            // B. FC Gading Status
+            // B. FC Gading Status (DIKUNCI 3 SLOT MAKSIMAL)
             onSnapshot(fcRef, (snap) => {
                 if (!snap.exists()) return;
                 const d = snap.data();
-                let slots = d.chargingSlots || []; let dis = d.disabledSlots || []; let qLen = (d.waitingQueue || []).length;
-                let totalSlots = slots.length > 0 ? slots.length : 3; let emptySlots = 0;
-                for(let i=0; i<totalSlots; i++) { if(slots[i] === null && !(dis && dis[i])) emptySlots++; }
+                
+                let slots = d.chargingSlots || []; 
+                let dis = d.disabledSlots || []; 
+                let qLen = (d.waitingQueue || []).length;
+                let emptySlots = 0;
+                
+                // MENGUNCI CEK HANYA UNTUK 3 SLOT PERTAMA (Biar gak salah hitung 5 slot)
+                for(let i=0; i<3; i++) { 
+                    if(slots[i] === null && !(dis && dis[i])) emptySlots++; 
+                }
 
                 const rightContainer = document.getElementById('fcStatusRight');
                 if(qLen > 0) {
@@ -460,10 +459,8 @@
             onSnapshot(query(collection(db, "mlu_store"), orderBy("timestamp", "desc")), (snap) => {
                 let titles = []; let count = 0;
                 snap.forEach(doc => { if(count < 2) titles.push(doc.data().title); count++; });
-                
                 if(snap.size > 0) pasarText = `${snap.size} Item Tersedia (${titles.join(', ')}...)`;
                 else pasarText = "Belum ada item jualan.";
-                
                 updateMarqueeText();
             });
         }
@@ -475,7 +472,7 @@
         }
 
         // =========================================================================
-        // 3. FUNGSI CEK JARAK & S.O.S
+        // 3. FUNGSI CEK JARAK (KE KELAPA GADING) & S.O.S
         // =========================================================================
         function cekJarakFC() {
             if (navigator.geolocation) {
