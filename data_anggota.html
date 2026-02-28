@@ -66,7 +66,7 @@
         .m-wa-name { font-size: 10px; font-weight: 700; color: var(--electric-blue); background: rgba(45,99,237,0.08); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 5px; text-transform: uppercase; }
         .m-plat { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; }
         
-        /* SALDO (Hanya Muncul Jika Berhak) */
+        /* SALDO (PRIVACY PROTECTED) */
         .m-saldo { 
             font-size: 11px; font-weight: 800; color: var(--success); 
             display: flex; align-items: center; gap: 6px; margin-top: 6px; 
@@ -178,7 +178,7 @@
             
             <div class="upload-area">
                 <i class="fas fa-camera" style="font-size:24px; color:var(--electric-blue); margin-bottom:5px; display:block;"></i>
-                <div style="font-size:11px; font-weight:700; color:var(--text-muted);">Tap untuk Upload Foto Wajah (Opsional)</div>
+                <div style="font-size:11px; font-weight:700; color:var(--text-muted);">Tap untuk Upload Foto Wajah</div>
                 <input type="file" id="formFoto" accept="image/*">
                 <img id="previewFoto" class="preview-img">
             </div>
@@ -247,7 +247,7 @@
         const platKu = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         
         let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
-        const isUserDewa = (platKu === 'B4248SWF');
+        const isUserDewa = (platKu === 'B4248SWF'); // HANYA PLAT BAPAK YG BISA JADI DEWA
         
         // ADMIN = BUKAN KELUARGA MLU & BUKAN GUEST (ATAU DEWA)
         const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
@@ -300,10 +300,8 @@
                     if (w > h) { if (w > 600) { h *= 600/w; w = 600; } } else { if (h > 600) { w *= 600/h; h = 600; } }
                     canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
                     currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
-                    
-                    const preview = document.getElementById('previewFoto');
-                    preview.src = currentPhotoBase64;
-                    preview.style.display = 'block';
+                    document.getElementById('previewFoto').src = currentPhotoBase64;
+                    document.getElementById('previewFoto').style.display = 'block';
                 }
                 img.src = event.target.result;
             }
@@ -320,30 +318,28 @@
             const list = document.getElementById('memberList'); list.innerHTML = '';
             
             data.sort((a, b) => {
-                let aIsP = (a.role && a.role !== 'KELUARGA MLU');
-                let bIsP = (b.role && b.role !== 'KELUARGA MLU');
-                if (aIsP && !bIsP) return -1;
-                if (!aIsP && bIsP) return 1;
-                return 0;
+                let aIsP = (a.role && a.role !== 'KELUARGA MLU'); let bIsP = (b.role && b.role !== 'KELUARGA MLU');
+                if (aIsP && !bIsP) return -1; if (!aIsP && bIsP) return 1; return 0;
             });
 
             data.forEach(m => {
                 const isPengurus = m.role && m.role !== 'KELUARGA MLU';
                 const cardClass = isPengurus ? 'member-card is-pengurus' : 'member-card';
-                
                 const nameKtp = m.namaKtp || m.nama || "-";
                 const nameWa = m.namaWa || "-";
-                
                 const photoSrc = m.foto && m.foto.length > 50 ? m.foto : `https://ui-avatars.com/api/?background=${isPengurus ? 'D4AF37' : '2D63ED'}&color=${isPengurus ? '000' : 'fff'}&bold=true&name=${encodeURIComponent(nameKtp)}`;
-                
                 let waLink = m.hp && m.hp !== "-" ? `https://wa.me/62${m.hp.replace(/^0+/, '')}` : '#';
-
+                
                 // FORMAT SALDO
                 const saldo = m.saldoTabungan ? parseInt(m.saldoTabungan).toLocaleString('id-ID') : "0";
 
-                // LOGIKA PRIVASI DOMPET
-                const isMe = (m.id === u.id); // Apakah ini kartu saya sendiri?
-                const canSeeWallet = isMe || (isUserDewa && dewaMode === 'ON'); // Saya sendiri ATAU Dewa Mode ON
+                // LOGIKA PRIVASI DOMPET (SANGAT KETAT!)
+                const isMe = (m.id === u.id); // Kartu saya sendiri
+                const isDewaActive = (isUserDewa && dewaMode === 'ON'); // Mode Dewa BAPAK RIZKY (B4248SWF)
+                
+                // Pengurus/Admin biasa TIDAK BISA lihat punya orang lain. 
+                // Hanya BAPAK (Dewa) yang bisa lihat semua.
+                const canSeeWallet = isMe || isDewaActive; 
 
                 let saldoHtml = '';
                 if (canSeeWallet) {
@@ -360,7 +356,8 @@
                             <div class="m-name">${nameKtp}</div>
                             <div class="m-wa-name"><i class="fas fa-comment-dots"></i> WA: ${nameWa}</div>
                             <div class="m-plat">${m.plat} • ${m.type || m.divisi || 'RTO'}</div>
-                            ${saldoHtml} <div class="m-role">${m.role}</div>
+                            ${saldoHtml} 
+                            <div class="m-role">${m.role}</div>
                         </div>
                         <div class="m-actions">
                             <a href="${waLink}" class="btn-act btn-call" target="_blank"><i class="fab fa-whatsapp"></i></a>
@@ -378,9 +375,9 @@
             renderList(filtered);
         };
 
-        // --- CEK HISTORY TABUNGAN ---
+        // --- CEK HISTORY (FIX LOADING + PRIVASI) ---
         window.checkSavings = async (id, name) => {
-            // DOUBLE CHECK: HANYA DEWA ATAU PEMILIK
+            // DOUBLE CHECK PRIVASI SAAT KLIK
             if (u.id !== id && !(isUserDewa && dewaMode === 'ON')) {
                 alert("🔒 Maaf, detail tabungan bersifat pribadi.");
                 return;
@@ -390,7 +387,7 @@
             document.getElementById('historyContent').innerHTML = `<div style="text-align:center; padding:20px; color:#94A3B8;">Memuat data...</div>`;
             document.getElementById('historyModal').style.display = 'flex';
 
-            // QUERY TANPA INDEX (FILTER CLIENT SIDE BIAR GAK ERROR)
+            // QUERY NO INDEX (SAFE)
             const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", id));
             const snap = await getDocs(q);
             
@@ -400,7 +397,7 @@
             let dataArr = [];
             snap.forEach(d => dataArr.push(d.data()));
             
-            // URUTKAN MANUAL DI JAVASCRIPT (ANTI ERROR INDEX)
+            // SORT CLIENT SIDE (ANTI LOADING)
             dataArr.sort((a,b) => b.timestamp - a.timestamp);
 
             if(dataArr.length === 0) {

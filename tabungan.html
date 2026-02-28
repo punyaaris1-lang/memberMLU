@@ -11,6 +11,7 @@
         body { margin:0; background:var(--bg-surface); font-family:'Inter',sans-serif; padding-bottom:100px; color:var(--text-main); }
         * { box-sizing:border-box; outline:none; -webkit-tap-highlight-color:transparent; }
 
+        /* HEADER (BIRU) */
         .header-main { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 35px 20px 70px; border-bottom-left-radius:30px; border-bottom-right-radius:30px; color:white; text-align:center; box-shadow:0 10px 30px rgba(10,34,89,0.3); }
         .main-title { font-family:'Space Grotesk'; font-size:24px; font-weight:900; margin:0; }
         .sub-tag { font-size:11px; opacity:0.8; font-weight:600; display:block; margin-top:5px;}
@@ -18,18 +19,22 @@
         /* TAB NAV */
         .tab-container { display:flex; justify-content:center; gap:10px; margin-top:-30px; padding:0 15px; }
         .tab-btn { background:white; border:none; padding:12px 15px; border-radius:25px; font-weight:800; font-size:11px; color:#64748B; box-shadow:0 5px 15px rgba(0,0,0,0.05); cursor:pointer; flex:1; transition:0.2s; white-space:nowrap; }
-        .tab-btn.active { background:var(--success); color:white; box-shadow:0 5px 20px rgba(16,185,129,0.3); transform:scale(1.05); }
+        .tab-btn.active { background:var(--royal-blue); color:white; box-shadow:0 5px 20px rgba(10,34,89,0.3); transform:scale(1.05); }
 
         .content-area { padding:20px; display:none; animation:fadeIn 0.3s; }
         .content-area.active { display:block; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 
-        /* CARD SALDO */
-        .saldo-card { background:linear-gradient(135deg, #059669 0%, #047857 100%); padding:25px; border-radius:20px; color:white; text-align:center; margin-bottom:20px; box-shadow:0 10px 25px rgba(5,150,105,0.3); position:relative; overflow:hidden;}
+        /* CARD SALDO (FIX: TEMA BIRU) */
+        .saldo-card { 
+            background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); 
+            padding: 25px; border-radius: 20px; color: white; text-align: center; margin-bottom: 20px; 
+            box-shadow: 0 10px 25px rgba(45,99,237,0.3); position: relative; overflow: hidden;
+        }
         .saldo-card::before { content:''; position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(255,255,255,0.1); border-radius:50%; }
         .saldo-lbl { font-size:11px; font-weight:700; opacity:0.9; text-transform:uppercase; letter-spacing:1px; }
         .saldo-val { font-family:'Space Grotesk'; font-size:32px; font-weight:900; margin:5px 0 15px; }
-        .btn-tarik { background:white; color:#059669; border:none; padding:10px 25px; border-radius:50px; font-weight:800; font-size:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.1); display:inline-flex; align-items:center; gap:5px;}
+        .btn-tarik { background:white; color:var(--royal-blue); border:none; padding:10px 25px; border-radius:50px; font-weight:800; font-size:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.1); display:inline-flex; align-items:center; gap:5px;}
 
         /* HISTORY LIST */
         .trx-item { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid #E2E8F0; }
@@ -196,41 +201,34 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // CEK LOGIN
+        // CEK USER & MODE DEWA
         let u = null;
         try { u = JSON.parse(localStorage.getItem('maka_user')); } catch(e) {}
         if(!u || !u.id) { window.location.href='index.html'; }
 
-        // --- CEK HAK AKSES PENGURUS ---
         const myRole = (u.role || "").toUpperCase();
-        
-        // DEWA MODE CHECK (Supaya Bapak bisa akses)
         const platKu = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         const isUserDewa = (platKu === 'B4248SWF');
         let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
 
-        // Definisi "Pengurus" = Bukan Keluarga MLU & Bukan Guest (Atau Dewa)
+        // PRIVILEGES
         const isPengurus = (myRole !== 'KELUARGA MLU' && myRole !== 'GUEST') || u.isSuperAdmin || (isUserDewa && dewaMode === 'ON');
-        
-        // Definisi "Approval" = Ketum / Waketum / Dewa
-        const isApprover = myRole.includes('KETU') || myRole.includes('WAKIL') || u.isSuperAdmin || (isUserDewa && dewaMode === 'ON');
+        const isApprover = myRole.includes('KETU') || myRole.includes('WAKIL') || u.isSuperAdmin || (isUserDewa && dewaMode === 'ON'); 
 
-        // LOGIKA KUNCI / GEMBOK
+        // RENDER SCREEN
         if (!isPengurus) {
             document.getElementById('lockScreen').style.display = 'block';
-            // Stop Script execution for members
         } else {
             document.getElementById('mainApp').style.display = 'block';
             initApp();
         }
 
         function initApp() {
-            // SETUP TABS
-            document.getElementById('btnTabAdmin').style.display = 'block'; // Pengurus pasti bisa liat ini
+            if(isPengurus) document.getElementById('btnTabAdmin').style.display = 'block';
             if(isApprover) document.getElementById('btnTabApprove').style.display = 'block';
             document.getElementById('depDate').valueAsDate = new Date();
 
-            // 1. DATA MEMBER (SALDO & HISTORY)
+            // 1. DATA MEMBER
             const myRef = doc(db, "mlu_members", u.id); 
             let myCurrentPin = u.pin; 
 
@@ -242,14 +240,21 @@
                 }
             });
 
-            const qHist = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", u.id), orderBy("timestamp", "desc"));
+            // 2. HISTORY TRANSAKSI (FIX LOADING: Sort di Client Side)
+            const qHist = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", u.id));
             onSnapshot(qHist, (snap) => {
                 const list = document.getElementById('historyList');
                 list.innerHTML = "";
-                if(snap.empty) { list.innerHTML = `<div style="text-align:center; padding:10px; color:#cbd5e1; font-size:11px;">Belum ada transaksi.</div>`; return;}
                 
-                snap.forEach(d => {
-                    const data = d.data();
+                let dataArr = [];
+                snap.forEach(d => dataArr.push(d.data()));
+                
+                // SORT DI JAVASCRIPT AGAR TIDAK ERROR INDEX
+                dataArr.sort((a,b) => b.timestamp - a.timestamp);
+
+                if(dataArr.length === 0) { list.innerHTML = `<div style="text-align:center; padding:10px; color:#cbd5e1; font-size:11px;">Belum ada transaksi.</div>`; return;}
+                
+                dataArr.forEach(data => {
                     const isPlus = data.type === 'IN';
                     const color = isPlus ? 'trx-in' : 'trx-out';
                     const sign = isPlus ? '+' : '-';
@@ -272,14 +277,19 @@
                 });
             });
 
-            // 2. ADMIN INPUT LIST (LOAD ALL MEMBERS)
-            let allMembers = [];
-            getDocs(query(collection(db, "mlu_members"), orderBy("namaKtp", "asc"))).then(snap => {
-                snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
-                renderMembers(allMembers);
-            });
+            // 3. ADMIN LIST
+            if(isPengurus) {
+                let allMembers = [];
+                getDocs(query(collection(db, "mlu_members"))).then(snap => {
+                    snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
+                    // SORT MANUAL
+                    allMembers.sort((a,b) => (a.namaKtp || '').localeCompare(b.namaKtp || ''));
+                    window.allMembersCache = allMembers;
+                    renderMembers(allMembers);
+                });
+            }
 
-            // 3. APPROVAL LIST
+            // 4. APPROVAL LIST (FIX LOADING)
             if(isApprover) {
                 const qApp = query(collection(db, "mlu_tabungan_trx"), where("type", "==", "OUT"), where("status", "==", "PENDING"));
                 onSnapshot(qApp, (snap) => {
@@ -290,16 +300,12 @@
                     snap.forEach(d => {
                         const data = d.data();
                         const approvedBy = data.approvedBy || [];
-                        
-                        // Logic Cek Role Approval (Termasuk Dewa Mode)
                         const amIKetum = myRole.includes('KETU') || (isUserDewa && dewaMode === 'ON');
-                        const amIWaket = myRole.includes('WAKIL'); // Dewa dianggap Ketum saja
-                        
+                        const amIWaket = myRole.includes('WAKIL');
                         const isSignedByMe = (amIKetum && approvedBy.includes('KETUM')) || (amIWaket && approvedBy.includes('WAKETUM'));
                         
                         const badgeKetum = approvedBy.includes('KETUM') ? 'bg-green' : 'bg-gray';
                         const badgeWaket = approvedBy.includes('WAKETUM') ? 'bg-green' : 'bg-gray';
-
                         let btnAction = !isSignedByMe ? `<button class="btn-approve" onclick="approveTrx('${d.id}')">SETUJUI</button>` : `<span style="font-size:10px; color:var(--success); font-weight:800;">MENUNGGU PARTNER...</span>`;
 
                         cont.innerHTML += `
@@ -322,26 +328,23 @@
             }
         }
 
-        // --- GLOBAL FUNCTIONS ---
+        // --- FUNCTIONS ---
         window.renderMembers = (arr) => {
             const cont = document.getElementById('adminMemberList');
             cont.innerHTML = "";
             if(arr.length === 0) { cont.innerHTML = "<div style='text-align:center; padding:20px; color:#aaa;'>Data kosong</div>"; return; }
-            
             arr.forEach(m => {
-                const nama = m.namaKtp || m.nama || 'Tanpa Nama';
-                const plat = m.plat || '-';
                 cont.innerHTML += `
                 <div class="member-row">
-                    <div><div class="m-name">${nama}</div><div class="m-plat">${plat}</div></div>
-                    <button class="btn-plus" onclick="openDepositModal('${m.id}', '${nama}')"><i class="fas fa-plus"></i></button>
+                    <div><div class="m-name">${m.namaKtp || m.nama || 'Tanpa Nama'}</div><div class="m-plat">${m.plat || '-'}</div></div>
+                    <button class="btn-plus" onclick="openDepositModal('${m.id}', '${m.namaKtp || m.nama}')"><i class="fas fa-plus"></i></button>
                 </div>`;
             });
         }
 
         window.filterMembers = () => {
             const key = document.getElementById('searchMem').value.toUpperCase();
-            const res = allMembers.filter(m => (m.namaKtp && m.namaKtp.includes(key)) || (m.plat && m.plat.includes(key)));
+            const res = window.allMembersCache.filter(m => (m.namaKtp && m.namaKtp.includes(key)) || (m.plat && m.plat.includes(key)));
             window.renderMembers(res);
         }
 
@@ -388,20 +391,23 @@
             const currBal = parseInt(document.getElementById('myBalance').innerText.replace(/[^0-9]/g,''));
 
             if (amt < 50000) return alert("Minimal Rp 50.000");
-            if (amt > currBal) return alert("Saldo tidak mencukupi!");
-            if (!pin || pin !== u.pin) return alert("PIN SALAH! Transaksi ditolak.");
+            if (amt > currBal) return alert("Saldo kurang!");
+            
+            // VERIFIKASI PIN (Pastikan PIN di database sudah ada, kalau belum, minta user set di profil)
+            if (!u.pin) { return alert("Anda belum set PIN Login. Hubungi Admin."); }
+            if (pin !== u.pin) return alert("PIN SALAH!");
 
             const fee = Math.floor(amt * 0.05);
             try {
                 await addDoc(collection(db, "mlu_tabungan_trx"), {
                     memberId: u.id, memberName: u.namaKtp || u.nama, type: 'OUT', amount: amt, fee: fee, netAmount: amt - fee, desc: desc, timestamp: Date.now(), status: 'PENDING', approvedBy: []
                 });
-                document.getElementById('modalWithdraw').style.display='none'; alert("Pengajuan terkirim! Menunggu ACC Ketum & Waketum.");
+                document.getElementById('modalWithdraw').style.display='none'; alert("Pengajuan terkirim!");
             } catch(e) { alert("Error: " + e); }
         }
 
         window.approveTrx = async (trxId) => {
-            if(!confirm("Setujui penarikan ini?")) return;
+            if(!confirm("Setujui?")) return;
             try {
                 await runTransaction(db, async (t) => {
                     const trxRef = doc(db, "mlu_tabungan_trx", trxId);
@@ -409,12 +415,10 @@
                     if (!trxDoc.exists()) throw "Data hilang!";
                     const data = trxDoc.data();
                     let approvals = data.approvedBy || [];
-                    
                     let roleTag = "";
                     if(myRole.includes('KETU') || (isUserDewa && dewaMode === 'ON')) roleTag = "KETUM";
                     else if(myRole.includes('WAKIL')) roleTag = "WAKETUM";
-                    
-                    if(!roleTag) throw "Anda tidak berhak approve";
+                    if(!roleTag) throw "Akses ditolak";
                     if(approvals.includes(roleTag)) throw "Sudah diapprove";
 
                     approvals.push(roleTag);
@@ -427,7 +431,7 @@
                         const newBal = (memDoc.data().saldoTabungan || 0) - data.amount;
                         t.update(memRef, { saldoTabungan: newBal });
                         const kasRef = doc(collection(db, "mlu_finance"));
-                        t.set(kasRef, { type: 'IN', amount: data.fee, desc: `Fee Penarikan Tabungan ${data.memberName}`, timestamp: Date.now() });
+                        t.set(kasRef, { type: 'IN', amount: data.fee, desc: `Fee Penarikan ${data.memberName}`, timestamp: Date.now() });
                     } else {
                         t.update(trxRef, { approvedBy: approvals });
                     }
