@@ -14,7 +14,6 @@
             --text-main: #0F172A; --text-muted: #64748B; --danger: #EF4444; 
             --success: #10B981; --warning: #F59E0B; --gold: #D4AF37;
             --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
-            --glow-red: 0 10px 30px rgba(239, 68, 68, 0.3);
         }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -52,36 +51,28 @@
         .pfc-title { font-size: 9px; font-weight: 800; color: #93C5FD; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; margin-bottom: 2px;}
         .pfc-val { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; line-height: 1; display: flex; flex-direction: column; align-items: center;}
 
-        /* --- MARQUEE --- */
-        .marquee-box { margin: 15px 20px; background: white; border: 1px solid rgba(45,99,237,0.1); border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
-        .mq-icon { color: var(--danger); font-size: 12px; animation: ring 2s infinite; }
-        .mq-content { flex: 1; overflow: hidden; white-space: nowrap; }
-        .mq-text { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; font-size: 11px; font-weight: 700; color: var(--text-main); }
-        .mq-text span.hi-blue { color: var(--electric-blue); font-weight: 900; margin-left: 15px;}
-        .mq-text span.hi-green { color: var(--success); font-weight: 900; margin-left: 15px;}
-
         /* --- DASHBOARD WIDGETS --- */
-        .dash-container { padding: 0 20px; margin-bottom: 20px; }
+        .dash-container { padding: 0 20px; margin: -25px 0 20px; position: relative; z-index: 10; }
         
-        /* BANNER FC GADING (PENGGANTI MAP) */
+        /* BANNER FC GADING */
         .fc-banner { 
-            background: white; border-radius: 16px; padding: 20px; 
+            background: white; border-radius: 20px; padding: 20px; 
             display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 10px 25px rgba(45,99,237,0.08); border: 1px solid rgba(45,99,237,0.15); 
+            box-shadow: 0 10px 30px rgba(10,34,89,0.08); border: 1px solid rgba(45,99,237,0.1); 
             cursor: pointer; position: relative; overflow: hidden;
         }
-        .fc-banner::after { content: ''; position: absolute; right: -20px; top: -20px; width: 80px; height: 80px; background: rgba(45,99,237,0.05); border-radius: 50%; }
+        .fc-banner::after { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; background: rgba(45,99,237,0.05); border-radius: 50%; }
         .fc-left { display: flex; flex-direction: column; z-index: 2; }
         .fc-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--royal-blue); letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;}
         .fc-dist { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-top: 5px; }
         .fc-right { text-align: right; z-index: 2; }
-        .fc-val { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; line-height: 1; color: var(--text-main); }
-        .fc-lbl { font-family: 'Inter'; font-size: 9px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+        .fc-val { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; line-height: 1; }
+        .fc-lbl { font-family: 'Inter'; font-size: 9px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; display: block; margin-top: 4px; }
 
-        /* --- 8 MENU GRID --- */
-        .menu-container { padding: 0 20px; position: relative; z-index: 10; margin-bottom: 20px;}
+        /* --- MENU GRID --- */
+        .menu-container { padding: 0 20px; margin-bottom: 20px;}
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .menu-btn { background: rgba(255, 255, 255, 0.9); border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid rgba(45, 99, 237, 0.15); box-shadow: 0 5px 15px rgba(45, 99, 237, 0.05); transition: 0.2s; cursor: pointer; }
+        .menu-btn { background: white; border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid rgba(45, 99, 237, 0.1); box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: 0.2s; cursor: pointer; }
         .menu-btn:active { transform: scale(0.95); border-color: var(--electric-blue); }
         
         .icon-box { width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px; color: white; }
@@ -93,6 +84,7 @@
         .ic-info { background: linear-gradient(135deg, #8B5CF6 0%, #4338CA 100%); }
         .ic-pasar { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
         .ic-tour { background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%); }
+        .ic-tabungan { background: linear-gradient(135deg, #10B981 0%, #047857 100%); }
         
         .menu-title { font-family: 'Space Grotesk'; font-size: 12px; font-weight: 900; color: var(--royal-blue); margin-bottom: 2px; }
         .menu-desc { font-size: 8px; font-weight: 600; color: var(--text-muted); line-height: 1.2; }
@@ -131,7 +123,6 @@
         .nav-item i { font-size: 18px; margin-bottom: 2px; }
         .nav-text { font-family: 'Inter'; font-size: 8px; font-weight: 800; text-transform: uppercase; }
 
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
         @keyframes pulseSOS { 0%, 100% { box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); } 50% { box-shadow: 0 10px 30px rgba(239, 68, 68, 0.7); border: 2px solid #FFF;} }
         @keyframes tilt-shaking { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
     </style>
@@ -164,21 +155,14 @@
         </div>
     </header>
 
-    <div class="marquee-box">
-        <i class="fas fa-bullhorn mq-icon"></i>
-        <div class="mq-content">
-            <div class="mq-text" id="runningTextCombined">Memuat Informasi Penting, Uang Kas, dan Pasar MLU...</div>
-        </div>
-    </div>
-
     <div class="dash-container">
         <div class="fc-banner" onclick="window.location.href='antrian.html'">
             <div class="fc-left">
-                <div class="fc-title"><i class="fas fa-bolt" style="color:var(--electric-blue);"></i> FC GADING</div>
-                <div class="fc-dist" id="fcDistInfo"><i class="fas fa-map-marker-alt"></i> Cek Lokasi...</div>
+                <div class="fc-title"><i class="fas fa-charging-station" style="color:var(--royal-blue);"></i> STATUS STASIUN</div>
+                <div class="fc-dist" id="fcDistInfo"><i class="fas fa-map-marker-alt"></i> Menghitung jarak...</div>
             </div>
             <div class="fc-right" id="fcStatusRight">
-                <span class="fc-lbl">STATUS</span>
+                <span class="fc-lbl">INFO LIVE</span>
                 <div class="fc-val" style="color:#aaa; font-size:16px;">Memuat...</div>
             </div>
         </div>
@@ -201,6 +185,11 @@
                 <div class="menu-title">Uang Kas</div>
                 <div class="menu-desc">Laporan finansial & donasi</div>
             </a>
+            <a href="tabungan.html" class="menu-btn">
+                <div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div>
+                <div class="menu-title">Tabungan</div>
+                <div class="menu-desc">Simpanan & Penarikan</div>
+            </a>
             <a href="antrian.html" class="menu-btn">
                 <div class="icon-box ic-antrian"><i class="fas fa-charging-station"></i></div>
                 <div class="menu-title">Live Antrian</div>
@@ -221,11 +210,6 @@
                 <div class="menu-title">Pasar MLU</div>
                 <div class="menu-desc">Forum Jual Beli Member</div>
             </a>
-            <div class="menu-btn" onclick="alert('Segera Hadir!')">
-                <div class="icon-box ic-tour"><i class="fas fa-route"></i></div>
-                <div class="menu-title">Jadwal Touring</div>
-                <div class="menu-desc">Rute & agenda riding</div>
-            </div>
         </div>
     </main>
 
@@ -267,38 +251,31 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const INFO_PENTING = "Kopdar Gabungan MLU diadakan minggu depan. Pastikan iuran kas sudah lunas. Tetap solid!";
-        const STATION_LAT = -6.159389; 
-        const STATION_LNG = 106.901416;
-
+        // FIREBASE MLU
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        const fcConfig = { apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" };
-        const appFC = initializeApp(fcConfig, "AppFC");
+        // FIREBASE FC GADING (UTK STATUS)
+        const appFC = initializeApp({ apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" }, "AppFC");
         const dbFC = getFirestore(appFC);
         const fcRef = doc(dbFC, "antrian", "utama");
 
-        // --- SISTEM LOGIN FIX ---
-        // Jika tidak ada data user, TENDANG ke Login (Index.html)
-        // Jangan biarkan jadi Guest
+        // --- SISTEM LOGIN FIX (GUEST REMOVED) ---
         let uData = null;
         try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
 
+        // JIKA TIDAK ADA DATA LOGIN, TENDANG KELUAR
         if (!uData || !uData.plat) {
-            window.location.href = 'index.html'; // TENDANG JIKA GUEST
+            window.location.href = 'index.html'; 
         }
 
         const myName = uData.namaKtp || uData.namaWa || uData.nama || "User";
         const myPlat = uData.plat || "B XXXX XX";
         const myRole = uData.role || "MEMBER";
         const myPhoto = (uData.foto && uData.foto.length > 50) ? uData.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(myName)}`;
-
-        let kasTotal = 0;
-        let pasarText = "Belum ada barang baru.";
 
         document.addEventListener('DOMContentLoaded', () => {
             const hour = new Date().getHours();
@@ -340,49 +317,35 @@
                     if(slots[i] === null && !(dis && dis[i])) emptySlots++; 
                 }
 
+                // LOGIKA TAMPILAN BARU (SESUAI REQUEST)
+                let statusText = "";
+                let statusColor = "";
+                let bannerHtml = "";
+
+                if (qLen > 0) {
+                    statusText = `${qLen} ANTRIAN`;
+                    statusColor = "var(--warning)"; // Orange/Kuning Gelap
+                    
+                    bannerHtml = `<span style="color:var(--warning);">${qLen} ANTRIAN</span>`;
+                } else {
+                    statusText = `${emptySlots} SLOT KOSONG`;
+                    statusColor = "var(--success)"; // Hijau
+                    
+                    bannerHtml = `<span style="color:var(--success);">${emptySlots} SLOT KOSONG</span>`;
+                }
+
                 // Update Mini Status (Profile)
                 const miniStatus = document.getElementById('profileFcStatus');
-                if(qLen > 0) miniStatus.innerHTML = `<span style="color:var(--warning); font-size:16px;">${qLen}</span><span style="font-size:8px; font-weight:800; color:#aaa;">ANTRI</span>`;
-                else miniStatus.innerHTML = `<span style="color:var(--success); font-size:16px;">0${emptySlots}</span><span style="font-size:8px; font-weight:800; color:#aaa;">SLOT</span>`;
+                miniStatus.innerHTML = `<span style="color:${statusColor}; font-size:10px; font-weight:800;">${statusText}</span>`;
 
                 // Update Banner (Dashboard)
                 const rightContainer = document.getElementById('fcStatusRight');
-                if(qLen > 0) {
-                    rightContainer.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;"><span class="fc-val" style="color:var(--warning);">${qLen} <span style="font-size:12px; font-family:'Inter'; color:#aaa;">Antri</span></span><span class="fc-lbl">~${qLen * 30} MNT TUNGGU</span></div>`;
-                } else {
-                    rightContainer.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;"><span class="fc-val" style="color:#D4FF00;">0${emptySlots} <span style="font-size:12px; font-family:'Inter'; color:#aaa;">Slot</span></span><span class="fc-lbl" style="color:var(--success);">KOSONG</span></div>`;
-                }
-            });
-
-            // Kas Info
-            onSnapshot(collection(db, "mlu_finance"), (snap) => {
-                let balance = 0;
-                snap.forEach(doc => {
-                    const amt = doc.data().amount || 0;
-                    const type = doc.data().type === 'IN_COLLECTIVE' ? 'IN' : doc.data().type;
-                    if(type === 'IN') balance += amt; else balance -= amt;
-                });
-                kasTotal = balance;
-                updateMarqueeText();
-            });
-
-            // Pasar Info
-            onSnapshot(query(collection(db, "mlu_store"), orderBy("timestamp", "desc")), (snap) => {
-                let titles = []; let count = 0;
-                snap.forEach(doc => { if(count < 2) titles.push(doc.data().title); count++; });
-                
-                if(snap.size > 0) pasarText = `${snap.size} Item Tersedia (${titles.join(', ')}...)`;
-                else pasarText = "Belum ada item jualan.";
-                
-                updateMarqueeText();
+                rightContainer.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;"><span class="fc-val">${bannerHtml}</span><span class="fc-lbl">REALTIME INFO</span></div>`;
             });
         }
 
-        function updateMarqueeText() {
-            const tgl = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short'});
-            const fullText = `⚠️ <b>INFO MLU:</b> ${INFO_PENTING} <span class="hi-green"><i class="fas fa-wallet"></i> KAS PER ${tgl.toUpperCase()}: Rp ${kasTotal.toLocaleString('id-ID')}</span> <span class="hi-blue"><i class="fas fa-shopping-cart"></i> PASAR: ${pasarText}</span>`;
-            document.getElementById('runningTextCombined').innerHTML = fullText;
-        }
+        const STATION_LAT = -6.159389; 
+        const STATION_LNG = 106.901416;
 
         function cekJarakFC() {
             if (navigator.geolocation) {
@@ -392,7 +355,7 @@
                     const a = 0.5 - c((STATION_LAT - lat) * p)/2 + c(lat * p) * c(STATION_LAT * p) * (1 - c((STATION_LNG - lon) * p))/2;
                     const distKm = 12742 * Math.asin(Math.sqrt(a)); 
                     const estMenit = Math.ceil((distKm / 25) * 60); 
-                    document.getElementById('fcDistInfo').innerHTML = `<i class="fas fa-route"></i> ~${distKm.toFixed(1)} KM (${estMenit} mnt jalan)`;
+                    document.getElementById('fcDistInfo').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${distKm.toFixed(1)} KM (${estMenit} mnt)`;
                 });
             }
         }

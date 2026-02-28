@@ -2,22 +2,16 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU - Directory</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
         :root { 
-            --royal-blue: #0A2259; 
-            --electric-blue: #2D63ED; 
-            --bg-surface: #F0F4F8; 
-            --white: #FFFFFF; 
-            --text-main: #0F172A; 
-            --text-muted: #64748B; 
-            --danger: #EF4444; 
-            --success: #10B981;
-            --gold: #D4AF37;
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; 
+            --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; 
+            --danger: #EF4444; --success: #10B981; --gold: #D4AF37;
             
             --border-soft: rgba(45, 99, 237, 0.15); 
             --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
@@ -25,7 +19,7 @@
             --glow-gold: 0 10px 25px rgba(212, 175, 55, 0.25);
             --glow-success: 0 10px 25px rgba(16, 185, 129, 0.25);
         }
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent;}
         
         /* HEADER GLOWING */
@@ -57,7 +51,6 @@
             border: 1px solid var(--border-soft); box-shadow: 0 5px 15px rgba(45,99,237,0.05); transition: 0.3s;
         }
         
-        /* Kartu Khusus Pengurus */
         .member-card.is-pengurus { 
             border: 1px solid rgba(212, 175, 55, 0.4); 
             background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255, 251, 235, 0.9) 100%); 
@@ -69,13 +62,21 @@
         .m-photo:active { transform: scale(0.95); }
 
         .m-info { flex: 1; min-width: 0; }
-        
         .m-name { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: var(--royal-blue); text-transform: uppercase; margin-bottom: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2;}
         .is-pengurus .m-name { color: #000; }
-        
         .m-wa-name { font-size: 10px; font-weight: 700; color: var(--electric-blue); background: rgba(45,99,237,0.08); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 5px; text-transform: uppercase; }
-
         .m-plat { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; }
+        
+        /* SALDO CLICKABLE */
+        .m-saldo { 
+            font-size: 11px; font-weight: 800; color: var(--success); 
+            display: flex; align-items: center; gap: 6px; margin-top: 6px; 
+            cursor: pointer; padding: 4px 8px; background: rgba(16,185,129,0.1); 
+            border-radius: 8px; width: fit-content; transition: 0.2s;
+        }
+        .m-saldo:active { transform: scale(0.95); background: rgba(16,185,129,0.2); }
+        .m-saldo i { font-size: 12px; }
+
         .m-role { font-size: 9px; font-weight: 800; background: #F1F5F9; color: var(--text-muted); padding: 4px 8px; border-radius: 8px; display: inline-block; margin-top: 5px; border: 1px solid #E2E8F0;}
         .is-pengurus .m-role { background: rgba(212, 175, 55, 0.1); color: #B48500; border: 1px solid rgba(212, 175, 55, 0.3); }
 
@@ -83,10 +84,8 @@
         .btn-act { width: 35px; height: 35px; border-radius: 12px; border: none; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-call { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
         .btn-call:active { background: var(--success); color: white; box-shadow: var(--glow-success); }
-        
         .btn-edit { background: rgba(45, 99, 237, 0.1); color: var(--electric-blue); border: 1px solid rgba(45, 99, 237, 0.2); display: none; }
         .btn-edit:active { background: var(--electric-blue); color: white; box-shadow: var(--glow-blue); }
-        
         .btn-del { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); display: none; }
         .btn-del:active { background: var(--danger); color: white; box-shadow: var(--glow-red); }
         .btn-act:active { transform: scale(0.9); }
@@ -95,7 +94,17 @@
         .fab-add { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--glow-blue); border: none; cursor: pointer; z-index: 1000; transition: 0.2s;}
         .fab-add:active { transform: scale(0.9); }
 
-        /* --- MODAL FORM (TAMBAH/EDIT) GLASSMORPHISM --- */
+        /* --- MODAL HISTORY (BARU) --- */
+        .hist-list { margin-top: 15px; max-height: 400px; overflow-y: auto; }
+        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #E2E8F0; }
+        .hist-item:last-child { border-bottom: none; }
+        .hist-left { display: flex; flex-direction: column; gap: 2px; }
+        .hist-desc { font-size: 12px; font-weight: 700; color: var(--text-main); }
+        .hist-date { font-size: 10px; color: var(--text-muted); }
+        .hist-val { font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; }
+        .val-in { color: var(--success); } .val-out { color: var(--danger); }
+
+        /* --- MODAL FORM --- */
         .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.7); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
         .modal-box { 
             background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); width: 100%; max-width: 500px; 
@@ -123,14 +132,13 @@
         .btn-save { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: var(--glow-blue); letter-spacing: 1px; transition: 0.2s;}
         .btn-save:active { transform: scale(0.98); }
 
-        /* --- LIGHTBOX (VIEW FOTO FULL) --- */
+        /* LIGHTBOX */
         .photo-viewer-overlay { position: fixed; inset: 0; background: rgba(5,10,21,0.9); z-index: 99999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px;}
         .pv-container { position: relative; max-width: 400px; width: 100%; text-align: center; }
         .pv-container img { width: 100%; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); object-fit: cover; max-height: 70vh; border: 2px solid rgba(255,255,255,0.2); }
         .pv-close { position: absolute; top: -15px; right: -15px; width: 40px; height: 40px; border-radius: 50%; background: var(--danger); color: white; border: 2px solid white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--glow-red); transition: 0.2s; }
         .pv-close:active { transform: scale(0.9); }
 
-        /* BACK NAVIGATION */
         .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
         .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--glow-blue); }
     </style>
@@ -216,45 +224,40 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title" style="font-size:16px;">Riwayat Tabungan</div>
+                <button class="btn-close" onclick="document.getElementById('historyModal').style.display='none'"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="historyTargetName" style="font-size:12px; font-weight:700; color:#64748B; margin-top:-15px; margin-bottom:15px; text-transform:uppercase;"></div>
+            <div id="historyContent" class="hist-list">
+                <div style="text-align:center; font-size:12px; color:#aaa; padding:20px;">Memuat...</div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // HAK AKSES ADMIN DEWA & SAKLAR ON/OFF
+        // CEK USER
         const u = JSON.parse(localStorage.getItem('maka_user')) || {};
         const platKu = (u.plat || "").replace(/\s+/g, '').toUpperCase();
-        
         let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
         const isUserDewa = (platKu === 'B4248SWF');
-        
         const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
 
-        // Render Tombol Saklar Khusus Bapak (Glow Theme)
+        // Render Tombol Dewa
         if (isUserDewa) {
             const header = document.getElementById('mainHeader');
             const btnSaklar = document.createElement('button');
-            
             btnSaklar.innerHTML = dewaMode === 'ON' ? '<i class="fas fa-crown"></i> MODE DEWA: ON' : '<i class="fas fa-user-shield"></i> MODE DEWA: OFF';
-            btnSaklar.style.cssText = `
-                margin-top: 15px; 
-                background: ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.2)'}; 
-                color: ${dewaMode === 'ON' ? '#000' : '#FFF'}; 
-                border: 1px solid ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.4)'}; 
-                padding: 8px 15px; border-radius: 20px; 
-                font-family: 'Space Grotesk'; font-size: 11px; font-weight: 900; 
-                cursor: pointer; box-shadow: ${dewaMode === 'ON' ? '0 0 15px rgba(212,175,55,0.6)' : 'none'}; 
-                transition: 0.2s;
-            `;
-            
-            btnSaklar.onclick = () => {
-                const newState = dewaMode === 'ON' ? 'OFF' : 'ON';
-                localStorage.setItem('maka_dewa_mode', newState);
-                location.reload(); 
-            };
-            
+            btnSaklar.style.cssText = `margin-top: 15px; background: ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.2)'}; color: ${dewaMode === 'ON' ? '#000' : '#FFF'}; border: 1px solid ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.4)'}; padding: 8px 15px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 900; cursor: pointer; box-shadow: ${dewaMode === 'ON' ? '0 0 15px rgba(212,175,55,0.6)' : 'none'}; transition: 0.2s;`;
+            btnSaklar.onclick = () => { localStorage.setItem('maka_dewa_mode', dewaMode === 'ON' ? 'OFF' : 'ON'); location.reload(); };
             header.appendChild(btnSaklar);
         }
 
@@ -268,7 +271,7 @@
         let membersData = [];
         let currentPhotoBase64 = "";
 
-        // MESIN KOMPRESOR FOTO
+        // MESIN KOMPRESOR
         document.getElementById('formFoto').addEventListener('change', function(e) {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -280,10 +283,8 @@
                     if (w > h) { if (w > 600) { h *= 600/w; w = 600; } } else { if (h > 600) { w *= 600/h; h = 600; } }
                     canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
                     currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
-                    
-                    const preview = document.getElementById('previewFoto');
-                    preview.src = currentPhotoBase64;
-                    preview.style.display = 'block';
+                    document.getElementById('previewFoto').src = currentPhotoBase64;
+                    document.getElementById('previewFoto').style.display = 'block';
                 }
                 img.src = event.target.result;
             }
@@ -300,23 +301,20 @@
             const list = document.getElementById('memberList'); list.innerHTML = '';
             
             data.sort((a, b) => {
-                let aIsP = (a.role && a.role !== 'KELUARGA MLU');
-                let bIsP = (b.role && b.role !== 'KELUARGA MLU');
-                if (aIsP && !bIsP) return -1;
-                if (!aIsP && bIsP) return 1;
-                return 0;
+                let aIsP = (a.role && a.role !== 'KELUARGA MLU'); let bIsP = (b.role && b.role !== 'KELUARGA MLU');
+                if (aIsP && !bIsP) return -1; if (!aIsP && bIsP) return 1; return 0;
             });
 
             data.forEach(m => {
                 const isPengurus = m.role && m.role !== 'KELUARGA MLU';
                 const cardClass = isPengurus ? 'member-card is-pengurus' : 'member-card';
-                
                 const nameKtp = m.namaKtp || m.nama || "-";
                 const nameWa = m.namaWa || "-";
-                
                 const photoSrc = m.foto && m.foto.length > 50 ? m.foto : `https://ui-avatars.com/api/?background=${isPengurus ? 'D4AF37' : '2D63ED'}&color=${isPengurus ? '000' : 'fff'}&bold=true&name=${encodeURIComponent(nameKtp)}`;
-                
                 let waLink = m.hp && m.hp !== "-" ? `https://wa.me/62${m.hp.replace(/^0+/, '')}` : '#';
+                
+                // FORMAT SALDO
+                const saldo = m.saldoTabungan ? parseInt(m.saldoTabungan).toLocaleString('id-ID') : "0";
 
                 list.innerHTML += `
                     <div class="${cardClass}">
@@ -325,6 +323,11 @@
                             <div class="m-name">${nameKtp}</div>
                             <div class="m-wa-name"><i class="fas fa-comment-dots"></i> WA: ${nameWa}</div>
                             <div class="m-plat">${m.plat} • ${m.type || m.divisi || 'RTO'}</div>
+                            
+                            <div class="m-saldo" onclick="checkSavings('${m.id}', '${nameKtp}')">
+                                <i class="fas fa-wallet"></i> Rp ${saldo}
+                            </div>
+
                             <div class="m-role">${m.role}</div>
                         </div>
                         <div class="m-actions">
@@ -343,54 +346,67 @@
             renderList(filtered);
         };
 
-        // FUNGSI ZOOM FOTO (LIGHTBOX)
-        window.viewPhoto = (src) => {
-            document.getElementById('pvImage').src = src;
-            document.getElementById('photoViewer').style.display = 'flex';
-        };
-        window.closePhoto = () => {
-            document.getElementById('photoViewer').style.display = 'none';
-        };
+        // --- CEK HISTORY TABUNGAN ---
+        window.checkSavings = async (id, name) => {
+            // PROTEKSI: Cuma boleh liat punya sendiri atau Admin
+            if(u.id !== id && !isAdmin) {
+                alert("🔒 Maaf, detail tabungan bersifat pribadi. Anda hanya bisa melihat milik sendiri.");
+                return;
+            }
+
+            document.getElementById('historyTargetName').innerText = name;
+            document.getElementById('historyContent').innerHTML = `<div style="text-align:center; padding:20px; color:#94A3B8;">Memuat data...</div>`;
+            document.getElementById('historyModal').style.display = 'flex';
+
+            const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", id), orderBy("timestamp", "desc"));
+            const snap = await getDocs(q);
+            
+            const cont = document.getElementById('historyContent');
+            cont.innerHTML = "";
+            
+            if(snap.empty) {
+                cont.innerHTML = `<div style="text-align:center; padding:20px; color:#cbd5e1; font-size:12px;">Belum ada riwayat transaksi.</div>`;
+                return;
+            }
+
+            snap.forEach(d => {
+                const data = d.data();
+                const isIn = data.type === 'IN';
+                const cls = isIn ? 'val-in' : 'val-out';
+                const sign = isIn ? '+' : '-';
+                const date = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
+                
+                cont.innerHTML += `
+                <div class="hist-item">
+                    <div class="hist-left">
+                        <div class="hist-desc">${data.desc || (isIn ? 'Setoran' : 'Penarikan')}</div>
+                        <div class="hist-date">${date}</div>
+                    </div>
+                    <div class="hist-val ${cls}">${sign} Rp ${data.amount.toLocaleString('id-ID')}</div>
+                </div>`;
+            });
+        }
+
+        window.viewPhoto = (src) => { document.getElementById('pvImage').src = src; document.getElementById('photoViewer').style.display = 'flex'; };
+        window.closePhoto = () => { document.getElementById('photoViewer').style.display = 'none'; };
 
         window.openModal = () => { 
-            document.getElementById('formId').value = ''; 
-            document.getElementById('formNamaKtp').value = ''; 
-            document.getElementById('formNamaWa').value = ''; 
-            document.getElementById('formPlat').value = ''; 
-            document.getElementById('formHp').value = ''; 
-            document.getElementById('formRole').value = 'KELUARGA MLU';
-            document.getElementById('formType').value = 'RTO';
-            document.getElementById('formPin').value = ''; 
-            currentPhotoBase64 = "";
-            document.getElementById('previewFoto').style.display = 'none';
-            document.getElementById('formFoto').value = '';
-            document.getElementById('modalTitleText').innerText = "Tambah Anggota";
-            document.getElementById('formModal').style.display = 'flex'; 
+            document.getElementById('formId').value = ''; document.getElementById('formNamaKtp').value = ''; document.getElementById('formNamaWa').value = ''; 
+            document.getElementById('formPlat').value = ''; document.getElementById('formHp').value = ''; document.getElementById('formRole').value = 'KELUARGA MLU';
+            document.getElementById('formType').value = 'RTO'; document.getElementById('formPin').value = ''; 
+            currentPhotoBase64 = ""; document.getElementById('previewFoto').style.display = 'none'; document.getElementById('formFoto').value = '';
+            document.getElementById('modalTitleText').innerText = "Tambah Anggota"; document.getElementById('formModal').style.display = 'flex'; 
         };
 
         window.openEditModal = (id) => {
-            const m = membersData.find(x => x.id === id);
-            if(!m) return;
-            document.getElementById('formId').value = id; 
-            document.getElementById('formNamaKtp').value = m.namaKtp || m.nama || ''; 
-            document.getElementById('formNamaWa').value = m.namaWa || m.nama || ''; 
-            document.getElementById('formPlat').value = m.plat || ''; 
-            document.getElementById('formHp').value = m.hp || ''; 
-            document.getElementById('formRole').value = m.role || 'KELUARGA MLU';
-            document.getElementById('formType').value = m.type || m.divisi || 'RTO'; 
-            document.getElementById('formPin').value = m.pin || ''; 
-            
-            document.getElementById('modalTitleText').innerText = "Edit Anggota & Foto";
-            
-            if(m.foto && m.foto.length > 50) {
-                currentPhotoBase64 = m.foto;
-                document.getElementById('previewFoto').src = m.foto;
-                document.getElementById('previewFoto').style.display = 'block';
-            } else {
-                currentPhotoBase64 = "";
-                document.getElementById('previewFoto').style.display = 'none';
-            }
-
+            const m = membersData.find(x => x.id === id); if(!m) return;
+            document.getElementById('formId').value = id; document.getElementById('formNamaKtp').value = m.namaKtp || m.nama || ''; 
+            document.getElementById('formNamaWa').value = m.namaWa || m.nama || ''; document.getElementById('formPlat').value = m.plat || ''; 
+            document.getElementById('formHp').value = m.hp || ''; document.getElementById('formRole').value = m.role || 'KELUARGA MLU';
+            document.getElementById('formType').value = m.type || m.divisi || 'RTO'; document.getElementById('formPin').value = m.pin || ''; 
+            document.getElementById('modalTitleText').innerText = "Edit Anggota";
+            if(m.foto && m.foto.length > 50) { currentPhotoBase64 = m.foto; document.getElementById('previewFoto').src = m.foto; document.getElementById('previewFoto').style.display = 'block'; } 
+            else { currentPhotoBase64 = ""; document.getElementById('previewFoto').style.display = 'none'; }
             document.getElementById('formModal').style.display = 'flex'; 
         }
 
@@ -408,34 +424,18 @@
 
             if(!namaKtp || !namaWa || !plat) return alert("Nama KTP, Nama WA, dan Plat wajib diisi!");
 
-            const btn = document.getElementById('btnSave');
-            btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
+            const btn = document.getElementById('btnSave'); btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
 
             try {
-                let payload = { 
-                    namaKtp: namaKtp, namaWa: namaWa, nama: namaWa, 
-                    plat: plat, hp: hp, role: role, type: type 
-                };
-                
-                if (pin !== undefined) {
-                    payload.pin = pin;
-                }
-                
-                if(currentPhotoBase64 !== "") {
-                    payload.foto = currentPhotoBase64;
-                }
+                let payload = { namaKtp: namaKtp, namaWa: namaWa, nama: namaWa, plat: plat, hp: hp, role: role, type: type };
+                if (pin !== undefined) payload.pin = pin;
+                if(currentPhotoBase64 !== "") payload.foto = currentPhotoBase64;
 
-                if (id) {
-                    await updateDoc(doc(db, "mlu_members", id), payload);
-                } else {
-                    await addDoc(collection(db, "mlu_members"), payload);
-                }
+                if (id) await updateDoc(doc(db, "mlu_members", id), payload);
+                else await addDoc(collection(db, "mlu_members"), payload);
                 closeModal();
-            } catch (e) {
-                alert("Gagal menyimpan: " + e.message);
-            } finally {
-                btn.innerText = "SIMPAN DATA"; btn.style.opacity = '1';
-            }
+            } catch (e) { alert("Gagal menyimpan: " + e.message); } 
+            finally { btn.innerText = "SIMPAN DATA"; btn.style.opacity = '1'; }
         };
 
         window.deleteData = async (id) => { if(confirm("Hapus anggota ini permanen?")) { await deleteDoc(doc(db, "mlu_members", id)); } };
