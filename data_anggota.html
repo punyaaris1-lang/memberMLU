@@ -32,7 +32,7 @@
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: #93C5FD; text-transform: uppercase; margin-bottom: 5px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5);}
         .main-title { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 900; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.2);}
 
-        /* SEARCH BOX GLASS */
+        /* SEARCH BOX */
         .search-box { 
             margin: -30px 20px 20px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);
             border-radius: 20px; padding: 5px 15px; display: flex; align-items: center; 
@@ -43,14 +43,13 @@
         .search-box i { color: var(--electric-blue); font-size: 18px; margin-right: 10px; }
         .search-box input { flex: 1; border: none; padding: 15px 0; font-family: 'Inter'; font-size: 14px; font-weight: 600; background: transparent; color: var(--text-main);}
 
-        /* KARTU ANGGOTA GLASSMORPHISM */
+        /* LIST & CARD */
         .list-container { padding: 0 20px 30px; display: flex; flex-direction: column; gap: 12px; }
         .member-card { 
             background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);
             border-radius: 20px; padding: 15px; display: flex; align-items: center; gap: 15px; 
             border: 1px solid var(--border-soft); box-shadow: 0 5px 15px rgba(45,99,237,0.05); transition: 0.3s;
         }
-        
         .member-card.is-pengurus { 
             border: 1px solid rgba(212, 175, 55, 0.4); 
             background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255, 251, 235, 0.9) 100%); 
@@ -67,12 +66,12 @@
         .m-wa-name { font-size: 10px; font-weight: 700; color: var(--electric-blue); background: rgba(45,99,237,0.08); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 5px; text-transform: uppercase; }
         .m-plat { font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; }
         
-        /* SALDO CLICKABLE */
+        /* SALDO (Hanya Muncul Jika Berhak) */
         .m-saldo { 
             font-size: 11px; font-weight: 800; color: var(--success); 
             display: flex; align-items: center; gap: 6px; margin-top: 6px; 
             cursor: pointer; padding: 4px 8px; background: rgba(16,185,129,0.1); 
-            border-radius: 8px; width: fit-content; transition: 0.2s;
+            border-radius: 8px; width: fit-content; transition: 0.2s; border:1px solid rgba(16,185,129,0.2);
         }
         .m-saldo:active { transform: scale(0.95); background: rgba(16,185,129,0.2); }
         .m-saldo i { font-size: 12px; }
@@ -90,11 +89,10 @@
         .btn-del:active { background: var(--danger); color: white; box-shadow: var(--glow-red); }
         .btn-act:active { transform: scale(0.9); }
 
-        /* FAB ADD BUTTON */
         .fab-add { position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px; background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--glow-blue); border: none; cursor: pointer; z-index: 1000; transition: 0.2s;}
         .fab-add:active { transform: scale(0.9); }
 
-        /* --- MODAL HISTORY (BARU) --- */
+        /* MODAL HISTORY */
         .hist-list { margin-top: 15px; max-height: 400px; overflow-y: auto; }
         .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed #E2E8F0; }
         .hist-item:last-child { border-bottom: none; }
@@ -104,7 +102,7 @@
         .hist-val { font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; }
         .val-in { color: var(--success); } .val-out { color: var(--danger); }
 
-        /* --- MODAL FORM --- */
+        /* MODAL FORM */
         .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.7); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
         .modal-box { 
             background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); width: 100%; max-width: 500px; 
@@ -244,20 +242,39 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // CEK USER
+        // HAK AKSES ADMIN DEWA & SAKLAR ON/OFF
         const u = JSON.parse(localStorage.getItem('maka_user')) || {};
         const platKu = (u.plat || "").replace(/\s+/g, '').toUpperCase();
+        
         let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
         const isUserDewa = (platKu === 'B4248SWF');
+        
+        // ADMIN = BUKAN KELUARGA MLU & BUKAN GUEST (ATAU DEWA)
         const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
 
-        // Render Tombol Dewa
+        // Render Tombol Saklar Khusus Bapak (Glow Theme)
         if (isUserDewa) {
             const header = document.getElementById('mainHeader');
             const btnSaklar = document.createElement('button');
+            
             btnSaklar.innerHTML = dewaMode === 'ON' ? '<i class="fas fa-crown"></i> MODE DEWA: ON' : '<i class="fas fa-user-shield"></i> MODE DEWA: OFF';
-            btnSaklar.style.cssText = `margin-top: 15px; background: ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.2)'}; color: ${dewaMode === 'ON' ? '#000' : '#FFF'}; border: 1px solid ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.4)'}; padding: 8px 15px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 900; cursor: pointer; box-shadow: ${dewaMode === 'ON' ? '0 0 15px rgba(212,175,55,0.6)' : 'none'}; transition: 0.2s;`;
-            btnSaklar.onclick = () => { localStorage.setItem('maka_dewa_mode', dewaMode === 'ON' ? 'OFF' : 'ON'); location.reload(); };
+            btnSaklar.style.cssText = `
+                margin-top: 15px; 
+                background: ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.2)'}; 
+                color: ${dewaMode === 'ON' ? '#000' : '#FFF'}; 
+                border: 1px solid ${dewaMode === 'ON' ? 'var(--gold)' : 'rgba(255,255,255,0.4)'}; 
+                padding: 8px 15px; border-radius: 20px; 
+                font-family: 'Space Grotesk'; font-size: 11px; font-weight: 900; 
+                cursor: pointer; box-shadow: ${dewaMode === 'ON' ? '0 0 15px rgba(212,175,55,0.6)' : 'none'}; 
+                transition: 0.2s;
+            `;
+            
+            btnSaklar.onclick = () => {
+                const newState = dewaMode === 'ON' ? 'OFF' : 'ON';
+                localStorage.setItem('maka_dewa_mode', newState);
+                location.reload(); 
+            };
+            
             header.appendChild(btnSaklar);
         }
 
@@ -271,7 +288,7 @@
         let membersData = [];
         let currentPhotoBase64 = "";
 
-        // MESIN KOMPRESOR
+        // MESIN KOMPRESOR FOTO
         document.getElementById('formFoto').addEventListener('change', function(e) {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -283,8 +300,10 @@
                     if (w > h) { if (w > 600) { h *= 600/w; w = 600; } } else { if (h > 600) { w *= 600/h; h = 600; } }
                     canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
                     currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
-                    document.getElementById('previewFoto').src = currentPhotoBase64;
-                    document.getElementById('previewFoto').style.display = 'block';
+                    
+                    const preview = document.getElementById('previewFoto');
+                    preview.src = currentPhotoBase64;
+                    preview.style.display = 'block';
                 }
                 img.src = event.target.result;
             }
@@ -301,20 +320,38 @@
             const list = document.getElementById('memberList'); list.innerHTML = '';
             
             data.sort((a, b) => {
-                let aIsP = (a.role && a.role !== 'KELUARGA MLU'); let bIsP = (b.role && b.role !== 'KELUARGA MLU');
-                if (aIsP && !bIsP) return -1; if (!aIsP && bIsP) return 1; return 0;
+                let aIsP = (a.role && a.role !== 'KELUARGA MLU');
+                let bIsP = (b.role && b.role !== 'KELUARGA MLU');
+                if (aIsP && !bIsP) return -1;
+                if (!aIsP && bIsP) return 1;
+                return 0;
             });
 
             data.forEach(m => {
                 const isPengurus = m.role && m.role !== 'KELUARGA MLU';
                 const cardClass = isPengurus ? 'member-card is-pengurus' : 'member-card';
+                
                 const nameKtp = m.namaKtp || m.nama || "-";
                 const nameWa = m.namaWa || "-";
-                const photoSrc = m.foto && m.foto.length > 50 ? m.foto : `https://ui-avatars.com/api/?background=${isPengurus ? 'D4AF37' : '2D63ED'}&color=${isPengurus ? '000' : 'fff'}&bold=true&name=${encodeURIComponent(nameKtp)}`;
-                let waLink = m.hp && m.hp !== "-" ? `https://wa.me/62${m.hp.replace(/^0+/, '')}` : '#';
                 
+                const photoSrc = m.foto && m.foto.length > 50 ? m.foto : `https://ui-avatars.com/api/?background=${isPengurus ? 'D4AF37' : '2D63ED'}&color=${isPengurus ? '000' : 'fff'}&bold=true&name=${encodeURIComponent(nameKtp)}`;
+                
+                let waLink = m.hp && m.hp !== "-" ? `https://wa.me/62${m.hp.replace(/^0+/, '')}` : '#';
+
                 // FORMAT SALDO
                 const saldo = m.saldoTabungan ? parseInt(m.saldoTabungan).toLocaleString('id-ID') : "0";
+
+                // LOGIKA PRIVASI DOMPET
+                const isMe = (m.id === u.id); // Apakah ini kartu saya sendiri?
+                const canSeeWallet = isMe || (isUserDewa && dewaMode === 'ON'); // Saya sendiri ATAU Dewa Mode ON
+
+                let saldoHtml = '';
+                if (canSeeWallet) {
+                    saldoHtml = `
+                    <div class="m-saldo" onclick="checkSavings('${m.id}', '${nameKtp}')">
+                        <i class="fas fa-wallet"></i> Rp ${saldo}
+                    </div>`;
+                }
 
                 list.innerHTML += `
                     <div class="${cardClass}">
@@ -323,12 +360,7 @@
                             <div class="m-name">${nameKtp}</div>
                             <div class="m-wa-name"><i class="fas fa-comment-dots"></i> WA: ${nameWa}</div>
                             <div class="m-plat">${m.plat} • ${m.type || m.divisi || 'RTO'}</div>
-                            
-                            <div class="m-saldo" onclick="checkSavings('${m.id}', '${nameKtp}')">
-                                <i class="fas fa-wallet"></i> Rp ${saldo}
-                            </div>
-
-                            <div class="m-role">${m.role}</div>
+                            ${saldoHtml} <div class="m-role">${m.role}</div>
                         </div>
                         <div class="m-actions">
                             <a href="${waLink}" class="btn-act btn-call" target="_blank"><i class="fab fa-whatsapp"></i></a>
@@ -348,9 +380,9 @@
 
         // --- CEK HISTORY TABUNGAN ---
         window.checkSavings = async (id, name) => {
-            // PROTEKSI: Cuma boleh liat punya sendiri atau Admin
-            if(u.id !== id && !isAdmin) {
-                alert("🔒 Maaf, detail tabungan bersifat pribadi. Anda hanya bisa melihat milik sendiri.");
+            // DOUBLE CHECK: HANYA DEWA ATAU PEMILIK
+            if (u.id !== id && !(isUserDewa && dewaMode === 'ON')) {
+                alert("🔒 Maaf, detail tabungan bersifat pribadi.");
                 return;
             }
 
@@ -358,19 +390,25 @@
             document.getElementById('historyContent').innerHTML = `<div style="text-align:center; padding:20px; color:#94A3B8;">Memuat data...</div>`;
             document.getElementById('historyModal').style.display = 'flex';
 
-            const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", id), orderBy("timestamp", "desc"));
+            // QUERY TANPA INDEX (FILTER CLIENT SIDE BIAR GAK ERROR)
+            const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", id));
             const snap = await getDocs(q);
             
             const cont = document.getElementById('historyContent');
             cont.innerHTML = "";
             
-            if(snap.empty) {
+            let dataArr = [];
+            snap.forEach(d => dataArr.push(d.data()));
+            
+            // URUTKAN MANUAL DI JAVASCRIPT (ANTI ERROR INDEX)
+            dataArr.sort((a,b) => b.timestamp - a.timestamp);
+
+            if(dataArr.length === 0) {
                 cont.innerHTML = `<div style="text-align:center; padding:20px; color:#cbd5e1; font-size:12px;">Belum ada riwayat transaksi.</div>`;
                 return;
             }
 
-            snap.forEach(d => {
-                const data = d.data();
+            dataArr.forEach(data => {
                 const isIn = data.type === 'IN';
                 const cls = isIn ? 'val-in' : 'val-out';
                 const sign = isIn ? '+' : '-';
