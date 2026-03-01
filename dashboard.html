@@ -253,17 +253,17 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // FIREBASE MLU
+        // FIREBASE MLU ( UTAMA )
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        // FIREBASE FC GADING (UTK STATUS)
-        const appFC = initializeApp({ apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" }, "AppFC");
+        // FIREBASE FC GADING ( UTK STATUS ) - UPDATED: fcgadingnew22
+        const appFC = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppFC");
         const dbFC = getFirestore(appFC);
         const fcRef = doc(dbFC, "antrian", "utama");
 
-        // --- SISTEM LOGIN FIX (GUEST REMOVED) ---
+        // --- SISTEM LOGIN FIX ---
         let uData = null;
         try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
 
@@ -317,20 +317,18 @@
                     if(slots[i] === null && !(dis && dis[i])) emptySlots++; 
                 }
 
-                // LOGIKA TAMPILAN BARU (SESUAI REQUEST)
+                // LOGIKA TAMPILAN
                 let statusText = "";
                 let statusColor = "";
                 let bannerHtml = "";
 
                 if (qLen > 0) {
                     statusText = `${qLen} ANTRIAN`;
-                    statusColor = "var(--warning)"; // Orange/Kuning Gelap
-                    
+                    statusColor = "var(--warning)"; 
                     bannerHtml = `<span style="color:var(--warning);">${qLen} ANTRIAN</span>`;
                 } else {
                     statusText = `${emptySlots} SLOT KOSONG`;
-                    statusColor = "var(--success)"; // Hijau
-                    
+                    statusColor = "var(--success)"; 
                     bannerHtml = `<span style="color:var(--success);">${emptySlots} SLOT KOSONG</span>`;
                 }
 
