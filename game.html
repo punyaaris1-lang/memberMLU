@@ -15,7 +15,7 @@
     <style>
         :root { 
             --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; 
-            --text-main: #0F172A; --white: #FFFFFF; --danger: #EF4444; --success: #10B981; --warning: #F59E0B;
+            --text-main: #0F172A; --white: #FFFFFF; --danger: #EF4444; --success: #10B981; --warning: #F59E0B; --gold: #D4AF37;
         }
 
         body { margin:0; background: var(--bg-surface); font-family:'Space Grotesk',sans-serif; color:var(--text-main); overflow-x:hidden; touch-action:manipulation; user-select:none; }
@@ -31,7 +31,7 @@
         .game-card { 
             background: white; border-radius: 20px; padding: 20px; text-align: center; 
             box-shadow: 0 5px 15px rgba(45,99,237,0.1); border: 1px solid rgba(45,99,237,0.1); 
-            cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; position: relative; overflow: hidden;
         }
         .game-card:active { transform: scale(0.95); background: var(--bg-surface); }
         .gc-icon { font-size: 35px; color: var(--electric-blue); margin-bottom: 10px; }
@@ -44,10 +44,27 @@
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 
         /* COMMON UI */
-        .btn-back { background: transparent; border: 1px solid var(--royal-blue); color: var(--royal-blue); padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 12px; margin-bottom: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;}
+        .top-nav { width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .btn-back { background: white; border: 1px solid var(--royal-blue); color: var(--royal-blue); padding: 8px 15px; border-radius: 50px; font-weight: 800; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;}
+        .btn-leader { background: var(--gold); border: none; color: #000; padding: 8px 15px; border-radius: 50px; font-weight: 800; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 5px 10px rgba(212,175,55,0.3); }
+        
         .btn-action { background: var(--electric-blue); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 900; margin-top: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(45,99,237,0.3); width: 100%; max-width: 250px;}
         .btn-action:active { transform: scale(0.95); }
         .score-display { font-size: 24px; color: var(--royal-blue); margin-bottom: 10px; }
+
+        /* MODAL LEADERBOARD */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 99999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: white; width: 90%; max-width: 400px; border-radius: 20px; padding: 25px; animation: popUp 0.3s forwards; max-height: 80vh; overflow-y: auto; }
+        @keyframes popUp { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
+        .lb-title { text-align: center; font-size: 20px; color: var(--royal-blue); margin-bottom: 20px; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px; }
+        .lb-list { display: flex; flex-direction: column; gap: 10px; }
+        .lb-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #F8FAFC; border-radius: 10px; border: 1px solid #E2E8F0; }
+        .lb-rank { width: 30px; height: 30px; background: var(--royal-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; margin-right: 10px; }
+        .lb-rank.r1 { background: var(--gold); color: #000; }
+        .lb-rank.r2 { background: #94A3B8; }
+        .lb-rank.r3 { background: #B45309; }
+        .lb-name { font-weight: 800; font-size: 13px; color: var(--text-main); flex: 1; }
+        .lb-score { font-weight: 900; color: var(--electric-blue); }
 
         /* MABAR PANEL */
         .mabar-panel { background: #E0F2FE; padding: 15px; border-radius: 15px; margin-bottom: 20px; width: 100%; text-align: center; border: 1px solid #BAE6FD; display:none; }
@@ -66,7 +83,7 @@
         .ttt-cell.x { color: var(--danger); } .ttt-cell.o { color: var(--electric-blue); }
 
         /* --- CHESS --- */
-        #myBoard { width: 100%; border: 5px solid #333; border-radius: 5px; }
+        #myBoard { width: 100%; max-width: 400px; border: 5px solid #333; border-radius: 5px; }
         
         /* --- SUDOKU --- */
         .sudoku-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; background: var(--royal-blue); border: 2px solid var(--royal-blue); width: 100%; aspect-ratio: 1; }
@@ -100,7 +117,7 @@
         /* Pola Warna Papan */
         .ut-cell:nth-child(even) { background: #E0F2FE; }
         .ut-cell:nth-child(odd) { background: #F0F9FF; }
-        .ut-cell:nth-child(5n) { background: #FEF3C7; } /* Tiap kelipatan 5 warna kuning */
+        .ut-cell:nth-child(5n) { background: #FEF3C7; } 
         
         .ut-p1, .ut-p2 { width: 20px; height: 20px; border-radius: 50%; position: absolute; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.4); transition: 0.3s; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .ut-p1 { background: var(--danger); background-image: radial-gradient(circle at 30% 30%, #ff8888, #D32F2F); }
@@ -157,27 +174,37 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="lbModal">
+        <div class="modal-box">
+            <div style="text-align:right;"><button onclick="closeLeaderboard()" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button></div>
+            <div class="lb-title" id="lbTitle">TOP SKOR</div>
+            <div class="lb-list" id="lbContent">
+                <div style="text-align:center; color:#999;">Memuat data...</div>
+            </div>
+        </div>
+    </div>
+
     <div id="game-snake" class="game-wrapper">
-        <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div class="top-nav">
+            <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn-leader" onclick="showLeaderboard('snake')"><i class="fas fa-trophy"></i> RANK</button>
+        </div>
         <div class="score-display">SKOR: <span id="snakeScore">0</span></div>
         <canvas id="snakeCanvas" width="300" height="300"></canvas>
         <div class="controls">
-            <div></div>
-            <button class="c-btn" onmousedown="snakeDir(0,-1)" ontouchstart="snakeDir(0,-1)"><i class="fas fa-chevron-up"></i></button>
-            <div></div>
-            
+            <div></div><button class="c-btn" onmousedown="snakeDir(0,-1)" ontouchstart="snakeDir(0,-1)"><i class="fas fa-chevron-up"></i></button><div></div>
             <button class="c-btn" onmousedown="snakeDir(-1,0)" ontouchstart="snakeDir(-1,0)"><i class="fas fa-chevron-left"></i></button>
             <button class="c-btn" onclick="initSnake()"><i class="fas fa-redo"></i></button>
             <button class="c-btn" onmousedown="snakeDir(1,0)" ontouchstart="snakeDir(1,0)"><i class="fas fa-chevron-right"></i></button>
-            
-            <div></div>
-            <button class="c-btn" onmousedown="snakeDir(0,1)" ontouchstart="snakeDir(0,1)"><i class="fas fa-chevron-down"></i></button>
-            <div></div>
+            <div></div><button class="c-btn" onmousedown="snakeDir(0,1)" ontouchstart="snakeDir(0,1)"><i class="fas fa-chevron-down"></i></button><div></div>
         </div>
     </div>
 
     <div id="game-moto" class="game-wrapper">
-        <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div class="top-nav">
+            <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn-leader" onclick="showLeaderboard('moto')"><i class="fas fa-trophy"></i> RANK</button>
+        </div>
         <div class="score-display">JARAK: <span id="motoScore">0</span>m</div>
         <canvas id="motoCanvas" width="300" height="400"></canvas>
         <div class="moto-controls">
@@ -188,7 +215,10 @@
     </div>
 
     <div id="game-ttt" class="game-wrapper">
-        <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div class="top-nav">
+            <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn-leader" onclick="showLeaderboard('ttt')"><i class="fas fa-trophy"></i> JUARA</button>
+        </div>
         <div id="tttMabar" class="mabar-panel"></div>
         <h2 id="tttStatus" style="color:var(--royal-blue);">Giliran: X</h2>
         <div class="ttt-grid" id="tttBoard"></div>
@@ -196,15 +226,24 @@
     </div>
 
     <div id="game-chess" class="game-wrapper">
-        <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div class="top-nav">
+            <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn-leader" onclick="showLeaderboard('chess')"><i class="fas fa-trophy"></i> JUARA</button>
+        </div>
         <div id="chessMabar" class="mabar-panel"></div>
+        
+        <button onclick="fixChessBoard()" style="background:none; border:none; color:#999; font-size:10px; margin-bottom:5px; cursor:pointer;">(Klik jika papan tidak muncul)</button>
+        
         <div id="myBoard"></div>
         <p id="chessStatus" style="text-align:center; font-size:12px; margin-top:10px;">Status: Menunggu...</p>
         <button class="btn-action" onclick="initChess()">RESET PAPAN</button>
     </div>
 
     <div id="game-sudoku" class="game-wrapper">
-        <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div class="top-nav">
+            <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn-leader" onclick="showLeaderboard('sudoku')"><i class="fas fa-trophy"></i> JUARA</button>
+        </div>
         <div class="sudoku-board" id="sudokuBoard"></div>
         <div class="numpad">
             <button class="num-btn" onclick="fillSudoku(1)">1</button>
@@ -222,7 +261,10 @@
     </div>
 
     <div id="game-ut" class="game-wrapper">
-        <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div class="top-nav">
+            <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn-leader" onclick="showLeaderboard('ut')"><i class="fas fa-trophy"></i> JUARA</button>
+        </div>
         <div id="utMabar" class="mabar-panel"></div>
         <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
             <div style="font-size:12px; font-weight:800; color:var(--danger);"><i class="fas fa-circle"></i> MERAH (P1): <span id="p1Pos">1</span></div>
@@ -236,18 +278,26 @@
     </div>
 
     <div id="game-puzzle" class="game-wrapper">
-        <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div class="top-nav">
+            <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+            <button class="btn-leader" onclick="showLeaderboard('puzzle')"><i class="fas fa-trophy"></i> JUARA</button>
+        </div>
         <div class="puzzle-grid" id="puzzleBoard"></div>
         <button class="btn-action" onclick="initPuzzle()">ACAK ULANG</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, update, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", databaseURL: "https://rtomaka-e67b5-default-rtdb.firebaseio.com", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+
+        // USER INFO
+        const u = JSON.parse(localStorage.getItem('maka_user')) || { nama: 'Guest', id: 'guest' };
+        const myName = u.namaKtp || u.namaWa || u.nama || "User";
+        const myId = u.id || "guest_" + Math.floor(Math.random()*1000);
 
         // GLOBAL VARS
         window.activeRoom = null;
@@ -271,8 +321,13 @@
             if(id==='ttt' && !online) initTTT(); 
             if(id==='ut' && !online) initUT();
             
-            // FIX: CATUR SELALU INIT, BIAR PAPAN MUNCUL
-            if(id==='chess') setTimeout(initChess, 500); 
+            // FIX: CATUR PASTI MUNCUL (Jeda 0.5 detik + Resize)
+            if(id==='chess') {
+                setTimeout(() => {
+                    initChess();
+                    window.fixChessBoard();
+                }, 500); 
+            }
         }
 
         window.backToMenu = () => {
@@ -282,6 +337,56 @@
             if(motoLoop) cancelAnimationFrame(motoLoop);
             if(window.activeRoom) window.activeRoom = null;
         }
+
+        // --- LEADERBOARD SYSTEM ---
+        window.updateLeaderboard = (game, score) => {
+            // Cek skor lama
+            const lbRef = ref(db, `leaderboards/${game}/${myId}`);
+            get(lbRef).then((snap) => {
+                let currentScore = 0;
+                if(snap.exists()) currentScore = snap.val().score;
+                
+                // Logic: High Score (Snake/Moto) atau Total Wins (Lainnya)
+                let newScore = score;
+                if(game !== 'snake' && game !== 'moto') newScore = currentScore + 1; // Increment Wins
+                else if(score <= currentScore) return; // Kalau skor lebih kecil, abaikan (Highscore only)
+
+                set(lbRef, { name: myName, score: newScore });
+            });
+        }
+
+        window.showLeaderboard = (game) => {
+            document.getElementById('lbModal').style.display = 'flex';
+            const content = document.getElementById('lbContent');
+            content.innerHTML = '<div style="text-align:center;">Memuat...</div>';
+            
+            const titleMap = { 'snake':'TOP SKOR ULAR', 'moto':'TOP JARAK MOTO', 'ttt':'JUARA XO', 'chess':'GRANDMASTER', 'ut':'RAJA ULAR TANGGA', 'sudoku':'MASTER SUDOKU', 'puzzle':'MASTER PUZZLE' };
+            document.getElementById('lbTitle').innerText = titleMap[game] || 'LEADERBOARD';
+
+            // Get Data (Sorted Client Side for simplicity with Firebase)
+            get(ref(db, `leaderboards/${game}`)).then((snap) => {
+                if(!snap.exists()) {
+                    content.innerHTML = '<div style="text-align:center; color:#999;">Belum ada data.</div>';
+                    return;
+                }
+                const data = snap.val();
+                let list = Object.values(data);
+                list.sort((a,b) => b.score - a.score); // Descending
+                
+                let html = '';
+                list.slice(0, 10).forEach((item, i) => {
+                    let rClass = i===0?'r1':(i===1?'r2':(i===2?'r3':''));
+                    html += `
+                        <div class="lb-item">
+                            <div class="lb-rank ${rClass}">${i+1}</div>
+                            <div class="lb-name">${item.name}</div>
+                            <div class="lb-score">${item.score}</div>
+                        </div>`;
+                });
+                content.innerHTML = html;
+            });
+        }
+        window.closeLeaderboard = () => { document.getElementById('lbModal').style.display = 'none'; }
 
         // --- MABAR SYSTEM ---
         function showMabarPanel(gameId) {
@@ -353,7 +458,7 @@
         }
 
         // ===================================
-        // 1. SNAKE (FIXED TOUCH)
+        // 1. SNAKE
         // ===================================
         const sCvs = document.getElementById('snakeCanvas');
         const sCtx = sCvs.getContext('2d');
@@ -399,6 +504,8 @@
             let newHead = {x: snakeX, y: snakeY};
             if(snakeX < 0 || snakeX >= 300 || snakeY < 0 || snakeY >= 300 || snakeCollision(newHead, snake)){
                 clearInterval(snakeGameLoop); 
+                alert("Game Over! Skor: " + snakeScore);
+                updateLeaderboard('snake', snakeScore);
             }
             snake.unshift(newHead);
         }
@@ -441,7 +548,10 @@
                 mCtx.fillStyle = "#EF4444"; mCtx.fillRect(obstacles[i].x, obstacles[i].y, 40, 40);
                 if(motoX < obstacles[i].x + 30 && motoX + 30 > obstacles[i].x && 
                    320 < obstacles[i].y + 30 && 320 + 50 > obstacles[i].y) {
-                    motoGameOver = true; alert("CRASH! Jarak: " + Math.floor(motoScore) + "m"); return;
+                    motoGameOver = true; 
+                    alert("CRASH! Jarak: " + Math.floor(motoScore) + "m"); 
+                    updateLeaderboard('moto', Math.floor(motoScore));
+                    return;
                 }
             }
             motoScore += 0.1;
@@ -466,22 +576,37 @@
         }
         window.clickTTT = (i) => {
             if(window.tttBoard[i] !== '') return;
+            // Online Check
             if(window.activeRoom) {
                 let mySym = (window.myRole === 'host') ? 'X' : 'O';
                 if(window.tttTurn !== mySym) return alert("Bukan giliranmu!");
                 window.tttBoard[i] = mySym;
                 let nextTurn = (mySym === 'X') ? 'O' : 'X';
                 update(ref(db, 'games/' + window.activeRoom), { board: window.tttBoard, turn: nextTurn });
+                checkTTTWin(mySym, true); // Cek menang
             } else {
                 window.tttBoard[i] = window.tttTurn;
+                checkTTTWin(window.tttTurn, false);
                 window.tttTurn = (window.tttTurn==='X'?'O':'X');
                 document.getElementById('tttStatus').innerText = "Giliran: " + window.tttTurn;
                 renderTTT();
             }
         }
+        function checkTTTWin(player, isOnline) {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            let won = false;
+            wins.forEach(w => { if(window.tttBoard[w[0]] && window.tttBoard[w[0]] === window.tttBoard[w[1]] && window.tttBoard[w[0]] === window.tttBoard[w[2]]) won = true; });
+            if(won) { 
+                document.getElementById('tttStatus').innerText = `${player} Menang!`; 
+                if(!isOnline || (isOnline && player === (window.myRole==='host'?'X':'O'))) {
+                    updateLeaderboard('ttt', 1); // Record Win
+                }
+                renderTTT(); return; 
+            }
+        }
 
         // ===================================
-        // 4. CHESS (FIXED: ALWAYS INIT)
+        // 4. CHESS (FIXED)
         // ===================================
         window.chessBoard = null;
         window.gameChess = new Chess();
@@ -507,16 +632,21 @@
                     if(window.activeRoom) {
                         update(ref(db, 'games/' + window.activeRoom), { fen: window.gameChess.fen(), turn: window.gameChess.turn() });
                     }
+                    if(window.gameChess.in_checkmate()) {
+                        alert("Skakmat! Anda Menang!");
+                        updateLeaderboard('chess', 1);
+                    }
                 }
             });
-            $(window).resize(window.chessBoard.resize);
         }
+        
+        window.fixChessBoard = () => { if(window.chessBoard) window.chessBoard.resize(); }
 
         // ===================================
         // 5. ULAR TANGGA (PREMIUM)
         // ===================================
         window.p1 = 1; window.p2 = 1; window.utTurn = 1;
-        const jumps = {3:11, 6:17, 9:18, 10:12, 14:4, 19:8, 22:20, 24:16}; // Shortcut map
+        const jumps = {3:11, 6:17, 9:18, 10:12, 14:4, 19:8, 22:20, 24:16}; 
         
         window.initUT = () => {
             window.p1=1; window.p2=1; window.utTurn=1;
@@ -524,22 +654,18 @@
         }
         window.drawUT = () => {
             const b = document.getElementById('utBoard'); b.innerHTML = '';
-            // Render 30 Kotak (5x6 Grid, ZigZag logic handled by flex order simply 1-30 for clarity)
             for(let i=1; i<=30; i++) {
                 let content = i;
                 if(i===window.p1) content += `<div class="ut-p1"></div>`;
                 if(i===window.p2) content += `<div class="ut-p2"></div>`;
-                
                 if(jumps[i]) content += (jumps[i] > i ? `<i class="fas fa-ladder ut-icon icon-ladder"></i>` : `<i class="fas fa-staff-snake ut-icon icon-snake"></i>`);
-                
-                b.innerHTML += `<div class="ut-cell">${content}</div>`;
+                b.innerHTML += `<div class="ut-cell" style="order:${i}">${content}</div>`;
             }
             document.getElementById('p1Pos').innerText = window.p1;
             document.getElementById('p2Pos').innerText = window.p2;
         }
         window.rollDice = () => {
             let d = Math.ceil(Math.random()*6);
-            
             if(window.activeRoom) {
                 let myTurn = (window.myRole === 'host') ? 1 : 2;
                 if(window.utTurn !== myTurn) return;
@@ -551,16 +677,23 @@
                 let updates = { lastRoll: d, turn: (myTurn===1?2:1) };
                 if(myTurn===1) updates.p1 = currPos; else updates.p2 = currPos;
                 update(ref(db, 'games/' + window.activeRoom), updates);
+                
+                if(currPos === 30) {
+                    alert("ANDA MENANG!");
+                    updateLeaderboard('ut', 1);
+                }
             } else {
                 document.getElementById('diceRes').innerText = `🎲 ${d}`;
                 if(window.utTurn === 1) {
                     window.p1 += d; if(window.p1 > 30) window.p1 = 30 - (window.p1-30);
                     if(jumps[window.p1]) window.p1 = jumps[window.p1];
                     window.utTurn = 2; document.getElementById('btnRoll').innerText = "KOCOK (P2)";
+                    if(window.p1 === 30) alert("P1 MENANG!");
                 } else {
                     window.p2 += d; if(window.p2 > 30) window.p2 = 30 - (window.p2-30);
                     if(jumps[window.p2]) window.p2 = jumps[window.p2];
                     window.utTurn = 1; document.getElementById('btnRoll').innerText = "KOCOK (P1)";
+                    if(window.p2 === 30) alert("P2 MENANG!");
                 }
                 drawUT();
             }
@@ -572,16 +705,14 @@
         let sGrid=[], sSol=[], sSel=null;
         
         window.initSudoku = () => {
-            // Simple Valid Sudoku Generator
             const base = [1,2,3,4,5,6,7,8,9];
             sSol = [];
             for(let i=0; i<9; i++) {
-                let shift = (i%3)*3 + Math.floor(i/3); // Shift pattern for valid grid
+                let shift = (i%3)*3 + Math.floor(i/3); 
                 let row = [...base.slice(shift), ...base.slice(0,shift)];
                 sSol = sSol.concat(row);
             }
             sGrid = [...sSol];
-            // Remove 30 cells
             for(let i=0; i<30; i++) sGrid[Math.floor(Math.random()*81)] = 0;
             renderSudoku();
         }
@@ -604,6 +735,10 @@
             } else { 
                 sSel.style.color = '#0F172A'; // Correct
                 sSel.innerText = n === 0 ? '' : n; 
+            }
+            // Check Win (Simple)
+            if(document.querySelectorAll('.sudoku-cell').length === 81 && !document.querySelector('.error')) {
+                // updateLeaderboard('sudoku', 1);
             }
         }
 
