@@ -57,8 +57,8 @@
         /* --- SNAKE --- */
         #snakeCanvas { background: var(--white); border: 2px solid var(--electric-blue); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .controls { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .c-btn { width: 60px; height: 60px; background: white; border: 1px solid #E2E8F0; border-radius: 15px; font-size: 24px; color: var(--royal-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
-        .c-btn:active { background: var(--electric-blue); color: white; }
+        .c-btn { width: 60px; height: 60px; background: white; border: 1px solid #E2E8F0; border-radius: 15px; font-size: 24px; color: var(--royal-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 10px rgba(0,0,0,0.05); cursor: pointer; }
+        .c-btn:active { background: var(--electric-blue); color: white; transform: scale(0.9); }
 
         /* --- TIC TAC TOE --- */
         .ttt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: var(--royal-blue); padding: 8px; border-radius: 15px; }
@@ -66,7 +66,7 @@
         .ttt-cell.x { color: var(--danger); } .ttt-cell.o { color: var(--electric-blue); }
 
         /* --- CHESS --- */
-        #myBoard { width: 100%; }
+        #myBoard { width: 100%; border: 5px solid #333; border-radius: 5px; }
         
         /* --- SUDOKU --- */
         .sudoku-board { display: grid; grid-template-columns: repeat(9, 1fr); gap: 1px; background: var(--royal-blue); border: 2px solid var(--royal-blue); width: 100%; aspect-ratio: 1; }
@@ -87,28 +87,28 @@
         .btn-steer { flex: 1; background: var(--electric-blue); color: white; border: none; padding: 20px; border-radius: 15px; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-steer:active { transform: scale(0.95); }
 
-        /* --- ULAR TANGGA (VISUAL BAGUS) --- */
+        /* --- ULAR TANGGA (PREMIUM LOOK) --- */
         .ut-board { 
-            display: grid; grid-template-columns: repeat(5, 1fr); /* 5 Kolom x 6 Baris = 30 Kotak */
-            gap: 2px; width: 100%; background: #CBD5E1; padding: 5px; border-radius: 10px; border: 4px solid var(--royal-blue);
+            display: grid; grid-template-columns: repeat(5, 1fr); /* 5x6 = 30 Kotak */
+            gap: 2px; width: 100%; background: var(--royal-blue); padding: 5px; border-radius: 10px; border: 4px solid var(--royal-blue);
         }
         .ut-cell { 
             aspect-ratio: 1; background: white; display: flex; align-items: flex-start; justify-content: flex-start; 
-            font-size: 10px; font-weight: 800; padding: 2px; position: relative; border-radius: 4px; color: #94A3B8;
+            font-size: 10px; font-weight: 800; padding: 4px; position: relative; border-radius: 4px; color: #94A3B8;
         }
-        /* Warna-warni papan */
-        .ut-cell:nth-child(even) { background: #EFF6FF; }
-        .ut-cell:nth-child(3n) { background: #F0FDF4; }
-        .ut-cell:nth-child(5n) { background: #FEF2F2; }
-
-        .ut-p1, .ut-p2 { width: 18px; height: 18px; border-radius: 50%; position: absolute; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: 0.3s; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .ut-p1 { background: var(--danger); }
-        .ut-p2 { background: var(--electric-blue); margin-left: 5px; margin-top: 5px; } /* Biar ga numpuk */
         
-        /* Ikon Tangga & Ular */
-        .ut-icon { position: absolute; font-size: 18px; bottom: 2px; right: 2px; opacity: 0.8; }
-        .icon-ladder { color: var(--success); }
-        .icon-snake { color: var(--danger); }
+        /* Pola Warna Papan */
+        .ut-cell:nth-child(even) { background: #E0F2FE; }
+        .ut-cell:nth-child(odd) { background: #F0F9FF; }
+        .ut-cell:nth-child(5n) { background: #FEF3C7; } /* Tiap kelipatan 5 warna kuning */
+        
+        .ut-p1, .ut-p2 { width: 20px; height: 20px; border-radius: 50%; position: absolute; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.4); transition: 0.3s; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .ut-p1 { background: var(--danger); background-image: radial-gradient(circle at 30% 30%, #ff8888, #D32F2F); }
+        .ut-p2 { background: var(--electric-blue); background-image: radial-gradient(circle at 30% 30%, #88aaff, #1976D2); margin-left: 6px; margin-top: 6px; } 
+        
+        .ut-icon { position: absolute; font-size: 20px; bottom: 2px; right: 2px; opacity: 0.9; }
+        .icon-ladder { color: var(--success); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        .icon-snake { color: var(--danger); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
         
         /* --- PUZZLE --- */
         .puzzle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; background: var(--royal-blue); padding: 5px; border-radius: 10px; width: 100%; max-width: 300px; }
@@ -162,11 +162,17 @@
         <div class="score-display">SKOR: <span id="snakeScore">0</span></div>
         <canvas id="snakeCanvas" width="300" height="300"></canvas>
         <div class="controls">
-            <div></div><button class="c-btn" onclick="snakeDir(0,-1)"><i class="fas fa-chevron-up"></i></button><div></div>
-            <button class="c-btn" onclick="snakeDir(-1,0)"><i class="fas fa-chevron-left"></i></button>
+            <div></div>
+            <button class="c-btn" onmousedown="snakeDir(0,-1)" ontouchstart="snakeDir(0,-1)"><i class="fas fa-chevron-up"></i></button>
+            <div></div>
+            
+            <button class="c-btn" onmousedown="snakeDir(-1,0)" ontouchstart="snakeDir(-1,0)"><i class="fas fa-chevron-left"></i></button>
             <button class="c-btn" onclick="initSnake()"><i class="fas fa-redo"></i></button>
-            <button class="c-btn" onclick="snakeDir(1,0)"><i class="fas fa-chevron-right"></i></button>
-            <div></div><button class="c-btn" onclick="snakeDir(0,1)"><i class="fas fa-chevron-down"></i></button><div></div>
+            <button class="c-btn" onmousedown="snakeDir(1,0)" ontouchstart="snakeDir(1,0)"><i class="fas fa-chevron-right"></i></button>
+            
+            <div></div>
+            <button class="c-btn" onmousedown="snakeDir(0,1)" ontouchstart="snakeDir(0,1)"><i class="fas fa-chevron-down"></i></button>
+            <div></div>
         </div>
     </div>
 
@@ -236,7 +242,6 @@
     </div>
 
     <script type="module">
-        // FIREBASE SETUP UNTUK MULTIPLAYER
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -246,7 +251,7 @@
 
         // GLOBAL VARS
         window.activeRoom = null;
-        window.myRole = null; // 'host' or 'guest'
+        window.myRole = null; 
         window.gameType = null;
 
         window.startGame = (id, online=false) => {
@@ -263,9 +268,11 @@
             if(id==='moto') initMoto();
             if(id==='sudoku') initSudoku();
             if(id==='puzzle') initPuzzle();
-            if(id==='ttt' && !online) initTTT(); // Offline mode
-            if(id==='chess' && !online) initChess(); 
+            if(id==='ttt' && !online) initTTT(); 
             if(id==='ut' && !online) initUT();
+            
+            // FIX: CATUR SELALU INIT, BIAR PAPAN MUNCUL
+            if(id==='chess') setTimeout(initChess, 500); 
         }
 
         window.backToMenu = () => {
@@ -273,7 +280,7 @@
             document.getElementById('mainMenu').style.display = 'grid';
             if(snakeGameLoop) clearInterval(snakeGameLoop);
             if(motoLoop) cancelAnimationFrame(motoLoop);
-            if(window.activeRoom) window.activeRoom = null; // Disconnect
+            if(window.activeRoom) window.activeRoom = null;
         }
 
         // --- MABAR SYSTEM ---
@@ -299,7 +306,6 @@
             const panel = document.getElementById(gameId + 'Mabar');
             panel.innerHTML = `KODE KAMAR: <div class="room-code">${code}</div><div style="font-size:10px;">Berikan kode ini ke teman.</div>`;
             
-            // Init DB for Room
             let initData = {};
             if(gameId === 'ttt') initData = { board: ['','','','','','','','',''], turn: 'X' };
             if(gameId === 'chess') initData = { fen: 'start', turn: 'w' };
@@ -324,25 +330,21 @@
                 if(!data) return;
 
                 if(gameId === 'ttt') {
-                    // Update Board TTT
                     window.tttBoard = data.board;
                     window.tttTurn = data.turn;
                     document.getElementById('tttStatus').innerText = "Giliran: " + data.turn;
                     renderTTT();
                 }
                 if(gameId === 'chess') {
-                    // Update Chess
                     if(data.fen !== 'start') window.chessBoard.position(data.fen);
                     window.gameChess.load(data.fen === 'start' ? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' : data.fen);
                     document.getElementById('chessStatus').innerText = "Giliran: " + (data.turn==='w'?'Putih':'Hitam');
                 }
                 if(gameId === 'ut') {
-                    // Update UT
                     window.p1 = data.p1; window.p2 = data.p2; window.utTurn = data.turn;
                     drawUT();
                     document.getElementById('diceRes').innerText = `🎲 ${data.lastRoll}`;
                     document.getElementById('btnRoll').innerText = `GILIRAN P${data.turn}`;
-                    // Disable button if not my turn
                     let myTurnNum = (window.myRole === 'host') ? 1 : 2;
                     document.getElementById('btnRoll').disabled = (data.turn !== myTurnNum);
                     document.getElementById('btnRoll').style.opacity = (data.turn !== myTurnNum) ? 0.5 : 1;
@@ -351,7 +353,7 @@
         }
 
         // ===================================
-        // 1. SNAKE
+        // 1. SNAKE (FIXED TOUCH)
         // ===================================
         const sCvs = document.getElementById('snakeCanvas');
         const sCtx = sCvs.getContext('2d');
@@ -448,7 +450,7 @@
         }
 
         // ===================================
-        // 3. TIC TAC TOE (HYBRID ONLINE)
+        // 3. TIC TAC TOE
         // ===================================
         window.tttBoard = []; window.tttTurn = 'X';
         window.initTTT = () => {
@@ -464,18 +466,13 @@
         }
         window.clickTTT = (i) => {
             if(window.tttBoard[i] !== '') return;
-            
-            // ONLINE LOGIC
             if(window.activeRoom) {
-                // Cek giliran
                 let mySym = (window.myRole === 'host') ? 'X' : 'O';
                 if(window.tttTurn !== mySym) return alert("Bukan giliranmu!");
-                
                 window.tttBoard[i] = mySym;
                 let nextTurn = (mySym === 'X') ? 'O' : 'X';
                 update(ref(db, 'games/' + window.activeRoom), { board: window.tttBoard, turn: nextTurn });
             } else {
-                // OFFLINE
                 window.tttBoard[i] = window.tttTurn;
                 window.tttTurn = (window.tttTurn==='X'?'O':'X');
                 document.getElementById('tttStatus').innerText = "Giliran: " + window.tttTurn;
@@ -484,7 +481,7 @@
         }
 
         // ===================================
-        // 4. CHESS (ONLINE + VISUAL FIX)
+        // 4. CHESS (FIXED: ALWAYS INIT)
         // ===================================
         window.chessBoard = null;
         window.gameChess = new Chess();
@@ -496,19 +493,17 @@
             window.chessBoard = Chessboard('myBoard', {
                 draggable: true,
                 position: 'start',
-                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png', // FIX GAMBAR
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
                 onDragStart: (source, piece) => {
                     if (window.gameChess.game_over()) return false;
-                    // ONLINE CHECK
                     if(window.activeRoom) {
                         let myColor = (window.myRole==='host') ? 'w' : 'b';
-                        if(window.gameChess.turn() !== myColor) return false; // Bukan giliranmu
+                        if(window.gameChess.turn() !== myColor) return false;
                     }
                 },
                 onDrop: (source, target) => {
                     let move = window.gameChess.move({ from: source, to: target, promotion: 'q' });
                     if (move === null) return 'snapback';
-                    
                     if(window.activeRoom) {
                         update(ref(db, 'games/' + window.activeRoom), { fen: window.gameChess.fen(), turn: window.gameChess.turn() });
                     }
@@ -518,10 +513,10 @@
         }
 
         // ===================================
-        // 5. ULAR TANGGA (VISUAL BAGUS)
+        // 5. ULAR TANGGA (PREMIUM)
         // ===================================
         window.p1 = 1; window.p2 = 1; window.utTurn = 1;
-        const jumps = {3:11, 6:17, 9:18, 10:12, 14:4, 19:8, 22:20, 24:16}; // Shortcut
+        const jumps = {3:11, 6:17, 9:18, 10:12, 14:4, 19:8, 22:20, 24:16}; // Shortcut map
         
         window.initUT = () => {
             window.p1=1; window.p2=1; window.utTurn=1;
@@ -529,16 +524,15 @@
         }
         window.drawUT = () => {
             const b = document.getElementById('utBoard'); b.innerHTML = '';
-            // Render 30 Kotak (ZigZag sederhana agar mudah)
+            // Render 30 Kotak (5x6 Grid, ZigZag logic handled by flex order simply 1-30 for clarity)
             for(let i=1; i<=30; i++) {
                 let content = i;
                 if(i===window.p1) content += `<div class="ut-p1"></div>`;
                 if(i===window.p2) content += `<div class="ut-p2"></div>`;
                 
-                // Add Icon
                 if(jumps[i]) content += (jumps[i] > i ? `<i class="fas fa-ladder ut-icon icon-ladder"></i>` : `<i class="fas fa-staff-snake ut-icon icon-snake"></i>`);
                 
-                b.innerHTML += `<div class="ut-cell" style="order:${i}">${content}</div>`;
+                b.innerHTML += `<div class="ut-cell">${content}</div>`;
             }
             document.getElementById('p1Pos').innerText = window.p1;
             document.getElementById('p2Pos').innerText = window.p2;
@@ -546,11 +540,9 @@
         window.rollDice = () => {
             let d = Math.ceil(Math.random()*6);
             
-            // ONLINE LOGIC
             if(window.activeRoom) {
                 let myTurn = (window.myRole === 'host') ? 1 : 2;
-                if(window.utTurn !== myTurn) return; // Tombol mestinya disabled, tapi double check
-                
+                if(window.utTurn !== myTurn) return;
                 let currPos = (myTurn===1) ? window.p1 : window.p2;
                 currPos += d; 
                 if(currPos > 30) currPos = 30 - (currPos-30);
@@ -559,9 +551,7 @@
                 let updates = { lastRoll: d, turn: (myTurn===1?2:1) };
                 if(myTurn===1) updates.p1 = currPos; else updates.p2 = currPos;
                 update(ref(db, 'games/' + window.activeRoom), updates);
-            
             } else {
-                // OFFLINE
                 document.getElementById('diceRes').innerText = `🎲 ${d}`;
                 if(window.utTurn === 1) {
                     window.p1 += d; if(window.p1 > 30) window.p1 = 30 - (window.p1-30);
@@ -577,16 +567,45 @@
         }
 
         // ===================================
-        // 6. SUDOKU & PUZZLE (OFFLINE)
+        // 6. SUDOKU (FIXED LOGIC) & PUZZLE
         // ===================================
-        // (Logika sama seperti sebelumnya, ringkas)
-        let sGrid=[], sSel=null;
-        window.initSudoku = () => { sGrid=Array(81).fill(0); for(let i=0;i<30;i++)sGrid[Math.floor(Math.random()*81)]=Math.ceil(Math.random()*9); renderSudoku(); }
+        let sGrid=[], sSol=[], sSel=null;
+        
+        window.initSudoku = () => {
+            // Simple Valid Sudoku Generator
+            const base = [1,2,3,4,5,6,7,8,9];
+            sSol = [];
+            for(let i=0; i<9; i++) {
+                let shift = (i%3)*3 + Math.floor(i/3); // Shift pattern for valid grid
+                let row = [...base.slice(shift), ...base.slice(0,shift)];
+                sSol = sSol.concat(row);
+            }
+            sGrid = [...sSol];
+            // Remove 30 cells
+            for(let i=0; i<30; i++) sGrid[Math.floor(Math.random()*81)] = 0;
+            renderSudoku();
+        }
         window.renderSudoku = () => { 
             const el=document.getElementById('sudokuBoard'); el.innerHTML=''; 
-            sGrid.forEach((v,i)=>{ let d=document.createElement('div'); d.className=`sudoku-cell ${v?'given':''}`; d.innerText=v||''; d.onclick=()=>{if(!v){if(sSel)sSel.classList.remove('selected');sSel=d;sSel.classList.add('selected');}}; el.appendChild(d); });
+            sGrid.forEach((v,i)=>{ 
+                let d=document.createElement('div'); 
+                d.className=`sudoku-cell ${v?'given':''}`; 
+                d.innerText=v||''; 
+                d.onclick=()=>{if(!v){if(sSel)sSel.classList.remove('selected');sSel=d;sSel.classList.add('selected');sSel.dataset.idx=i;}}; 
+                el.appendChild(d); 
+            });
         }
-        window.fillSudoku = (n) => { if(sSel){sSel.innerText=n||''; sSel.style.color=n?'var(--electric-blue)':'inherit';} }
+        window.fillSudoku = (n) => { 
+            if(!sSel) return;
+            let idx = parseInt(sSel.dataset.idx);
+            if(n !== 0 && sSol[idx] !== n) { 
+                sSel.style.color = '#EF4444'; // Wrong
+                sSel.innerText = n; 
+            } else { 
+                sSel.style.color = '#0F172A'; // Correct
+                sSel.innerText = n === 0 ? '' : n; 
+            }
+        }
 
         let puzArr=[1,2,3,4,5,6,7,8,0];
         window.initPuzzle = () => { puzArr.sort(()=>Math.random()-0.5); renderPuzzle(); }
