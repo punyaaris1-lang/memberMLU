@@ -13,54 +13,44 @@
             --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; 
             --text-main: #0F172A; --text-muted: #64748B; --danger: #EF4444; 
             --success: #10B981; --warning: #F59E0B; --gold: #D4AF37;
-            --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
+            --chat-me: #2D63ED; --chat-other: #FFFFFF;
         }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; text-decoration: none; }
 
         /* --- HEADER & PROFILE --- */
-        .header-bg { 
-            background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
-            padding: 35px 20px 35px; 
-            border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; 
-            position: relative; box-shadow: var(--glow-blue); 
-            border-bottom: 2px solid rgba(45, 99, 237, 0.3);
-        }
+        .header-bg { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 35px 20px 35px; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; position: relative; box-shadow: 0 10px 30px rgba(45, 99, 237, 0.25); border-bottom: 2px solid rgba(45, 99, 237, 0.3); }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white; }
         .greeting { font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; line-height: 1.1; text-shadow: 0 2px 10px rgba(255,255,255,0.2); }
         .date-text { font-size: 10px; font-weight: 800; color: #93C5FD; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
         .btn-settings { color: white; opacity: 0.9; font-size: 24px; cursor: pointer; }
 
-        .profile-card { 
-            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); 
-            backdrop-filter: blur(15px); padding: 12px 15px; border-radius: 18px; 
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
+        .profile-card { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(15px); padding: 12px 15px; border-radius: 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 5px 20px rgba(0,0,0,0.1); position: relative; }
         .p-left { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden;}
         .p-photo { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 2px solid white; background: #E2E8F0; }
         .p-info { color: white; overflow: hidden; }
         .p-role { font-size: 9px; font-weight: 800; background: var(--gold); color: #000; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 2px; }
         .p-name { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
         .p-plat { font-size: 10px; font-weight: 600; color: #E2E8F0; margin-top: 2px; }
-        .p-divider { width: 1px; height: 35px; background: rgba(255,255,255,0.2); margin: 0 10px; }
         
-        .p-fc-status { display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; min-width: 60px; cursor: pointer; transition: 0.2s;}
-        .p-fc-status:active { transform: scale(0.9); }
+        .p-fc-status { display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; min-width: 60px; cursor: pointer; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 10px; margin-left: 10px; }
         .pfc-title { font-size: 9px; font-weight: 800; color: #93C5FD; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; margin-bottom: 2px;}
-        .pfc-val { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; line-height: 1; display: flex; flex-direction: column; align-items: center;}
+        .pfc-val { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; line-height: 1; }
+
+        /* SWITCH LOKASI */
+        .loc-toggle { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; margin-left: 10px;}
+        .loc-label { font-size: 8px; font-weight: 800; color: #93C5FD; text-transform: uppercase; }
+        .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); transition: .4s; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); border-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(16px); }
 
         /* --- DASHBOARD WIDGETS --- */
         .dash-container { padding: 0 20px; margin: -25px 0 20px; position: relative; z-index: 10; }
-        
-        /* BANNER FC GADING */
-        .fc-banner { 
-            background: white; border-radius: 20px; padding: 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 10px 30px rgba(10,34,89,0.08); border: 1px solid rgba(45,99,237,0.1); 
-            cursor: pointer; position: relative; overflow: hidden;
-        }
+        .fc-banner { background: white; border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(10,34,89,0.08); border: 1px solid rgba(45,99,237,0.1); cursor: pointer; position: relative; overflow: hidden; }
         .fc-banner::after { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; background: rgba(45,99,237,0.05); border-radius: 50%; }
         .fc-left { display: flex; flex-direction: column; z-index: 2; }
         .fc-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--royal-blue); letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;}
@@ -74,8 +64,8 @@
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .menu-btn { background: white; border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1px solid rgba(45, 99, 237, 0.1); box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: 0.2s; cursor: pointer; }
         .menu-btn:active { transform: scale(0.95); border-color: var(--electric-blue); }
-        
         .icon-box { width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 8px; color: white; }
+        
         .ic-anggota { background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%); }
         .ic-pengurus { background: linear-gradient(135deg, var(--gold) 0%, #B48500 100%); }
         .ic-keuangan { background: linear-gradient(135deg, var(--success) 0%, #059669 100%); }
@@ -83,48 +73,64 @@
         .ic-reminder { background: linear-gradient(135deg, #F97316 0%, #C2410C 100%); }
         .ic-info { background: linear-gradient(135deg, #8B5CF6 0%, #4338CA 100%); }
         .ic-pasar { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
-        .ic-tour { background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%); }
         .ic-tabungan { background: linear-gradient(135deg, #10B981 0%, #047857 100%); }
+        .ic-map { background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%); }
+        .ic-chat { background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%); }
+        .ic-game { background: linear-gradient(135deg, #A855F7 0%, #7E22CE 100%); }
         
         .menu-title { font-family: 'Space Grotesk'; font-size: 12px; font-weight: 900; color: var(--royal-blue); margin-bottom: 2px; }
         .menu-desc { font-size: 8px; font-weight: 600; color: var(--text-muted); line-height: 1.2; }
 
-        /* --- FLOATING SOS BUTTON --- */
-        .floating-sos {
-            position: fixed; bottom: 100px; right: 20px; width: 60px; height: 60px;
-            background: linear-gradient(135deg, var(--danger), #991B1B);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: #fff; text-decoration: none; z-index: 10000;
-            border: 2px solid #FCA5A5; box-shadow: var(--glow-red), inset 0 0 15px rgba(255,255,255,0.4);
-            animation: pulseSOS 1.5s infinite; cursor: pointer;
-        }
-        .floating-sos i { animation: tilt-shaking 0.5s infinite alternate; }
-        .floating-sos::after { content: 'U.R.C'; position: absolute; bottom: -15px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 9px; color: var(--danger); left: 50%; transform: translateX(-50%); }
+        /* --- FLOATING BUTTONS --- */
+        .float-container { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 10000; }
+        .btn-float { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.2s; }
+        .btn-float:active { transform: scale(0.9); }
+        .btn-sos { background: linear-gradient(135deg, var(--danger), #991B1B); border: 2px solid #FCA5A5; animation: pulseSOS 1.5s infinite; }
+        .btn-chat { background: linear-gradient(135deg, var(--electric-blue), #1D4ED8); border: 2px solid #93C5FD; }
+        .btn-sos::after { content: 'U.R.C'; position: absolute; bottom: -15px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 9px; color: var(--danger); left: 50%; transform: translateX(-50%); }
+        .btn-chat::after { content: 'CHAT'; position: absolute; bottom: -15px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 9px; color: var(--electric-blue); left: 50%; transform: translateX(-50%); }
 
-        /* --- MODAL FORM SOS --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.9); z-index: 99999; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); }
+        /* --- CHAT DRAWER --- */
+        .chat-drawer {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 90vh; background: white;
+            border-top-left-radius: 25px; border-top-right-radius: 25px;
+            transform: translateY(110%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 99999; display: flex; flex-direction: column;
+            box-shadow: 0 -10px 50px rgba(0,0,0,0.2);
+        }
+        .chat-drawer.open { transform: translateY(0); }
+        .chat-header { padding: 15px 20px; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; background: white; border-top-left-radius: 25px; border-top-right-radius: 25px; }
+        .chat-title { font-family: 'Space Grotesk'; font-weight: 900; font-size: 18px; color: var(--royal-blue); }
+        .chat-body { flex: 1; overflow-y: auto; padding: 20px; background: var(--bg-surface); display: flex; flex-direction: column; gap: 10px; }
+        .msg-bubble { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 13px; line-height: 1.4; word-wrap: break-word; position:relative;}
+        .msg-me { align-self: flex-end; background: var(--chat-me); color: white; border-bottom-right-radius: 2px; }
+        .msg-other { align-self: flex-start; background: white; color: var(--text-main); border-bottom-left-radius: 2px; border: 1px solid #E2E8F0; }
+        .msg-sender { font-size: 9px; font-weight: 700; margin-bottom: 3px; opacity: 0.8; display: block; }
+        .msg-reply-ctx { background: rgba(0,0,0,0.1); padding: 5px; border-radius: 5px; font-size: 10px; margin-bottom: 5px; border-left: 3px solid rgba(255,255,255,0.5); }
+        .msg-img { max-width: 100%; border-radius: 10px; margin-top: 5px; display: block; cursor: pointer;}
+        .chat-footer { padding: 10px 15px; background: white; border-top: 1px solid #E2E8F0; }
+        .reply-preview { background: #F1F5F9; padding: 8px 15px; font-size: 11px; border-radius: 10px; margin-bottom: 10px; display: none; justify-content: space-between; align-items: center; border-left: 3px solid var(--electric-blue); }
+        .input-area { display: flex; gap: 10px; align-items: flex-end; }
+        .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #E2E8F0; background: #F8FAFC; outline: none; font-family: 'Inter'; font-size: 14px; max-height: 100px; overflow-y: auto; resize: none;}
+        .btn-icon { width: 45px; height: 45px; border-radius: 50%; border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0;}
+        .btn-attach { background: #F1F5F9; color: #64748B; }
+        .btn-send { background: var(--electric-blue); color: white; }
+
+        /* MODAL & OVERLAY */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.9); z-index: 99998; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(8px); }
         .modal-box { background: white; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; padding: 30px 25px; transform: translateY(100%); animation: slideUp 0.3s forwards; box-shadow: 0 -10px 40px rgba(239,68,68,0.2); border-top: 2px solid rgba(239,68,68,0.3);}
         @keyframes slideUp { to { transform: translateY(0); } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--danger); display: flex; align-items: center; gap: 10px;}
-        .btn-close { background: #F1F5F9; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text-muted); transition:0.2s;}
-        .btn-close:active { transform: scale(0.9); background: #E2E8F0;}
-        .form-group { margin-bottom: 15px; }
-        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; }
-        .form-input:focus { border-color: var(--danger); background: white; box-shadow: 0 0 15px rgba(239,68,68,0.15);}
-        .btn-send-sos { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--danger); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: var(--glow-red); display: flex; justify-content: center; align-items: center; gap: 10px; transition:0.2s;}
-        .btn-send-sos:active { transform: scale(0.95); }
-
-        /* --- DOCK NAV --- */
+        
         .dock-container { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(45, 99, 237, 0.2); padding: 10px 30px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 10px 30px rgba(45, 99, 237, 0.15); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #94A3B8; transition: 0.3s; }
         .nav-item.active { color: var(--electric-blue); }
         .nav-item i { font-size: 18px; margin-bottom: 2px; }
         .nav-text { font-family: 'Inter'; font-size: 8px; font-weight: 800; text-transform: uppercase; }
-
+        
+        /* HELPER */
+        .form-group { margin-bottom: 15px; } .form-input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #E2E8F0; background: #F8FAFC; outline: none; }
+        .btn-send-sos { width: 100%; padding: 18px; border: none; border-radius: 16px; background: var(--danger); color: white; font-weight: 800; margin-top: 10px; cursor: pointer; }
         @keyframes pulseSOS { 0%, 100% { box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3); } 50% { box-shadow: 0 10px 30px rgba(239, 68, 68, 0.7); border: 2px solid #FFF;} }
-        @keyframes tilt-shaking { 0% { transform: rotate(-10deg); } 100% { transform: rotate(10deg); } }
     </style>
 </head>
 <body>
@@ -147,10 +153,18 @@
                     <div class="p-plat" id="userPlat">...</div>
                 </div>
             </div>
-            <div class="p-divider"></div>
+            
             <div class="p-fc-status" onclick="window.location.href='antrian.html'">
-                <div class="pfc-title"><i class="fas fa-bolt"></i> FC GADING</div>
-                <div class="pfc-val" id="profileFcStatus"><span style="color:#aaa; font-size:10px;">...</span></div>
+                <div class="pfc-title"><i class="fas fa-bolt"></i> FC</div>
+                <div class="pfc-val" id="profileFcStatus">...</div>
+            </div>
+
+            <div class="loc-toggle" id="locToggleContainer">
+                <span class="loc-label">LOKASI</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggleLocation" onchange="toggleLoc(this)">
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
     </header>
@@ -159,7 +173,7 @@
         <div class="fc-banner" onclick="window.location.href='antrian.html'">
             <div class="fc-left">
                 <div class="fc-title"><i class="fas fa-charging-station" style="color:var(--royal-blue);"></i> STATUS STASIUN</div>
-                <div class="fc-dist" id="fcDistInfo"><i class="fas fa-map-marker-alt"></i> Menghitung jarak...</div>
+                <div class="fc-dist" id="fcDistInfo"><i class="fas fa-map-marker-alt"></i> Menghitung...</div>
             </div>
             <div class="fc-right" id="fcStatusRight">
                 <span class="fc-lbl">INFO LIVE</span>
@@ -180,20 +194,39 @@
                 <div class="menu-title">Pengurus</div>
                 <div class="menu-desc">Struktur komando pusat</div>
             </a>
+            
+            <a href="map.html" class="menu-btn" id="menuMap">
+                <div class="icon-box ic-map"><i class="fas fa-map-marked-alt"></i></div>
+                <div class="menu-title">Peta Member</div>
+                <div class="menu-desc">Pantau lokasi kawan</div>
+            </a>
+            <a href="#" class="menu-btn" id="menuChat" onclick="openChat(); return false;">
+                <div class="icon-box ic-chat"><i class="fas fa-comments"></i></div>
+                <div class="menu-title">Global Chat</div>
+                <div class="menu-desc">Forum diskusi umum</div>
+            </a>
+
             <a href="keuangan.html" class="menu-btn">
                 <div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div>
                 <div class="menu-title">Uang Kas</div>
-                <div class="menu-desc">Laporan finansial & donasi</div>
+                <div class="menu-desc">Laporan finansial</div>
             </a>
             <a href="tabungan.html" class="menu-btn">
                 <div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div>
                 <div class="menu-title">Tabungan</div>
                 <div class="menu-desc">Simpanan & Penarikan</div>
             </a>
+            
+            <a href="game.html" class="menu-btn" id="menuGame">
+                <div class="icon-box ic-game"><i class="fas fa-gamepad"></i></div>
+                <div class="menu-title">Game Center</div>
+                <div class="menu-desc">Hiburan santai</div>
+            </a>
+
             <a href="antrian.html" class="menu-btn">
                 <div class="icon-box ic-antrian"><i class="fas fa-charging-station"></i></div>
                 <div class="menu-title">Live Antrian</div>
-                <div class="menu-desc">Monitor Stasiun FC Gading</div>
+                <div class="menu-desc">Monitor Stasiun FC</div>
             </a>
             <a href="reminder.html" class="menu-btn">
                 <div class="icon-box ic-reminder"><i class="fas fa-bell"></i></div>
@@ -203,43 +236,66 @@
             <a href="info_mlu.html" class="menu-btn">
                 <div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div>
                 <div class="menu-title">Info MLU</div>
-                <div class="menu-desc">Pusat informasi & aturan</div>
+                <div class="menu-desc">Pusat informasi</div>
             </a>
             <a href="store.html" class="menu-btn">
                 <div class="icon-box ic-pasar"><i class="fas fa-store"></i></div>
                 <div class="menu-title">Pasar MLU</div>
-                <div class="menu-desc">Forum Jual Beli Member</div>
+                <div class="menu-desc">Forum Jual Beli</div>
             </a>
         </div>
     </main>
 
-    <a href="#" class="floating-sos" onclick="openSosModal(); return false;">
-        <i class="fas fa-ambulance"></i>
-    </a>
+    <div class="float-container" id="floatContainer">
+        <div class="btn-float btn-chat" onclick="openChat()"><i class="fas fa-comment-dots"></i></div>
+        <div class="btn-float btn-sos" onclick="openSosModal()"><i class="fas fa-ambulance"></i></div>
+    </div>
+
+    <div class="modal-overlay" id="chatOverlay" onclick="closeChat()"></div>
+    <div class="chat-drawer" id="chatDrawer">
+        <div class="chat-header">
+            <div class="chat-title"><i class="fas fa-comments"></i> MLU GLOBAL CHAT</div>
+            <button class="btn-icon btn-attach" style="width:30px; height:30px; margin-left:auto; margin-right:10px;" onclick="closeChat()"><i class="fas fa-chevron-down"></i></button>
+        </div>
+        <div class="chat-body" id="chatList">
+            <div style="text-align:center; margin-top:50px; color:#aaa;">Memuat pesan...</div>
+        </div>
+        <div class="chat-footer">
+            <div class="reply-preview" id="replyPreview">
+                <span><i class="fas fa-reply"></i> Balas ke: <b id="replyToName">...</b></span>
+                <i class="fas fa-times" onclick="cancelReply()" style="cursor:pointer;"></i>
+            </div>
+            <div class="input-area">
+                <button class="btn-icon btn-attach" onclick="document.getElementById('chatImgInput').click()"><i class="fas fa-image"></i></button>
+                <input type="file" id="chatImgInput" accept="image/*" style="display:none;" onchange="sendImage()">
+                <textarea id="chatInput" class="chat-input" rows="1" placeholder="Ketik pesan..." oninput="this.style.height='';this.style.height=this.scrollHeight+'px'"></textarea>
+                <button class="btn-icon btn-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
 
     <div class="modal-overlay" id="sosModal">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="modal-title"><i class="fas fa-broadcast-tower"></i> Laporan S.O.S</div>
-                <button class="btn-close" onclick="closeSosModal()"><i class="fas fa-times"></i></button>
+                <button class="btn-icon btn-attach" onclick="document.getElementById('sosModal').style.display='none'"><i class="fas fa-times"></i></button>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Laporan Anda dapat dikirimkan ke Group Pengurus atau kontak pilihan Anda beserta rincian lokasi terkini.</p>
             <div class="form-group">
                 <label>Pilih Kendala Darurat</label>
                 <select id="sosType" class="form-input">
-                    <option value="Unit Mogok / Trouble">Unit Mogok / Trouble</option>
-                    <option value="Ban Bocor / Kempes">Ban Bocor / Kempes</option>
-                    <option value="Kecelakaan Lalu Lintas">Kecelakaan Lalu Lintas</option>
-                    <option value="Kehabisan Baterai di Jalan">Kehabisan Baterai di Jalan</option>
-                    <option value="Tindak Kriminal / Begal">Tindak Kriminal / Begal</option>
-                    <option value="Lainnya">Lainnya...</option>
+                    <option>Unit Mogok / Trouble</option>
+                    <option>Ban Bocor / Kempes</option>
+                    <option>Kecelakaan Lalu Lintas</option>
+                    <option>Kehabisan Baterai di Jalan</option>
+                    <option>Tindak Kriminal / Begal</option>
+                    <option>Lainnya</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>Keterangan Tambahan / Patokan Lokasi</label>
-                <textarea id="sosDesc" class="form-input" rows="3" placeholder="Contoh: Depan Indomaret, dekat pom bensin..."></textarea>
+                <label>Keterangan Tambahan</label>
+                <textarea id="sosDesc" class="form-input" rows="3" placeholder="Patokan lokasi..."></textarea>
             </div>
-            <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()"><i class="fab fa-whatsapp"></i> BAGIKAN S.O.S</button>
+            <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()">BAGIKAN S.O.S</button>
         </div>
     </div>
 
@@ -251,100 +307,147 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // FIREBASE MLU ( UTAMA )
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
-        const app = initializeApp(firebaseConfig); 
-        const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // FIREBASE FC GADING ( UTK STATUS ) - UPDATED: fcgadingnew22
         const appFC = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppFC");
         const dbFC = getFirestore(appFC);
         const fcRef = doc(dbFC, "antrian", "utama");
 
-        // --- SISTEM LOGIN FIX ---
         let uData = null;
         try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        if (!uData || !uData.plat) window.location.href = 'index.html'; 
 
-        // JIKA TIDAK ADA DATA LOGIN, TENDANG KELUAR
-        if (!uData || !uData.plat) {
-            window.location.href = 'index.html'; 
-        }
-
-        const myName = uData.namaKtp || uData.namaWa || uData.nama || "User";
+        const myName = uData.namaKtp || uData.namaWa || "User";
         const myPlat = uData.plat || "B XXXX XX";
-        const myRole = uData.role || "MEMBER";
-        const myPhoto = (uData.foto && uData.foto.length > 50) ? uData.foto : `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=${encodeURIComponent(myName)}`;
+        let replyContext = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            const hour = new Date().getHours();
-            let greeting = (hour < 10) ? "Selamat Pagi," : (hour < 15) ? "Selamat Siang," : (hour < 18) ? "Selamat Sore," : "Selamat Malam,";
-            
             document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('greetingText').innerText = greeting;
+            document.getElementById('greetingText').innerText = (new Date().getHours() < 10) ? "Selamat Pagi," : (new Date().getHours() < 15) ? "Selamat Siang," : (new Date().getHours() < 18) ? "Selamat Sore," : "Selamat Malam,";
             document.getElementById('userName').innerText = myName;
             document.getElementById('userPlat').innerText = myPlat;
-            document.getElementById('userRole').innerText = myRole;
+            document.getElementById('userRole').innerText = uData.role || "MEMBER";
+            if (uData.foto && uData.foto.length > 50) document.getElementById('userPhoto').src = uData.foto;
 
-            const rBadge = document.getElementById('userRole');
-            if (myRole.includes("KETUM") || myRole.includes("WAKETUM") || myRole.includes("PEMBINA")) {
-                rBadge.style.background = "var(--gold)"; rBadge.style.color = "#000";
-            } else if (myRole === "KELUARGA MLU" || myRole === "GUEST") {
-                rBadge.style.background = "rgba(255,255,255,0.2)"; rBadge.style.color = "#FFF";
-            } else {
-                rBadge.style.background = "var(--electric-blue)"; rBadge.style.color = "#FFF";
+            // --- PROTEKSI AJI (B 4381 SWD) ---
+            const blacklist = "B4381SWD";
+            const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
+
+            if (myPlatClean === blacklist) {
+                // BLOKIR MAP & CHAT & LOKASI
+                document.getElementById('menuMap').style.display = 'none';
+                document.getElementById('menuChat').style.display = 'none';
+                document.querySelector('.btn-chat').style.display = 'none';
+                document.getElementById('locToggleContainer').style.display = 'none';
+                localStorage.setItem('maka_loc_share', 'OFF');
+                
+                // GAME TETAP DIBUKA (TIDAK DIBLOKIR)
             }
 
-            document.getElementById('userPhoto').src = myPhoto;
-            
+            const savedLoc = localStorage.getItem('maka_loc_share');
+            if(savedLoc === 'ON' && myPlatClean !== blacklist) {
+                document.getElementById('toggleLocation').checked = true;
+                startTracking();
+            }
+
             cekJarakFC();
-            initDataListeners(); 
+            initDataListeners();
+            initChat();
         });
 
-        function initDataListeners() {
-            // FC Status (Header & Banner)
-            onSnapshot(fcRef, (snap) => {
-                if (!snap.exists()) return;
-                const d = snap.data();
-                
-                let slots = d.chargingSlots || []; 
-                let dis = d.disabledSlots || []; 
-                let qLen = (d.waitingQueue || []).length;
-                let emptySlots = 0;
-                
-                for(let i=0; i<3; i++) { 
-                    if(slots[i] === null && !(dis && dis[i])) emptySlots++; 
-                }
+        // --- CHAT LOGIC ---
+        function initChat() {
+            const qChat = query(collection(db, "mlu_chat_global"), orderBy("timestamp", "desc"), limit(50));
+            onSnapshot(qChat, (snap) => {
+                const list = document.getElementById('chatList');
+                list.innerHTML = '';
+                const msgs = [];
+                snap.forEach(d => msgs.push({id:d.id, ...d.data()}));
+                msgs.reverse().forEach(m => {
+                    const isMe = m.senderId === uData.id;
+                    const cls = isMe ? 'msg-me' : 'msg-other';
+                    const sender = isMe ? 'Saya' : (m.senderName || 'Member');
+                    
+                    let replyHtml = '';
+                    if(m.replyTo) { replyHtml = `<div class="msg-reply-ctx"><b>${m.replyTo.sender}:</b> ${m.replyTo.text.substring(0,30)}...</div>`; }
+                    let imgHtml = '';
+                    if(m.image) { imgHtml = `<img src="${m.image}" class="msg-img" onclick="viewImage('${m.image}')">`; }
 
-                // LOGIKA TAMPILAN
-                let statusText = "";
-                let statusColor = "";
-                let bannerHtml = "";
-
-                if (qLen > 0) {
-                    statusText = `${qLen} ANTRIAN`;
-                    statusColor = "var(--warning)"; 
-                    bannerHtml = `<span style="color:var(--warning);">${qLen} ANTRIAN</span>`;
-                } else {
-                    statusText = `${emptySlots} SLOT KOSONG`;
-                    statusColor = "var(--success)"; 
-                    bannerHtml = `<span style="color:var(--success);">${emptySlots} SLOT KOSONG</span>`;
-                }
-
-                // Update Mini Status (Profile)
-                const miniStatus = document.getElementById('profileFcStatus');
-                miniStatus.innerHTML = `<span style="color:${statusColor}; font-size:10px; font-weight:800;">${statusText}</span>`;
-
-                // Update Banner (Dashboard)
-                const rightContainer = document.getElementById('fcStatusRight');
-                rightContainer.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;"><span class="fc-val">${bannerHtml}</span><span class="fc-lbl">REALTIME INFO</span></div>`;
+                    list.innerHTML += `<div class="msg-bubble ${cls}" onclick="setReply('${m.id}', '${sender}', '${m.text}')">${replyHtml}<span class="msg-sender">${sender} • ${m.plat}</span>${m.text}${imgHtml}</div>`;
+                });
+                list.scrollTop = list.scrollHeight;
             });
         }
 
-        const STATION_LAT = -6.159389; 
-        const STATION_LNG = 106.901416;
+        window.openChat = () => { document.getElementById('chatOverlay').style.display='block'; setTimeout(()=>document.getElementById('chatDrawer').classList.add('open'),10); };
+        window.closeChat = () => { document.getElementById('chatDrawer').classList.remove('open'); setTimeout(()=>document.getElementById('chatOverlay').style.display='none',300); };
 
+        window.setReply = (id, name, text) => { replyContext = { id, sender: name, text }; document.getElementById('replyToName').innerText = name; document.getElementById('replyPreview').style.display = 'flex'; }
+        window.cancelReply = () => { replyContext = null; document.getElementById('replyPreview').style.display = 'none'; }
+
+        window.sendChat = async () => {
+            const txt = document.getElementById('chatInput').value.trim();
+            if(!txt) return;
+            await addDoc(collection(db, "mlu_chat_global"), { text: txt, senderId: uData.id, senderName: myName, plat: myPlat, timestamp: Date.now(), replyTo: replyContext });
+            document.getElementById('chatInput').value = ''; cancelReply();
+        }
+
+        window.sendImage = () => {
+            const file = document.getElementById('chatImgInput').files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const img = new Image();
+                img.onload = async function() {
+                    const cvs = document.createElement('canvas'); const ctx = cvs.getContext('2d');
+                    let w = img.width; let h = img.height;
+                    if(w>600){ h*=600/w; w=600;}
+                    cvs.width=w; cvs.height=h; ctx.drawImage(img,0,0,w,h);
+                    const b64 = cvs.toDataURL('image/jpeg', 0.7);
+                    await addDoc(collection(db, "mlu_chat_global"), { text: "", image: b64, senderId: uData.id, senderName: myName, plat: myPlat, timestamp: Date.now() });
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // --- MAP TRACKING ---
+        let watchId = null;
+        window.toggleLoc = (el) => {
+            if(el.checked) {
+                if(confirm("Aktifkan lokasi?")) { localStorage.setItem('maka_loc_share', 'ON'); startTracking(); } else { el.checked = false; }
+            } else { localStorage.setItem('maka_loc_share', 'OFF'); stopTracking(); }
+        }
+        function startTracking() {
+            if(navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition((pos) => {
+                    updateDoc(doc(db, "mlu_members", uData.id), { lat: pos.coords.latitude, lng: pos.coords.longitude, lastUpdate: Date.now(), isSharing: true });
+                }, null, { enableHighAccuracy: true });
+            }
+        }
+        function stopTracking() {
+            if(watchId) navigator.geolocation.clearWatch(watchId);
+            updateDoc(doc(db, "mlu_members", uData.id), { isSharing: false });
+        }
+
+        // --- FC DATA ---
+        function initDataListeners() {
+            onSnapshot(fcRef, (snap) => {
+                if (!snap.exists()) return;
+                const d = snap.data();
+                let qLen = (d.waitingQueue || []).length;
+                let empty = 0;
+                for(let i=0; i<3; i++) { if(d.chargingSlots[i]===null && !d.disabledSlots[i]) empty++; }
+                let html = qLen > 0 ? `<span style="color:var(--warning);">${qLen} ANTRIAN</span>` : `<span style="color:var(--success);">${empty} SLOT KOSONG</span>`;
+                document.getElementById('fcStatusRight').innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;"><span class="fc-val">${html}</span><span class="fc-lbl">REALTIME INFO</span></div>`;
+                document.getElementById('profileFcStatus').innerHTML = `<span style="color:${qLen>0?'var(--warning)':'var(--success)'}; font-size:10px; font-weight:800;">${qLen>0?qLen+' ANTRI':empty+' SLOT'}</span>`;
+            });
+        }
+
+        const STATION_LAT = -6.159389; const STATION_LNG = 106.901416;
         function cekJarakFC() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((pos) => {
@@ -352,51 +455,20 @@
                     const p = 0.017453292519943295, c = Math.cos;
                     const a = 0.5 - c((STATION_LAT - lat) * p)/2 + c(lat * p) * c(STATION_LAT * p) * (1 - c((STATION_LNG - lon) * p))/2;
                     const distKm = 12742 * Math.asin(Math.sqrt(a)); 
-                    const estMenit = Math.ceil((distKm / 25) * 60); 
-                    document.getElementById('fcDistInfo').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${distKm.toFixed(1)} KM (${estMenit} mnt)`;
+                    document.getElementById('fcDistInfo').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${distKm.toFixed(1)} KM (${Math.ceil((distKm/25)*60)} mnt)`;
                 });
             }
         }
 
         window.openSosModal = () => { document.getElementById('sosModal').style.display = 'flex'; };
         window.closeSosModal = () => { document.getElementById('sosModal').style.display = 'none'; };
-
         window.sendSos = () => {
-            const btn = document.getElementById('btnSendSos');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari Lokasi...';
-            btn.style.opacity = '0.7';
-
-            const sosType = document.getElementById('sosType').value;
-            const sosDesc = document.getElementById('sosDesc').value.trim() || "Tidak ada keterangan";
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
-                        executeWa(sosType, sosDesc, myName, uData.plat, mapsLink);
-                    },
-                    (error) => { executeWa(sosType, sosDesc, myName, uData.plat, "(Lokasi GPS tidak diizinkan)"); }
-                );
-            } else {
-                executeWa(sosType, sosDesc, myName, uData.plat, "(Perangkat tidak mendukung GPS)");
-            }
+            const btn = document.getElementById('btnSendSos'); btn.innerHTML = '...';
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const url = `https://wa.me/?text=${encodeURIComponent(`*SOS MLU*\nNama: ${myName}\nPlat: ${myPlat}\nLokasi: http://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}\nInfo: ${document.getElementById('sosDesc').value}`)}`;
+                window.location.href = url;
+            });
         };
-
-        function executeWa(type, desc, name, plat, loc) {
-            const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', '');
-            const profileLink = `${baseUrl}data_anggota.html?cari=${encodeURIComponent(plat)}`;
-            const msg = `*🚨 LAPORAN DARURAT S.O.S (MLU) 🚨*\n\n*Pelapor:* ${name} (${plat})\n*Kendala:* ${type}\n*Keterangan:* ${desc}\n\n*📍 Titik Lokasi:*\n${loc}\n\n*👤 Cek Profil Pelapor:*\n${profileLink}\n\n_Mohon segera direspon, anggota butuh bantuan!_`;
-            const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-            
-            const btn = document.getElementById('btnSendSos');
-            btn.innerHTML = '<i class="fab fa-whatsapp"></i> BAGIKAN S.O.S';
-            btn.style.opacity = '1';
-            
-            window.closeSosModal();
-            window.location.href = url;
-        }
     </script>
 </body>
 </html>
