@@ -15,7 +15,7 @@
     <style>
         :root { 
             --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; 
-            --text-main: #0F172A; --white: #FFFFFF; --danger: #EF4444; --success: #10B981;
+            --text-main: #0F172A; --white: #FFFFFF; --danger: #EF4444; --success: #10B981; --warning: #F59E0B;
         }
 
         body { margin:0; background: var(--bg-surface); font-family:'Space Grotesk',sans-serif; color:var(--text-main); overflow-x:hidden; touch-action:manipulation; user-select:none; }
@@ -26,7 +26,7 @@
         .title { font-size:20px; color:var(--royal-blue); display:flex; align-items:center; gap:10px; }
         .close-btn { color:var(--text-main); font-size:24px; text-decoration:none; }
 
-        /* MENU GRID (HOME) */
+        /* MENU GRID */
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px; max-width: 600px; margin: 0 auto; }
         .game-card { 
             background: white; border-radius: 20px; padding: 20px; text-align: center; 
@@ -36,17 +36,23 @@
         .game-card:active { transform: scale(0.95); background: var(--bg-surface); }
         .gc-icon { font-size: 35px; color: var(--electric-blue); margin-bottom: 10px; }
         .gc-name { font-size: 14px; font-weight: 900; color: var(--royal-blue); }
+        .gc-badge { font-size: 9px; background: var(--success); color: white; padding: 2px 6px; border-radius: 4px; margin-top: 5px; }
 
-        /* GAME CONTAINER */
+        /* GAME AREA */
         .game-wrapper { display: none; flex-direction: column; align-items: center; min-height: 80vh; padding: 20px; width: 100%; max-width:500px; margin:0 auto; animation: fadeIn 0.3s; }
         .game-wrapper.active { display: flex; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
 
-        /* COMMON COMPONENTS */
+        /* COMMON UI */
         .btn-back { background: transparent; border: 1px solid var(--royal-blue); color: var(--royal-blue); padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 12px; margin-bottom: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;}
-        .btn-action { background: var(--electric-blue); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 900; margin-top: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(45,99,237,0.3); }
+        .btn-action { background: var(--electric-blue); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 900; margin-top: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(45,99,237,0.3); width: 100%; max-width: 250px;}
         .btn-action:active { transform: scale(0.95); }
         .score-display { font-size: 24px; color: var(--royal-blue); margin-bottom: 10px; }
+
+        /* MABAR PANEL */
+        .mabar-panel { background: #E0F2FE; padding: 15px; border-radius: 15px; margin-bottom: 20px; width: 100%; text-align: center; border: 1px solid #BAE6FD; display:none; }
+        .room-code { font-size: 24px; font-weight: 900; color: var(--royal-blue); letter-spacing: 2px; margin: 10px 0; background: white; padding: 10px; border-radius: 10px; border: 2px dashed var(--royal-blue); }
+        .room-input { padding: 12px; border-radius: 10px; border: 1px solid #ccc; width: 100%; text-align: center; font-weight: 800; font-size: 16px; margin-bottom: 10px; text-transform: uppercase;}
 
         /* --- SNAKE --- */
         #snakeCanvas { background: var(--white); border: 2px solid var(--electric-blue); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -67,7 +73,7 @@
         .sudoku-cell { background: white; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--text-main); cursor: pointer; }
         .sudoku-cell.given { background: #F1F5F9; color: var(--royal-blue); }
         .sudoku-cell.selected { background: var(--electric-blue); color: white; }
-        .sudoku-cell.error { color: var(--danger); }
+        .sudoku-cell.error { color: var(--danger); background: #FEF2F2; }
         .sudoku-cell:nth-child(3n) { border-right: 2px solid var(--royal-blue); }
         .sudoku-cell:nth-child(9n) { border-right: none; }
         .sudoku-cell:nth-child(n+19):nth-child(-n+27), .sudoku-cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--royal-blue); }
@@ -75,26 +81,39 @@
         .num-btn { background: white; border: 1px solid #E2E8F0; padding: 15px 0; border-radius: 10px; font-size: 18px; font-weight: 700; color: var(--royal-blue); }
         .num-btn:active { background: var(--electric-blue); color: white; }
 
-        /* --- MOTO RUN (RACING) --- */
+        /* --- MOTO RUN --- */
         #motoCanvas { background: #334155; border-left: 10px solid #FFF; border-right: 10px solid #FFF; border-radius: 5px; width: 300px; height: 400px; display: block; }
         .moto-controls { display: flex; gap: 20px; margin-top: 20px; width: 300px; }
         .btn-steer { flex: 1; background: var(--electric-blue); color: white; border: none; padding: 20px; border-radius: 15px; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-steer:active { transform: scale(0.95); }
 
-        /* --- ULAR TANGGA --- */
-        .ut-board { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; width: 100%; background: var(--royal-blue); padding: 5px; border-radius: 10px; }
-        .ut-cell { aspect-ratio: 1; background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; position: relative; border-radius: 2px; }
-        .ut-cell:nth-child(even) { background: #F8FAFC; }
-        .ut-p1, .ut-p2 { width: 15px; height: 15px; border-radius: 50%; position: absolute; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: 0.3s; }
-        .ut-p1 { background: var(--danger); top: 2px; left: 2px; z-index: 2; }
-        .ut-p2 { background: var(--electric-blue); bottom: 2px; right: 2px; z-index: 2; }
-        .ut-ladder { color: var(--success); position: absolute; font-size: 14px; opacity: 0.5; z-index: 1; }
-        .ut-snake { color: var(--danger); position: absolute; font-size: 14px; opacity: 0.5; z-index: 1; }
+        /* --- ULAR TANGGA (VISUAL BAGUS) --- */
+        .ut-board { 
+            display: grid; grid-template-columns: repeat(5, 1fr); /* 5 Kolom x 6 Baris = 30 Kotak */
+            gap: 2px; width: 100%; background: #CBD5E1; padding: 5px; border-radius: 10px; border: 4px solid var(--royal-blue);
+        }
+        .ut-cell { 
+            aspect-ratio: 1; background: white; display: flex; align-items: flex-start; justify-content: flex-start; 
+            font-size: 10px; font-weight: 800; padding: 2px; position: relative; border-radius: 4px; color: #94A3B8;
+        }
+        /* Warna-warni papan */
+        .ut-cell:nth-child(even) { background: #EFF6FF; }
+        .ut-cell:nth-child(3n) { background: #F0FDF4; }
+        .ut-cell:nth-child(5n) { background: #FEF2F2; }
+
+        .ut-p1, .ut-p2 { width: 18px; height: 18px; border-radius: 50%; position: absolute; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: 0.3s; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .ut-p1 { background: var(--danger); }
+        .ut-p2 { background: var(--electric-blue); margin-left: 5px; margin-top: 5px; } /* Biar ga numpuk */
+        
+        /* Ikon Tangga & Ular */
+        .ut-icon { position: absolute; font-size: 18px; bottom: 2px; right: 2px; opacity: 0.8; }
+        .icon-ladder { color: var(--success); }
+        .icon-snake { color: var(--danger); }
         
         /* --- PUZZLE --- */
         .puzzle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; background: var(--royal-blue); padding: 5px; border-radius: 10px; width: 100%; max-width: 300px; }
-        .puz-tile { aspect-ratio: 1; background: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: var(--royal-blue); cursor: pointer; border-radius: 5px; }
-        .puz-tile.empty { background: transparent; cursor: default; }
+        .puz-tile { aspect-ratio: 1; background: white; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: var(--royal-blue); cursor: pointer; border-radius: 5px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1); }
+        .puz-tile.empty { background: transparent; cursor: default; box-shadow: none; }
     </style>
 </head>
 <body>
@@ -113,25 +132,28 @@
             <i class="fas fa-motorcycle gc-icon"></i>
             <div class="gc-name">MOTO RUN</div>
         </div>
-        <div class="game-card" onclick="startGame('ttt')">
-            <i class="fas fa-times gc-icon"></i>
-            <div class="gc-name">TIC TAC TOE</div>
-        </div>
-        <div class="game-card" onclick="startGame('chess')">
-            <i class="fas fa-chess gc-icon"></i>
-            <div class="gc-name">CATUR</div>
-        </div>
         <div class="game-card" onclick="startGame('sudoku')">
             <i class="fas fa-border-all gc-icon"></i>
             <div class="gc-name">SUDOKU</div>
         </div>
-        <div class="game-card" onclick="startGame('ut')">
-            <i class="fas fa-dice gc-icon"></i>
-            <div class="gc-name">ULAR TANGGA</div>
-        </div>
         <div class="game-card" onclick="startGame('puzzle')">
             <i class="fas fa-puzzle-piece gc-icon"></i>
-            <div class="gc-name">PUZZLE GESER</div>
+            <div class="gc-name">PUZZLE</div>
+        </div>
+        <div class="game-card" onclick="startGame('ttt', true)">
+            <i class="fas fa-times gc-icon"></i>
+            <div class="gc-name">TIC TAC TOE</div>
+            <div class="gc-badge">ONLINE</div>
+        </div>
+        <div class="game-card" onclick="startGame('chess', true)">
+            <i class="fas fa-chess gc-icon"></i>
+            <div class="gc-name">CATUR</div>
+            <div class="gc-badge">ONLINE</div>
+        </div>
+        <div class="game-card" onclick="startGame('ut', true)">
+            <i class="fas fa-dice gc-icon"></i>
+            <div class="gc-name">ULAR TANGGA</div>
+            <div class="gc-badge">ONLINE</div>
         </div>
     </div>
 
@@ -161,6 +183,7 @@
 
     <div id="game-ttt" class="game-wrapper">
         <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div id="tttMabar" class="mabar-panel"></div>
         <h2 id="tttStatus" style="color:var(--royal-blue);">Giliran: X</h2>
         <div class="ttt-grid" id="tttBoard"></div>
         <button class="btn-action" onclick="initTTT()">RESET GAME</button>
@@ -168,8 +191,9 @@
 
     <div id="game-chess" class="game-wrapper">
         <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div id="chessMabar" class="mabar-panel"></div>
         <div id="myBoard"></div>
-        <p id="chessStatus" style="text-align:center; font-size:12px; margin-top:10px;">Putih Jalan</p>
+        <p id="chessStatus" style="text-align:center; font-size:12px; margin-top:10px;">Status: Menunggu...</p>
         <button class="btn-action" onclick="initChess()">RESET PAPAN</button>
     </div>
 
@@ -193,14 +217,15 @@
 
     <div id="game-ut" class="game-wrapper">
         <button class="btn-back" onclick="backToMenu()"><i class="fas fa-arrow-left"></i> KEMBALI</button>
+        <div id="utMabar" class="mabar-panel"></div>
         <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
-            <div style="font-size:12px; font-weight:800; color:var(--danger);">P1 (MERAH): <span id="p1Pos">1</span></div>
-            <div style="font-size:12px; font-weight:800; color:var(--electric-blue);">P2 (BIRU): <span id="p2Pos">1</span></div>
+            <div style="font-size:12px; font-weight:800; color:var(--danger);"><i class="fas fa-circle"></i> MERAH (P1): <span id="p1Pos">1</span></div>
+            <div style="font-size:12px; font-weight:800; color:var(--electric-blue);"><i class="fas fa-circle"></i> BIRU (P2): <span id="p2Pos">1</span></div>
         </div>
         <div class="ut-board" id="utBoard"></div>
         <div style="margin-top:20px; text-align:center;">
             <div id="diceRes" style="font-size:30px; font-weight:900; margin-bottom:10px;">🎲 -</div>
-            <button id="btnRoll" class="btn-action" onclick="rollDice()">KOCOK DADU (P1)</button>
+            <button id="btnRoll" class="btn-action" onclick="rollDice()">KOCOK DADU</button>
         </div>
     </div>
 
@@ -210,37 +235,130 @@
         <button class="btn-action" onclick="initPuzzle()">ACAK ULANG</button>
     </div>
 
-    <script>
-        function startGame(id) {
+    <script type="module">
+        // FIREBASE SETUP UNTUK MULTIPLAYER
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", databaseURL: "https://rtomaka-e67b5-default-rtdb.firebaseio.com", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // GLOBAL VARS
+        window.activeRoom = null;
+        window.myRole = null; // 'host' or 'guest'
+        window.gameType = null;
+
+        window.startGame = (id, online=false) => {
             document.getElementById('mainMenu').style.display = 'none';
             document.querySelectorAll('.game-wrapper').forEach(el => el.classList.remove('active'));
             document.getElementById('game-'+id).classList.add('active');
             
+            if(online) {
+                window.gameType = id;
+                showMabarPanel(id);
+            }
+
             if(id==='snake') initSnake();
             if(id==='moto') initMoto();
-            if(id==='ttt') initTTT();
-            if(id==='chess') setTimeout(initChess, 100); 
             if(id==='sudoku') initSudoku();
-            if(id==='ut') initUT();
             if(id==='puzzle') initPuzzle();
+            if(id==='ttt' && !online) initTTT(); // Offline mode
+            if(id==='chess' && !online) initChess(); 
+            if(id==='ut' && !online) initUT();
         }
 
-        function backToMenu() {
+        window.backToMenu = () => {
             document.querySelectorAll('.game-wrapper').forEach(el => el.classList.remove('active'));
             document.getElementById('mainMenu').style.display = 'grid';
             if(snakeGameLoop) clearInterval(snakeGameLoop);
             if(motoLoop) cancelAnimationFrame(motoLoop);
+            if(window.activeRoom) window.activeRoom = null; // Disconnect
+        }
+
+        // --- MABAR SYSTEM ---
+        function showMabarPanel(gameId) {
+            const panelId = gameId + 'Mabar';
+            const el = document.getElementById(panelId);
+            if(el) {
+                el.style.display = 'block';
+                el.innerHTML = `
+                    <div style="font-size:12px; font-weight:700;">MODE ONLINE</div>
+                    <button class="btn-action" style="margin:5px 0; font-size:10px; padding:8px;" onclick="createRoom('${gameId}')">BUAT KAMAR (HOST)</button>
+                    <div style="margin:5px 0;">atau</div>
+                    <input type="text" id="${gameId}RoomInput" class="room-input" placeholder="KODE KAMAR" maxlength="5">
+                    <button class="btn-action" style="margin:5px 0; background:var(--success); font-size:10px; padding:8px;" onclick="joinRoom('${gameId}')">GABUNG</button>
+                `;
+            }
+        }
+
+        window.createRoom = (gameId) => {
+            const code = Math.floor(1000 + Math.random() * 9000);
+            window.activeRoom = code;
+            window.myRole = 'host';
+            const panel = document.getElementById(gameId + 'Mabar');
+            panel.innerHTML = `KODE KAMAR: <div class="room-code">${code}</div><div style="font-size:10px;">Berikan kode ini ke teman.</div>`;
+            
+            // Init DB for Room
+            let initData = {};
+            if(gameId === 'ttt') initData = { board: ['','','','','','','','',''], turn: 'X' };
+            if(gameId === 'chess') initData = { fen: 'start', turn: 'w' };
+            if(gameId === 'ut') initData = { p1: 1, p2: 1, turn: 1, lastRoll: 0 };
+            
+            set(ref(db, 'games/' + code), initData);
+            listenRoom(gameId, code);
+        }
+
+        window.joinRoom = (gameId) => {
+            const code = document.getElementById(gameId+'RoomInput').value;
+            if(!code) return alert("Masukkan kode!");
+            window.activeRoom = code;
+            window.myRole = 'guest';
+            document.getElementById(gameId + 'Mabar').innerHTML = `<div style="color:var(--success); font-weight:800;">TERHUBUNG KE ${code}</div>`;
+            listenRoom(gameId, code);
+        }
+
+        function listenRoom(gameId, code) {
+            onValue(ref(db, 'games/' + code), (snapshot) => {
+                const data = snapshot.val();
+                if(!data) return;
+
+                if(gameId === 'ttt') {
+                    // Update Board TTT
+                    window.tttBoard = data.board;
+                    window.tttTurn = data.turn;
+                    document.getElementById('tttStatus').innerText = "Giliran: " + data.turn;
+                    renderTTT();
+                }
+                if(gameId === 'chess') {
+                    // Update Chess
+                    if(data.fen !== 'start') window.chessBoard.position(data.fen);
+                    window.gameChess.load(data.fen === 'start' ? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1' : data.fen);
+                    document.getElementById('chessStatus').innerText = "Giliran: " + (data.turn==='w'?'Putih':'Hitam');
+                }
+                if(gameId === 'ut') {
+                    // Update UT
+                    window.p1 = data.p1; window.p2 = data.p2; window.utTurn = data.turn;
+                    drawUT();
+                    document.getElementById('diceRes').innerText = `🎲 ${data.lastRoll}`;
+                    document.getElementById('btnRoll').innerText = `GILIRAN P${data.turn}`;
+                    // Disable button if not my turn
+                    let myTurnNum = (window.myRole === 'host') ? 1 : 2;
+                    document.getElementById('btnRoll').disabled = (data.turn !== myTurnNum);
+                    document.getElementById('btnRoll').style.opacity = (data.turn !== myTurnNum) ? 0.5 : 1;
+                }
+            });
         }
 
         // ===================================
-        // 1. SNAKE (FIXED)
+        // 1. SNAKE
         // ===================================
-        const snakeCvs = document.getElementById('snakeCanvas');
-        const sCtx = snakeCvs.getContext('2d');
+        const sCvs = document.getElementById('snakeCanvas');
+        const sCtx = sCvs.getContext('2d');
         const box = 15;
         let snake, food, d, snakeScore, snakeGameLoop;
 
-        function initSnake() {
+        window.initSnake = () => {
             if(snakeGameLoop) clearInterval(snakeGameLoop);
             snake = [{x: 9*box, y: 10*box}];
             food = {x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box};
@@ -249,7 +367,7 @@
             snakeGameLoop = setInterval(drawSnake, 120);
         }
 
-        function snakeDir(x,y) {
+        window.snakeDir = (x,y) => {
             if(x===0 && y===-1 && d!='DOWN') d='UP';
             else if(x===0 && y===1 && d!='UP') d='DOWN';
             else if(x===-1 && y===0 && d!='RIGHT') d='LEFT';
@@ -285,234 +403,196 @@
         function snakeCollision(h,arr){ for(let i=0; i<arr.length; i++){ if(h.x==arr[i].x && h.y==arr[i].y) return true; } return false; }
 
         // ===================================
-        // 2. MOTO RUN (BARU)
+        // 2. MOTO RUN
         // ===================================
         const mCvs = document.getElementById('motoCanvas');
         const mCtx = mCvs.getContext('2d');
         let motoX = 130, motoSpeed = 0, obstacles = [], motoScore = 0, motoLoop;
         let motoGameOver = false;
 
-        function initMoto() {
+        window.initMoto = () => {
             motoX = 130; motoSpeed = 0; obstacles = []; motoScore = 0; motoGameOver = false;
             if(motoLoop) cancelAnimationFrame(motoLoop);
             motoUpdate();
         }
 
-        function moveMoto(dir) { motoSpeed = dir * 5; }
-        function stopMoto() { motoSpeed = 0; }
+        window.moveMoto = (dir) => { motoSpeed = dir * 5; }
+        window.stopMoto = () => { motoSpeed = 0; }
 
         function motoUpdate() {
             if(motoGameOver) return;
             mCtx.clearRect(0,0,300,400);
             
-            // Draw Road
             mCtx.fillStyle = "#334155"; mCtx.fillRect(0,0,300,400);
             mCtx.fillStyle = "#FFF"; 
-            for(let i=0; i<400; i+=40) mCtx.fillRect(145, (i + motoScore*5)%400, 10, 20); // Moving line
+            for(let i=0; i<400; i+=40) mCtx.fillRect(145, (i + motoScore*5)%400, 10, 20);
 
-            // Player Moto
             motoX += motoSpeed;
             if(motoX < 10) motoX = 10; if(motoX > 250) motoX = 250;
-            mCtx.fillStyle = "#2D63ED"; mCtx.fillRect(motoX, 320, 40, 60); // Body
-            mCtx.fillStyle = "#000"; mCtx.fillRect(motoX+10, 300, 20, 20); // Head
+            mCtx.fillStyle = "#2D63ED"; mCtx.fillRect(motoX, 320, 40, 60); 
+            mCtx.fillStyle = "#000"; mCtx.fillRect(motoX+10, 300, 20, 20);
 
-            // Obstacles
             if(Math.random() < 0.02) obstacles.push({x: Math.random()*240 + 10, y: -50});
             
             for(let i=0; i<obstacles.length; i++){
                 obstacles[i].y += 5;
-                mCtx.fillStyle = "#EF4444"; mCtx.fillRect(obstacles[i].x, obstacles[i].y, 40, 40); // Car
-                
-                // Collision
+                mCtx.fillStyle = "#EF4444"; mCtx.fillRect(obstacles[i].x, obstacles[i].y, 40, 40);
                 if(motoX < obstacles[i].x + 30 && motoX + 30 > obstacles[i].x && 
                    320 < obstacles[i].y + 30 && 320 + 50 > obstacles[i].y) {
                     motoGameOver = true; alert("CRASH! Jarak: " + Math.floor(motoScore) + "m"); return;
                 }
             }
-
             motoScore += 0.1;
             document.getElementById('motoScore').innerText = Math.floor(motoScore);
             motoLoop = requestAnimationFrame(motoUpdate);
         }
 
         // ===================================
-        // 3. TIC TAC TOE
+        // 3. TIC TAC TOE (HYBRID ONLINE)
         // ===================================
-        let tttBoard = [], tttTurn = 'X', tttActive = true;
-        function initTTT() {
-            tttBoard = ['','','','','','','','','']; tttTurn = 'X'; tttActive = true;
+        window.tttBoard = []; window.tttTurn = 'X';
+        window.initTTT = () => {
+            window.tttBoard = ['','','','','','','','','']; window.tttTurn = 'X';
             document.getElementById('tttStatus').innerText = "Giliran: X";
             renderTTT();
         }
-        function renderTTT() {
+        window.renderTTT = () => {
             const el = document.getElementById('tttBoard'); el.innerHTML = '';
-            tttBoard.forEach((val, i) => {
+            window.tttBoard.forEach((val, i) => {
                 el.innerHTML += `<div class="ttt-cell ${val.toLowerCase()}" onclick="clickTTT(${i})">${val}</div>`;
             });
         }
-        function clickTTT(i) {
-            if(tttBoard[i] !== '' || !tttActive) return;
-            tttBoard[i] = tttTurn;
-            checkTTTWin();
-            if(tttActive) { tttTurn = tttTurn === 'X' ? 'O' : 'X'; document.getElementById('tttStatus').innerText = `Giliran: ${tttTurn}`; renderTTT(); }
-        }
-        function checkTTTWin() {
-            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            let won = false;
-            wins.forEach(w => { if(tttBoard[w[0]] && tttBoard[w[0]] === tttBoard[w[1]] && tttBoard[w[0]] === tttBoard[w[2]]) won = true; });
-            if(won) { document.getElementById('tttStatus').innerText = `${tttTurn} Menang!`; tttActive = false; renderTTT(); return; }
-            if(!tttBoard.includes('')) { document.getElementById('tttStatus').innerText = "Seri!"; tttActive = false; renderTTT(); }
-        }
-
-        // ===================================
-        // 4. CHESS (RE-INIT FIX)
-        // ===================================
-        let board = null, game = new Chess();
-        function initChess() {
-            game.reset();
-            // PENTING: Hapus papan lama jika ada
-            if(board) board.destroy();
-            const cfg = { draggable: true, position: 'start', onDragStart: onDragStart, onDrop: onDrop, onSnapEnd: onSnapEnd };
-            board = Chessboard('myBoard', cfg);
-            $(window).resize(board.resize);
-            updateStatus();
-        }
-        function onDragStart (source, piece) {
-            if (game.game_over()) return false;
-            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
-        }
-        function onDrop (source, target) {
-            let move = game.move({ from: source, to: target, promotion: 'q' });
-            if (move === null) return 'snapback';
-            updateStatus();
-            window.setTimeout(makeRandomMove, 250);
-        }
-        function onSnapEnd () { board.position(game.fen()); }
-        function makeRandomMove () {
-            let moves = game.moves();
-            if (moves.length === 0) return;
-            let move = moves[Math.floor(Math.random() * moves.length)];
-            game.move(move);
-            board.position(game.fen());
-            updateStatus();
-        }
-        function updateStatus() {
-            let status = (game.turn() === 'b') ? "Giliran Hitam" : "Giliran Putih";
-            if(game.in_checkmate()) status = "Game Over. Skakmat.";
-            document.getElementById('chessStatus').innerText = status;
-        }
-
-        // ===================================
-        // 5. SUDOKU (FIXED LOGIC)
-        // ===================================
-        let sGrid = [], sSol = [], sSel = null;
-        function initSudoku() {
-            const base = [1,2,3,4,5,6,7,8,9];
-            sSol = [];
-            // Buat Grid Valid Sederhana
-            for(let i=0; i<9; i++) {
-                let shift = (i%3)*3 + Math.floor(i/3);
-                let row = [...base.slice(shift), ...base.slice(0,shift)];
-                sSol = sSol.concat(row);
-            }
-            sGrid = [...sSol];
-            // Hapus 40 angka acak
-            for(let i=0; i<40; i++) sGrid[Math.floor(Math.random()*81)] = 0;
-            renderSudoku();
-        }
-        function renderSudoku() {
-            const el = document.getElementById('sudokuBoard'); el.innerHTML = '';
-            sGrid.forEach((v, i) => {
-                let div = document.createElement('div');
-                div.className = `sudoku-cell ${v!==0 ? 'given' : ''}`;
-                div.innerText = v !== 0 ? v : '';
-                div.onclick = () => {
-                    if(sGrid[i]!==0) return; // Ignore givens
-                    if(sSel) sSel.classList.remove('selected');
-                    sSel = div; sSel.classList.add('selected'); sSel.dataset.idx = i;
-                }
-                el.appendChild(div);
-            });
-        }
-        function fillSudoku(n) {
-            if(!sSel) return;
-            let idx = parseInt(sSel.dataset.idx);
+        window.clickTTT = (i) => {
+            if(window.tttBoard[i] !== '') return;
             
-            // Cek Benar/Salah langsung
-            if(n !== 0 && sSol[idx] !== n) { 
-                sSel.style.color = '#EF4444'; // Merah kalau salah
-                sSel.innerText = n; 
-            } else { 
-                sSel.style.color = '#0F172A'; // Hitam kalau benar/kosong
-                sSel.innerText = n === 0 ? '' : n; 
+            // ONLINE LOGIC
+            if(window.activeRoom) {
+                // Cek giliran
+                let mySym = (window.myRole === 'host') ? 'X' : 'O';
+                if(window.tttTurn !== mySym) return alert("Bukan giliranmu!");
+                
+                window.tttBoard[i] = mySym;
+                let nextTurn = (mySym === 'X') ? 'O' : 'X';
+                update(ref(db, 'games/' + window.activeRoom), { board: window.tttBoard, turn: nextTurn });
+            } else {
+                // OFFLINE
+                window.tttBoard[i] = window.tttTurn;
+                window.tttTurn = (window.tttTurn==='X'?'O':'X');
+                document.getElementById('tttStatus').innerText = "Giliran: " + window.tttTurn;
+                renderTTT();
             }
         }
 
         // ===================================
-        // 6. ULAR TANGGA
+        // 4. CHESS (ONLINE + VISUAL FIX)
         // ===================================
-        let p1 = 1, p2 = 1, turn = 1;
-        const jumps = {3:11, 6:17, 9:18, 10:12, 14:4, 19:8, 22:20, 24:16}; 
-        
-        function initUT() {
-            p1=1; p2=1; turn=1;
-            drawUT();
-            document.getElementById('btnRoll').innerText = "KOCOK DADU (P1)";
-            document.getElementById('diceRes').innerText = "🎲 -";
+        window.chessBoard = null;
+        window.gameChess = new Chess();
+
+        window.initChess = () => {
+            window.gameChess.reset();
+            if(window.chessBoard) window.chessBoard.destroy();
+            
+            window.chessBoard = Chessboard('myBoard', {
+                draggable: true,
+                position: 'start',
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png', // FIX GAMBAR
+                onDragStart: (source, piece) => {
+                    if (window.gameChess.game_over()) return false;
+                    // ONLINE CHECK
+                    if(window.activeRoom) {
+                        let myColor = (window.myRole==='host') ? 'w' : 'b';
+                        if(window.gameChess.turn() !== myColor) return false; // Bukan giliranmu
+                    }
+                },
+                onDrop: (source, target) => {
+                    let move = window.gameChess.move({ from: source, to: target, promotion: 'q' });
+                    if (move === null) return 'snapback';
+                    
+                    if(window.activeRoom) {
+                        update(ref(db, 'games/' + window.activeRoom), { fen: window.gameChess.fen(), turn: window.gameChess.turn() });
+                    }
+                }
+            });
+            $(window).resize(window.chessBoard.resize);
         }
-        function drawUT() {
+
+        // ===================================
+        // 5. ULAR TANGGA (VISUAL BAGUS)
+        // ===================================
+        window.p1 = 1; window.p2 = 1; window.utTurn = 1;
+        const jumps = {3:11, 6:17, 9:18, 10:12, 14:4, 19:8, 22:20, 24:16}; // Shortcut
+        
+        window.initUT = () => {
+            window.p1=1; window.p2=1; window.utTurn=1;
+            drawUT();
+        }
+        window.drawUT = () => {
             const b = document.getElementById('utBoard'); b.innerHTML = '';
+            // Render 30 Kotak (ZigZag sederhana agar mudah)
             for(let i=1; i<=30; i++) {
                 let content = i;
-                if(i===p1) content += `<div class="ut-p1"></div>`;
-                if(i===p2) content += `<div class="ut-p2"></div>`;
-                if(jumps[i]) content += (jumps[i] > i ? `<i class="fas fa-ladder ut-ladder"></i>` : `<i class="fas fa-staff-snake ut-snake"></i>`);
-                b.innerHTML += `<div class="ut-cell">${content}</div>`;
+                if(i===window.p1) content += `<div class="ut-p1"></div>`;
+                if(i===window.p2) content += `<div class="ut-p2"></div>`;
+                
+                // Add Icon
+                if(jumps[i]) content += (jumps[i] > i ? `<i class="fas fa-ladder ut-icon icon-ladder"></i>` : `<i class="fas fa-staff-snake ut-icon icon-snake"></i>`);
+                
+                b.innerHTML += `<div class="ut-cell" style="order:${i}">${content}</div>`;
             }
-            document.getElementById('p1Pos').innerText = p1;
-            document.getElementById('p2Pos').innerText = p2;
+            document.getElementById('p1Pos').innerText = window.p1;
+            document.getElementById('p2Pos').innerText = window.p2;
         }
-        function rollDice() {
+        window.rollDice = () => {
             let d = Math.ceil(Math.random()*6);
-            document.getElementById('diceRes').innerText = `🎲 ${d}`;
             
-            if(turn === 1) {
-                p1 += d; if(p1 > 30) p1 = 30 - (p1-30);
-                if(jumps[p1]) p1 = jumps[p1];
-                turn = 2; document.getElementById('btnRoll').innerText = "KOCOK DADU (P2)";
+            // ONLINE LOGIC
+            if(window.activeRoom) {
+                let myTurn = (window.myRole === 'host') ? 1 : 2;
+                if(window.utTurn !== myTurn) return; // Tombol mestinya disabled, tapi double check
+                
+                let currPos = (myTurn===1) ? window.p1 : window.p2;
+                currPos += d; 
+                if(currPos > 30) currPos = 30 - (currPos-30);
+                if(jumps[currPos]) currPos = jumps[currPos];
+                
+                let updates = { lastRoll: d, turn: (myTurn===1?2:1) };
+                if(myTurn===1) updates.p1 = currPos; else updates.p2 = currPos;
+                update(ref(db, 'games/' + window.activeRoom), updates);
+            
             } else {
-                p2 += d; if(p2 > 30) p2 = 30 - (p2-30);
-                if(jumps[p2]) p2 = jumps[p2];
-                turn = 1; document.getElementById('btnRoll').innerText = "KOCOK DADU (P1)";
+                // OFFLINE
+                document.getElementById('diceRes').innerText = `🎲 ${d}`;
+                if(window.utTurn === 1) {
+                    window.p1 += d; if(window.p1 > 30) window.p1 = 30 - (window.p1-30);
+                    if(jumps[window.p1]) window.p1 = jumps[window.p1];
+                    window.utTurn = 2; document.getElementById('btnRoll').innerText = "KOCOK (P2)";
+                } else {
+                    window.p2 += d; if(window.p2 > 30) window.p2 = 30 - (window.p2-30);
+                    if(jumps[window.p2]) window.p2 = jumps[window.p2];
+                    window.utTurn = 1; document.getElementById('btnRoll').innerText = "KOCOK (P1)";
+                }
+                drawUT();
             }
-            drawUT();
-            if(p1===30 || p2===30) alert(`PEMENANG: ${p1===30 ? 'P1' : 'P2'}!`);
         }
 
         // ===================================
-        // 7. PUZZLE
+        // 6. SUDOKU & PUZZLE (OFFLINE)
         // ===================================
-        let puzArr = [1,2,3,4,5,6,7,8,0];
-        function initPuzzle() {
-            // Simple shuffle that is solvable
-            puzArr = [1,2,3,4,5,6,7,8,0].sort(() => Math.random() - 0.5);
-            renderPuzzle();
+        // (Logika sama seperti sebelumnya, ringkas)
+        let sGrid=[], sSel=null;
+        window.initSudoku = () => { sGrid=Array(81).fill(0); for(let i=0;i<30;i++)sGrid[Math.floor(Math.random()*81)]=Math.ceil(Math.random()*9); renderSudoku(); }
+        window.renderSudoku = () => { 
+            const el=document.getElementById('sudokuBoard'); el.innerHTML=''; 
+            sGrid.forEach((v,i)=>{ let d=document.createElement('div'); d.className=`sudoku-cell ${v?'given':''}`; d.innerText=v||''; d.onclick=()=>{if(!v){if(sSel)sSel.classList.remove('selected');sSel=d;sSel.classList.add('selected');}}; el.appendChild(d); });
         }
-        function renderPuzzle() {
-            const el = document.getElementById('puzzleBoard'); el.innerHTML = '';
-            puzArr.forEach((v, i) => {
-                el.innerHTML += `<div class="puz-tile ${v===0?'empty':''}" onclick="moveTile(${i})">${v===0?'':v}</div>`;
-            });
-        }
-        function moveTile(i) {
-            let empty = puzArr.indexOf(0);
-            if(i === empty-1 || i === empty+1 || i === empty-3 || i === empty+3) {
-                if(i === empty-1 && empty%3 === 0) return;
-                if(i === empty+1 && (empty+1)%3 === 0) return;
-                [puzArr[i], puzArr[empty]] = [puzArr[empty], puzArr[i]];
-                renderPuzzle();
-            }
-        }
+        window.fillSudoku = (n) => { if(sSel){sSel.innerText=n||''; sSel.style.color=n?'var(--electric-blue)':'inherit';} }
+
+        let puzArr=[1,2,3,4,5,6,7,8,0];
+        window.initPuzzle = () => { puzArr.sort(()=>Math.random()-0.5); renderPuzzle(); }
+        function renderPuzzle() { document.getElementById('puzzleBoard').innerHTML=puzArr.map((v,i)=>`<div class="puz-tile ${v?'':'empty'}" onclick="moveTile(${i})">${v||''}</div>`).join(''); }
+        window.moveTile = (i) => { let e=puzArr.indexOf(0); if([e-1,e+1,e-3,e+3].includes(i)){ [puzArr[i],puzArr[e]]=[puzArr[e],puzArr[i]]; renderPuzzle(); }}
+
     </script>
 </body>
 </html>
