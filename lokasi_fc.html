@@ -6,11 +6,13 @@
     <title>MLU - Smart Station Navigator</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
+        /* === TEMA LIGHT GLASSMORPHISM & GLOW (VERSI PUTIH) === */
         :root {
             --royal-blue: #0A2259;
             --electric-blue: #2D63ED;
@@ -28,11 +30,12 @@
         }
 
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; overflow: hidden; background: var(--bg-surface); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; text-decoration: none;}
 
         /* --- FULLSCREEN MAP --- */
         #map { width: 100vw; height: 100vh; z-index: 1; }
-        .leaflet-control-attribution { display: none; }
+        .leaflet-control-attribution { display: none !important; }
+        .leaflet-routing-container { display: none !important; } 
 
         /* --- FLOATING HEADER --- */
         .map-header {
@@ -54,7 +57,7 @@
         }
         .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; box-shadow: 0 0 8px var(--success); }
 
-        /* --- PREMIUM MARKER PIN --- */
+        /* --- PREMIUM MARKER PIN (STASIUN) --- */
         .marker-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; width: 120px !important; transform: translate(-50%, -100%); }
         
         .pin-tooltip {
@@ -98,13 +101,10 @@
         }
         .btn-close:active { transform: scale(0.9); background: #E2E8F0; }
 
-        .routing-info { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-        .card-dist { font-size: 10px; font-weight: 800; color: var(--electric-blue); background: rgba(45,99,237,0.1); padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; border: 1px solid rgba(45,99,237,0.2);}
-        .card-eta { font-size: 10px; font-weight: 800; color: var(--warning); background: #FFFBEB; padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; border: 1px solid #FDE68A;}
-        .card-near { font-size: 10px; font-weight: 800; color: var(--success); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 8px; letter-spacing: 1px; display: none; border: 1px solid rgba(16,185,129,0.3);}
-
+        .routing-info { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
+        .card-dist { font-size: 11px; font-weight: 800; color: var(--electric-blue); background: rgba(45,99,237,0.1); padding: 8px 14px; border-radius: 8px; letter-spacing: 1px; border: 1px solid rgba(45,99,237,0.2); width:100%;}
+        
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 900; color: var(--royal-blue); margin: 0 0 6px; line-height: 1.1; text-transform: uppercase; }
-        .card-addr { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; font-weight: 600; display: none; }
 
         .btn-nav-map {
             display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -132,6 +132,7 @@
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         @keyframes pulseOuter { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
 
+        .custom-pin, .custom-user { background: transparent; border: none; }
     </style>
 </head>
 <body>
@@ -146,14 +147,11 @@
     <div id="infoCard" class="info-card">
         <button class="btn-close" onclick="closeCard()"><i class="fas fa-times"></i></button>
         
+        <div class="card-title" id="fcName">Station Name</div>
         <div class="routing-info">
-            <div class="card-near" id="lblNear"><i class="fas fa-star"></i> REKOMENDASI TERDEKAT</div>
             <div class="card-dist" id="fcDist"><i class="fas fa-car"></i> MENGHITUNG JARAK...</div>
-            <div class="card-eta" id="fcEta" style="display:none;"><i class="fas fa-clock"></i> ETA...</div>
         </div>
 
-        <div class="card-title" id="fcName">Station Name</div>
-        <div class="card-addr" id="fcAddr"></div>
         <a href="#" id="btnMaps" target="_blank" class="btn-nav-map">
             <i class="fas fa-location-arrow"></i> BUKA NAVIGASI GOOGLE
         </a>
@@ -166,182 +164,145 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
     <script>
-        // 1. INIT MAP
+        // INIT MAP (Style Putih/Voyager)
         const map = L.map('map', {zoomControl: false}).setView([-6.2, 106.8], 11);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
 
-        // 2. USER ICON
-        const userIcon = L.divIcon({
-            className: 'custom-user',
-            html: `<div class="user-wrap"><div class="user-pulse"></div><div class="user-dot"></div></div>`,
-            iconSize: [44, 44], iconAnchor: [22, 22]
-        });
-        
-        // 3. DATA API SPREADSHEET
-        const SHEET_ID = '1EJOTMMfGpBMFPqR0LzbMbh7tZUcTCZld4x387OO9aJM'; 
-        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+        // DATA SOURCE (100% Dari script hitam)
+        const URL_LOKASI = "https://docs.google.com/spreadsheets/d/1EJOTMMfGpBMFPqR0LzbMbh7tZUcTCZld4x387OO9aJM/export?format=csv";
 
         let userLat = null, userLng = null;
+        let routingControl = null;
+        let userMarker = null;
 
-        // 4. HA-VERSINE FORMULA (Hanya untuk sorting cepat awal)
-        function calculateFastDist(lat1, lon1, lat2, lon2) {
-            const R = 6371; 
-            const dLat = (lat2-lat1) * Math.PI/180;
-            const dLon = (lon2-lon1) * Math.PI/180;
-            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
+        // RUMUS JARAK (Dari script hitam)
+        function getStraightDist(lat1, lon1, lat2, lon2) {
+            const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180;
+            const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return (R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))).toFixed(1);
         }
 
-        // 5. OSRM API INTEGRATION (Actual Driving Distance & ETA)
-        async function fetchOSRMData(startLat, startLng, endLat, endLng) {
-            try {
-                // OSRM format: lon,lat
-                const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=false`);
-                const data = await response.json();
-                if(data.routes && data.routes.length > 0) {
-                    return {
-                        distance: data.routes[0].distance, // Meters
-                        duration: data.routes[0].duration  // Seconds
-                    };
-                }
-            } catch(e) { console.error("OSRM Error:", e); }
-            return null;
-        }
-
-        // 6. GET GPS
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => {
-                userLat = pos.coords.latitude;
-                userLng = pos.coords.longitude;
-                L.marker([userLat, userLng], {icon: userIcon, zIndexOffset: 1000}).addTo(map);
-                document.getElementById('gpsStatus').innerHTML = '<div class="live-dot"></div> GPS ACTIVE';
-                loadFCData();
-            }, () => { 
-                document.getElementById('gpsStatus').innerHTML = '<div class="live-dot" style="background:var(--danger)"></div> GPS DENIED';
-                loadFCData(); 
-            }, { enableHighAccuracy: true });
-        } else { 
-            document.getElementById('gpsStatus').innerHTML = '<div class="live-dot" style="background:var(--danger)"></div> GPS UNAVAILABLE';
-            loadFCData(); 
-        }
-
-        // 7. LOAD STATION DATA
-        function loadFCData() {
-            Papa.parse(CSV_URL, {
-                download: true, header: true, skipEmptyLines: true,
-                complete: function(results) {
+        // GPS INIT
+        function initGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    userLat = pos.coords.latitude; userLng = pos.coords.longitude;
                     
-                    let minFastDist = Infinity;
-                    let nearestStation = null;
-
-                    results.data.forEach(row => {
-                        let lat = null, lng = null, name = "FC Station", addr = ""; // Default addr dikosongkan
-
-                        // Parsing CSV
-                        const keys = Object.keys(row);
-                        for(let k of keys) {
-                            let cleanKey = k.toLowerCase().trim();
-                            if(cleanKey.includes('nama') || cleanKey.includes('station') || cleanKey.includes('lokasi')) { if(row[k]) name = row[k]; }
-                            if(cleanKey.includes('alamat')) { if(row[k]) addr = row[k]; }
-                        }
-                        for(let k of keys) {
-                            let val = String(row[k]).replace(',', '.').trim(); let num = parseFloat(val);
-                            if(isNaN(num)) continue;
-                            let cleanKey = k.toLowerCase();
-                            if (cleanKey.includes('lat') && num < -5 && num > -11) lat = num;
-                            if ((cleanKey.includes('long') || cleanKey.includes('lng')) && num > 95 && num < 141) lng = num;
-                        }
-                        if (lat === null || lng === null) {
-                            Object.values(row).forEach(val => {
-                                let v = String(val).replace(',', '.').trim(); let num = parseFloat(v);
-                                if (!isNaN(num)) {
-                                    if (lat === null && num < 6 && num > -11) lat = num;
-                                    else if (lng === null && num > 95 && num < 141) lng = num;
-                                }
-                            });
-                        }
-
-                        if (lat && lng) {
-                            // Find nearest quickly
-                            if (userLat && userLng) {
-                                let fDist = calculateFastDist(userLat, userLng, lat, lng);
-                                if (fDist < minFastDist) {
-                                    minFastDist = fDist;
-                                    nearestStation = { name, addr, lat, lng };
-                                }
-                            }
-
-                            // Render Custom Premium Marker
-                            const fcIcon = L.divIcon({ 
-                                className: 'custom-pin', 
-                                html: `<div class="marker-wrapper"><div class="pin-tooltip">${name}</div><div class="pin-body"><i class="fas fa-bolt"></i></div></div>`, 
-                                iconSize: [120, 70], iconAnchor: [60, 70] 
-                            });
-
-                            const m = L.marker([lat, lng], {icon: fcIcon}).addTo(map);
-                            m.on('click', () => showInfo(name, addr, lat, lng, false));
-                        }
+                    const uIcon = L.divIcon({
+                        className: 'custom-user',
+                        html: `<div class="user-wrap"><div class="user-pulse"></div><div class="user-dot"></div></div>`,
+                        iconSize: [44, 44], iconAnchor: [22, 22]
                     });
-
-                    // AUTO-ZOOM & OSRM FETCH FOR NEAREST STATION
-                    if (nearestStation) {
-                        showInfo(nearestStation.name, nearestStation.addr, nearestStation.lat, nearestStation.lng, true);
-                        const bounds = L.latLngBounds([[userLat, userLng], [nearestStation.lat, nearestStation.lng]]);
-                        map.fitBounds(bounds, { padding: [80, 80], maxZoom: 14 });
-                    }
-                }
-            });
-        }
-
-        async function showInfo(name, addr, lat, lng, isNearest) {
-            document.getElementById('fcName').innerText = name;
-            
-            const addrEl = document.getElementById('fcAddr');
-            if (addr) {
-                addrEl.innerText = addr;
-                addrEl.style.display = 'block';
-            } else {
-                addrEl.style.display = 'none';
-            }
-            
-            const distLabel = document.getElementById('fcDist');
-            const etaLabel = document.getElementById('fcEta');
-            const nearLabel = document.getElementById('lblNear');
-            
-            // Set Google Maps Navigation URL (Format Routing)
-            document.getElementById('btnMaps').href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-
-            nearLabel.style.display = isNearest ? 'inline-block' : 'none';
-
-            if (userLat && userLng) {
-                distLabel.style.display = 'inline-block';
-                distLabel.innerHTML = `<i class="fas fa-spinner fa-spin"></i> KALKULASI RUTE...`;
-                etaLabel.style.display = 'none';
-                
-                // Fetch actual road routing data via OSRM
-                const routingData = await fetchOSRMData(userLat, userLng, lat, lng);
-                
-                if(routingData) {
-                    const distKm = (routingData.distance / 1000).toFixed(1);
-                    const durMin = Math.ceil(routingData.duration / 60);
                     
-                    distLabel.innerHTML = `<i class="fas fa-car"></i> ${distKm} KM`;
-                    etaLabel.style.display = 'inline-block';
-                    etaLabel.innerHTML = `<i class="fas fa-clock"></i> ${durMin} MENIT`;
-                } else {
-                    distLabel.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Gagal Kalkulasi`;
-                }
-            } else {
-                distLabel.style.display = 'none';
-                etaLabel.style.display = 'none';
+                    userMarker = L.marker([userLat, userLng], {icon: uIcon, zIndexOffset: 1000}).addTo(map);
+                    map.setView([userLat, userLng], 12); 
+                    document.getElementById('gpsStatus').innerHTML = '<div class="live-dot"></div> GPS ACTIVE';
+                    loadFCData();
+                }, (err) => { 
+                    document.getElementById('gpsStatus').innerHTML = '<div class="live-dot" style="background:var(--danger)"></div> GPS DENIED';
+                    loadFCData(); 
+                }, { timeout: 10000, enableHighAccuracy: true });
+            } else { 
+                document.getElementById('gpsStatus').innerHTML = '<div class="live-dot" style="background:var(--danger)"></div> GPS UNAVAILABLE';
+                loadFCData(); 
             }
-
-            document.getElementById('infoCard').classList.add('active');
         }
         
-        function closeCard() { document.getElementById('infoCard').classList.remove('active'); }
+        initGPS();
+
+        // 100% COPY PASTE ENGINE PENARIK DATA DARI SCRIPT HITAM
+        async function loadFCData() {
+            try {
+                const txtLoc = await fetch(URL_LOKASI).then(r=>r.text());
+                const rows = txtLoc.split('\n').slice(1);
+                
+                rows.forEach((r) => {
+                    const c = r.split(',');
+                    
+                    let latStr = c[4] ? c[4].replace(/"/g, '').replace(',', '.') : '';
+                    let lngStr = c[5] ? c[5].replace(/"/g, '').replace(',', '.') : '';
+                    let name = c[0] ? c[0].replace(/"/g, '').trim() : "STASIUN FC";
+                    let mapLink = c[6] ? c[6].replace(/"/g, '').trim() : '';
+
+                    let latVal = parseFloat(latStr);
+                    let lngVal = parseFloat(lngStr);
+                    
+                    if(c.length < 5 || isNaN(latVal) || isNaN(lngVal)) return;
+
+                    // GANTI MARKER BAWAAN JADI MARKER PUTIH PREMIUM
+                    const fcIcon = L.divIcon({ 
+                        className: 'custom-pin', 
+                        html: `<div class="marker-wrapper"><div class="pin-tooltip">${name}</div><div class="pin-body"><i class="fas fa-bolt"></i></div></div>`, 
+                        iconSize: [120, 70], iconAnchor: [60, 70] 
+                    });
+
+                    const m = L.marker([latVal, lngVal], {icon: fcIcon}).addTo(map);
+                    
+                    m.on('click', () => {
+                        let distStraight = "--";
+                        if(userLat && userLng) { distStraight = getStraightDist(userLat, userLng, latVal, lngVal); }
+                        showInfo(name, distStraight, latVal, lngVal, mapLink);
+                    });
+                });
+            } catch(e) { console.error("Data error: ", e); }
+        }
+
+        // TAMPILKAN INFO CARD (Desain Putih, Logika Hitam)
+        function showInfo(name, distStraight, lat, lng, mapLink) {
+            document.getElementById('fcName').innerText = name;
+            
+            if(userLat && userLng) {
+                document.getElementById('fcDist').innerHTML = `<i class="fas fa-spinner fa-spin"></i> KALKULASI RUTE...`;
+            } else {
+                document.getElementById('fcDist').innerHTML = `<i class="fas fa-car"></i> JARAK: -- KM (GPS MATI)`;
+            }
+            
+            // Logika Link Maps
+            let finalLink = "";
+            if (mapLink && mapLink.startsWith("http")) {
+                finalLink = mapLink;
+            } else if (userLat && userLng) {
+                finalLink = `http://googleusercontent.com/maps.google.com/maps?saddr=${userLat},${userLng}&daddr=${lat},${lng}`;
+            } else {
+                finalLink = `http://googleusercontent.com/maps.google.com/maps?q=${lat},${lng}`;
+            }
+            
+            document.getElementById('btnMaps').href = finalLink;
+            document.getElementById('infoCard').classList.add('active');
+
+            if (routingControl) { map.removeControl(routingControl); }
+
+            if (userLat && userLng) {
+                routingControl = L.Routing.control({
+                    waypoints: [ L.latLng(userLat, userLng), L.latLng(lat, lng) ],
+                    lineOptions: { styles: [{color: '#2D63ED', opacity: 0.8, weight: 5}] }, // Garis rute warna biru
+                    createMarker: function() { return null; }, 
+                    addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true, show: false
+                })
+                .on('routesfound', function(e) {
+                    const distanceRouteKm = (e.routes[0].summary.totalDistance / 1000).toFixed(1);
+                    document.getElementById('fcDist').innerHTML = `<i class="fas fa-car"></i> JARAK TEMPUH: ${distanceRouteKm} KM`;
+                })
+                .on('routingerror', function(e) {
+                    document.getElementById('fcDist').innerHTML = `<i class="fas fa-car"></i> JARAK UDARA: ${distStraight} KM`;
+                })
+                .addTo(map);
+            }
+        }
+
+        function closeCard() { 
+            document.getElementById('infoCard').classList.remove('active'); 
+            if (routingControl) { 
+                map.removeControl(routingControl); 
+                routingControl = null;
+            }
+            if (userLat && userLng) {
+                map.setView([userLat, userLng], 12); 
+            }
+        }
     </script>
 </body>
 </html>
