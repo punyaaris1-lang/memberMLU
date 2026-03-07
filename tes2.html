@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mockup Dashboard - Final Premium</title>
+    <title>Mockup Dashboard - Final Premium Revision</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,12 +41,13 @@
 
         @keyframes floatBlob { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(40px, 60px) scale(1.1); } }
 
-        /* --- WATERMARK LOGO RAKSASA MIRING --- */
+        /* --- WATERMARK LOGO RAKSASA (logomlu.png) --- */
         .bg-watermark {
             position: fixed; top: 15%; left: -20%; width: 140%; height: 100%;
-            background-image: url('logomlu.png'); /* Logo MLU */
+            background-image: url('logomlu.png'); /* Menggunakan logo yang diminta */
             background-repeat: no-repeat; background-size: contain; background-position: center;
-            opacity: 0.06; transform: rotate(-15deg) scale(1.1); z-index: -1; pointer-events: none;
+            opacity: 0.15; /* Opacity dinaikkan agar lebih tegas */
+            transform: rotate(-15deg) scale(1.1); z-index: -1; pointer-events: none;
         }
 
         /* --- CLASS GLOBAL KACA TERANG --- */
@@ -80,13 +81,13 @@
             background: rgba(212, 175, 55, 0.1); color: var(--soft-gold-dark); 
             border: 1px solid rgba(212, 175, 55, 0.3); padding: 4px 10px; border-radius: 8px; 
             display: inline-block; margin-bottom: 4px; letter-spacing: 1px;
-            white-space: nowrap; /* Mencegah tulisan turun ke bawah */
+            white-space: nowrap; 
         }
         
         .p-name { font-family: 'Outfit'; font-size: 18px; font-weight: 800; color: var(--royal-blue); }
         .p-plat { font-family: 'Inter'; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
         
-        /* Bagian kanan profile hanya tinggal switch lokasi */
+        /* Switch lokasi kanan */
         .p-right { display: flex; align-items: center; justify-content: flex-end;}
         .loc-toggle { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .loc-label { font-size: 8px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
@@ -101,29 +102,30 @@
         /* --- DASHBOARD WIDGETS --- */
         .dash-container { padding: 0 20px; margin-bottom: 20px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
         
-        /* BANNER STASIUN DIPERKECIL (Lebih slim) */
+        /* BANNER STASIUN DIPERKECIL */
         .fc-banner { 
-            border-radius: 20px; padding: 15px 20px; /* Padding dikurangi agar pipih */
+            border-radius: 20px; padding: 15px 20px; 
             display: flex; justify-content: space-between; align-items: center; 
             position: relative; overflow: hidden; 
         }
         .fc-banner::after { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; background: linear-gradient(135deg, rgba(212,175,55,0.1), transparent); border-radius: 50%; pointer-events: none;}
         
         .banner-left { display: flex; flex-direction: column; z-index: 2; }
-        .banner-title { font-family: 'Outfit'; font-size: 15px; /* Font dikecilkan */ font-weight: 900; color: var(--royal-blue); display: flex; align-items: center; gap: 6px;}
+        .banner-title { font-family: 'Outfit'; font-size: 15px; font-weight: 900; color: var(--royal-blue); display: flex; align-items: center; gap: 6px;}
         .banner-desc { font-size: 10px; font-weight: 700; color: var(--soft-gold-dark); margin-top: 5px; background: rgba(255,255,255,0.9); padding: 4px 10px; border-radius: 8px; display: inline-block; width: max-content; box-shadow: 0 2px 10px rgba(212, 175, 55, 0.1);}
         
         .banner-right { text-align: right; z-index: 2; }
-        .banner-val { font-family: 'Outfit'; font-size: 24px; /* Angka dikecilkan */ font-weight: 900; line-height: 1; color: var(--text-main); }
+        .banner-val { font-family: 'Outfit'; font-size: 24px; font-weight: 900; line-height: 1; color: var(--text-main); }
         .banner-lbl { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; display: block; margin-top: 4px; }
 
-        /* RADAR MOCKUP (Muncul di bawah status FC) */
+        /* RADAR MOCKUP */
         .radar-box {
             height: 120px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
             border: 2px dashed rgba(45,99,237,0.3); background: rgba(255,255,255,0.3);
+            transition: all 0.3s ease; /* Transisi halus saat muncul/hilang */
         }
 
-        /* --- MENU GRID --- */
+        /* --- MENU GRID (Sisa 8 Menu) --- */
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         
         .menu-btn { 
@@ -135,14 +137,28 @@
             border-bottom: 1px solid rgba(255,255,255,0.2);
             border-radius: 25px; padding: 20px 10px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; 
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.05); 
+            box-shadow: 0 10px 30px rgba(10, 34, 89, 0.05); 
             cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth transition */
         }
 
-        /* EFEK KLIK PADA TOMBOL MENU (Skala kecil pada kartunya) */
-        .menu-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.8); transition: 0.1s; }
+        /* --- EFEK KLIK BARU: GLASS PRESS (Masuk ke dalam) --- */
+        .menu-btn:active { 
+            transform: scale(0.92); /* Kartu mengecil */
+            background: rgba(255, 255, 255, 0.85); /* Kaca jadi memutih beku */
+            /* Inset shadow membuat kesan ditekan ke dalam */
+            box-shadow: inset 0 8px 20px rgba(0,0,0,0.08), 0 2px 5px rgba(0,0,0,0.02); 
+            border-color: var(--electric-blue); /* Border menyala biru */
+        }
         
-        /* EFEK ANIMASI MELAYANG PADA ICON BOX */
+        /* Ikon ikut tertekan ke dalam */
+        .menu-btn:active .icon-box {
+            transform: scale(0.9);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.2); /* Ikon ikut masuk */
+            filter: brightness(1.1);
+        }
+        
+        /* EFEK ANIMASI MELAYANG NORMAL (Sama seperti sebelumnya) */
         @keyframes floatIconBox {
             0%, 100% { transform: translateY(0px); box-shadow: 0 10px 20px rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.3); }
             50% { transform: translateY(-6px); box-shadow: 0 15px 25px rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.5); }
@@ -152,13 +168,9 @@
             width: 55px; height: 55px; border-radius: 18px; 
             display: flex; align-items: center; justify-content: center; font-size: 24px; 
             margin-bottom: 12px; color: white; 
-            /* Panggil animasi melayang */
             animation: floatIconBox 3s ease-in-out infinite; 
+            transition: all 0.2s ease;
         }
-
-        /* EFEK KLIK SPINNING/BOUNCE PADA IKON DI DALAMNYA */
-        .icon-box i { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .menu-btn:active .icon-box i { transform: rotate(360deg) scale(1.3); }
 
         /* Delay melayang agar tidak berbarengan (Organik) */
         .menu-btn:nth-child(1) .icon-box { animation-delay: 0s; }
@@ -169,15 +181,13 @@
         .menu-btn:nth-child(6) .icon-box { animation-delay: 1.0s; }
         .menu-btn:nth-child(7) .icon-box { animation-delay: 1.2s; }
         .menu-btn:nth-child(8) .icon-box { animation-delay: 1.4s; }
-        .menu-btn:nth-child(9) .icon-box { animation-delay: 1.6s; }
         
-        /* Pewarnaan 9 Ikon Original */
+        /* Pewarnaan 8 Ikon Sisa */
         .ic-anggota { background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); } 
         .ic-pengurus { background: linear-gradient(135deg, var(--soft-gold-light) 0%, var(--soft-gold-dark) 100%); color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.1);} 
         .ic-keuangan { background: linear-gradient(135deg, var(--soft-silver-light) 0%, var(--soft-silver-dark) 100%); color: white;} 
         .ic-tabungan { background: linear-gradient(135deg, #34D399 0%, #10B981 100%); } 
         .ic-game { background: linear-gradient(135deg, #C084FC 0%, #9333EA 100%); } 
-        .ic-antrian { background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%); } 
         .ic-reminder { background: linear-gradient(135deg, #FDBA74 0%, #F97316 100%); } 
         .ic-info { background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%); } 
         .ic-pasar { background: linear-gradient(135deg, #F472B6 0%, #DB2777 100%); } 
@@ -242,7 +252,7 @@
                 <div class="loc-toggle">
                     <span class="loc-label">RADAR MAP</span>
                     <label class="switch">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="toggleLocation" checked>
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -265,7 +275,7 @@
             </div>
         </div>
 
-        <div class="radar-box glass-panel">
+        <div class="radar-box glass-panel" id="radarMapMockup">
             <i class="fas fa-map-marked-alt" style="font-size:32px; color:var(--electric-blue); margin-bottom:10px; animation: floatBlob 2s infinite alternate;"></i>
             <div style="font-family:'Space Grotesk'; font-weight:900; font-size:12px; color:var(--royal-blue); letter-spacing:1px;">MENCARI MEMBER SEKITAR...</div>
         </div>
@@ -299,11 +309,6 @@
                 <div class="menu-desc">Hiburan santai</div>
             </div>
             <div class="menu-btn">
-                <div class="icon-box ic-antrian"><i class="fas fa-charging-station"></i></div>
-                <div class="menu-title">Live Antrian</div>
-                <div class="menu-desc">Monitor Stasiun FC</div>
-            </div>
-            <div class="menu-btn">
                 <div class="icon-box ic-reminder"><i class="fas fa-bell"></i></div>
                 <div class="menu-title">Garasi Pintar</div>
                 <div class="menu-desc">Log Book EV & OD</div>
@@ -313,7 +318,8 @@
                 <div class="menu-title">Info MLU</div>
                 <div class="menu-desc">Pusat informasi</div>
             </div>
-            <div class="menu-btn" style="grid-column: span 2; padding: 15px;"> <div class="icon-box ic-pasar" style="margin-bottom: 5px;"><i class="fas fa-store"></i></div>
+            <div class="menu-btn">
+                <div class="icon-box ic-pasar"><i class="fas fa-store"></i></div>
                 <div class="menu-title">Pasar MLU</div>
                 <div class="menu-desc">Forum Jual Beli Member</div>
             </div>
@@ -331,5 +337,18 @@
         <div class="nav-item"><i class="fas fa-route"></i><span class="nav-text">RUTE</span></div>
     </div>
 
+    <script>
+        // Script Sederhana untuk Toggle Muncul/Hilang Radar Map
+        const toggleBtn = document.getElementById('toggleLocation');
+        const radarMap = document.getElementById('radarMapMockup');
+
+        toggleBtn.addEventListener('change', function() {
+            if(this.checked) {
+                radarMap.style.display = 'flex'; // Munculkan map
+            } else {
+                radarMap.style.display = 'none'; // Sembunyikan map
+            }
+        });
+    </script>
 </body>
 </html>
