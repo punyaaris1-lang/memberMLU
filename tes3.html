@@ -3,207 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLU Member Poster</title>
+    <title>MLU Giant Logo</title>
     <style>
-        /* Font Anton untuk Judul Besar, Roboto untuk teks biasa */
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;500;900&display=swap');
+        /* Font Impact/Anton yang tebal dan padat */
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Teko:wght@400;600&display=swap');
 
         body {
-            background-color: #000;
+            background-color: #050505;
             margin: 0;
-            padding: 10px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            font-family: 'Teko', sans-serif;
         }
 
-        .poster {
+        .poster-container {
+            position: relative;
             width: 100%;
-            max-width: 400px;
-            background: linear-gradient(180deg, #111 0%, #000 100%);
-            position: relative;
-            text-align: center;
-            padding: 30px 20px;
-            border: 1px solid #333;
-            box-shadow: 0 20px 50px rgba(0,0,0,1);
+            max-width: 420px;
+            height: 100vh; /* Full layar HP */
+            max-height: 800px;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            border: 4px solid #000;
         }
 
-        /* Garis Emas di Atas */
-        .top-bar {
+        /* BACKGROUND MESH (Jaring-jaring halus) */
+        .poster-container::before {
+            content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
-            background: #c5a059;
-            box-shadow: 0 0 15px #c5a059;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.2;
+            z-index: 0;
         }
 
-        .logo {
-            width: 120px;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+        /* LOGO RAKSASA MIRING */
+        .giant-logo-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg); /* Miring 15 derajat */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 1;
+            opacity: 1; /* Logo Jelas */
         }
 
-        /* PUNCHLINE: BADGE MERAH */
-        .alert-badge {
-            display: inline-block;
-            background-color: #d60000;
-            color: #fff;
-            padding: 5px 15px;
-            font-weight: 900;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transform: skew(-10deg); /* Miring dikit biar racing */
-            margin-bottom: 15px;
-            box-shadow: 0 0 15px rgba(214, 0, 0, 0.4);
+        .giant-logo {
+            width: 110%; /* Lebih lebar dari layar sedikit biar sangar */
+            max-width: 380px;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+            /* Animasi halus biar kerasa 3D */
+            animation: float 6s ease-in-out infinite;
         }
 
-        .alert-badge span {
-            display: inline-block;
-            transform: skew(10deg); /* Tulisan dilurusin lagi */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        /* JUDUL BESAR - FONT ANTON */
-        h1 {
-            font-family: 'Anton', sans-serif;
-            color: #fff;
-            font-size: 3.2rem; /* Sangat Besar */
-            line-height: 0.9;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        h1 span {
-            color: #c5a059; /* Warna Emas */
-        }
-
-        .subtitle {
-            color: #888;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* GARIS PEMISAH */
-        .divider {
-            height: 1px;
-            background: #333;
-            margin: 20px 0;
+        /* KONTEN TEKS (Di atas logo) */
+        .content-top {
             position: relative;
+            z-index: 2;
+            text-align: center;
         }
-        
-        /* INFO GRID (Tanggal & Waktu) */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+
+        /* Badge Baru */
+        .badge-energy {
+            display: inline-block;
+            background: #c5a059;
+            color: #000;
+            padding: 5px 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transform: skew(-10deg);
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
             margin-bottom: 20px;
         }
 
-        .info-item {
-            text-align: left;
+        .title-event {
+            font-family: 'Anton', sans-serif;
+            font-size: 3.5rem;
+            line-height: 0.85;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0 #000; /* Outline hitam biar teks kebaca di atas logo */
+            margin-bottom: 5px;
         }
 
-        .label {
-            font-size: 0.7rem;
+        .title-event span {
+            color: transparent;
+            -webkit-text-stroke: 1px #fff; /* Teks bolong (outline only) */
+        }
+
+        /* KONTEN BAWAH */
+        .content-bottom {
+            position: relative;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.8); /* Gelap transparan biar teks kebaca */
+            border: 1px solid #333;
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #c5a059;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .info-label {
+            color: #aaa;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .info-val {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .location-big {
+            font-size: 1.5rem;
             color: #c5a059;
             font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
-
-        .value {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #fff;
             line-height: 1;
-        }
-
-        .value small {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: #ccc;
-        }
-
-        /* LOKASI BESAR DI BAWAH */
-        .location-box {
-            text-align: left;
-            border-left: 4px solid #c5a059;
-            padding-left: 15px;
             margin-top: 10px;
-        }
-
-        .location-box .value {
-            font-size: 1.2rem;
-            line-height: 1.2;
-        }
-
-        /* FOOTER QUOTE */
-        .footer-cta {
-            margin-top: 40px;
-            font-family: 'Anton', sans-serif;
-            font-size: 1.5rem;
-            color: #333; /* Warna gelap biar tidak balapan sama judul */
             text-transform: uppercase;
-            background: #fff;
-            color: #000;
-            padding: 10px;
-            display: inline-block;
-            width: 100%;
-            box-sizing: border-box;
-            transform: skew(-10deg);
         }
-        
-        .footer-cta span {
-            display: block;
-            transform: skew(10deg);
+
+        .cta-footer {
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #fff;
+            letter-spacing: 2px;
         }
 
     </style>
 </head>
 <body>
 
-    <div class="poster">
-        <div class="top-bar"></div>
-
-        <img src="logomlu.png" alt="MLU" class="logo">
-
-        <div class="alert-badge">
-            <span>⚠️ Warning: Battery Low</span>
-        </div>
-
-        <h1>MEGA<br><span>KOPDAR</span><br>MLU</h1>
+    <div class="poster-container">
         
-        <div class="subtitle">Charging Station: Stadion JIS</div>
-
-        <div class="divider"></div>
-
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="label">Tanggal</div>
-                <div class="value">08 <small>MARET</small></div>
-            </div>
-            <div class="info-item">
-                <div class="label">Waktu</div>
-                <div class="value">17:00 <small>WIB</small></div>
+        <div class="content-top">
+            <div class="badge-energy">⚡ ENERGY RECHARGE ⚡</div>
+            
+            <div class="title-event">
+                MEGA<br>KOPDAR<br><span>MLU 2026</span>
             </div>
         </div>
 
-        <div class="location-box">
-            <div class="label">Titik Kumpul</div>
-            <div class="value">KOLONG JEMBATAN<br>DEPAN STADION JIS</div>
-            <div style="color: #666; font-size: 0.8rem; margin-top: 5px;">Sunter, Jakarta Utara</div>
+        <div class="giant-logo-container">
+            <img src="logomlu.png" alt="MLU" class="giant-logo">
         </div>
 
-        <div class="footer-cta">
-            <span>SIAPKAN UNIT. KITA GASPOL!</span>
+        <div class="content-bottom">
+            <div class="info-row">
+                <span class="info-label">DATE</span>
+                <span class="info-val">08 MARET</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">TIME</span>
+                <span class="info-val">17:00 WIB</span>
+            </div>
+            
+            <div style="text-align: left;">
+                <span class="info-label" style="font-size: 0.8rem;">TITIK KUMPUL:</span>
+                <div class="location-big">KOLONG JEMBATAN JIS</div>
+                <div class="cta-footer">Sunter, Jakarta Utara</div>
+            </div>
         </div>
+
     </div>
 
 </body>
