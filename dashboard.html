@@ -42,74 +42,32 @@
         .decoration-hang {
             position: absolute; top: -10px; width: 100%; display: flex; justify-content: center; gap: 50px; z-index: 10; pointer-events: none;
         }
-        .ketupat-box {
-            position: relative; animation: sway 3s infinite ease-in-out;
-        }
-        .ketupat-box:nth-child(2) { animation-delay: 1s; top: 15px; } /* Ketupat tengah lebih turun */
+        .ketupat-box { position: relative; animation: sway 3s infinite ease-in-out; }
+        .ketupat-box:nth-child(2) { animation-delay: 1s; top: 15px; } 
         
-        .ketupat-shape {
-            width: 30px; height: 30px; background: var(--gold);
-            transform: rotate(45deg);
-            border: 2px solid #B45309;
-            box-shadow: 0 0 10px rgba(252, 211, 77, 0.6);
-        }
-        .ketupat-tali {
-            position: absolute; top: -50px; left: 50%; width: 2px; height: 50px; 
-            background: rgba(252, 211, 77, 0.5); transform: translateX(-50%);
-        }
+        .ketupat-shape { width: 30px; height: 30px; background: var(--gold); transform: rotate(45deg); border: 2px solid #B45309; box-shadow: 0 0 10px rgba(252, 211, 77, 0.6); }
+        .ketupat-tali { position: absolute; top: -50px; left: 50%; width: 2px; height: 50px; background: rgba(252, 211, 77, 0.5); transform: translateX(-50%); }
 
         /* Header Icon */
-        .anno-header-art {
-            padding: 50px 20px 10px;
-            background: radial-gradient(circle at 50% 0%, rgba(252, 211, 77, 0.15), transparent 70%);
-            border-top-left-radius: 23px; border-top-right-radius: 23px;
-        }
-        .icon-moon {
-            font-size: 50px;
-            background: -webkit-linear-gradient(#FCD34D, #F59E0B);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5));
-        }
+        .anno-header-art { padding: 50px 20px 10px; background: radial-gradient(circle at 50% 0%, rgba(252, 211, 77, 0.15), transparent 70%); border-top-left-radius: 23px; border-top-right-radius: 23px; }
+        .icon-moon { font-size: 50px; background: -webkit-linear-gradient(#FCD34D, #F59E0B); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5)); }
 
         /* Konten */
         .anno-content { padding: 10px 25px 30px; position: relative; z-index: 2; color: white; font-family: 'Outfit', sans-serif; }
-        
-        .anno-title {
-            font-size: 24px; font-weight: 900; letter-spacing: 1px; color: white; margin-bottom: 5px; text-transform: uppercase;
-        }
-        .anno-date {
-            font-size: 16px; color: var(--gold); font-weight: 700; margin-bottom: 20px;
-            display: inline-block; border-bottom: 1px solid rgba(252, 211, 77, 0.3); padding-bottom: 3px;
-        }
+        .anno-title { font-size: 24px; font-weight: 900; letter-spacing: 1px; color: white; margin-bottom: 5px; text-transform: uppercase; }
+        .anno-date { font-size: 16px; color: var(--gold); font-weight: 700; margin-bottom: 20px; display: inline-block; border-bottom: 1px solid rgba(252, 211, 77, 0.3); padding-bottom: 3px; }
 
         /* Box Peringatan Merah */
-        .warning-box {
-            background: rgba(220, 38, 38, 0.15); 
-            border: 2px solid rgba(220, 38, 38, 0.5);
-            border-radius: 16px; padding: 15px; margin-bottom: 20px;
-        }
+        .warning-box { background: rgba(220, 38, 38, 0.15); border: 2px solid rgba(220, 38, 38, 0.5); border-radius: 16px; padding: 15px; margin-bottom: 20px; }
         .warning-text { font-size: 15px; color: #FCA5A5; line-height: 1.4; }
-        .big-warning {
-            display: block; font-size: 22px; font-weight: 900; color: #EF4444; margin: 8px 0;
-            text-transform: uppercase; text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-        }
+        .big-warning { display: block; font-size: 22px; font-weight: 900; color: #EF4444; margin: 8px 0; text-transform: uppercase; text-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
 
         .anno-note { font-size: 13px; color: #FFFFF; line-height: 1.5; font-style: italic; }
-        
-        .anno-footer {
-            margin-top: 25px; font-size: 12px; font-weight: 800; color: var(--gold); letter-spacing: 2px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+        .anno-footer { margin-top: 25px; font-size: 12px; font-weight: 800; color: var(--gold); letter-spacing: 2px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .anno-footer::before, .anno-footer::after { content:''; display: block; height: 1px; width: 30px; background: rgba(252, 211, 77, 0.3); }
 
         /* Tombol Close */
-        .btn-anno-close { 
-            position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; 
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); 
-            color: white; border-radius: 50%; font-size: 14px; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; z-index: 100;
-            transition: 0.2s;
-        }
+        .btn-anno-close { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 100; transition: 0.2s; }
         .btn-anno-close:active { background: rgba(239,68,68,0.8); }
 
         @keyframes popUp { 0%{transform:scale(0.8);opacity:0;} 100%{transform:scale(1);opacity:1;} }
@@ -127,7 +85,9 @@
         .p-left { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden;}
         .p-photo { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 2px solid white; background: #E2E8F0; }
         .p-info { color: white; overflow: hidden; }
+        
         .p-role { font-size: 9px; font-weight: 800; background: var(--gold); color: #000; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 2px; }
+        
         .p-name { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
         .p-plat { font-size: 10px; font-weight: 600; color: #E2E8F0; margin-top: 2px; }
         
@@ -253,30 +213,15 @@
     <div id="annoPopup" class="anno-overlay">
         <div class="anno-card">
             <div class="decoration-hang">
-                <div class="ketupat-box">
-                    <div class="ketupat-tali"></div>
-                    <div class="ketupat-shape"></div>
-                </div>
-                <div class="ketupat-box">
-                    <div class="ketupat-tali" style="height:70px; top:-70px;"></div>
-                    <div class="ketupat-shape"></div>
-                </div>
-                <div class="ketupat-box">
-                    <div class="ketupat-tali"></div>
-                    <div class="ketupat-shape"></div>
-                </div>
+                <div class="ketupat-box"><div class="ketupat-tali"></div><div class="ketupat-shape"></div></div>
+                <div class="ketupat-box"><div class="ketupat-tali" style="height:70px; top:-70px;"></div><div class="ketupat-shape"></div></div>
+                <div class="ketupat-box"><div class="ketupat-tali"></div><div class="ketupat-shape"></div></div>
             </div>
-
             <button class="btn-anno-close" onclick="closeAnno()"><i class="fas fa-times"></i></button>
-            
-            <div class="anno-header-art">
-                <i class="fas fa-bullhorn icon-moon"></i>
-            </div>
-
+            <div class="anno-header-art"><i class="fas fa-bullhorn icon-moon"></i></div>
             <div class="anno-content">
                 <div class="anno-title">HARAP DIPERHATIKAN</div>
                 <div class="anno-date">14 Mar - 24 Mar</div>
-
                 <div class="warning-box">
                     <div class="warning-text">
                         Mohon kerja samanya:
@@ -284,11 +229,7 @@
                         UNTUK YG NGECAS MALAM HARAP TIDUR BERGANTIAN, HARUS ADA YG STANDBY MENJAGA CASAN
                     </div>
                 </div>
-
-                <div class="anno-note">
-                    "KARENA SHOWROOM TUTUP. TIDAK ADA YANG BISA RESET FC JIKA ERROR. "
-                </div>
-                
+                <div class="anno-note">"KARENA SHOWROOM TUTUP. TIDAK ADA YANG BISA RESET FC JIKA ERROR. "</div>
                 <div class="anno-footer">PENGURUS MLU</div>
             </div>
         </div>
@@ -348,6 +289,27 @@
 
     <main class="menu-container">
         <div class="menu-grid">
+            
+            <div style="grid-column: span 2; display:flex; gap:10px;">
+    <a href="absen.html" class="menu-btn" style="flex:1; background: linear-gradient(135deg, #10B981 0%, #059669 100%); border:none; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); padding: 15px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div class="icon-box" style="width:35px; height:35px; background:rgba(255,255,255,0.2); font-size:18px; margin:0; border-radius:10px;">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div style="text-align:left;">
+                <div class="menu-title" style="color:white; font-size:14px; margin-bottom:0;">ABSEN KOPDAR</div>
+                <div class="menu-desc" style="color:rgba(255,255,255,0.9); font-size:9px;">Klik scan lokasi</div>
+            </div>
+        </div>
+    </a>
+
+    <a href="rekap_absen.html" class="menu-btn" style="width: 35%; background: white; border:1px solid #E2E8F0; padding: 15px;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <i class="fas fa-list-ol" style="font-size:20px; color:var(--royal-blue); margin-bottom:5px;"></i>
+            <div class="menu-title" style="color:var(--royal-blue); font-size:10px; margin:0;">LIHAT DATA</div>
+        </div>
+    </a>
+</div>
             <a href="data_anggota.html" class="menu-btn">
                 <div class="icon-box ic-anggota"><i class="fas fa-users"></i></div>
                 <div class="menu-title">Data Anggota</div>
@@ -358,7 +320,6 @@
                 <div class="menu-title">Pengurus</div>
                 <div class="menu-desc">Struktur komando pusat</div>
             </a>
-            
             <a href="keuangan.html" class="menu-btn">
                 <div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div>
                 <div class="menu-title">Uang Kas</div>
@@ -369,13 +330,11 @@
                 <div class="menu-title">Tabungan</div>
                 <div class="menu-desc">Simpanan & Penarikan</div>
             </a>
-            
             <a href="game.html" class="menu-btn" id="menuGame">
                 <div class="icon-box ic-game"><i class="fas fa-gamepad"></i></div>
                 <div class="menu-title">Game Center</div>
                 <div class="menu-desc">Hiburan santai</div>
             </a>
-
             <a href="antrian.html" class="menu-btn">
                 <div class="icon-box ic-antrian"><i class="fas fa-charging-station"></i></div>
                 <div class="menu-title">Live Antrian</div>
@@ -410,9 +369,7 @@
             <div class="chat-title"><i class="fas fa-comments"></i> MLU GLOBAL CHAT</div>
             <button class="btn-icon btn-attach" style="width:30px; height:30px; margin-left:auto; margin-right:10px;" onclick="closeChat()"><i class="fas fa-chevron-down"></i></button>
         </div>
-        <div class="chat-body" id="chatList">
-            <div style="text-align:center; margin-top:50px; color:#aaa;">Memuat pesan...</div>
-        </div>
+        <div class="chat-body" id="chatList"><div style="text-align:center; margin-top:50px; color:#aaa;">Memuat pesan...</div></div>
         <div class="chat-footer">
             <div class="reply-preview" id="replyPreview">
                 <span><i class="fas fa-reply"></i> Balas ke: <b id="replyToName">...</b></span>
@@ -429,12 +386,12 @@
 
     <div class="modal-overlay" id="sosModal">
         <div class="modal-box">
-            <div class="modal-header">
-                <div class="modal-title"><i class="fas fa-broadcast-tower"></i> Laporan S.O.S</div>
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="modal-title" style="font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--danger);"><i class="fas fa-broadcast-tower"></i> Laporan S.O.S</div>
                 <button class="btn-icon btn-attach" onclick="document.getElementById('sosModal').style.display='none'"><i class="fas fa-times"></i></button>
             </div>
             <div class="form-group">
-                <label>Pilih Kendala Darurat</label>
+                <label style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Pilih Kendala Darurat</label>
                 <select id="sosType" class="form-input">
                     <option>Unit Mogok / Trouble</option>
                     <option>Ban Bocor / Kempes</option>
@@ -445,7 +402,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Keterangan Tambahan</label>
+                <label style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Keterangan Tambahan</label>
                 <textarea id="sosDesc" class="form-input" rows="3" placeholder="Patokan lokasi..."></textarea>
             </div>
             <button class="btn-send-sos" id="btnSendSos" onclick="sendSos()">BAGIKAN S.O.S</button>
@@ -480,18 +437,13 @@
         let markers = {};
 
         // --- FUNGSI CLOSE PENGUMUMAN ---
-        window.closeAnno = () => {
-            document.getElementById('annoPopup').style.display = 'none';
-        }
+        window.closeAnno = () => { document.getElementById('annoPopup').style.display = 'none'; }
 
-        // --- PENJADWALAN PENGUMUMAN OTOMATIS (12 Maret - 26 Maret) ---
+        // --- PENJADWALAN PENGUMUMAN (12 Maret - 26 Maret) ---
         function checkAnnoSchedule() {
             const now = new Date();
-            // Start: 12 March 23:50 (Bulan 2 = Maret)
             const start = new Date(2026, 2, 12, 23, 50, 0); 
-            // End: 26 March 08:00
             const end = new Date(2026, 2, 25, 8, 0, 0);
-
             if (now >= start && now <= end) {
                 document.getElementById('annoPopup').style.display = 'flex';
             } else {
@@ -504,16 +456,35 @@
             document.getElementById('greetingText').innerText = (new Date().getHours() < 10) ? "Selamat Pagi," : (new Date().getHours() < 15) ? "Selamat Siang," : (new Date().getHours() < 18) ? "Selamat Sore," : "Selamat Malam,";
             document.getElementById('userName').innerText = myName;
             document.getElementById('userPlat').innerText = myPlat;
-            document.getElementById('userRole').innerText = uData.role || "MEMBER";
             if (uData.foto && uData.foto.length > 50) document.getElementById('userPhoto').src = uData.foto;
 
-            // Cek Jadwal Pengumuman
+            // --- SISTEM UNDERCOVER PAK RIZKY ---
+            const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
+            const roleEl = document.getElementById('userRole');
+            let displayRole = uData.role || "MEMBER";
+
+            if (myPlatClean === "B4248SWF") {
+                // Tampilan menyamar jadi member biasa
+                displayRole = "KELUARGA MLU";
+                roleEl.style.background = "rgba(255, 255, 255, 0.2)";
+                roleEl.style.color = "#FFF";
+                roleEl.style.border = "1px solid rgba(255, 255, 255, 0.4)";
+            } else if (displayRole === "PENGURUS") {
+                roleEl.style.background = "var(--gold)";
+                roleEl.style.color = "#000";
+                roleEl.style.border = "none";
+            } else {
+                roleEl.style.background = "rgba(255, 255, 255, 0.2)";
+                roleEl.style.color = "#FFF";
+                roleEl.style.border = "1px solid rgba(255, 255, 255, 0.4)";
+            }
+            roleEl.innerText = displayRole;
+
+            // Cek Jadwal Pengumuman Lebaran
             checkAnnoSchedule();
 
             // --- PROTEKSI AJI (B 4381 SWD) ---
             const blacklist = "B4381SWD";
-            const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
-
             if (myPlatClean === blacklist) {
                 document.querySelector('.btn-chat').style.display = 'none'; 
                 document.getElementById('locToggleContainer').style.display = 'none'; 
@@ -553,7 +524,6 @@
             setTimeout(() => {
                 if(!map) {
                     map = L.map('radarMap').setView([-6.1754, 106.8272], 10);
-                    // GANTI TILE LAYER KE ESRI WORLD STREET (Premium Look)
                     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                         attribution: 'Esri'
                     }).addTo(map);
@@ -563,9 +533,7 @@
             }, 500);
         }
 
-        function hideRadar() {
-            document.getElementById('radarContainer').style.display = 'none';
-        }
+        function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
 
         function loadMembers() {
             onSnapshot(collection(db, "mlu_members"), (snap) => {
@@ -577,11 +545,8 @@
                             html: `<div class="marker-pin"><img src="${m.foto || 'https://ui-avatars.com/api/?background=2D63ED&color=fff&name='+m.nama}"><div class="marker-label">${m.nama}</div></div>`,
                             iconSize: [30, 42], iconAnchor: [15, 42]
                         });
-                        if(markers[doc.id]) {
-                            markers[doc.id].setLatLng([m.lat, m.lng]);
-                        } else {
-                            markers[doc.id] = L.marker([m.lat, m.lng], {icon: icon}).addTo(map);
-                        }
+                        if(markers[doc.id]) { markers[doc.id].setLatLng([m.lat, m.lng]); } 
+                        else { markers[doc.id] = L.marker([m.lat, m.lng], {icon: icon}).addTo(map); }
                     } else {
                         if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; }
                     }
