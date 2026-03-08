@@ -11,20 +11,12 @@
     <style>
         /* === TEMA ULTRA LUXURY (WHITE & ROYAL BLUE) === */
         :root { 
-            --royal-blue: #0A2259; 
-            --electric-blue: #2D63ED; 
-            --gold-lux: #D4AF37;
-            --bg-surface: #F0F4F8; 
-            --text-main: #0F172A; 
-            --text-muted: #64748B; 
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; --gold-lux: #D4AF37;
+            --bg-surface: #F0F4F8; --text-main: #0F172A; --text-muted: #64748B; 
             
-            /* Glass Variables */
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.9);
-            --shadow-soft: 0 15px 40px rgba(10, 34, 89, 0.08);
-            --shadow-gold: 0 15px 40px rgba(212, 175, 55, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.75); --glass-border: rgba(255, 255, 255, 0.9);
+            --shadow-soft: 0 15px 40px rgba(10, 34, 89, 0.08); --shadow-gold: 0 15px 40px rgba(212, 175, 55, 0.2);
         }
-        
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; overflow-x: hidden; position: relative; -webkit-tap-highlight-color: transparent;}
         * { box-sizing: border-box; outline: none; text-decoration: none; }
 
@@ -82,12 +74,12 @@
         }
         .card-ketum .p-role { color: #B45309; border-color: rgba(212,175,55,0.3); background: rgba(255, 251, 235, 0.8); }
 
-        .p-name { font-family: 'Outfit'; font-size: 16px; font-weight: 900; color: var(--royal-blue); margin: 0; line-height: 1.2; }
+        .p-name { font-family: 'Outfit'; font-size: 16px; font-weight: 900; color: var(--royal-blue); margin: 0; line-height: 1.2; text-transform: uppercase;}
         .card-ketum .p-name { font-size: 22px; }
-        .p-plat { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 4px; font-family: 'Inter';}
+        .p-plat { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-top: 4px; font-family: 'Inter'; text-transform: uppercase;}
 
         /* GRIDS */
-        .tier-2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .tier-2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } /* Kanan Kiri */
         .tier-3-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; }
         .tier-4-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         @media (max-width: 380px) { .tier-4-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -122,6 +114,12 @@
         <div id="tier3-title" style="display:none;"><div class="sec-label">PENASEHAT & PEMBINA</div></div>
         <div id="tier3" class="tier-3-grid"></div>
 
+        <div id="tier-korlap-title" style="display:none;"><div class="sec-label">KOORDINATOR LAPANGAN</div></div>
+        <div id="tier-korlap" class="tier-2-grid"></div>
+
+        <div id="tier-satgas-title" style="display:none;"><div class="sec-label">SATUAN TUGAS</div></div>
+        <div id="tier-satgas" class="tier-2-grid"></div>
+
         <div id="tier4-title" style="display:none;"><div class="sec-label">DIVISI OPERASIONAL</div></div>
         <div id="tier4" class="tier-4-grid"></div>
     </div>
@@ -135,10 +133,14 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // FOTO LOKAL (Mapping Manual)
+        // MAPPING FOTO MANUAL
         const localPhotos = {
             "AMAR": "amar.jpg", "AJI": "aji.jpg", "DONI": "doni.jpg", "UBAY": "ubay.jpg",
-            "AHMAD": "akiaki.jpg", "PURNOMO": "ipung.jpg", "DAYYAN": "dayan.jpg",
+            "AHMAD": "akiaki.jpg", 
+            "PURNOMO": "ipung.jpg", // DATA PURNOMO
+            "IPUNG": "ipung.jpg",   // VARIANT
+            "PUR": "ipung.jpg",     // VARIANT
+            "DAYYAN": "dayan.jpg",
             "HENDRO": "hendro.jpg", "IWAN": "iwan.jpg", "JETLEE": "jetlee.jpg", "SANDI": "sandi.jpg"
         };
 
@@ -147,11 +149,9 @@
             const displayName = data.namaKtp || data.namaWa || data.nama || "";
             const cleanName = displayName.toUpperCase().trim();
             
-            // LOGIKA FOTO (Lokal -> Database -> Avatar)
+            // CEK NAMA UNTUK FOTO LOCAL
             let photoUrl = "";
             let foundLocal = false;
-            
-            // Cek di list lokal (mengandung kata kunci)
             for (const [key, val] of Object.entries(localPhotos)) {
                 if (cleanName.includes(key)) { photoUrl = val; foundLocal = true; break; }
             }
@@ -163,8 +163,6 @@
 
             const cardClass = isKetum ? 'p-card card-ketum' : 'p-card';
             const crownHtml = isKetum ? '<i class="fas fa-crown ketum-crown"></i>' : '';
-            
-            // Styling khusus Tier 4 (Kecil)
             const photoStyle = isSmall ? 'width:60px; height:60px;' : '';
             const nameStyle = isSmall ? 'font-size:12px;' : '';
             const roleStyle = isSmall ? 'font-size:7px; padding:2px 6px;' : '';
@@ -189,24 +187,53 @@
                 const querySnapshot = await getDocs(q);
                 loader.style.display = 'none';
                 
-                if (querySnapshot.empty) {
-                    document.querySelector('.content-container').innerHTML += '<div style="text-align:center; color:var(--text-muted);">Belum ada data pengurus.</div>';
-                    return;
-                }
-
                 document.getElementById('tier2-title').style.display = 'block';
                 document.getElementById('tier3-title').style.display = 'block';
-                document.getElementById('tier4-title').style.display = 'block';
+                
+                let purnomoFound = false;
 
                 querySnapshot.forEach((doc) => {
                     const d = doc.data();
                     const r = (d.role || "").toUpperCase();
+                    const n = (d.namaKtp || d.nama || "").toUpperCase();
 
+                    // 1. BLOKIR FERRY (HILANGKAN)
+                    if (n.includes('FERRY')) return;
+
+                    // 2. CEK APAKAH PURNOMO SUDAH ADA DI DB
+                    if (n.includes('PURNOMO') || n.includes('IPUNG') || n.includes('PUR')) {
+                        purnomoFound = true;
+                    }
+
+                    // RENDER NORMAL
                     if (r === 'KETUA UMUM') renderCard('tier1', d, true);
-                    else if (r === 'WAKIL KETUA' || r === 'SEKRETARIS' || r.includes('WAKIL') || r.includes('SEKRE')) renderCard('tier2', d);
+                    else if (r.includes('WAKIL KETUA') || r.includes('SEKRETARIS') || r.includes('BENDAHARA')) renderCard('tier2', d);
                     else if (r === 'PEMBINA' || r === 'PENASEHAT') renderCard('tier3', d);
-                    else renderCard('tier4', d, false, true); // Sisanya masuk grid kecil
+                    else if (r.includes('KORLAP')) {
+                        document.getElementById('tier-korlap-title').style.display = 'block';
+                        renderCard('tier-korlap', d);
+                    }
+                    else if (r.includes('SATGAS')) {
+                        document.getElementById('tier-satgas-title').style.display = 'block';
+                        renderCard('tier-satgas', d);
+                    }
+                    else {
+                        document.getElementById('tier4-title').style.display = 'block';
+                        renderCard('tier4', d, false, true); 
+                    }
                 });
+
+                // 3. JIKA PURNOMO BELUM ADA DI DB -> PAKSA MUNCUL (MANUAL INJECTION)
+                if (!purnomoFound) {
+                    const manualPurnomo = {
+                        namaKtp: "PURNOMO",
+                        role: "HUMAS",
+                        plat: "B XXXX XX",
+                        foto: "ipung.jpg" // Pakai foto lokal
+                    };
+                    document.getElementById('tier4-title').style.display = 'block';
+                    renderCard('tier4', manualPurnomo, false, true);
+                }
 
             } catch (e) {
                 loader.innerHTML = `<span style="color:#EF4444">Gagal memuat: ${e.message}</span>`;
