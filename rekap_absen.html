@@ -10,13 +10,8 @@
     
     <style>
         :root { 
-            --royal-blue: #0A2259; 
-            --electric-blue: #2D63ED; 
-            --bg-surface: #F0F4F8; 
-            --text-main: #0F172A; 
-            --text-muted: #64748B;
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; --text-main: #0F172A; --text-muted: #64748B;
         }
-        
         body { margin:0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); }
 
         .header { 
@@ -25,7 +20,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
         .title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin: 0; text-transform: uppercase; }
-        .subtitle { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 5px; text-transform: uppercase; }
+        .subtitle { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
         .stat-card {
             margin: 20px; padding: 25px 20px; border-radius: 20px;
@@ -54,8 +49,7 @@
         .att-time { font-size: 12px; font-weight: 700; color: var(--text-main); background: #F1F5F9; padding: 6px 10px; border-radius: 8px;}
 
         .empty-state { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 13px; font-weight: 600; padding: 20px; }
-        .error-msg { color: #EF4444; background: #FEF2F2; padding: 10px; border-radius: 10px; border: 1px solid #FECACA; font-size: 11px; margin-top: 10px;}
-
+        
         .btn-back { 
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
             background: white; padding: 12px 30px; border-radius: 50px; 
@@ -90,41 +84,48 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, query, where, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // CONFIG FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // Format tanggal harus sama persis dengan yang disimpan absen.html
+        // Format tanggal
         function getTodayDate() { const d = new Date(); return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; }
-
+        
         const hariIni = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}).toUpperCase();
         document.getElementById('currentDate').innerText = hariIni;
 
-        // DEBUG: Cek Tanggal System
-        console.log("Query Tanggal:", getTodayDate());
-
+        // --- SOLUSI TANPA LAPTOP ---
+        // Kita HAPUS 'orderBy' di sini supaya tidak butuh Index
         const q = query(
             collection(db, "absensi_kopdar"), 
-            where("tanggal", "==", getTodayDate()),
-            orderBy("timestamp", "desc")
+            where("tanggal", "==", getTodayDate())
         );
 
-        // LISTENER DATA
         onSnapshot(q, (snapshot) => {
             const listArea = document.getElementById('listArea');
             const totalEl = document.getElementById('totalCount');
             
-            totalEl.innerText = snapshot.size; 
+            // Simpan data ke Array dulu biar bisa diurutkan di HP (Client Side)
+            let absensiList = [];
+            snapshot.forEach((doc) => {
+                absensiList.push(doc.data());
+            });
+
+            // Urutkan manual: Yang timestamp-nya paling besar (terbaru) di atas
+            absensiList.sort((a, b) => b.timestamp - a.timestamp);
+
+            totalEl.innerText = absensiList.length; 
             listArea.innerHTML = ""; 
 
-            if (snapshot.empty) {
-                listArea.innerHTML = '<div class="empty-state">Belum ada data masuk hari ini.<br><span style="font-size:10px; opacity:0.7">Pastikan Anda sudah klik tombol Absen.</span></div>';
+            if (absensiList.length === 0) {
+                listArea.innerHTML = '<div class="empty-state">Belum ada data masuk.<br><span style="font-size:10px; opacity:0.7">Data akan muncul otomatis setelah ada yang absen.</span></div>';
                 return;
             }
 
-            snapshot.forEach((doc) => {
-                const d = doc.data();
+            // Tampilkan Data yang sudah diurutkan
+            absensiList.forEach((d) => {
                 const inisial = d.nama ? d.nama.charAt(0).toUpperCase() : "?";
                 const html = `
                 <div class="attendee-card">
@@ -140,17 +141,8 @@
                 listArea.innerHTML += html;
             });
         }, (error) => {
-            // JIKA ERROR, TAMPILKAN DI LAYAR AGAR KETAHUAN
-            console.error("Error Firestore:", error);
-            document.getElementById('listArea').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-exclamation-triangle" style="color:red; font-size:24px;"></i><br>
-                    GAGAL MEMUAT DATA
-                    <div class="error-msg">
-                        ${error.message}<br>
-                        (Cek Rules Database di Firebase Console)
-                    </div>
-                </div>`;
+            console.error("Error:", error);
+            document.getElementById('listArea').innerHTML = `<div class="empty-state" style="color:red;">Error: ${error.message}</div>`;
         });
     </script>
 </body>
