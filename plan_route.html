@@ -3,143 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - Smart Trip Planner</title>
+    <title>MLU - Trip Planner</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
+        /* === TEMA ULTRA LUXURY GLASS === */
         :root {
-            --royal-blue: #0A2259;
-            --electric-blue: #2D63ED;
-            --bg-surface: #F0F4F8;
-            --white: #FFFFFF;
-            --text-main: #0F172A;
-            --text-muted: #64748B;
-            --success: #10B981;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            
-            --border-soft: rgba(45, 99, 237, 0.15);
-            --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
-            --glow-red: 0 10px 25px rgba(239, 68, 68, 0.25);
-            --glow-green: 0 10px 25px rgba(16, 185, 129, 0.25);
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
+            --bg-surface: #F0F4F8; --white: #FFFFFF; --text-main: #0F172A; 
+            --success: #10B981; --danger: #EF4444; --warning: #F59E0B;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --shadow-soft: 0 15px 40px rgba(10, 34, 89, 0.1);
         }
 
-        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg-surface); color: var(--text-main); padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg-surface); color: var(--text-main); padding-bottom: 100px; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
-        /* --- HERO HEADER GLOWING --- */
+        /* HEADER */
         .hero-header {
             background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%);
             padding: 50px 20px 80px;
             border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
             text-align: center; color: white; position: relative;
-            box-shadow: var(--glow-blue); border-bottom: 2px solid rgba(45,99,237,0.3);
+            box-shadow: 0 10px 30px rgba(45, 99, 237, 0.25);
         }
-        .header-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: #93C5FD; text-transform: uppercase; margin-bottom: 8px; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
-        .main-title { font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);}
+        .header-tag { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 5px; }
+        .main-title { font-family: 'Outfit'; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px; }
 
-        /* --- FLOATING FORM GLASSMORPHISM --- */
+        /* CONTAINER FORM */
         .planner-container { padding: 0 20px; margin-top: -50px; position: relative; z-index: 10; }
-        
         .form-card {
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
             border-radius: 30px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(45, 99, 237, 0.1);
-            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft); border: 1px solid rgba(255,255,255,0.8);
         }
 
-        /* Input Group */
         .input-box { position: relative; margin-bottom: 15px; }
-        .input-label { position: absolute; left: 18px; top: 18px; font-size: 11px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 1px; z-index: 2; }
+        .input-label { position: absolute; left: 18px; top: 18px; font-size: 10px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 1px; z-index: 2; }
         
         .form-control {
-            width: 100%; padding: 16px 18px 16px 80px;
-            background: rgba(255, 255, 255, 0.8); border: 1px solid var(--border-soft); border-radius: 18px;
+            width: 100%; padding: 16px 18px 16px 70px;
+            background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(45,99,237,0.15); border-radius: 18px;
             font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: var(--text-main);
-            outline: none; transition: 0.3s;
+            transition: 0.3s;
         }
-        .form-control:focus { border-color: var(--electric-blue); background: var(--white); box-shadow: 0 0 15px rgba(45, 99, 237, 0.15); }
-        .form-control.gps-active { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.05); box-shadow: 0 0 10px rgba(16,185,129,0.1); }
+        .form-control:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 15px rgba(45, 99, 237, 0.1); }
+        .form-control.gps-active { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.05); }
 
-        /* Actions */
         .btn-gps {
             position: absolute; right: 10px; top: 10px; width: 34px; height: 34px;
-            background: rgba(45, 99, 237, 0.1); color: var(--electric-blue); border: 1px solid rgba(45,99,237,0.2); border-radius: 12px;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(45,99,237,0.1);
+            background: rgba(45, 99, 237, 0.1); color: var(--electric-blue); border: none; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
         }
-        .btn-gps:active { transform: scale(0.9); background: var(--electric-blue); color: white; box-shadow: var(--glow-blue); }
+        .btn-gps:active { transform: scale(0.9); }
 
         .btn-add-stop {
-            width: 100%; padding: 14px; background: rgba(45,99,237,0.05); color: var(--electric-blue);
+            width: 100%; padding: 12px; background: rgba(45,99,237,0.05); color: var(--electric-blue);
             border: 1px dashed var(--electric-blue); border-radius: 16px; font-family: 'Space Grotesk';
-            font-weight: 800; font-size: 12px; cursor: pointer; margin-bottom: 20px; transition: 0.2s;
+            font-weight: 800; font-size: 12px; cursor: pointer; margin-bottom: 20px;
         }
-        .btn-add-stop:active { background: rgba(45,99,237,0.1); box-shadow: var(--glow-blue); color: var(--royal-blue); }
 
-        /* Battery Input */
-        .battery-row { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding-top: 10px; border-top: 1px dashed rgba(45,99,237,0.2); }
-        .bat-icon { font-size: 24px; color: var(--success); filter: drop-shadow(0 0 5px rgba(16,185,129,0.5));}
-        .bat-input-wrap { flex: 1; position: relative; }
-        .bat-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        .bat-input { width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.8); border: 1px solid var(--border-soft); border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 18px; color: var(--royal-blue); outline: none; transition: 0.3s;}
-        .bat-input:focus { border-color: var(--electric-blue); box-shadow: 0 0 15px rgba(45,99,237,0.15); background: white;}
+        .battery-row { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding-top: 15px; border-top: 1px dashed rgba(45,99,237,0.2); }
+        .bat-input { width: 100%; padding: 12px; border: 1px solid rgba(45,99,237,0.2); border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 18px; color: var(--royal-blue); text-align: center; }
 
-        /* Calculate Button */
         .btn-calculate {
-            width: 100%; padding: 18px; background: var(--electric-blue);
+            width: 100%; padding: 18px; background: linear-gradient(135deg, var(--electric-blue), var(--royal-blue));
             color: white; border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800;
-            font-size: 15px; cursor: pointer; box-shadow: var(--glow-blue); transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
+            font-size: 14px; cursor: pointer; box-shadow: 0 10px 25px rgba(45,99,237,0.3);
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
         }
         .btn-calculate:active { transform: scale(0.97); }
 
-        /* --- MAP RESULT --- */
-        #map-container { display: none; margin-top: 25px; border-radius: 30px; overflow: hidden; box-shadow: 0 15px 35px rgba(45,99,237,0.15); border: 1px solid var(--border-soft); }
+        /* MAP RESULT */
+        #map-container { display: none; margin-top: 25px; border-radius: 25px; overflow: hidden; box-shadow: var(--shadow-soft); border: 4px solid white; }
         #map { height: 350px; width: 100%; z-index: 1; }
-        .leaflet-control-attribution { display: none; }
 
-        /* --- TIMELINE RESULT GLASSMORPHISM --- */
+        /* RESULT CARD */
         .result-card { 
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
-            border-radius: 30px; padding: 25px; margin-top: 20px; 
-            box-shadow: 0 10px 30px rgba(45,99,237,0.1); border: 1px solid var(--border-soft); display: none; 
+            background: white; border-radius: 25px; padding: 25px; margin-top: 20px; 
+            box-shadow: var(--shadow-soft); display: none; 
         }
-        .res-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed rgba(45,99,237,0.2); }
-        .res-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; color: var(--royal-blue); text-transform: uppercase; }
+        .res-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #E2E8F0; }
+        .res-title { font-family: 'Outfit'; font-size: 18px; font-weight: 900; color: var(--royal-blue); }
         
-        .res-badge { font-size: 9px; font-weight: 800; padding: 4px 10px; border-radius: 8px; letter-spacing: 1px; }
-        .badge-safe { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.3); box-shadow: 0 0 10px rgba(16,185,129,0.2); }
-        .badge-warn { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); box-shadow: 0 0 10px rgba(239,68,68,0.2); }
-
         .timeline { position: relative; padding-left: 20px; border-left: 2px dashed #CBD5E1; margin-left: 10px; }
         .t-node { position: relative; margin-bottom: 25px; }
-        .t-dot { position: absolute; left: -26px; top: 0; width: 10px; height: 10px; background: var(--white); border: 3px solid var(--electric-blue); border-radius: 50%; box-shadow: 0 0 0 4px var(--white); }
-        .t-dot.charge { border-color: var(--success); background: var(--success); box-shadow: var(--glow-green); }
+        .t-dot { position: absolute; left: -26px; top: 5px; width: 10px; height: 10px; background: white; border: 3px solid var(--electric-blue); border-radius: 50%; }
+        .t-dot.charge { border-color: var(--success); background: var(--success); box-shadow: 0 0 10px rgba(16,185,129,0.5); }
         
-        .t-content { background: rgba(255,255,255,0.9); padding: 15px; border-radius: 15px; border: 1px solid var(--border-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .t-name { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; color: var(--royal-blue); margin-bottom: 5px; }
+        .t-content { background: #F8FAFC; padding: 15px; border-radius: 15px; border: 1px solid #E2E8F0; }
+        .t-name { font-weight: 800; font-size: 13px; color: var(--text-main); margin-bottom: 5px; }
         .t-stats { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text-muted); }
-        .t-bat { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; }
-        .bat-ok { color: var(--success); }
-        .bat-low { color: var(--danger); text-shadow: 0 0 10px rgba(239,68,68,0.3);}
+        .bat-val { font-family: 'Space Grotesk'; font-weight: 900; }
+        .bat-ok { color: var(--success); } .bat-low { color: var(--danger); }
 
-        .btn-nav-gmaps { display: block; width: 100%; text-align: center; padding: 15px; background: rgba(45,99,237,0.1); color: var(--electric-blue); border: 1px solid rgba(45,99,237,0.2); border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; text-decoration: none; margin-top: 20px; transition: 0.2s; }
-        .btn-nav-gmaps:active { background: var(--electric-blue); color: white; box-shadow: var(--glow-blue); }
+        .btn-nav-gmaps { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; background: rgba(45,99,237,0.1); color: var(--electric-blue); border-radius: 16px; font-weight: 800; text-decoration: none; margin-top: 20px; font-size: 13px; font-family: 'Space Grotesk';}
 
-        /* --- LOADING OVERLAY --- */
-        #loader { position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
-        .spinner { width: 50px; height: 50px; border: 4px solid #E2E8F0; border-top: 4px solid var(--electric-blue); border-radius: 50%; animation: spin 1s linear infinite; box-shadow: 0 0 15px rgba(45,99,237,0.2); }
-        .load-text { font-family: 'Space Grotesk'; font-weight: 800; color: var(--royal-blue); margin-top: 20px; letter-spacing: 1px; }
-
-        /* --- BACK NAVIGATION --- */
+        /* BACK NAV */
         .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 85%; max-width: 350px; }
-        .btn-premium-back { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 1px solid var(--border-soft); color: var(--electric-blue); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-blue); display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; transition: 0.3s; }
-        .btn-premium-back:active { transform: scale(0.95); background: #F8FAFC; }
-
+        .btn-premium-back { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); color: var(--electric-blue); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.15); display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; transition: 0.3s; }
+        
+        /* LOADER */
+        #loader { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #E2E8F0; border-top: 4px solid var(--electric-blue); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -147,7 +116,7 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <div class="load-text">MENGANALISA RUTE...</div>
+        <div style="font-family:'Space Grotesk'; font-weight:800; color:var(--royal-blue); margin-top:15px;">MENGHITUNG RUTE...</div>
     </div>
 
     <header class="hero-header">
@@ -160,21 +129,21 @@
             <div id="waypoints">
                 <div class="input-box">
                     <div class="input-label">START</div>
-                    <input type="text" id="start-input" class="form-control loc-input" placeholder="Ketik lokasi awal...">
+                    <input type="text" id="start-input" class="form-control loc-input" placeholder="Lokasi Awal">
                     <button class="btn-gps" onclick="useCurrentLocation()"><i class="fas fa-crosshairs"></i></button>
                 </div>
                 <div class="input-box">
                     <div class="input-label">DEST.</div>
-                    <input type="text" class="form-control loc-input" placeholder="Ketik tujuan akhir...">
+                    <input type="text" class="form-control loc-input" placeholder="Tujuan Akhir">
                 </div>
             </div>
             
-            <button class="btn-add-stop" onclick="addStop()">+ TAMBAH PERSINGGAHAN</button>
+            <button class="btn-add-stop" onclick="addStop()">+ TAMBAH TITIK HENTI</button>
 
             <div class="battery-row">
-                <i class="fas fa-battery-three-quarters bat-icon"></i>
-                <div class="bat-input-wrap">
-                    <span class="bat-label">Sisa Baterai Kendaraan (%)</span>
+                <i class="fas fa-battery-three-quarters" style="font-size:24px; color:var(--success);"></i>
+                <div style="flex:1;">
+                    <div style="font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom:5px;">SISA BATERAI (%)</div>
                     <input type="number" id="battery" class="bat-input" value="100" max="100" min="1">
                 </div>
             </div>
@@ -190,16 +159,14 @@
     </div>
 
     <div class="back-nav">
-        <a href="dashboard.html" class="btn-premium-back">
-            <i class="fas fa-home"></i> KEMBALI KE HOME
-        </a>
+        <a href="dashboard.html" class="btn-premium-back"><i class="fas fa-home"></i> KEMBALI KE HOME</a>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script>
-        // INIT MAP (Light Mode Voyager)
+        // INIT MAP
         const map = L.map('map', {zoomControl: false}).setView([-6.2, 106.8], 10);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
         
@@ -207,10 +174,9 @@
         let mapLayers = L.layerGroup().addTo(map);
         const SHEET_ID = '1EJOTMMfGpBMFPqR0LzbMbh7tZUcTCZld4x387OO9aJM'; 
         const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
-
         let gpsStartCoords = null; 
 
-        // Load FC Data
+        // LOAD DATA STASIUN
         window.onload = function() {
             Papa.parse(CSV_URL, {
                 download: true, header: true,
@@ -229,7 +195,7 @@
                         const keys = Object.keys(row);
                         for(let k of keys) {
                             let cleanKey = k.toLowerCase().trim();
-                            if(cleanKey.includes('nama') || cleanKey.includes('lokasi') || cleanKey.includes('station')) {
+                            if(cleanKey.includes('nama') || cleanKey.includes('lokasi')) {
                                 if(row[k] && row[k].trim() !== "") { name = row[k]; break; }
                             }
                         }
@@ -239,47 +205,28 @@
             });
         };
 
-        // --- GPS FEATURE ---
+        // GPS
         async function useCurrentLocation() {
             const input = document.getElementById('start-input');
             if(!navigator.geolocation) return alert("Browser tidak support GPS");
             
-            input.value = "Mencari Lokasi...";
-            input.classList.remove('gps-active');
-
+            input.value = "Mencari...";
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 const { latitude, longitude } = pos.coords;
                 gpsStartCoords = { lat: latitude, lon: longitude, name: "Posisi Saya" };
-                
-                try {
-                    const addr = await getAddressFromCoords(latitude, longitude);
-                    gpsStartCoords.name = addr;
-                    input.value = addr; 
-                } catch(e) {
-                    input.value = "[ GPS TERSAMBUNG ]";
-                }
-                
+                input.value = "📍 LOKASI SAYA AKTIF"; 
                 input.classList.add('gps-active'); 
-            }, () => {
-                alert("Gagal mengambil lokasi GPS. Pastikan GPS nyala.");
-                input.value = "";
-            }, { enableHighAccuracy: true });
-        }
-
-        async function getAddressFromCoords(lat, lon) {
-            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const d = await r.json();
-            return d.display_name.split(',').slice(0, 3).join(',');
+            }, () => { alert("Gagal mengambil GPS."); input.value = ""; }, { enableHighAccuracy: true });
         }
 
         function addStop() {
             const div = document.createElement('div');
             div.className = 'input-box';
-            div.innerHTML = `<div class="input-label" style="color:#94A3B8;">STOP</div><input type="text" class="form-control loc-input" placeholder="Titik Persinggahan"><div style="position:absolute; right:15px; top:18px; color:var(--danger); cursor:pointer; font-weight:bold;" onclick="this.parentElement.remove()">X</div>`;
+            div.innerHTML = `<div class="input-label" style="color:#94A3B8;">STOP</div><input type="text" class="form-control loc-input" placeholder="Titik Singgah"><div style="position:absolute; right:15px; top:15px; color:#EF4444; font-weight:bold; cursor:pointer;" onclick="this.parentElement.remove()">✕</div>`;
             document.getElementById('waypoints').insertBefore(div, document.getElementById('waypoints').lastElementChild);
         }
 
-        // --- CALCULATE LOGIC ---
+        // --- CALCULATE ROUTE ---
         async function calculateRoute() {
             const inputs = document.querySelectorAll('.loc-input');
             const batStart = parseInt(document.getElementById('battery').value);
@@ -290,7 +237,7 @@
             let inputTexts = [];
             inputs.forEach(i => { let val = i.value.trim(); if(val) inputTexts.push(val); });
             
-            if(inputTexts.length < 2) return alert("Masukkan lokasi awal & tujuan!");
+            if(inputTexts.length < 2) return alert("Min. 2 lokasi diperlukan!");
 
             loading.style.display = 'flex';
             mapLayers.clearLayers();
@@ -301,7 +248,7 @@
                 let points = [];
                 for(let i=0; i<inputTexts.length; i++) {
                     const txt = inputTexts[i];
-                    if(i === 0 && gpsStartCoords && (txt === gpsStartCoords.name || txt === "[ GPS TERSAMBUNG ]")) {
+                    if(i === 0 && gpsStartCoords && txt.includes("LOKASI SAYA")) {
                         points.push(gpsStartCoords);
                     } else {
                         const c = await getGeo(txt);
@@ -310,23 +257,23 @@
                     }
                 }
 
-                // OSRM Direct Calculate
+                // Kalkulasi Dasar
                 const directRoute = await getOSRM(points);
                 const totalDistKm = directRoute.distance / 1000;
-                const needed = Math.ceil(totalDistKm); // 1% = 1KM asumption
+                const needed = Math.ceil(totalDistKm); // Asumsi 1% = 1KM
                 const finalBat = batStart - needed;
 
                 if (finalBat >= 10) {
-                    renderResult('aman', 'RUTE AMAN DILALUI', points, batStart, null);
-                    drawMap(points, '#2D63ED'); // Electric Blue Line
+                    renderResult('RUTE AMAN', points, batStart, null);
+                    drawMap(points, '#2D63ED');
                 } else {
                     const bestCharger = await findBestCharger(points[0], points[points.length-1], batStart);
                     if (bestCharger) {
-                        renderResult('aman', 'RUTE VIA CHARGING', points, batStart, bestCharger);
+                        renderResult('REKOMENDASI CHARGING', points, batStart, bestCharger);
                         drawComplexRoute(points[0], bestCharger, points[points.length-1]);
                     } else {
-                        renderResult('nekat', 'PERINGATAN: BATERAI TIDAK CUKUP', points, batStart, null);
-                        drawMap(points, '#EF4444'); // Red Line
+                        renderResult('PERINGATAN: BATERAI KURANG', points, batStart, null);
+                        drawMap(points, '#EF4444');
                     }
                 }
                 
@@ -334,57 +281,39 @@
                 resArea.style.display = 'block';
                 setTimeout(() => map.invalidateSize(), 500);
 
-            } catch (e) {
-                alert(e.message);
-            } finally {
-                loading.style.display = 'none';
-            }
+            } catch (e) { alert(e.message); } 
+            finally { loading.style.display = 'none'; }
         }
 
         async function findBestCharger(start, end, currentBat) {
             let candidates = [];
             for (let fc of fcLocations) {
-                const distFromStart = getCrowDist(start.lat, start.lon, fc.lat, fc.lng);
-                if (distFromStart <= (currentBat - 5)) candidates.push({ ...fc, distFromStart });
+                const dist = getCrowDist(start.lat, start.lon, fc.lat, fc.lng);
+                if (dist <= (currentBat - 5)) candidates.push({ ...fc });
             }
             if (candidates.length === 0) return null; 
 
-            candidates.sort((a,b) => getCrowDist(a.lat, a.lng, end.lat, end.lon) - getCrowDist(b.lat, b.lng, end.lat, end.lon));
-
+            // Cari yang paling efisien ke tujuan
             let bestFC = null; let minTotalDist = 999999;
-            const checkLimit = Math.min(candidates.length, 3);
-            
-            for(let i=0; i<checkLimit; i++) {
+            for(let i=0; i<Math.min(candidates.length, 5); i++) {
                 const fc = candidates[i];
                 const route = await getOSRM([start, {lat: fc.lat, lon: fc.lng}, end]);
-                const totalDist = route.distance / 1000;
-                if (totalDist < minTotalDist) { minTotalDist = totalDist; bestFC = fc; }
+                const dist = route.distance / 1000;
+                if (dist < minTotalDist) { minTotalDist = dist; bestFC = fc; }
             }
             return bestFC;
         }
 
-        async function renderResult(type, title, points, startBat, charger) {
+        async function renderResult(title, points, startBat, charger) {
             const area = document.getElementById('result-area');
-            const badgeClass = type === 'aman' ? 'badge-safe' : 'badge-warn';
-            const badgeText = type === 'aman' ? 'RECOMMENDED' : 'CRITICAL';
-            
-            let html = `
-                <div class="res-header">
-                    <div class="res-title">${title}</div>
-                    <div class="res-badge ${badgeClass}">${badgeText}</div>
-                </div>
-                <div class="timeline">
-            `;
+            let html = `<div class="res-header"><div class="res-title">${title}</div></div><div class="timeline">`;
 
-            let stops = [];
-            if (charger) stops = [points[0], {name: charger.name, lat: charger.lat, lon: charger.lng, isCharge: true}, points[points.length-1]];
-            else stops = points;
-
+            let stops = charger ? [points[0], {name: charger.name, lat: charger.lat, lon: charger.lng, isCharge: true}, points[points.length-1]] : points;
             let currentBat = startBat;
 
             for (let i = 0; i < stops.length; i++) {
                 const pt = stops[i];
-                let distInfo = "Start Point";
+                let distInfo = "Start";
                 let batClass = "bat-ok";
                 let dotClass = pt.isCharge ? 'charge' : '';
 
@@ -394,14 +323,10 @@
                     const dist = leg.distance / 1000;
                     const used = Math.ceil(dist);
                     currentBat -= used;
-                    distInfo = `${dist.toFixed(1)} KM (Konsumsi ${used}%)`;
+                    distInfo = `${dist.toFixed(1)} KM (-${used}%)`;
                 }
 
-                if (pt.isCharge) {
-                    currentBat = 100; 
-                    distInfo += ` • <span style="color:var(--success); font-weight:800; text-shadow:0 0 5px rgba(16,185,129,0.3);">[ ISI PENUH ]</span>`;
-                }
-
+                if (pt.isCharge) { currentBat = 100; distInfo += ` • <span style="color:#10B981; font-weight:800;">FULL CHARGE</span>`; }
                 if (currentBat < 20) batClass = "bat-low";
 
                 html += `
@@ -409,18 +334,14 @@
                         <div class="t-dot ${dotClass}"></div>
                         <div class="t-content">
                             <div class="t-name">${pt.name}</div>
-                            <div class="t-stats">
-                                <span>${distInfo}</span>
-                                <span class="t-bat ${batClass}">${currentBat}%</span>
-                            </div>
+                            <div class="t-stats"><span>${distInfo}</span><span class="bat-val ${batClass}">${currentBat}%</span></div>
                         </div>
                     </div>`;
             }
 
             let gmapsLink = `https://www.google.com/maps/dir/`;
             stops.forEach(s => gmapsLink += `${s.lat},${s.lon}/`);
-
-            html += `</div><a href="${gmapsLink}" target="_blank" class="btn-nav-gmaps"><i class="fas fa-location-arrow"></i> ARAHKAN VIA GMAPS</a>`;
+            html += `</div><a href="${gmapsLink}" target="_blank" class="btn-nav-gmaps"><i class="fas fa-location-arrow"></i> BUKA GOOGLE MAPS</a>`;
             area.innerHTML = html;
         }
 
@@ -428,17 +349,10 @@
             const r = await getOSRM(points);
             const coords = decodePolyline(r.geometry);
             L.polyline(coords, {color: color, weight: 5, opacity: 0.8}).addTo(mapLayers);
-            
             points.forEach((p, i) => {
-                const iconHtml = i === 0 ? '<div style="background:var(--success);width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(0,0,0,0.5);"></div>' : 
-                                 (i === points.length-1 ? '<div style="background:var(--danger);width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(0,0,0,0.5);"></div>' : 
-                                 '<div style="background:var(--warning);width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(0,0,0,0.5);"></div>');
-                
-                const customIcon = L.divIcon({ className: '', html: iconHtml, iconSize: [16, 16], iconAnchor: [8, 8] });
-                L.marker([p.lat, p.lon], {icon: customIcon}).addTo(mapLayers).bindPopup(`<b>${p.name}</b>`);
+                L.marker([p.lat, p.lon]).addTo(mapLayers).bindPopup(`<b>${p.name}</b>`);
             });
-            
-            map.fitBounds(L.polyline(coords).getBounds(), {padding:[40,40]});
+            map.fitBounds(L.polyline(coords).getBounds(), {padding:[30,30]});
         }
 
         async function drawComplexRoute(start, mid, end) {

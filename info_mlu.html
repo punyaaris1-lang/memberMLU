@@ -5,90 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU - Information Center</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
+        /* === TEMA ULTRA LUXURY GLASS === */
         :root { 
-            --royal-blue: #0A2259; 
-            --electric-blue: #2D63ED; 
-            --bg-surface: #F0F4F8; 
-            --white: #FFFFFF; 
-            --text-main: #0F172A; 
-            --text-muted: #64748B; 
-            --danger: #EF4444; 
-            --success: #10B981;
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
+            --gold-lux: #D4AF37; --bg-surface: #F0F4F8; 
+            --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; 
+            --danger: #EF4444; --success: #10B981;
             
-            --border-soft: rgba(45, 99, 237, 0.15); 
-            --glow-blue: 0 10px 30px rgba(45, 99, 237, 0.25);
-            --glow-red: 0 10px 25px rgba(239, 68, 68, 0.25);
-            --glow-green: 0 10px 25px rgba(16, 185, 129, 0.25);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --shadow-soft: 0 15px 40px rgba(10, 34, 89, 0.08);
+            --glow-blue: 0 5px 20px rgba(45, 99, 237, 0.3);
+            --glow-green: 0 5px 20px rgba(16, 185, 129, 0.3);
         }
         
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* --- HEADER GLOWING --- */
+        /* AMBIENT LIGHT & BACKGROUND */
+        .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: floatLight 10s infinite alternate; }
+        .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #bfdbfe; }
+        .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: rgba(212, 175, 55, 0.15); animation-delay: 2s; }
+        .bg-watermark { position: fixed; top: 15%; right: -15%; width: 100%; height: 80%; background-image: url('logomlu.png'); background-repeat: no-repeat; background-size: contain; background-position: center; opacity: 0.04; transform: rotate(-15deg); z-index: -2; pointer-events: none; }
+        @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(20px, 40px);} }
+
+        /* HEADER */
         .header-premium { 
             background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
             padding: 50px 25px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
             color: white; position: sticky; top: 0; z-index: 100; 
-            box-shadow: var(--glow-blue); border-bottom: 2px solid rgba(45,99,237,0.3);
+            box-shadow: 0 10px 30px rgba(45, 99, 237, 0.25); border-bottom: 2px solid rgba(45,99,237,0.3);
         }
-        .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 3px; color: #93C5FD; text-transform: uppercase; margin-bottom: 5px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
+        .main-title { font-family: 'Outfit'; font-size: 28px; font-weight: 900; margin: 0; letter-spacing: -1px; text-shadow: 0 10px 30px rgba(10,34,89,0.2); }
+        .sub-tag { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 5px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
 
         /* --- FEED / BLOG LIST GLASSMORPHISM --- */
         .feed-container { padding: 0 20px; margin-top: -30px; position: relative; z-index: 101; display: flex; flex-direction: column; gap: 20px; }
         
         .article-card { 
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(15px);
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(25px);
             border-radius: 24px; padding: 20px; 
-            box-shadow: 0 10px 25px rgba(45,99,237,0.1); border: 1px solid var(--border-soft); 
+            box-shadow: var(--shadow-soft); border: 1px solid rgba(255,255,255,0.9); 
             position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 15px;
+            transition: transform 0.3s;
         }
+        .article-card:active { transform: scale(0.98); }
         
         /* Gambar Artikel */
         .a-image { 
-            width: 100%; height: 200px; object-fit: cover; border-radius: 16px; 
-            background: #F1F5F9; border: 1px solid rgba(45,99,237,0.2); display: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            width: 100%; height: 200px; object-fit: cover; border-radius: 18px; 
+            background: #F1F5F9; border: 1px solid rgba(255,255,255,0.5); display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         
         .a-content { display: flex; flex-direction: column; gap: 8px; }
-        .a-date { font-size: 10px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 1px; }
-        .a-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); line-height: 1.2; }
-        .a-desc { font-size: 13px; color: var(--text-main); line-height: 1.6; white-space: pre-line; }
-        .a-author { margin-top: 5px; font-size: 10px; font-weight: 700; color: var(--text-muted); padding-top: 15px; border-top: 1px dashed #CBD5E1; display: flex; align-items: center; gap: 5px; }
+        .a-date { font-size: 10px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+        .a-title { font-family: 'Outfit'; font-size: 22px; font-weight: 800; color: var(--royal-blue); line-height: 1.2; }
+        .a-desc { font-size: 13px; color: var(--text-main); line-height: 1.6; white-space: pre-line; font-weight: 500; opacity: 0.9; }
+        .a-author { margin-top: 5px; font-size: 10px; font-weight: 700; color: var(--text-muted); padding-top: 15px; border-top: 1px dashed #CBD5E1; display: flex; align-items: center; gap: 6px; }
 
         /* Tombol Aksi Admin (Edit & Hapus) */
         .admin-actions { position: absolute; top: 15px; right: 15px; display: none; gap: 8px; z-index: 10; }
         .btn-act { 
-            width: 32px; height: 32px; border-radius: 10px; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; border: none; backdrop-filter: blur(5px);
-            font-size: 12px; transition: 0.2s;
+            width: 35px; height: 35px; border-radius: 12px; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; border: none; backdrop-filter: blur(10px);
+            font-size: 14px; transition: 0.2s;
         }
         .btn-act:active { transform: scale(0.9); }
-        .b-edit { background: rgba(255,255,255,0.9); color: var(--electric-blue); border: 1px solid rgba(45,99,237,0.3); box-shadow: 0 4px 10px rgba(45,99,237,0.2); }
-        .b-del { background: rgba(255,255,255,0.9); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); box-shadow: 0 4px 10px rgba(239,68,68,0.2); }
+        .b-edit { background: rgba(255,255,255,0.9); color: var(--electric-blue); border: 1px solid rgba(45,99,237,0.3); box-shadow: 0 5px 15px rgba(45,99,237,0.15); }
+        .b-del { background: rgba(255,255,255,0.9); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); box-shadow: 0 5px 15px rgba(239,68,68,0.15); }
 
         /* Tombol Bagikan WA Glowing */
         .btn-share {
-            margin-top: 5px; padding: 12px; border-radius: 12px; background: rgba(16, 185, 129, 0.05); 
-            color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); font-family: 'Space Grotesk'; 
+            margin-top: 5px; padding: 14px; border-radius: 14px; background: white; 
+            color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); font-family: 'Space Grotesk'; 
             font-weight: 800; font-size: 12px; cursor: pointer; display: flex; 
             justify-content: center; align-items: center; gap: 8px; transition: 0.2s; width: 100%;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1);
         }
         .btn-share:active { background: var(--success); color: white; box-shadow: var(--glow-green); }
 
         /* --- FAB (TOMBOL BUAT ARTIKEL) --- */
         .fab-admin { 
-            position: fixed; bottom: 100px; right: 20px; width: 65px; height: 65px; 
-            background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); 
+            position: fixed; bottom: 100px; right: 25px; width: 60px; height: 60px; 
+            background: linear-gradient(135deg, var(--royal-blue), var(--electric-blue)); 
             color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; 
-            font-size: 24px; box-shadow: var(--glow-blue); border: none; cursor: pointer; z-index: 1000; transition: 0.3s;
+            font-size: 22px; box-shadow: var(--glow-blue); border: 2px solid white; cursor: pointer; z-index: 1000; transition: 0.3s;
         }
         .fab-admin:active { transform: scale(0.9); }
 
@@ -104,25 +110,25 @@
         
         .m-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .m-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); }
-        .btn-close { background: #F1F5F9; border: none; width: 30px; height: 30px; border-radius: 50%; color: var(--text-muted); cursor: pointer; font-size: 14px; transition:0.2s;}
+        .btn-close { background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 50%; color: var(--text-muted); cursor: pointer; font-size: 14px; transition:0.2s;}
         .btn-close:active { transform: scale(0.9); background: #E2E8F0;}
 
         .inp-group { margin-bottom: 15px; }
-        .inp-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        .inp-text { width: 100%; padding: 15px; border-radius: 16px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-size: 14px; font-weight: 600; outline: none; transition: 0.2s;}
-        .inp-text:focus { border-color: var(--electric-blue); background: var(--white); box-shadow: 0 0 15px rgba(45,99,237,0.1); }
+        .inp-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: block; }
+        .inp-text { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-size: 14px; font-weight: 600; outline: none; transition: 0.2s;}
+        .inp-text:focus { border-color: var(--electric-blue); background: var(--white); box-shadow: 0 0 0 3px rgba(45,99,237,0.1); }
         textarea.inp-text { height: 120px; resize: none; }
 
         .upload-box { 
-            width: 100%; padding: 20px; border: 2px dashed #93C5FD; border-radius: 16px; text-align: center; 
-            color: var(--electric-blue); font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; cursor: pointer; 
-            margin-bottom: 15px; position: relative; overflow: hidden; background: #F8FAFC; transition:0.2s;
+            width: 100%; padding: 25px; border: 2px dashed #93C5FD; border-radius: 18px; text-align: center; 
+            color: var(--electric-blue); font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; cursor: pointer; 
+            margin-bottom: 15px; position: relative; overflow: hidden; background: #F0F9FF; transition:0.2s;
         }
-        .upload-box:active { background: #EFF6FF; }
+        .upload-box:active { background: #E0F2FE; }
         .upload-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
         #fileInput { display: none; }
 
-        .btn-submit { width: 100%; padding: 18px; border: none; border-radius: 20px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-blue); text-transform: uppercase; letter-spacing: 1px; transition:0.2s;}
+        .btn-submit { width: 100%; padding: 18px; border: none; border-radius: 18px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-blue); letter-spacing: 1px; transition:0.2s;}
         .btn-submit:active { transform: scale(0.98); }
 
         /* --- BACK NAVIGATION --- */
@@ -132,13 +138,17 @@
 </head>
 <body>
 
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+    <div class="bg-watermark"></div>
+
     <header class="header-premium">
-        <span class="sub-tag">Galeri & Informasi</span>
+        <span class="sub-tag">GALERI & INFORMASI</span>
         <h1 class="main-title">MLU HIGHLIGHTS</h1>
     </header>
 
     <div class="feed-container" id="feedList">
-        <div style="text-align:center; padding: 40px; color: #94A3B8; font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Memuat artikel...</div>
+        <div style="text-align:center; padding: 50px; color: #94A3B8; font-weight: 600;"><i class="fas fa-circle-notch fa-spin" style="font-size:24px; margin-bottom:10px; color:var(--electric-blue);"></i><br>Memuat berita terbaru...</div>
     </div>
 
     <button class="fab-admin" id="btnAdd" onclick="openModal()"><i class="fas fa-pen-nib"></i></button>
@@ -165,9 +175,9 @@
             </div>
 
             <div class="inp-group">
-                <label class="inp-label">Foto Dokumentasi (Opsional)</label>
+                <label class="inp-label">Foto Dokumentasi</label>
                 <label class="upload-box" for="fileInput">
-                    <i class="fas fa-image" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                    <i class="fas fa-camera" style="font-size: 28px; margin-bottom: 10px; display: block;"></i>
                     TAP UNTUK PILIH FOTO
                     <img id="imgPreview" src="">
                 </label>
@@ -197,7 +207,7 @@
         // --- RENDER ARTIKEL DARI FIREBASE ---
         onSnapshot(query(collection(db, 'mlu_info'), orderBy('timestamp', 'desc')), (snap) => {
             const list = document.getElementById('feedList');
-            list.innerHTML = snap.empty ? '<div style="text-align:center; color:#94A3B8; padding:30px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px;"></i><br>Belum ada kegiatan/berita.</div>' : '';
+            list.innerHTML = snap.empty ? '<div style="text-align:center; color:#94A3B8; padding:30px;"><i class="fas fa-inbox" style="font-size:30px; margin-bottom:10px; opacity:0.5;"></i><br>Belum ada kegiatan/berita.</div>' : '';
             
             window.articlesData = {}; 
 
@@ -217,10 +227,10 @@
                         ${adminHtml}
                         ${imageHtml}
                         <div class="a-content">
-                            <div class="a-date"><i class="fas fa-calendar-day" style="margin-right:5px;"></i>${d.date}</div>
+                            <div class="a-date"><i class="far fa-calendar-alt"></i> ${d.date}</div>
                             <div class="a-title">${d.title}</div>
                             <div class="a-desc">${d.desc}</div>
-                            <div class="a-author"><i class="fas fa-user-edit"></i> Ditulis oleh: ${d.author}</div>
+                            <div class="a-author"><i class="fas fa-feather-alt"></i> ${d.author}</div>
                         </div>
                         <button class="btn-share" onclick="window.shareToWA('${docSnap.id}')">
                             <i class="fab fa-whatsapp" style="font-size:16px;"></i> BAGIKAN KE WA
@@ -259,7 +269,7 @@
                     canvas.width = width; canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
                     
                     const preview = document.getElementById('imgPreview');
                     preview.src = currentImageBase64;
@@ -289,8 +299,10 @@
             if(data.image) {
                 document.getElementById('imgPreview').src = data.image;
                 document.getElementById('imgPreview').style.display = 'block';
+                currentImageBase64 = data.image;
             } else {
                 document.getElementById('imgPreview').style.display = 'none';
+                currentImageBase64 = "";
             }
 
             document.getElementById('postModal').style.display = 'flex';

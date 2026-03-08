@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -54,6 +54,7 @@
             padding: 6px 14px; border-radius: 50px; border: 1px solid rgba(45,99,237,0.3);
             display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;
             box-shadow: var(--glow-blue); letter-spacing: 2px; text-transform: uppercase;
+            pointer-events: auto; cursor: pointer;
         }
         .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; box-shadow: 0 0 8px var(--success); }
 
@@ -105,6 +106,7 @@
         .card-dist { font-size: 11px; font-weight: 800; color: var(--electric-blue); background: rgba(45,99,237,0.1); padding: 8px 14px; border-radius: 8px; letter-spacing: 1px; border: 1px solid rgba(45,99,237,0.2); width:100%;}
         
         .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 900; color: var(--royal-blue); margin: 0 0 6px; line-height: 1.1; text-transform: uppercase; }
+        .card-subtitle { font-size: 10px; font-weight: 700; color: var(--success); margin-bottom: 10px; text-transform: uppercase; display: none; }
 
         .btn-nav-map {
             display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -139,7 +141,7 @@
 
     <header class="map-header">
         <h1 class="main-title">STATION LOCATOR</h1>
-        <div class="live-tag" id="gpsStatus"><div class="live-dot"></div> MENCARI LOKASI...</div>
+        <div class="live-tag" id="gpsStatus" onclick="recenterMap()"><div class="live-dot"></div> MENCARI LOKASI...</div>
     </header>
 
     <div id="map"></div>
@@ -148,6 +150,8 @@
         <button class="btn-close" onclick="closeCard()"><i class="fas fa-times"></i></button>
         
         <div class="card-title" id="fcName">Station Name</div>
+        <div class="card-subtitle" id="fcTag">REKOMENDASI TERDEKAT</div>
+        
         <div class="routing-info">
             <div class="card-dist" id="fcDist"><i class="fas fa-car"></i> MENGHITUNG JARAK...</div>
         </div>
@@ -167,18 +171,19 @@
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <script>
-        // INIT MAP (Style Putih/Voyager)
+        // INIT MAP
         const map = L.map('map', {zoomControl: false}).setView([-6.2, 106.8], 11);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);
 
-        // DATA SOURCE (100% Dari script hitam)
+        // DATA SOURCE
         const URL_LOKASI = "https://docs.google.com/spreadsheets/d/1EJOTMMfGpBMFPqR0LzbMbh7tZUcTCZld4x387OO9aJM/export?format=csv";
 
         let userLat = null, userLng = null;
         let routingControl = null;
         let userMarker = null;
+        let fcLocations = []; // Simpan data stasiun di memory
 
-        // RUMUS JARAK (Dari script hitam)
+        // RUMUS JARAK (Haversine)
         function getStraightDist(lat1, lon1, lat2, lon2) {
             const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180;
             const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
@@ -197,28 +202,39 @@
                         iconSize: [44, 44], iconAnchor: [22, 22]
                     });
                     
+                    if(userMarker) map.removeLayer(userMarker);
                     userMarker = L.marker([userLat, userLng], {icon: uIcon, zIndexOffset: 1000}).addTo(map);
-                    map.setView([userLat, userLng], 12); 
-                    document.getElementById('gpsStatus').innerHTML = '<div class="live-dot"></div> GPS ACTIVE';
-                    loadFCData();
+                    
+                    // AUTO ZOOM KE USER
+                    map.setView([userLat, userLng], 15); 
+                    
+                    document.getElementById('gpsStatus').innerHTML = '<div class="live-dot"></div> GPS AKTIF (TAP UTK RE-CENTER)';
+                    
+                    // LOAD DATA & AUTO SUGGEST
+                    loadFCData(true); 
+
                 }, (err) => { 
-                    document.getElementById('gpsStatus').innerHTML = '<div class="live-dot" style="background:var(--danger)"></div> GPS DENIED';
-                    loadFCData(); 
+                    document.getElementById('gpsStatus').innerHTML = '<div class="live-dot" style="background:var(--danger)"></div> GPS MATI';
+                    loadFCData(false); 
                 }, { timeout: 10000, enableHighAccuracy: true });
             } else { 
                 document.getElementById('gpsStatus').innerHTML = '<div class="live-dot" style="background:var(--danger)"></div> GPS UNAVAILABLE';
-                loadFCData(); 
+                loadFCData(false); 
             }
         }
         
+        window.recenterMap = () => { if(userLat) map.setView([userLat, userLng], 15); }
+
         initGPS();
 
-        // 100% COPY PASTE ENGINE PENARIK DATA DARI SCRIPT HITAM
-        async function loadFCData() {
+        // LOAD DATA & AUTO SUGGEST LOGIC
+        async function loadFCData(autoSuggest) {
             try {
                 const txtLoc = await fetch(URL_LOKASI).then(r=>r.text());
                 const rows = txtLoc.split('\n').slice(1);
                 
+                fcLocations = []; // Reset
+
                 rows.forEach((r) => {
                     const c = r.split(',');
                     
@@ -232,7 +248,7 @@
                     
                     if(c.length < 5 || isNaN(latVal) || isNaN(lngVal)) return;
 
-                    // GANTI MARKER BAWAAN JADI MARKER PUTIH PREMIUM
+                    // Buat Marker
                     const fcIcon = L.divIcon({ 
                         className: 'custom-pin', 
                         html: `<div class="marker-wrapper"><div class="pin-tooltip">${name}</div><div class="pin-body"><i class="fas fa-bolt"></i></div></div>`, 
@@ -241,26 +257,58 @@
 
                     const m = L.marker([latVal, lngVal], {icon: fcIcon}).addTo(map);
                     
+                    // Simpan data untuk Auto Suggest
+                    fcLocations.push({ name: name, lat: latVal, lng: lngVal, mapLink: mapLink, marker: m });
+
                     m.on('click', () => {
                         let distStraight = "--";
                         if(userLat && userLng) { distStraight = getStraightDist(userLat, userLng, latVal, lngVal); }
-                        showInfo(name, distStraight, latVal, lngVal, mapLink);
+                        showInfo(name, distStraight, latVal, lngVal, mapLink, false);
                     });
                 });
+
+                // AUTO SUGGEST: CARI YANG PALING DEKAT SETELAH DATA LOAD
+                if (autoSuggest && userLat && userLng && fcLocations.length > 0) {
+                    findAndShowNearest();
+                }
+
             } catch(e) { console.error("Data error: ", e); }
         }
 
-        // TAMPILKAN INFO CARD (Desain Putih, Logika Hitam)
-        function showInfo(name, distStraight, lat, lng, mapLink) {
+        function findAndShowNearest() {
+            let nearest = null;
+            let minKm = 99999;
+
+            fcLocations.forEach(fc => {
+                let dist = parseFloat(getStraightDist(userLat, userLng, fc.lat, fc.lng));
+                if (dist < minKm) {
+                    minKm = dist;
+                    nearest = fc;
+                }
+            });
+
+            if (nearest) {
+                // Buka Info Card Otomatis
+                showInfo(nearest.name, minKm, nearest.lat, nearest.lng, nearest.mapLink, true);
+                // Zoom Fit Bounds (User + Station)
+                const group = new L.featureGroup([userMarker, nearest.marker]);
+                map.fitBounds(group.getBounds(), {padding: [50, 200]}); // Padding bawah besar utk card
+            }
+        }
+
+        function showInfo(name, distStraight, lat, lng, mapLink, isAuto) {
             document.getElementById('fcName').innerText = name;
             
+            // Tag Rekomendasi
+            const tagEl = document.getElementById('fcTag');
+            if(isAuto) tagEl.style.display = 'block'; else tagEl.style.display = 'none';
+
             if(userLat && userLng) {
                 document.getElementById('fcDist').innerHTML = `<i class="fas fa-spinner fa-spin"></i> KALKULASI RUTE...`;
             } else {
-                document.getElementById('fcDist').innerHTML = `<i class="fas fa-car"></i> JARAK: -- KM (GPS MATI)`;
+                document.getElementById('fcDist').innerHTML = `<i class="fas fa-car"></i> JARAK: ${distStraight} KM (GPS MATI)`;
             }
             
-            // Logika Link Maps
             let finalLink = "";
             if (mapLink && mapLink.startsWith("http")) {
                 finalLink = mapLink;
@@ -278,16 +326,14 @@
             if (userLat && userLng) {
                 routingControl = L.Routing.control({
                     waypoints: [ L.latLng(userLat, userLng), L.latLng(lat, lng) ],
-                    lineOptions: { styles: [{color: '#2D63ED', opacity: 0.8, weight: 5}] }, // Garis rute warna biru
+                    lineOptions: { styles: [{color: '#2D63ED', opacity: 0.8, weight: 6}] }, 
                     createMarker: function() { return null; }, 
-                    addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: true, show: false
+                    addWaypoints: false, draggableWaypoints: false, fitSelectedRoutes: false, show: false
                 })
                 .on('routesfound', function(e) {
                     const distanceRouteKm = (e.routes[0].summary.totalDistance / 1000).toFixed(1);
-                    document.getElementById('fcDist').innerHTML = `<i class="fas fa-car"></i> JARAK TEMPUH: ${distanceRouteKm} KM`;
-                })
-                .on('routingerror', function(e) {
-                    document.getElementById('fcDist').innerHTML = `<i class="fas fa-car"></i> JARAK UDARA: ${distStraight} KM`;
+                    const timeMins = Math.round(e.routes[0].summary.totalTime / 60);
+                    document.getElementById('fcDist').innerHTML = `<i class="fas fa-road"></i> ${distanceRouteKm} KM &nbsp;•&nbsp; <i class="fas fa-clock"></i> ${timeMins} MNT`;
                 })
                 .addTo(map);
             }
@@ -299,9 +345,7 @@
                 map.removeControl(routingControl); 
                 routingControl = null;
             }
-            if (userLat && userLng) {
-                map.setView([userLat, userLng], 12); 
-            }
+            recenterMap();
         }
     </script>
 </body>

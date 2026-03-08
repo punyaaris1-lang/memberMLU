@@ -12,11 +12,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* === TEMA LIGHT GLASSMORPHISM & GLOW === */
+        /* === TEMA ULTRA LUXURY GLASS === */
         :root { 
             --royal-blue: #0A2259; 
             --electric-blue: #2D63ED; 
-            --bg-surface: #F0F4F8; /* Light gray-blue background */
+            --bg-surface: #F0F4F8; 
             --white: #FFFFFF; 
             --text-main: #0F172A; 
             --text-muted: #64748B; 
@@ -30,8 +30,15 @@
             --glow-gold: 0 10px 25px rgba(212, 175, 55, 0.25);
         }
         
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        /* AMBIENT LIGHT & BACKGROUND */
+        .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: floatLight 10s infinite alternate; }
+        .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #bfdbfe; }
+        .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: rgba(212, 175, 55, 0.15); animation-delay: 2s; }
+        .bg-watermark { position: fixed; top: 15%; right: -15%; width: 100%; height: 80%; background-image: url('logomlu.png'); background-repeat: no-repeat; background-size: contain; background-position: center; opacity: 0.04; transform: rotate(-15deg); z-index: -2; pointer-events: none; }
+        @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(20px, 40px);} }
 
         /* --- HEADER MEWAH GLOWING --- */
         .header-premium { 
@@ -87,7 +94,7 @@
         .sc-tot { font-family: 'Space Grotesk'; font-size: 32px; font-weight: 900; color: var(--electric-blue); line-height: 1; text-shadow: 0 0 10px rgba(45,99,237,0.2);}
 
         /* --- SLOT BAY GLASSMORPHISM --- */
-        .slot-container { padding: 40px 20px 10px; display: flex; flex-direction: column; gap: 15px; }
+        .slot-container { padding: 40px 20px 10px; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 10;}
         .slot-bay { 
             background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
             border-radius: 24px; border: 1px solid rgba(255,255,255,0.6); padding: 15px; 
@@ -119,7 +126,7 @@
         .btn-disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; box-shadow: none; }
 
         /* --- BOTTOM ACTIONS --- */
-        .action-hub { padding: 10px 20px; display: flex; flex-direction: column; gap: 12px; }
+        .action-hub { padding: 10px 20px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;}
         .btn-hub { width: 100%; padding: 18px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
         .btn-take-q { background: var(--success); color: white; box-shadow: var(--glow-green); display: none; }
         .btn-take-q:active { transform: scale(0.98); }
@@ -167,6 +174,10 @@
     </style>
 </head>
 <body>
+
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+    <div class="bg-watermark"></div>
 
     <header class="header-premium">
         <div class="head-flex">

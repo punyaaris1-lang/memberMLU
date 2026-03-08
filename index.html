@@ -3,91 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU Super App - Login</title>
+    <title>MLU Super App - Login Premium</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="logomlu2.png">
     <link rel="apple-touch-icon" href="logomlu2.png">
-    <meta name="theme-color" content="#0A2259">
+    <meta name="theme-color" content="#F8FAFC">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { 
-            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
-            --bg-surface: #F8FAFC; --white: #FFFFFF; 
-            --text-main: #0F172A; --text-muted: #64748B; 
-            --gold: #D4AF37; --danger: #EF4444;
+            --royal-blue: #0A2259; 
+            --electric-blue: #2D63ED; 
+            --bg-surface: #F1F5F9; 
+            --white: #FFFFFF; 
+            --text-main: #0F172A; 
+            --text-muted: #64748B; 
+            --gold: #D4AF37; 
+            --danger: #EF4444;
+            --success: #10B981;
         }
         
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-surface); font-family: 'Inter', sans-serif; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg-surface); font-family: 'Inter', sans-serif; overflow: hidden; position: relative;}
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* --- SPLASH SCREEN --- */
-        #splashScreen { position: fixed; inset: 0; background: linear-gradient(160deg, var(--royal-blue) 0%, #051336 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease-out; }
-        
-        /* EFEK TEKS MELENGKUNG GLOWING */
-        .splash-top-art {
-            margin-bottom: -15px; 
-            opacity: 0; 
-            animation: fadeUp 1s ease-out 0.1s forwards;
-            pointer-events: none;
-        }
-        .neon-curve-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 13.5px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            animation: rgbGlow 3s infinite linear;
-        }
-        
-        .splash-title { font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; color: white; margin: 0; text-align: center; line-height: 1; letter-spacing: 2px; text-shadow: 0 10px 25px rgba(0,0,0,0.8); opacity: 0; animation: fadeUp 1s ease-out 0.3s forwards; position: relative; z-index: 2;}
-        .splash-loader { margin-top: 40px; width: 60px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.6s forwards; box-shadow: 0 0 10px rgba(0,0,0,0.5);}
-        .splash-loader::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: var(--electric-blue); border-radius: 10px; animation: loadingBar 1.5s infinite ease-in-out; box-shadow: 0 0 15px var(--electric-blue);}
+        /* --- ORNAMEN BACKGROUND (BLOBS) --- */
+        .bg-blob { position: absolute; border-radius: 50%; filter: blur(70px); z-index: 0; opacity: 0.6; animation: floatBlob 8s infinite alternate;}
+        .blob-1 { top: -10%; left: -20%; width: 400px; height: 400px; background: #2D63ED; }
+        .blob-2 { bottom: -10%; right: -10%; width: 350px; height: 350px; background: #10B981; animation-delay: 2s;}
+        .blob-3 { top: 40%; left: 40%; width: 250px; height: 250px; background: #8B5CF6; opacity: 0.3; }
 
-        /* --- LOGIN SCREEN --- */
-        #loginScreen { display: none; flex-direction: column; min-height: 100%; background: var(--bg-surface); background-image: radial-gradient(circle at 50% -20%, rgba(45, 99, 237, 0.1) 0%, transparent 50%); opacity: 0; transition: opacity 0.5s ease-in; padding: 40px 25px; align-items: center; justify-content: center; }
-        .login-card { background: white; width: 100%; max-width: 400px; border-radius: 35px; padding: 40px 30px; box-shadow: 0 25px 50px rgba(10,34,89,0.08); border: 1px solid rgba(255,255,255,0.8); text-align: center; }
-        .login-logo { width: 90px; height: 90px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-        .login-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; color: var(--royal-blue); margin: 0 0 5px 0; }
-        .login-subtitle { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 25px; line-height: 1.4; }
+        @keyframes floatBlob { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(30px) scale(1.1); } }
+
+        /* --- SPLASH SCREEN (GLASSMORPHISM) --- */
+        #splashScreen { 
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(241, 245, 249, 0.75); 
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: opacity 0.8s ease-out; 
+        }
+        
+        .splash-top-art { margin-bottom: -15px; opacity: 0; animation: fadeUp 1s ease-out 0.1s forwards; pointer-events: none; }
+        .neon-curve-text { font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; animation: rgbGlow 3s infinite linear; }
+        .splash-title { font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; color: var(--royal-blue); margin: 0; text-align: center; line-height: 1; letter-spacing: 2px; text-shadow: 0 10px 25px rgba(10,34,89,0.15); opacity: 0; animation: fadeUp 1s ease-out 0.3s forwards; position: relative; z-index: 2;}
+        .splash-loader { margin-top: 40px; width: 60px; height: 4px; background: rgba(10,34,89,0.1); border-radius: 10px; overflow: hidden; position: relative; opacity: 0; animation: fadeUp 1s ease-out 0.6s forwards; box-shadow: 0 0 10px rgba(45,99,237,0.1);}
+        .splash-loader::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 50%; background: var(--electric-blue); border-radius: 10px; animation: loadingBar 1.5s infinite ease-in-out; box-shadow: 0 0 15px rgba(45,99,237,0.5);}
+
+        /* --- LOGIN SCREEN (GLASSMORPHISM) --- */
+        #loginScreen { 
+            display: none; flex-direction: column; height: 100%; 
+            opacity: 0; transition: opacity 0.5s ease-in; 
+            padding: 20px; align-items: center; justify-content: center; 
+            position: relative; z-index: 10;
+        }
+
+        .login-card-glass { 
+            background: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-top: 1px solid rgba(255, 255, 255, 0.9);
+            border-left: 1px solid rgba(255, 255, 255, 0.8);
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            width: 100%; max-width: 400px; border-radius: 35px; 
+            padding: 40px 30px; box-shadow: 0 25px 50px rgba(10,34,89,0.1); 
+            text-align: center; 
+        }
+
+        .login-logo-wrap {
+            width: 95px; height: 95px; margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 25px; padding: 10px;
+            box-shadow: 0 15px 30px rgba(45, 99, 237, 0.15), inset 0 0 0 2px rgba(255,255,255,1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-logo { width: 100%; height: 100%; object-fit: contain; }
+        
+        .login-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; color: var(--royal-blue); margin: 0 0 8px 0; letter-spacing: -0.5px;}
+        .login-subtitle { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; padding: 0 10px;}
 
         .form-group { margin-bottom: 20px; text-align: left; position: relative;}
-        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px;}
-        .input-icon { position: absolute; left: 18px; top: 38px; color: var(--electric-blue); font-size: 16px; }
-        .form-input { width: 100%; padding: 16px 16px 16px 45px; border-radius: 16px; border: 2px solid #E2E8F0; background: #F8FAFC; font-family: 'Space Grotesk'; font-weight: 700; font-size: 16px; color: var(--text-main); transition: 0.3s; text-transform: uppercase;}
-        .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 4px rgba(45,99,237,0.1); }
+        .form-group label { font-size: 10px; font-weight: 800; color: var(--royal-blue); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px;}
+        .input-icon { position: absolute; left: 20px; top: 35px; color: var(--electric-blue); font-size: 16px; }
+        
+        .form-input-glass { 
+            width: 100%; padding: 16px 16px 16px 50px; border-radius: 20px; 
+            background: rgba(255, 255, 255, 0.5); 
+            border: 1.5px solid rgba(255, 255, 255, 0.8); 
+            font-family: 'Space Grotesk'; font-weight: 700; font-size: 16px; 
+            color: var(--text-main); transition: 0.3s; text-transform: uppercase;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .form-input-glass:focus { background: rgba(255, 255, 255, 0.95); border-color: var(--electric-blue); box-shadow: 0 0 0 4px rgba(45,99,237,0.15); }
+        .form-input-glass::placeholder { color: #94A3B8; text-transform: none; font-weight: 500;}
 
-        .btn-login { width: 100%; padding: 18px; border: none; border-radius: 16px; background: linear-gradient(135deg, var(--royal-blue) 0%, #15398F 100%); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 15px 30px rgba(10,34,89,0.25); transition: 0.2s; letter-spacing: 1px;}
-        .btn-login:active { transform: scale(0.96); }
+        .btn-login-premium { 
+            width: 100%; padding: 18px; border: none; border-radius: 20px; 
+            background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); 
+            color: white; font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; 
+            margin-top: 10px; cursor: pointer; box-shadow: 0 15px 30px rgba(45, 99, 237, 0.3); 
+            transition: 0.2s; letter-spacing: 1px; position: relative; overflow: hidden;
+        }
+        .btn-login-premium:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(45, 99, 237, 0.4); }
+        .btn-login-premium::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transform: skewX(-20deg); animation: shine 3s infinite; }
 
-        .error-msg { color: var(--danger); font-size: 11px; font-weight: 700; margin-top: 15px; background: #FEF2F2; padding: 10px; border-radius: 10px; display: none; }
+        .error-msg { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); font-size: 11px; font-weight: 700; margin-top: 15px; margin-bottom: 5px; padding: 12px; border-radius: 12px; display: none; }
 
-        /* --- CUSTOM INSTALL POPUP --- */
-        .install-modal { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 25px 20px; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -15px 40px rgba(10,34,89,0.15); z-index: 10000; text-align: center; transform: translateY(100%); animation: slideUpModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .install-icon { width: 60px; height: 60px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .copyright { margin-top: 35px; font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; opacity: 0.8; }
+
+        /* --- CUSTOM INSTALL POPUP (GLASSMORPHISM) --- */
+        .install-modal { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-top: 1px solid rgba(255,255,255,0.9); padding: 30px 25px; border-top-left-radius: 35px; border-top-right-radius: 35px; box-shadow: 0 -15px 40px rgba(10,34,89,0.1); z-index: 10000; text-align: center; transform: translateY(100%); animation: slideUpModal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .install-icon { width: 65px; height: 65px; border-radius: 18px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .install-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin: 0 0 5px 0; }
-        .install-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; line-height: 1.5; }
-        .btn-install { background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%); color: white; border: none; padding: 16px; width: 100%; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(45,99,237,0.3); margin-bottom: 10px;}
+        .install-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 25px; font-weight: 600; line-height: 1.5; }
+        .btn-install { background: linear-gradient(135deg, var(--electric-blue) 0%, #1D4ED8 100%); color: white; border: none; padding: 18px; width: 100%; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 20px rgba(45,99,237,0.25); margin-bottom: 10px;}
         .btn-close-install { background: transparent; color: #94A3B8; border: none; padding: 10px; width: 100%; font-size: 12px; font-weight: 700; cursor: pointer; }
 
         /* ANIMATIONS */
         @keyframes fadeUp { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         @keyframes loadingBar { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
         @keyframes slideUpModal { to { transform: translateY(0); } }
-        
-        /* EFEK WARNA-WARNI NEON PADA TEKS MELENGKUNG */
-        @keyframes rgbGlow {
-            0% { fill: #00F0FF; filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)); }
-            33% { fill: #00FF88; filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.8)); }
-            66% { fill: #FFD700; filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)); }
-            100% { fill: #00F0FF; filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)); }
-        }
+        @keyframes shine { 0% {left: -100%;} 20% {left: 200%;} 100% {left: 200%;} }
+        @keyframes rgbGlow { 0% { fill: #2D63ED; filter: drop-shadow(0 0 8px rgba(45, 99, 237, 0.5)); } 33% { fill: #10B981; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5)); } 66% { fill: #8B5CF6; filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5)); } 100% { fill: #2D63ED; filter: drop-shadow(0 0 8px rgba(45, 99, 237, 0.5)); } }
     </style>
 </head>
 <body>
+
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
 
     <div id="splashScreen">
         <div class="splash-top-art">
@@ -100,42 +146,48 @@
                 </text>
             </svg>
         </div>
-
-        <h1 class="splash-title">MLU<br>SUPER APPS</h1>
+        <h1 class="splash-title">MLU<br>SUPER APP</h1>
         <div class="splash-loader"></div>
     </div>
 
     <div id="loginScreen">
-        <div class="login-card">
-            <img src="logomlu2.png" class="login-logo" alt="Logo">
+        <div class="login-card-glass">
+            
+            <div class="login-logo-wrap">
+                <img src="logomlu2.png" class="login-logo" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/854/854878.png'">
+            </div>
+            
             <h2 class="login-title">LOGIN MEMBER</h2>
             <div class="login-subtitle">Jika ini login pertama Anda, PIN yang diketik akan otomatis menjadi PIN Permanen.</div>
 
             <div class="form-group">
                 <label>Plat Nomor Kendaraan</label>
                 <i class="fas fa-motorcycle input-icon"></i>
-                <input type="text" id="inputPlat" class="form-input" placeholder="Sesuai Data Pengurus" autocomplete="off">
+                <input type="text" id="inputPlat" class="form-input-glass" placeholder="B 1234 XYZ" autocomplete="off">
             </div>
 
             <div class="form-group">
-                <label>Buat / Masukkan PIN (4 Angka)</label>
+                <label>Secure PIN (4 Angka)</label>
                 <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="inputPin" class="form-input" placeholder="****" pattern="[0-9]*" inputmode="numeric" maxlength="4">
+                <input type="password" id="inputPin" class="form-input-glass" placeholder="****" pattern="[0-9]*" inputmode="numeric" maxlength="4">
             </div>
 
             <div id="errorBox" class="error-msg"></div>
-            <button class="btn-login" id="btnLogin" onclick="prosesLogin()">MASUK APLIKASI</button>
+            
+            <button class="btn-login-premium" id="btnLogin" onclick="prosesLogin()">
+                MASUK APLIKASI
+            </button>
         </div>
         
-        <div style="margin-top: 30px; font-size: 11px; font-weight: 600; color: var(--text-muted);">
+        <div class="copyright">
             &copy; 2026 Komunitas Maka Lintas Utara
         </div>
     </div>
 
     <div class="install-modal" id="installModal">
-        <img src="logomlu2.png" class="install-icon" alt="App Icon">
+        <img src="logomlu2.png" class="install-icon" alt="App Icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/854/854878.png'">
         <h3 class="install-title">Install MLU Super App</h3>
-        <p class="install-desc">Tambahkan aplikasi ini ke layar utama HP Anda untuk akses lebih cepat tanpa buka browser.</p>
+        <p class="install-desc">Tambahkan aplikasi ini ke layar utama HP Anda untuk akses lebih cepat dan pengalaman terbaik.</p>
         <button class="btn-install" onclick="triggerInstall()"><i class="fas fa-download"></i> INSTALL SEKARANG</button>
         <button class="btn-close-install" onclick="closeInstall()">Nanti saja</button>
     </div>
@@ -144,7 +196,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Firebase MLU
+        // Konfigurasi Firebase Asli MLU
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
@@ -182,8 +234,10 @@
                 setTimeout(() => {
                     splash.style.display = 'none';
                     if (userData) {
+                        // Jika sudah login, langsung ke dashboard
                         window.location.href = 'dashboard.html';
                     } else {
+                        // Jika belum, tampilkan form login
                         const loginBox = document.getElementById('loginScreen');
                         loginBox.style.display = 'flex';
                         setTimeout(() => { 
@@ -194,10 +248,10 @@
                         }, 50);
                     }
                 }, 800); 
-            }, 4000); 
+            }, 3500); 
         });
 
-        // Paksa huruf besar saat mengetik (tanpa mengubah spasi)
+        // Paksa huruf besar saat mengetik
         document.getElementById('inputPlat').addEventListener('input', function(e) {
             this.value = this.value.toUpperCase();
         });
@@ -209,87 +263,78 @@
             const errBox = document.getElementById('errorBox');
             const btn = document.getElementById('btnLogin');
 
-            if (!rawPlat || !pin) { errBox.innerText = "⚠️ Plat Nomor dan PIN wajib diisi!"; errBox.style.display = 'block'; return; }
-            if (pin.length !== 4) { errBox.innerText = "⚠️ PIN harus persis 4 angka!"; errBox.style.display = 'block'; return; }
+            if (!rawPlat || !pin) { errBox.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Plat Nomor dan PIN wajib diisi!"; errBox.style.display = 'block'; return; }
+            if (pin.length !== 4) { errBox.innerHTML = "<i class='fas fa-exclamation-triangle'></i> PIN harus persis 4 angka!"; errBox.style.display = 'block'; return; }
 
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMERIKSA...';
             btn.style.opacity = '0.7'; errBox.style.display = 'none';
 
             try {
-                // MODE BRUTAL: Tarik semua isi database anggota, kita geledah manual!
+                // Tarik semua isi database
                 const querySnapshot = await getDocs(collection(db, "mlu_members"));
                 
                 let userData = null; 
                 let docId = null;
 
-                // Geledah satu-satu ke setiap anggota
+                // Geledah manual satu-satu
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    
-                    // Deteksi nama kolom plat apapun (plat / Plat / PLAT / plat_nomor)
                     const platDiDatabase = data.plat || data.Plat || data.PLAT || data.plat_nomor || "";
                     
-                    // Bersihkan spasi di inputan dan di database, lalu adu!
-                    // Cara ini menghilangkan semua spasi jadi 'B4236SWJ' == 'B4236SWJ'
+                    // Bersihkan spasi
                     const platBersihDB = String(platDiDatabase).replace(/\s+/g, '').toUpperCase();
                     const platBersihInput = rawPlat.replace(/\s+/g, '');
 
-                    // Kalau cocok persis, langsung tangkap datanya!
                     if (platBersihDB === platBersihInput && platBersihDB !== "") {
                         userData = data;
                         docId = docSnap.id;
                     }
                 });
 
-                // Kalau setelah digeledah semua tetap tidak ada
                 if (!userData) {
-                    errBox.innerHTML = `⚠️ Plat <b>${rawPlat}</b> tidak ditemukan. Hubungi Pengurus!`;
+                    errBox.innerHTML = `<i class='fas fa-times-circle'></i> Plat <b>${rawPlat}</b> tidak terdaftar!`;
                     errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
                 }
 
-                // LANJUT CEK PIN
+                // CEK PIN
                 if (!userData.pin || userData.pin === "") {
-                    // JIKA PIN MASIH KOSONG, SIMPAN SEKARANG
                     try {
                         await updateDoc(doc(db, "mlu_members", docId), { pin: pin });
                         userData.pin = pin; 
                     } catch (e) {
-                        errBox.innerHTML = `⚠️ Gagal menyimpan PIN baru. Coba lagi.`;
+                        errBox.innerHTML = `<i class='fas fa-times-circle'></i> Gagal menyimpan PIN baru.`;
                         errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
                     }
                 } else {
-                    // JIKA PIN SUDAH ADA, COCOKKAN
                     if (pin !== String(userData.pin)) {
-                        errBox.innerHTML = `⚠️ PIN Salah!`;
+                        errBox.innerHTML = `<i class='fas fa-times-circle'></i> PIN Salah!`;
                         errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1'; return;
                     }
                 }
 
-                // ==========================================
-                // 🚀 KODE SAKTI VVIP KHUSUS PAK RIZKY 🚀
-                // ==========================================
+                // KODE VVIP BYPASS KHUSUS
                 const platCek = rawPlat.replace(/\s+/g, '');
                 if (platCek === "B4248SWF") {
                     userData.isSuperAdmin = true;
                     userData.role = "PENGURUS";
                 }
-                // ==========================================
 
                 // SUKSES
                 userData.id = docId; localStorage.setItem('maka_user', JSON.stringify(userData));
                 
                 btn.innerHTML = '<i class="fas fa-check-circle"></i> BERHASIL!';
                 btn.style.background = 'var(--success)';
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+                btn.style.opacity = '1';
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 800);
 
             } catch (error) {
-                errBox.innerText = "⚠️ Terjadi kesalahan koneksi. Coba lagi.";
+                errBox.innerHTML = "<i class='fas fa-wifi'></i> Gangguan koneksi. Coba lagi.";
                 errBox.style.display = 'block'; btn.innerHTML = 'MASUK APLIKASI'; btn.style.opacity = '1';
                 console.error(error);
             }
         };
 
-        // Memudahkan login pakai enter di HP
+        // Memudahkan login pakai enter
         document.getElementById('inputPin').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { prosesLogin(); }
         });
