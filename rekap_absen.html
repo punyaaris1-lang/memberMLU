@@ -9,54 +9,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { 
-            --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; --text-main: #0F172A; --text-muted: #64748B;
-        }
+        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; --text-main: #0F172A; }
         body { margin:0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); }
 
-        .header { 
-            padding: 30px 20px 20px; background: white; border-bottom: 1px solid #E2E8F0;
-            text-align: center; position: sticky; top: 0; z-index: 10; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        }
+        .header { padding: 30px 20px 20px; background: white; border-bottom: 1px solid #E2E8F0; text-align: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin: 0; text-transform: uppercase; }
-        .subtitle { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { font-size: 11px; color: #64748B; font-weight: 600; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .stat-card {
-            margin: 20px; padding: 25px 20px; border-radius: 20px;
-            background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%);
-            color: white; text-align: center; box-shadow: 0 10px 25px rgba(10, 34, 89, 0.15);
-        }
+        .stat-card { margin: 20px; padding: 25px 20px; border-radius: 20px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: white; text-align: center; box-shadow: 0 10px 25px rgba(10, 34, 89, 0.15); }
         .stat-num { font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; line-height: 1; margin-bottom: 5px;}
         .stat-label { font-size: 11px; font-weight: 700; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase; }
 
         .list-container { padding: 0 20px 100px; }
-        .list-label { font-size: 12px; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; display: block; }
-        
         .attendee-card {
-            background: white; border-radius: 16px; padding: 15px; margin-bottom: 10px;
+            background: white; border-radius: 16px; padding: 12px; margin-bottom: 10px;
             display: flex; align-items: center; justify-content: space-between;
             border: 1px solid #E2E8F0; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .att-left { display: flex; align-items: center; gap: 12px; }
-        .att-icon { 
-            width: 42px; height: 42px; background: #E0F2FE; border-radius: 12px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--electric-blue); 
-        }
-        .att-info h4 { margin: 0; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; color: var(--royal-blue); }
-        .att-info p { margin: 3px 0 0; font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;}
-        .att-time { font-size: 12px; font-weight: 700; color: var(--text-main); background: #F1F5F9; padding: 6px 10px; border-radius: 8px;}
-
-        .empty-state { text-align: center; color: var(--text-muted); margin-top: 50px; font-size: 13px; font-weight: 600; padding: 20px; }
         
-        .btn-back { 
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            background: white; padding: 12px 30px; border-radius: 50px; 
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-decoration: none; 
-            color: var(--royal-blue); font-weight: 800; font-size: 12px; 
-            border: 1px solid #E2E8F0; z-index: 99; display: flex; align-items: center; gap: 8px;
+        /* NOMOR URUT */
+        .att-num { 
+            font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; 
+            color: #94A3B8; width: 25px; text-align: center; 
         }
+
+        /* FOTO PROFIL */
+        .att-img { 
+            width: 45px; height: 45px; border-radius: 12px; object-fit: cover; 
+            background: #E0F2FE; border: 1px solid #E2E8F0;
+        }
+        
+        .att-info h4 { margin: 0; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; color: var(--royal-blue); }
+        .att-info p { margin: 3px 0 0; font-size: 10px; color: #64748B; font-weight: 600; text-transform: uppercase;}
+        .att-time { font-size: 11px; font-weight: 700; color: var(--text-main); background: #F1F5F9; padding: 6px 10px; border-radius: 8px;}
+
+        .empty-state { text-align: center; color: #94A3B8; margin-top: 50px; font-size: 13px; font-weight: 600; }
+        .btn-back { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: white; padding: 12px 30px; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-decoration: none; color: var(--royal-blue); font-weight: 800; font-size: 12px; border: 1px solid #E2E8F0; z-index: 99; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -71,79 +60,106 @@
         <div class="stat-label">TOTAL HADIR</div>
     </div>
 
-    <div class="list-container">
-        <span class="list-label">DAFTAR PESERTA</span>
-        <div id="listArea">
-            <div class="empty-state">
-                <i class="fas fa-spinner fa-spin"></i> Menghubungkan ke Server...
-            </div>
-        </div>
+    <div class="list-container" id="listArea">
+        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat Foto Member...</div>
     </div>
 
     <a href="dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i> KEMBALI</a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, query, where, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIG FIREBASE
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // Format tanggal
         function getTodayDate() { const d = new Date(); return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; }
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}).toUpperCase();
+
+        // 1. AMBIL DATABASE MEMBER DULU (Untuk mencocokkan FOTO)
+        // Kita simpan foto member dalam "Kamus" berdasarkan Plat Nomor
+        let photoMap = {}; 
         
-        const hariIni = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'}).toUpperCase();
-        document.getElementById('currentDate').innerText = hariIni;
+        async function loadData() {
+            try {
+                // Ambil semua member sekali saja
+                const memberSnap = await getDocs(collection(db, "mlu_members"));
+                memberSnap.forEach(doc => {
+                    const m = doc.data();
+                    if(m.plat && m.foto) {
+                        photoMap[m.plat] = m.foto; // Simpan: Plat B 1234 -> URL Foto
+                    }
+                });
 
-        // --- SOLUSI TANPA LAPTOP ---
-        // Kita HAPUS 'orderBy' di sini supaya tidak butuh Index
-        const q = query(
-            collection(db, "absensi_kopdar"), 
-            where("tanggal", "==", getTodayDate())
-        );
+                // 2. BARU AMBIL DATA ABSENSI REALTIME
+                const q = query(
+                    collection(db, "absensi_kopdar"), 
+                    where("tanggal", "==", getTodayDate())
+                );
 
-        onSnapshot(q, (snapshot) => {
-            const listArea = document.getElementById('listArea');
-            const totalEl = document.getElementById('totalCount');
-            
-            // Simpan data ke Array dulu biar bisa diurutkan di HP (Client Side)
-            let absensiList = [];
-            snapshot.forEach((doc) => {
-                absensiList.push(doc.data());
-            });
+                onSnapshot(q, (snapshot) => {
+                    const listArea = document.getElementById('listArea');
+                    const totalEl = document.getElementById('totalCount');
+                    
+                    let absensiList = [];
+                    snapshot.forEach((doc) => absensiList.push(doc.data()));
+                    
+                    // Urutkan (Terbaru di atas)
+                    absensiList.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    // Update Angka
+                    totalEl.innerText = absensiList.length; 
+                    listArea.innerHTML = ""; 
 
-            // Urutkan manual: Yang timestamp-nya paling besar (terbaru) di atas
-            absensiList.sort((a, b) => b.timestamp - a.timestamp);
+                    if (absensiList.length === 0) {
+                        listArea.innerHTML = '<div class="empty-state">Belum ada data masuk.</div>';
+                        return;
+                    }
 
-            totalEl.innerText = absensiList.length; 
-            listArea.innerHTML = ""; 
+                    // TAMPILKAN LIST DENGAN NOMOR & FOTO
+                    // Kita pakai loop terbalik untuk penomoran? Tidak, pakai index saja.
+                    // Tapi karena listnya terbaru di atas (descending), penomoran bisa jadi 1 adalah yang terbaru.
+                    // Atau mau 1 adalah yang datang duluan? Biasanya daftar hadir 1 di atas.
+                    // Oke, kita balik dulu sort-nya biar 1 itu yang datang pertama.
+                    
+                    // REVISI: Urutkan dari yang TERLAMA (Datang Duluan) biar nomor 1 tetap nomor 1
+                    absensiList.sort((a, b) => a.timestamp - b.timestamp);
 
-            if (absensiList.length === 0) {
-                listArea.innerHTML = '<div class="empty-state">Belum ada data masuk.<br><span style="font-size:10px; opacity:0.7">Data akan muncul otomatis setelah ada yang absen.</span></div>';
-                return;
+                    absensiList.forEach((d, index) => {
+                        // Cek Foto di Kamus photoMap
+                        // Kalau tidak ada foto, pakai API Avatar inisial
+                        let fotoUrl = photoMap[d.plat] || `https://ui-avatars.com/api/?background=E0F2FE&color=2D63ED&name=${d.nama}`;
+                        
+                        // Jika data absen itu sendiri sudah punya foto (untuk update ke depan), pakai itu prioritas
+                        if(d.foto) fotoUrl = d.foto;
+
+                        const html = `
+                        <div class="attendee-card">
+                            <div class="att-left">
+                                <div class="att-num">#${index + 1}</div>
+                                <img src="${fotoUrl}" class="att-img" onerror="this.src='https://ui-avatars.com/api/?background=E0F2FE&color=2D63ED&name=M'">
+                                <div class="att-info">
+                                    <h4>${d.nama}</h4>
+                                    <p>${d.plat} • <span style="color:var(--electric-blue);">${d.role}</span></p>
+                                </div>
+                            </div>
+                            <div class="att-time">${d.waktu}</div>
+                        </div>`;
+                        
+                        // Tumpuk ke bawah (Append) karena urutan 1 di atas
+                        listArea.innerHTML += html;
+                    });
+                    
+                    // Scroll ke bawah otomatis biar kelihatan yang baru? Tidak usah, biar user scroll sendiri.
+                });
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('listArea').innerHTML = `<div class="empty-state" style="color:red">Gagal memuat: ${e.message}</div>`;
             }
+        }
 
-            // Tampilkan Data yang sudah diurutkan
-            absensiList.forEach((d) => {
-                const inisial = d.nama ? d.nama.charAt(0).toUpperCase() : "?";
-                const html = `
-                <div class="attendee-card">
-                    <div class="att-left">
-                        <div class="att-icon">${inisial}</div>
-                        <div class="att-info">
-                            <h4>${d.nama}</h4>
-                            <p>${d.plat} • <span style="color:var(--electric-blue);">${d.role}</span></p>
-                        </div>
-                    </div>
-                    <div class="att-time">${d.waktu}</div>
-                </div>`;
-                listArea.innerHTML += html;
-            });
-        }, (error) => {
-            console.error("Error:", error);
-            document.getElementById('listArea').innerHTML = `<div class="empty-state" style="color:red;">Error: ${error.message}</div>`;
-        });
+        loadData(); // Jalankan fungsi
     </script>
 </body>
 </html>
