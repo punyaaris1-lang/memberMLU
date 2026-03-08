@@ -2,178 +2,222 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLU Full Typo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ucapan Selamat - Humas MLU</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Teko:wght@400;700&display=swap');
-
         body {
-            background-color: #000;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
+            background: #0f172a;
+            font-family: 'Outfit', sans-serif;
             display: flex;
+            align-items: center;
             justify-content: center;
             min-height: 100vh;
-            font-family: 'Teko', sans-serif;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
-        .poster {
-            position: relative;
+        /* --- POSTER CONTAINER --- */
+        .poster-frame {
             width: 100%;
-            max-width: 420px;
-            min-height: 100vh;
-            /* Background Tekstur Garis Halus */
-            background: 
-                linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-                repeating-linear-gradient(0deg, transparent, transparent 2px, #111 2px, #111 4px),
-                #000;
+            max-width: 450px;
+            height: 100vh; /* Full layar HP */
+            max-height: 800px;
+            background: linear-gradient(160deg, #0A2259 0%, #020617 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Isian disebar rata atas-bawah */
-            box-sizing: border-box;
-            border: 2px solid #222;
-        }
-
-        /* 1. BAGIAN ATAS: LOGO */
-        .header-section {
-            padding-top: 30px;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: white;
+            border: 4px solid #D4AF37;
         }
 
-        .logo {
-            width: 130px;
-            filter: drop-shadow(0 0 20px rgba(197, 160, 89, 0.4));
-            z-index: 10;
+        /* --- BACKGROUND EFFECTS --- */
+        .bg-pattern {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
         }
-
-        .status-pill {
-            margin-top: 15px;
-            background: #111;
-            color: #888;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            border: 1px solid #333;
-            text-transform: uppercase;
+        .glow-spot {
+            position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(45,99,237,0.4) 0%, transparent 70%);
+            filter: blur(50px);
         }
-
-        /* 2. BAGIAN TENGAH: FULL TEXT (PENGISI KEKOSONGAN) */
-        .middle-fill {
-            flex-grow: 1; /* Memaksa bagian ini memenuhi ruang kosong */
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Teks tepat di tengah vertikal */
-            align-items: center;
-            position: relative;
+        .gold-line {
+            width: 80%; height: 2px; background: linear-gradient(90deg, transparent, #D4AF37, transparent);
             margin: 20px 0;
-            line-height: 0.8; /* Rapatkan baris */
         }
 
-        /* KOPDAR: PUTIH RAKSASA */
-        .huge-text {
-            font-family: 'Anton', sans-serif;
-            font-size: 28vw; /* Ukuran dinamis mengikuti lebar layar */
-            max-size: 150px; /* Batas maksimal */
-            color: #fff;
-            text-transform: uppercase;
-            margin: 0;
-            letter-spacing: -5px;
-            text-shadow: 0 10px 30px rgba(0,0,0,1);
-            position: relative;
-            z-index: 1;
+        /* --- CONTENT --- */
+        .header-text {
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            letter-spacing: 5px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(212,175,55,0.5);
         }
 
-        /* KELUARGA MLU: EMAS (NUMPUK DIKIT) */
-        .gold-bar-text {
-            font-family: 'Anton', sans-serif;
-            font-size: 3rem;
-            color: transparent;
-            background: linear-gradient(to bottom, #ffd700, #c5a059, #b8860b);
+        .main-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, #FFFFFF 20%, #93C5FD 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin: 0;
+        }
+
+        /* --- PHOTO FRAME (LUXURY) --- */
+        .photo-container {
+            position: relative;
+            margin: 40px 0;
+            width: 220px; height: 220px;
+        }
+        
+        /* Cincin Emas Berputar */
+        .ring-spin {
+            position: absolute; inset: -15px;
+            border-radius: 50%;
+            border: 2px dashed rgba(212, 175, 55, 0.4);
+            animation: spin 10s linear infinite;
+        }
+        .ring-static {
+            position: absolute; inset: -5px;
+            border-radius: 50%;
+            border: 4px solid #D4AF37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .photo-circle {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid white;
+            position: relative;
+            z-index: 10;
+            background: #ccc;
+        }
+        
+        .photo-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- NAME & ROLE --- */
+        .name-box {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .name-text {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
             text-transform: uppercase;
-            margin-top: -20px; /* Tarik ke atas biar nempel KOPDAR */
-            z-index: 5;
-            filter: drop-shadow(0 5px 0 #000);
-            white-space: nowrap;
+            letter-spacing: 2px;
+        }
+        
+        .role-badge {
+            background: linear-gradient(90deg, #D4AF37, #F59E0B);
+            color: #000;
+            font-weight: 900;
+            font-size: 14px;
+            padding: 8px 25px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            transform: translateY(-50%);
+            display: inline-block;
+            position: relative;
+            z-index: 20;
         }
 
-        /* SLOGAN */
-        .slogan-block {
-            margin-top: 30px;
-            text-align: center;
-        }
-        .slogan-line { font-size: 1.2rem; color: #fff; letter-spacing: 2px; }
-        .slogan-gold { font-size: 1.2rem; color: #c5a059; font-weight: 700; letter-spacing: 2px; }
-
-        /* 3. BAGIAN BAWAH: INFO */
-        .footer-section {
-            background: #0a0a0a;
-            padding: 25px 20px;
-            border-top: 4px solid #c5a059;
+        .message {
+            width: 80%;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-top: 15px;
+            font-weight: 300;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 20px;
+        .footer {
+            position: absolute; bottom: 30px;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
         }
 
-        .label { font-size: 0.8rem; color: #666; letter-spacing: 1px; display: block; margin-bottom: 3px;}
-        .val { font-size: 1.5rem; color: #fff; font-weight: 700; font-family: 'Anton', sans-serif; }
-
-        .loc-box { text-align: left; }
-        .loc-title { font-size: 2rem; color: #c5a059; font-family: 'Anton', sans-serif; line-height: 1; text-transform: uppercase;}
-        .loc-sub { font-size: 1rem; color: #aaa; margin-top: 5px; }
-
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        /* Confetti Effect */
+        .confetti {
+            position: absolute; width: 8px; height: 8px; background: #D4AF37;
+            animation: fall linear infinite; opacity: 0;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(800px) rotate(720deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="poster">
+    <div class="poster-frame">
+        <div class="bg-pattern"></div>
+        <div class="glow-spot"></div>
+
+        <div class="confetti" style="left:10%; animation-duration:3s; animation-delay:0s;"></div>
+        <div class="confetti" style="left:30%; animation-duration:4s; animation-delay:1s; background:#fff;"></div>
+        <div class="confetti" style="left:70%; animation-duration:2.5s; animation-delay:2s;"></div>
+        <div class="confetti" style="left:90%; animation-duration:3.5s; animation-delay:0.5s; background:#2D63ED;"></div>
+
+        <div class="header-text">KELUARGA BESAR MLU</div>
         
-        <div class="header-section">
-            <img src="logomlu.png" alt="MLU" class="logo">
-            <div class="status-pill">OFFICIAL INVITATION</div>
-        </div>
+        <h1 class="main-title">SELAMAT<br>& SUKSES</h1>
+        
+        <div class="gold-line"></div>
 
-        <div class="middle-fill">
-            <div class="huge-text">KOPDAR</div>
-            <div class="gold-bar-text">KELUARGA MLU</div>
-            
-            <div class="slogan-block">
-                <div class="slogan-line">BEDA RANGKA BEDA WARNA</div>
-                <div class="slogan-gold">SATU KELUARGA</div>
+        <div class="photo-container">
+            <div class="ring-spin"></div>
+            <div class="ring-static"></div>
+            <div class="photo-circle">
+                <img src="ipung.jpg" class="photo-img" onerror="this.src='https://ui-avatars.com/api/?name=Purnomo&background=0A2259&color=fff&size=256'">
             </div>
         </div>
 
-        <div class="footer-section">
-            <div class="info-grid">
-                <div>
-                    <span class="label">DATE</span>
-                    <span class="val">08.03.26</span>
-                </div>
-                <div style="text-align: right;">
-                    <span class="label">TIME</span>
-                    <span class="val">17:00 WIB</span>
-                </div>
-            </div>
+        <div class="role-badge">HUMAS MLU</div>
 
-            <div class="loc-box">
-                <span class="label">TITIK KUMPUL</span>
-                <div class="loc-title">JAKARTA INTERNATIONAL<br>STADIUM</div>
-                <div class="loc-sub">SUNTER - JAKARTA UTARA</div>
-            </div>
+        <div style="height: 15px;"></div>
+
+        <div class="name-box">
+            <div class="name-text">PURNOMO</div>
         </div>
 
+        <p class="message">
+            "Semoga amanah dalam mengemban tugas baru, semakin solid, dan membawa komunitas MLU semakin jaya & kompak selalu."
+        </p>
+
+        <div class="footer">#BEDARANGKABEDAWARNASATUKELUARGA</div>
     </div>
 
 </body>
