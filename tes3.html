@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - Saber Gold (Terang)</title>
+    <title>MLU - Clean Record</title>
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;700&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -17,17 +17,26 @@
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* TOMBOL MULAI */
-        #btnStart {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 9999;
+        /* TOMBOL TAHAP 1: SIAPKAN LAYAR */
+        #btnSetup {
+            position: fixed; z-index: 9999;
+            background: #fff; color: #000; 
+            border: 2px solid #D4AF37; padding: 15px 30px;
+            font-size: 16px; font-weight: 800; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px #D4AF37;
+        }
+
+        /* TOMBOL TAHAP 2: MULAI AKSI (MUNCUL NANTI) */
+        #btnAction {
+            position: fixed; z-index: 9999; display: none;
             background: #D4AF37; color: #000; 
-            border: 2px solid #fff; padding: 15px 40px;
-            font-size: 18px; font-weight: 800; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 30px #D4AF37;
+            border: none; padding: 20px 50px;
+            font-size: 20px; font-weight: 900; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 40px #D4AF37;
             animation: pulseBtn 1s infinite;
         }
-        @keyframes pulseBtn { 0%{transform:translate(-50%,-50%) scale(1);} 50%{transform:translate(-50%,-50%) scale(1.1);} 100%{transform:translate(-50%,-50%) scale(1);} }
+
+        @keyframes pulseBtn { 0%{transform:scale(1);} 50%{transform:scale(1.1);} 100%{transform:scale(1);} }
 
         /* CONTAINER UTAMA */
         .poster-container {
@@ -37,16 +46,16 @@
             overflow: hidden;
         }
 
-        /* === LAYER KONTEN (YANG AKAN DI-REVEAL) === */
+        /* === LAYER KONTEN === */
         .content-layer {
             position: absolute; inset: 0;
             display: flex; flex-direction: column; 
             align-items: center; justify-content: space-between;
-            padding: 60px 20px 100px 20px;
+            padding: 60px 20px 120px 20px;
             z-index: 1;
         }
 
-        /* FOTO BACKGROUND FULL (TERANG) */
+        /* FOTO BACKGROUND (TERANG) */
         .photo-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -54,28 +63,26 @@
         .photo-bg img {
             width: 100%; height: 100%;
             object-fit: cover;
-            object-position: top center; /* Fokus Wajah */
-            /* PERBAIKAN: Foto Dibuat Terang & Jernih */
+            object-position: top center; 
             filter: brightness(1.1) contrast(1.05); 
         }
-        /* GRADASI HALUS DI BAWAH BIAR TEKS JELAS */
         .gradient-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
-            background: linear-gradient(to top, #000 20%, transparent 100%);
-            z-index: 0; opacity: 0.8;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; 
+            background: linear-gradient(to top, #000 30%, transparent 100%);
+            z-index: 0; opacity: 0.9;
         }
 
-        /* LOGO BESAR (DI ATAS GRADASI) */
+        /* LOGO BESAR */
         .logo-area {
-            width: 220px; /* Logo Besar */
+            width: 220px; 
             filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8));
             animation: floatLogo 3s ease-in-out infinite;
-            margin-top: 40px;
-            position: relative; z-index: 2; /* Di atas foto */
+            margin-top: 30px;
+            position: relative; z-index: 2;
         }
         .logo-area img { width: 100%; }
 
-        /* TEKS NAMA (DI ATAS GRADASI) */
+        /* TEKS NAMA */
         .text-area { text-align: center; position: relative; z-index: 2; }
         .jabatan {
             display: inline-block; background: #D4AF37; color: #000;
@@ -95,24 +102,23 @@
             text-shadow: 0 0 5px #000;
         }
 
-        /* === LAYER PENUTUP (CURTAIN) === */
+        /* === CURTAIN (LAYER PENUTUP) === */
         .curtain {
             position: absolute; top: 0; left: 0; 
             width: 100%; height: 100%;
-            background: #000; /* Layar Hitam */
+            background: #000;
             z-index: 100;
             display: flex; align-items: center;
             transition: width 2.5s cubic-bezier(0.65, 0, 0.35, 1);
         }
         
-        /* SABER LIGHT (GARIS EMAS) */
         .saber-line {
             position: absolute; right: -5px; top: 0;
             width: 8px; height: 100%;
             background: #fff;
             box-shadow: 0 0 20px #D4AF37, 0 0 50px #D4AF37;
             z-index: 101;
-            display: none; /* Muncul pas animasi */
+            display: none;
         }
 
         /* BORDER MEWAH */
@@ -125,19 +131,16 @@
             pointer-events: none;
         }
 
-        /* ANIMASI */
         @keyframes floatLogo { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
-        
-        /* KELAS ANIMASI JS */
-        .anim-reveal {
-            width: 0%; /* Geser ke kiri sampai habis */
-        }
+        .anim-reveal { width: 0%; }
 
     </style>
 </head>
 <body>
 
-    <button id="btnStart" onclick="startShow()">● MULAI REKAM</button>
+    <button id="btnSetup" onclick="setupScreen()">1. SIAPKAN LAYAR</button>
+
+    <button id="btnAction" onclick="playShow()">● MULAI AKSI</button>
 
     <div class="poster-container">
         <div class="border-frame"></div>
@@ -165,30 +168,34 @@
     </div>
 
     <script>
-        function startShow() {
-            const btn = document.getElementById('btnStart');
-            const curtain = document.getElementById('curtainLayer');
-            const saber = document.getElementById('saberLine');
-
-            // 1. Coba Fullscreen (Pake Try Catch biar ga Eror)
+        function setupScreen() {
+            // 1. Masuk Fullscreen
             try {
                 var elem = document.documentElement;
                 if (elem.requestFullscreen) elem.requestFullscreen();
                 else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-            } catch(e) {
-                console.log("Fullscreen ditolak, animasi tetap jalan.");
-            }
+            } catch(e) {}
 
-            // 2. Hilangkan Tombol
-            btn.style.display = 'none';
-
-            // 3. Jalankan Animasi
-            saber.style.display = 'block'; // Nyalakan pedang
+            // 2. Ganti Tombol
+            document.getElementById('btnSetup').style.display = 'none';
             
-            // Tunggu 0.5 detik biar siap rekam
+            // Tampilkan tombol ACTION setelah jeda sebentar
             setTimeout(() => {
-                curtain.classList.add('anim-reveal'); // Geser layar hitam
+                document.getElementById('btnAction').style.display = 'block';
             }, 500);
+        }
+
+        function playShow() {
+            // Hilangkan semua tombol
+            document.getElementById('btnAction').style.display = 'none';
+            
+            // Nyalakan Saber
+            document.getElementById('saberLine').style.display = 'block';
+            
+            // Jalankan Animasi
+            setTimeout(() => {
+                document.getElementById('curtainLayer').classList.add('anim-reveal'); 
+            }, 100); 
         }
     </script>
 
