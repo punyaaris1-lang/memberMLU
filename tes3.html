@@ -3,170 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - The Commander</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>MLU - Saber Reveal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;600;700&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        * { box-sizing: border-box; }
+        /* === RESET & BASIC SETUP === */
         body {
             margin: 0; padding: 0;
             background: #000;
             height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Rajdhani', sans-serif;
             overflow: hidden;
-            font-family: 'Montserrat', sans-serif;
         }
 
+        /* TOMBOL FULLSCREEN */
         #btnFullscreen {
-            position: fixed; top: 30px; z-index: 9999;
-            background: rgba(255, 255, 255, 0.1); color: #fff; 
-            border: 1px solid rgba(255,255,255,0.3); padding: 12px 25px;
-            font-weight: 700; border-radius: 50px; cursor: pointer;
-            backdrop-filter: blur(10px); letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: fixed; top: 30px; z-index: 99999;
+            background: #D4AF37; color: #000; border: none; padding: 10px 25px;
+            font-weight: 800; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px #D4AF37;
+            animation: pulse 1s infinite;
         }
+        @keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.1);} 100%{transform:scale(1);} }
 
-        .poster-frame {
+        /* === POSTER CONTENT (YANG AKAN DI-REVEAL) === */
+        .poster-container {
+            position: relative;
             width: 100vw; height: 100vh;
             background: #050505;
-            position: relative;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: flex-end;
-            padding-bottom: 80px;
+            display: flex; flex-direction: column; 
+            align-items: center;
+            /* Layout: Logo di atas, Teks di bawah */
+            justify-content: space-between; 
+            padding: 60px 20px 80px 20px;
             overflow: hidden;
         }
 
-        .smoke {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 120%, #1a1a1a 0%, #000 70%);
-            z-index: 0;
+        /* BORDER KEREN (NEON GOLD FRAME) */
+        .neon-border {
+            position: absolute;
+            inset: 15px; /* Jarak dari pinggir */
+            border: 2px solid #D4AF37;
+            box-shadow: 0 0 15px #D4AF37, inset 0 0 15px #D4AF37;
+            z-index: 50;
+            pointer-events: none;
+            border-radius: 10px;
         }
-        .light-beam {
-            position: absolute; top: -20%; left: 50%; transform: translateX(-50%) rotate(15deg);
-            width: 200px; height: 120%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
-            filter: blur(40px);
-            animation: beamMove 8s infinite alternate ease-in-out;
+        /* Aksen sudut border */
+        .neon-border::before, .neon-border::after {
+            content: ''; position: absolute; background: #000;
+        }
+        .corner-TL { position: absolute; top: 13px; left: 13px; width: 30px; height: 30px; border-top: 4px solid #fff; border-left: 4px solid #fff; z-index: 51; }
+        .corner-BR { position: absolute; bottom: 13px; right: 13px; width: 30px; height: 30px; border-bottom: 4px solid #fff; border-right: 4px solid #fff; z-index: 51; }
+
+        /* FOTO BACKGROUND */
+        .photo-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1;
         }
-        @keyframes beamMove { from {transform: translateX(-60%) rotate(10deg);} to {transform: translateX(-40%) rotate(-10deg);} }
-
-        /* --- LOGO DIPERBESAR --- */
-        .logo-area {
-            position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
-            z-index: 20; 
-            width: 280px; /* UKURAN LOGO JADI BESAR */
-            animation: fadeInDown 1s ease-out;
-            display: flex; justify-content: center;
-        }
-        .logo-img {
-            width: 100%; 
-            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.8)); /* Bayangan lebih tebal biar logo pop-up */
-            animation: breathe 4s infinite ease-in-out;
-        }
-        
-        .org-title {
-            position: absolute; top: 25%; /* Turunkan dikit biar ga nabrak logo */
-            color: rgba(255,255,255,0.4);
-            font-size: 14px; letter-spacing: 8px; text-transform: uppercase;
-            font-weight: 700; z-index: 5;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
-        }
-
-        /* --- FOTO PERBAIKAN --- */
-        .photo-container {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
-            z-index: 5;
-            display: flex; align-items: flex-end; justify-content: center;
-        }
-        
-        .photo-img {
+        .photo-bg img {
             width: 100%; height: 100%;
-            object-fit: cover; /* Memenuhi layar tanpa gepeng */
-            object-position: center top; /* FOKUS KE WAJAH (ATAS) */
-            /* Masking halus di bawah */
-            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-            filter: contrast(1.15) brightness(1.1); /* Tajamkan sedikit */
-            transform: scale(1.1); /* Zoom dikit biar penuh */
-            animation: slowZoom 15s infinite alternate;
+            object-fit: cover;
+            /* FIX FOTO: Fokus ke atas (wajah) agar tidak ke-zoom perut doang */
+            object-position: top center; 
+            /* Efek gelap biar tulisan terbaca */
+            filter: brightness(0.6) contrast(1.1); 
+        }
+        .gradient-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+            background: linear-gradient(to top, #000 10%, transparent 100%);
+            z-index: 2;
         }
 
-        /* --- TEXT INFORMATION --- */
-        .info-card {
-            position: relative; z-index: 30;
-            text-align: center; width: 90%;
-            padding: 30px 20px;
-            background: rgba(0, 0, 0, 0.75); /* Lebih gelap biar tulisan jelas */
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(212, 175, 55, 0.3); /* Border emas tipis */
-            border-top: 4px solid #D4AF37; 
-            border-radius: 8px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
-            animation: slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-bottom: 20px;
+        /* LOGO (POSISI ATAS) */
+        .logo-area {
+            position: relative; z-index: 10;
+            width: 180px; /* Ukuran Logo Pas */
+            margin-top: 40px;
+            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.6));
+            animation: floatLogo 4s ease-in-out infinite;
+        }
+        .logo-area img { width: 100%; }
+
+        /* TEKS INFO (POSISI BAWAH) */
+        .info-area {
+            position: relative; z-index: 10;
+            text-align: center;
+            width: 100%;
+        }
+        .jabatan-badge {
+            display: inline-block;
+            background: #D4AF37; color: #000;
+            padding: 5px 25px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700; letter-spacing: 2px;
+            font-size: 14px;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            margin-bottom: 10px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+        .nama-tokoh {
+            font-family: 'Teko', sans-serif;
+            font-size: 65px; line-height: 0.9;
+            color: #fff; text-transform: uppercase; margin: 0;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+        }
+        .org-text {
+            font-family: 'Rajdhani', sans-serif;
+            color: #ccc; letter-spacing: 5px; font-size: 14px;
+            margin-top: 5px;
+            text-shadow: 0 0 5px #000;
         }
 
-        .jabatan {
-            font-size: 16px; color: #D4AF37; font-weight: 800; letter-spacing: 4px;
-            text-transform: uppercase; margin-bottom: 5px; display: block;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
+        /* === ANIMATION UTILS === */
+        @keyframes floatLogo { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
 
-        .nama {
-            font-family: 'Playfair Display', serif;
-            font-size: 52px; color: #fff; margin: 0; line-height: 1;
-            text-transform: uppercase;
-            background: linear-gradient(to bottom, #fff 40%, #ccc 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+        /* === SABER EFFECT ELEMENTS === */
+        canvas#mask { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+        
+        .saber {
+            position: absolute; z-index: 102;
+            width: 10px; height: 0;
+            background: white; border-radius: 10px;
+            box-shadow: 0 0 10px #D4AF37, 0 0 30px #D4AF37, 0 0 60px #D4AF37, 0 0 120px #D4AF37;
         }
-
-        .deco-line {
-            position: absolute; bottom: 150px; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-            z-index: 10; opacity: 0.6; box-shadow: 0 0 10px #D4AF37;
+        
+        .glow {
+            position: absolute; z-index: 101;
+            width: 140px; height: 420px;
+            background: linear-gradient(to top, #D4AF37, #FFD700, white);
+            filter: blur(70px); opacity: 0.9; border-radius: 80px;
         }
-
-        @keyframes fadeInDown { from {opacity:0; transform:translate(-50%, -50px);} to {opacity:1; transform:translate(-50%, 0);} }
-        @keyframes slideUp { from {opacity:0; transform:translateY(100px);} to {opacity:1; transform:translateY(0);} }
-        @keyframes breathe { 0%,100% {transform:scale(1);} 50% {transform:scale(1.05);} }
-        @keyframes slowZoom { from {transform:scale(1.1);} to {transform:scale(1.2);} }
+        
+        .spark {
+            position: absolute; z-index: 103;
+            width: 5px; height: 5px;
+            background: #FFD700; border-radius: 50%;
+            box-shadow: 0 0 10px #D4AF37, 0 0 20px white;
+        }
 
     </style>
 </head>
 <body>
 
-    <button id="btnFullscreen" onclick="goFullscreen()">● REKAM</button>
+    <button id="btnFullscreen" onclick="igniteAndRecord()">● MULAI SHOW</button>
 
-    <div class="poster-frame">
-        <div class="smoke"></div>
-        <div class="light-beam"></div>
-        <div class="org-title">MAKA LINTAS UTARA</div>
+    <div class="poster-container">
+        <div class="neon-border"></div>
+        <div class="corner-TL"></div><div class="corner-BR"></div>
+
+        <div class="photo-bg">
+            <img src="ipung.jpg" alt="Foto Pengurus">
+            <div class="gradient-overlay"></div>
+        </div>
 
         <div class="logo-area">
-            <img src="logomlu.png" class="logo-img">
+            <img src="logomlu.png" alt="Logo MLU">
         </div>
 
-        <div class="photo-container">
-            <img src="dayan.jpg" class="photo-img">
-        </div>
-
-        <div class="deco-line"></div>
-
-        <div class="info-card">
-            <span class="jabatan">WAKIL KETUA UMUM</span>
-            <h1 class="nama">SANDI</h1>
+        <div class="info-area">
+            <div class="jabatan-badge">HUMAS</div>
+            <h1 class="nama-tokoh">PURNOMO</h1>
+            <div class="org-text">MAKA LINTAS UTARA</div>
         </div>
     </div>
 
+    <canvas id="mask"></canvas>
+    <div class="glow" id="glow"></div>
+    <div class="saber" id="saber"></div>
+
     <script>
-        function goFullscreen() {
-            var elem = document.documentElement;
-            if (elem.requestFullscreen) { elem.requestFullscreen(); }
-            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
-            document.getElementById('btnFullscreen').style.display = 'none';
+        // --- SETUP CANVAS & ANIMATION ---
+        const canvas = document.getElementById("mask");
+        const ctx = canvas.getContext("2d");
+        const saber = document.getElementById("saber");
+        const glow = document.getElementById("glow");
+
+        // Set ukuran canvas full layar
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Awal: Layar Hitam Pekat (Menutupi Poster)
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Init
+
+        // Variabel Animasi
+        let x = -200;
+        let ignite = 0;
+        let animationRunning = false;
+
+        // FUNGSI UNTUK MENGHAPUS HITAM (MASKING) SEPERTI CAHAYA
+        function drawLight(px) {
+            // Kita tidak clearRect semua, tapi kita timpa semi-transparan black untuk efek trail
+            // Tapi untuk reveal poster, kita gunakan destination-out
+            
+            ctx.globalCompositeOperation = "destination-out"; // Mode Penghapus
+
+            // Buat gradien cahaya penghapus
+            let g = ctx.createRadialGradient(px, canvas.height/2, 40, px, canvas.height/2, 400);
+            g.addColorStop(0, "rgba(0,0,0,1)"); // Hapus total di tengah
+            g.addColorStop(1, "rgba(0,0,0,0)"); // Fade di pinggir
+
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(px, canvas.height/2, 400, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.globalCompositeOperation = "source-over"; // Reset mode
+        }
+
+        // FUNGSI PERCIKAN API (SPARKS) - WARNA EMAS
+        function spark(px) {
+            for(let i=0; i<5; i++){
+                let s = document.createElement("div");
+                s.className = "spark";
+                s.style.left = (px + Math.random()*40 - 20) + "px";
+                s.style.top = (canvas.height/2 + Math.random()*200 - 100) + "px"; // Sebar vertikal
+                document.body.appendChild(s);
+
+                let vx = Math.random() * 10 - 5; // Kecepatan acak X
+                let vy = Math.random() * 10 - 5; // Kecepatan acak Y
+                let life = 0;
+
+                function moveSpark() {
+                    life++;
+                    s.style.left = (s.offsetLeft + vx) + "px";
+                    s.style.top = (s.offsetTop + vy) + "px";
+                    s.style.opacity = 1 - life/30; // Hilang perlahan
+
+                    if(life < 30) requestAnimationFrame(moveSpark);
+                    else s.remove();
+                }
+                moveSpark();
+            }
+        }
+
+        // FUNGSI UTAMA: NYALAKAN SABER & GERAKAN
+        function igniteAndRecord() {
+            // 1. Fullscreen
+            var elem = document.documentElement;
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+            
+            document.getElementById('btnFullscreen').style.display = 'none';
+
+            // 2. Mulai Animasi Saber
+            if(animationRunning) return;
+            animationRunning = true;
+            igniteLoop();
+        }
+
+        function igniteLoop() {
+            ignite += 15; // Kecepatan nyala pedang
+
+            saber.style.height = ignite + "px";
+            glow.style.height = (ignite + 80) + "px";
+            
+            // Posisi awal di kiri layar
+            let startX = 50; 
+            saber.style.left = startX + "px";
+            glow.style.left = (startX - 50) + "px";
+
+            // Center vertical
+            saber.style.top = (canvas.height/2 - ignite/2) + "px";
+            glow.style.top = (canvas.height/2 - (ignite+80)/2) + "px";
+
+            if (ignite < canvas.height * 0.6) { // Nyala sampai 60% tinggi layar
+                requestAnimationFrame(igniteLoop);
+            } else {
+                // Setelah nyala, mulai geser (SWEEP)
+                setTimeout(sweepLoop, 200);
+            }
+        }
+
+        function sweepLoop() {
+            x += 20; // Kecepatan geser ke kanan
+
+            saber.style.left = x + "px";
+            glow.style.left = (x - 70) + "px";
+
+            drawLight(x); // Hapus layar hitam
+            spark(x);     // Buat percikan
+
+            if (x < canvas.width + 300) {
+                requestAnimationFrame(sweepLoop);
+            } else {
+                // Selesai, pedang hilang
+                saber.style.opacity = 0;
+                glow.style.opacity = 0;
+                // Bersihkan sisa hitam (jika ada)
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+            }
+        }
+
     </script>
 
 </body>
