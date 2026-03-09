@@ -17,7 +17,6 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        /* TOMBOL REKAM */
         #btnFullscreen {
             position: fixed; top: 30px; z-index: 9999;
             background: rgba(255, 255, 255, 0.1); color: #fff; 
@@ -32,12 +31,11 @@
             background: #050505;
             position: relative;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: flex-end; /* Konten mulai dari bawah */
+            justify-content: flex-end;
             padding-bottom: 80px;
             overflow: hidden;
         }
 
-        /* --- BACKGROUND SMOKE EFFECT --- */
         .smoke {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 120%, #1a1a1a 0%, #000 70%);
@@ -53,82 +51,87 @@
         }
         @keyframes beamMove { from {transform: translateX(-60%) rotate(10deg);} to {transform: translateX(-40%) rotate(-10deg);} }
 
-        /* --- LOGO --- */
+        /* --- LOGO DIPERBESAR --- */
         .logo-area {
-            position: absolute; top: 8%; left: 50%; transform: translateX(-50%);
-            z-index: 20; width: 120px;
+            position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+            z-index: 20; 
+            width: 280px; /* UKURAN LOGO JADI BESAR */
             animation: fadeInDown 1s ease-out;
+            display: flex; justify-content: center;
         }
         .logo-img {
-            width: 100%; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            width: 100%; 
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.8)); /* Bayangan lebih tebal biar logo pop-up */
             animation: breathe 4s infinite ease-in-out;
         }
         
-        /* --- ORG NAME --- */
         .org-title {
-            position: absolute; top: 20%;
-            color: rgba(255,255,255,0.3);
-            font-size: 12px; letter-spacing: 8px; text-transform: uppercase;
+            position: absolute; top: 25%; /* Turunkan dikit biar ga nabrak logo */
+            color: rgba(255,255,255,0.4);
+            font-size: 14px; letter-spacing: 8px; text-transform: uppercase;
             font-weight: 700; z-index: 5;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
 
-        /* --- PHOTO PERSON --- */
+        /* --- FOTO PERBAIKAN --- */
         .photo-container {
-            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; height: 85%;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
             z-index: 5;
             display: flex; align-items: flex-end; justify-content: center;
         }
         
         .photo-img {
-            height: 90%; width: auto; max-width: 120%;
-            object-fit: cover;
-            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-            filter: contrast(1.1) saturate(1.1);
+            width: 100%; height: 100%;
+            object-fit: cover; /* Memenuhi layar tanpa gepeng */
+            object-position: center top; /* FOKUS KE WAJAH (ATAS) */
+            /* Masking halus di bawah */
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            filter: contrast(1.15) brightness(1.1); /* Tajamkan sedikit */
+            transform: scale(1.1); /* Zoom dikit biar penuh */
             animation: slowZoom 15s infinite alternate;
         }
 
-        /* --- TEXT INFORMATION (BAWAH) --- */
+        /* --- TEXT INFORMATION --- */
         .info-card {
             position: relative; z-index: 30;
-            text-align: center; width: 85%;
-            padding: 25px 20px; /* Padding sedikit ditambah karena plat hilang */
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #D4AF37;
-            border-radius: 4px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            text-align: center; width: 90%;
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.75); /* Lebih gelap biar tulisan jelas */
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.3); /* Border emas tipis */
+            border-top: 4px solid #D4AF37; 
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
             animation: slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 20px;
         }
 
         .jabatan {
-            font-size: 14px; color: #D4AF37; font-weight: 700; letter-spacing: 3px;
-            text-transform: uppercase; margin-bottom: 8px; display: block;
+            font-size: 16px; color: #D4AF37; font-weight: 800; letter-spacing: 4px;
+            text-transform: uppercase; margin-bottom: 5px; display: block;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .nama {
             font-family: 'Playfair Display', serif;
-            font-size: 48px; color: #fff; margin: 0; line-height: 1;
+            font-size: 52px; color: #fff; margin: 0; line-height: 1;
             text-transform: uppercase;
-            background: linear-gradient(to right, #fff 0%, #ccc 50%, #fff 100%);
+            background: linear-gradient(to bottom, #fff 40%, #ccc 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
         }
 
-        /* DEKORASI EMAS */
         .deco-line {
-            position: absolute; bottom: 120px; width: 100%; height: 1px;
+            position: absolute; bottom: 150px; width: 100%; height: 2px;
             background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-            z-index: 10; opacity: 0.5;
+            z-index: 10; opacity: 0.6; box-shadow: 0 0 10px #D4AF37;
         }
 
-        /* ANIMASI */
         @keyframes fadeInDown { from {opacity:0; transform:translate(-50%, -50px);} to {opacity:1; transform:translate(-50%, 0);} }
         @keyframes slideUp { from {opacity:0; transform:translateY(100px);} to {opacity:1; transform:translateY(0);} }
         @keyframes breathe { 0%,100% {transform:scale(1);} 50% {transform:scale(1.05);} }
-        @keyframes slowZoom { from {transform:scale(1);} to {transform:scale(1.1);} }
+        @keyframes slowZoom { from {transform:scale(1.1);} to {transform:scale(1.2);} }
 
     </style>
 </head>
@@ -146,7 +149,7 @@
         </div>
 
         <div class="photo-container">
-            <img src="akiaki.jpg" class="photo-img">
+            <img src="rizky.jpg" class="photo-img">
         </div>
 
         <div class="deco-line"></div>
@@ -154,7 +157,7 @@
         <div class="info-card">
             <span class="jabatan">KETUA UMUM</span>
             <h1 class="nama">KI AHMAD</h1>
-            </div>
+        </div>
     </div>
 
     <script>
@@ -162,7 +165,6 @@
             var elem = document.documentElement;
             if (elem.requestFullscreen) { elem.requestFullscreen(); }
             else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
-            
             document.getElementById('btnFullscreen').style.display = 'none';
         }
     </script>
