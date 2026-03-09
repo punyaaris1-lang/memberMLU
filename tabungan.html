@@ -68,10 +68,33 @@
         .btn-submit { width:100%; padding:16px; border:none; border-radius:16px; font-weight:800; color:white; cursor:pointer; margin-top:10px; }
         .bg-sukses { background:var(--success); } .bg-cancel { background:#E2E8F0; color:#475569; box-shadow:none; }
         
-        /* ADMIN EDIT HISTORY STYLE */
         .admin-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
         .btn-edit { background: none; border: none; color: var(--electric-blue); cursor: pointer; padding: 5px; font-size: 14px; }
         
+        /* TOMBOL NABUNG USER */
+        .btn-nabung {
+            background: rgba(255,255,255,0.2); 
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white; 
+            padding: 8px 15px; 
+            border-radius: 50px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+            margin: 15px auto 0;
+        }
+        .btn-nabung:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
+
+        /* TOMBOL RESET ADMIN (DEFAULT HIDDEN) */
+        .btn-danger-reset {
+            display: none; /* RAHASIA! */
+            width: 100%; padding: 15px; margin-top: 30px;
+            background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5;
+            border-radius: 12px; font-weight: 800; cursor: pointer;
+            font-size: 11px; letter-spacing: 1px;
+        }
+
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); }
     </style>
@@ -136,6 +159,11 @@
                 <div style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:20px; display:inline-block;">
                     <i class="fas fa-shield-alt"></i> TERVERIFIKASI
                 </div>
+                
+                <button class="btn-nabung" onclick="document.getElementById('modalQris').style.display='flex'">
+                    <i class="fas fa-qrcode"></i> ISI SALDO / NABUNG
+                </button>
+
                 <div id="adminIndicator" style="display:none; font-size:9px; margin-top:5px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
             </div>
             <div class="trx-list" id="historyList">
@@ -149,6 +177,10 @@
             </div>
             <input type="text" id="searchMem" class="form-input" placeholder="Cari Nama / Plat..." style="margin-bottom:15px;" onkeyup="filterMembers()">
             <div id="adminMemberList"></div>
+
+            <button id="btnResetData" class="btn-danger-reset" onclick="resetAllSystem()">
+                ⚠️ RESET SEMUA DATA (HAPUS SALDO & RIWAYAT)
+            </button>
         </div>
 
         <div id="viewApproval" class="content-area">
@@ -185,9 +217,24 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="modalQris">
+        <div class="modal-box" style="background:white; border-radius:20px; padding:30px;">
+            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue);">SCAN QRIS NABUNG</h3>
+            <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:20px;">
+                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS Error? Cek File qrisnabung.jpg">
+            </div>
+            <p style="font-size:12px; color:#64748B;">
+                1. Scan kode di atas.<br>
+                2. Transfer sesuai nominal tabungan.<br>
+                3. Kirim bukti ke Admin untuk diinput.
+            </p>
+            <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">TUTUP</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, orderBy, limit, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
@@ -199,6 +246,9 @@
         const cleanPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         const isTrueAdmin = (cleanPlat === "B4248SWF") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
         let isViewAdminVisible = isTrueAdmin; 
+
+        // CEK APAKAH INI RIZKY (SUPER ADMIN)
+        const isSuperAdmin = (cleanPlat === "B4248SWF");
 
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
 
@@ -218,6 +268,11 @@
                     loadHistory();
                     updateAdminView();
                     if(isTrueAdmin) initAdminData();
+
+                    // KHUSUS RIZKY: TAMPILKAN TOMBOL RESET
+                    if(isSuperAdmin) {
+                        document.getElementById('btnResetData').style.display = 'block';
+                    }
 
                     if (d.pin_tabungan) {
                         userPinTabungan = d.pin_tabungan; isSetupMode = false; 
@@ -242,6 +297,43 @@
             document.getElementById('btnTabAdmin').style.display = display;
             document.getElementById('btnTabApprove').style.display = display;
             document.getElementById('adminIndicator').style.display = display;
+        }
+
+        // RESET ALL DATA (PROTECTED WITH PASSWORD)
+        window.resetAllSystem = async () => {
+            if(!confirm("⚠️ PERINGATAN KERAS ⚠️\n\nAnda akan MENGHAPUS SEMUA DATA SALDO & RIWAYAT seluruh member.\n\nKlik OK jika Anda yakin.")) return;
+            
+            // MINTA PASSWORD
+            let pass = prompt("MASUKKAN PASSWORD KONFIRMASI:");
+            
+            // PASSWORD HARDCODED (Bisa diganti)
+            if(pass !== "MLU2025") {
+                return alert("PASSWORD SALAH! Akses ditolak.");
+            }
+
+            document.getElementById('loaderOverlay').style.display = 'flex';
+            
+            try {
+                // 1. Reset Saldo Member jadi 0
+                const membersSnap = await getDocs(collection(db, "mlu_members"));
+                const promises = [];
+                membersSnap.forEach(doc => {
+                    promises.push(updateDoc(doc.ref, { saldoTabungan: 0 }));
+                });
+
+                // 2. Hapus Semua History Transaksi
+                const trxSnap = await getDocs(collection(db, "mlu_tabungan_trx"));
+                trxSnap.forEach(doc => {
+                    promises.push(deleteDoc(doc.ref));
+                });
+
+                await Promise.all(promises);
+                alert("RESET BERHASIL!\nSemua saldo dan riwayat telah dihapus.");
+                location.reload();
+            } catch (e) {
+                alert("Gagal Reset: " + e.message);
+                document.getElementById('loaderOverlay').style.display = 'none';
+            }
         }
 
         // SECURITY LOGIC
