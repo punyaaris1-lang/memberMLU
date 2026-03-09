@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - Saber Gold</title>
+    <title>MLU - Saber Gold (Terang)</title>
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;700&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -46,7 +46,7 @@
             z-index: 1;
         }
 
-        /* FOTO BACKGROUND FULL */
+        /* FOTO BACKGROUND FULL (TERANG) */
         .photo-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -55,29 +55,34 @@
             width: 100%; height: 100%;
             object-fit: cover;
             object-position: top center; /* Fokus Wajah */
-            filter: brightness(0.6) contrast(1.1);
+            /* PERBAIKAN: Foto Dibuat Terang & Jernih */
+            filter: brightness(1.1) contrast(1.05); 
         }
+        /* GRADASI HALUS DI BAWAH BIAR TEKS JELAS */
         .gradient-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(to top, #000 10%, transparent 80%);
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(to top, #000 20%, transparent 100%);
+            z-index: 0; opacity: 0.8;
         }
 
-        /* LOGO BESAR */
+        /* LOGO BESAR (DI ATAS GRADASI) */
         .logo-area {
             width: 220px; /* Logo Besar */
             filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8));
             animation: floatLogo 3s ease-in-out infinite;
             margin-top: 40px;
+            position: relative; z-index: 2; /* Di atas foto */
         }
         .logo-area img { width: 100%; }
 
-        /* TEKS NAMA */
-        .text-area { text-align: center; }
+        /* TEKS NAMA (DI ATAS GRADASI) */
+        .text-area { text-align: center; position: relative; z-index: 2; }
         .jabatan {
             display: inline-block; background: #D4AF37; color: #000;
             padding: 5px 30px; font-weight: 800; letter-spacing: 2px;
             clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
             margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(212,175,55,0.5);
         }
         .nama {
             font-family: 'Teko', sans-serif;
@@ -87,6 +92,7 @@
         }
         .org {
             color: #ccc; letter-spacing: 5px; font-size: 14px; margin-top: 5px;
+            text-shadow: 0 0 5px #000;
         }
 
         /* === LAYER PENUTUP (CURTAIN) === */
@@ -96,6 +102,7 @@
             background: #000; /* Layar Hitam */
             z-index: 100;
             display: flex; align-items: center;
+            transition: width 2.5s cubic-bezier(0.65, 0, 0.35, 1);
         }
         
         /* SABER LIGHT (GARIS EMAS) */
@@ -123,11 +130,7 @@
         
         /* KELAS ANIMASI JS */
         .anim-reveal {
-            animation: swipeRight 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-        }
-        @keyframes swipeRight {
-            0% { width: 100%; }
-            100% { width: 0%; }
+            width: 0%; /* Geser ke kiri sampai habis */
         }
 
     </style>
