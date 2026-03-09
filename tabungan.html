@@ -11,9 +11,15 @@
 
     <style>
         /* === TEMA ULTRA LUXURY GLASS === */
-        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F0F4F8; --text-main: #0F172A; --danger: #EF4444; --success: #10B981; }
+        :root { 
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
+            --gold-lux: #D4AF37; --bg-surface: #F0F4F8; 
+            --text-main: #0F172A; --white: #FFFFFF; 
+            --danger: #EF4444; --success: #10B981; --warning: #F59E0B;
+        }
         body { margin:0; background:var(--bg-surface); font-family:'Inter',sans-serif; color:var(--text-main); overflow-x:hidden; user-select:none; }
         
+        /* SECURITY UI */
         #securityScreen { position: fixed; inset: 0; background: #F8FAFC; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s; }
         .sec-icon-box { width: 90px; height: 90px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 50px rgba(45,99,237,0.2); margin-bottom: 20px; position: relative; overflow: hidden; }
         .sec-icon-box i { font-size: 35px; color: var(--electric-blue); z-index: 2; }
@@ -25,6 +31,8 @@
         .face-frame { position: absolute; inset: 20px; border: 2px dashed rgba(255,255,255,0.6); border-radius: 30px; }
 
         .btn-action { width: 100%; max-width: 250px; padding: 16px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.25); background: var(--electric-blue); color: white; }
+        
+        /* PIN PAD */
         .pin-area { display: none; width: 100%; max-width: 280px; flex-direction: column; align-items: center; }
         .pin-display { display: flex; gap: 10px; margin-bottom: 30px; }
         .pin-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--electric-blue); }
@@ -33,29 +41,37 @@
         .pin-key { width: 65px; height: 65px; border-radius: 50%; background: white; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk'; font-size: 22px; font-weight: 800; color: var(--royal-blue); cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .pin-key:active { background: #F1F5F9; transform: scale(0.95); }
 
+        /* APP UI */
         #mainApp { display: none; }
         .header-main { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 35px 20px 80px; border-bottom-left-radius:30px; border-bottom-right-radius:30px; color:white; text-align:center; box-shadow:0 10px 30px rgba(10,34,89,0.3); }
+        .main-title { font-family:'Outfit'; font-size:24px; font-weight:900; margin:0; }
+        .sub-tag { font-size:11px; opacity:0.8; font-weight:600; display:block; margin-top:5px; font-family:'Space Grotesk'; letter-spacing:2px;}
+
         .tab-container { display:flex; justify-content:center; gap:10px; margin-top:-40px; padding:0 20px; position:relative; z-index:10; }
         .tab-btn { background:white; border:none; padding:12px 15px; border-radius:25px; font-weight:800; font-size:11px; color:#64748B; box-shadow:0 5px 15px rgba(0,0,0,0.05); cursor:pointer; flex:1; transition:0.3s; }
         .tab-btn.active { background:var(--royal-blue); color:white; box-shadow:0 5px 20px rgba(10,34,89,0.3); transform:scale(1.05); }
         .content-area { padding:20px; display:none; margin-top: 10px;}
         .content-area.active { display:block; }
+        
         .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 20px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
         .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
         
         .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02);}
-        .m-name { font-weight:800; font-size:13px; color:var(--text-main); text-transform:uppercase; font-family:'Space Grotesk';}
         .btn-plus { width:40px; height:40px; background:linear-gradient(135deg, #10B981, #059669); color:white; border-radius:12px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:16px; box-shadow:0 5px 15px rgba(16,185,129,0.3);}
         .btn-reset { width:40px; height:40px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--warning); cursor:pointer; font-size:16px; margin-right: 8px;}
         .app-card { background:white; border-left:5px solid var(--warning); padding:15px; border-radius:16px; margin-bottom:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); }
-        .btn-approve { background:var(--royal-blue); color:white; border:none; padding:10px 20px; border-radius:10px; font-size:11px; font-weight:800; cursor:pointer; }
         
         .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); }
+        .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 80vh; overflow-y: auto; }
         .form-group { margin-bottom:20px; text-align: left;}
         .form-input { width:100%; padding:15px; border:1px solid #E2E8F0; border-radius:14px; font-family:'Space Grotesk'; font-weight:700; font-size:16px; background:#F8FAFC; outline:none; }
         .btn-submit { width:100%; padding:16px; border:none; border-radius:16px; font-weight:800; color:white; cursor:pointer; margin-top:10px; }
         .bg-sukses { background:var(--success); } .bg-cancel { background:#E2E8F0; color:#475569; box-shadow:none; }
+        
+        /* ADMIN EDIT HISTORY STYLE */
+        .admin-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        .btn-edit { background: none; border: none; color: var(--electric-blue); cursor: pointer; padding: 5px; font-size: 14px; }
+        
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); }
     </style>
@@ -64,7 +80,7 @@
 
     <div id="loaderOverlay" style="position:fixed; inset:0; background:white; z-index:20000; display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <div style="width:40px; height:40px; border:4px solid #E2E8F0; border-top:4px solid var(--electric-blue); border-radius:50%; animation:spin 1s infinite linear;"></div>
-        <div style="margin-top:15px; font-weight:800; color:var(--royal-blue); font-size:12px;">MEMUAT SISTEM KEAMANAN...</div>
+        <div style="margin-top:15px; font-weight:800; color:var(--royal-blue); font-size:12px;">MEMUAT...</div>
         <style>@keyframes spin{100%{transform:rotate(360deg)}}</style>
     </div>
 
@@ -115,9 +131,7 @@
         <div id="viewMember" class="content-area active">
             <div class="saldo-card">
                 <button onclick="changePinSelf()" style="position:absolute; top:15px; right:15px; background:rgba(255,255,255,0.2); color:white; padding:5px 10px; border-radius:12px; font-size:9px; font-weight:800; cursor:pointer; border:1px solid rgba(255,255,255,0.4);">GANTI PIN 6 DIGIT</button>
-                
                 <div style="font-size:10px; opacity:0.8; letter-spacing:2px; cursor:pointer;" ondblclick="toggleStealthAdmin()">TOTAL SALDO</div>
-                
                 <div class="saldo-val" id="myBalance">Rp 0</div>
                 <div style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:20px; display:inline-block;">
                     <i class="fas fa-shield-alt"></i> TERVERIFIKASI
@@ -130,9 +144,8 @@
         </div>
 
         <div id="viewAdmin" class="content-area">
-            <div style="background:#EFF6FF; padding:15px; border-radius:16px; border:1px solid #BFDBFE; font-size:11px; color:#1D4ED8; margin-bottom:20px; display:flex; gap:10px; align-items:center;">
-                <i class="fas fa-shield-alt" style="font-size:20px;"></i>
-                <span><b>AREA ADMIN:</b><br>Lihat saldo & Reset PIN member.</span>
+            <div style="background:#EFF6FF; padding:15px; border-radius:16px; border:1px solid #BFDBFE; font-size:11px; color:#1D4ED8; margin-bottom:20px;">
+                <b>AREA ADMIN:</b> Gunakan tombol KUNCI untuk Reset PIN member.
             </div>
             <input type="text" id="searchMem" class="form-input" placeholder="Cari Nama / Plat..." style="margin-bottom:15px;" onkeyup="filterMembers()">
             <div id="adminMemberList"></div>
@@ -155,12 +168,26 @@
             <div class="form-group"><label class="form-label">Nominal (Rp)</label><input type="number" id="depAmount" class="form-input" placeholder="Contoh: 20000"></div>
             <div class="form-group"><label class="form-label">Tanggal Setor</label><input type="date" id="depDate" class="form-input"></div>
             <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalDeposit').style.display='none'">BATAL</button><button class="btn-submit bg-sukses" onclick="processDeposit()">SIMPAN</button></div>
+            
+            <div style="margin-top:25px; border-top:1px dashed #ddd; padding-top:15px;">
+                <div style="font-size:10px; font-weight:800; color:#94A3B8; margin-bottom:10px; text-transform:uppercase;">5 Transaksi Terakhir (Klik Pensil utk Edit)</div>
+                <div id="adminRecentTrx" style="max-height:150px; overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalEditTrx">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--warning); font-family:'Outfit'; font-size:18px;">KOREKSI TRANSAKSI</h3>
+            <input type="hidden" id="editTrxId"><input type="hidden" id="editOldAmount">
+            <div class="form-group"><label class="form-label">Nominal Baru (Rp)</label><input type="number" id="editNewAmount" class="form-input"></div>
+            <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalEditTrx').style.display='none'">BATAL</button><button class="btn-submit" style="background:var(--electric-blue); color:white;" onclick="saveEditTrx()">UPDATE</button></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
@@ -168,17 +195,14 @@
         let u = null; try { u = JSON.parse(localStorage.getItem('maka_user')); } catch(e) {}
         if(!u || !u.id) window.location.href='index.html';
 
-        // CEK HAK AKSES NYATA
+        // ADMIN CONFIG
         const cleanPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         const isTrueAdmin = (cleanPlat === "B4248SWF") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
-        
-        // VARIABEL STATUS TAMPILAN ADMIN (DEFAULT: SHOW JIKA ADMIN)
         let isViewAdminVisible = isTrueAdmin; 
 
-        // GLOBAL VARS
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
 
-        // LOAD AI
+        // INIT
         Promise.all([
             faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
@@ -192,8 +216,6 @@
                     document.getElementById('loaderOverlay').style.display = 'none';
                     document.getElementById('myBalance').innerText = `Rp ${(d.saldoTabungan||0).toLocaleString('id-ID')}`;
                     loadHistory();
-
-                    // INIT TAMPILAN ADMIN
                     updateAdminView();
                     if(isTrueAdmin) initAdminData();
 
@@ -206,16 +228,12 @@
             });
         }
 
-        // --- FITUR STEALTH MODE ---
+        // STEALTH ADMIN TOGGLE
         window.toggleStealthAdmin = () => {
-            if(!isTrueAdmin) return; // Kalau bukan admin beneran, ga ngefek
-            isViewAdminVisible = !isViewAdminVisible; // Switch ON/OFF
+            if(!isTrueAdmin) return;
+            isViewAdminVisible = !isViewAdminVisible;
             updateAdminView();
-            
-            // Efek Getar dikit biar kerasa (kalo HP support)
             if(navigator.vibrate) navigator.vibrate(50);
-            
-            // Pindah ke tab Member biar rapi
             if(!isViewAdminVisible) switchTab('member');
         }
 
@@ -226,6 +244,7 @@
             document.getElementById('adminIndicator').style.display = display;
         }
 
+        // SECURITY LOGIC
         function showActivationScreen() { document.getElementById('agreeModal').style.display = 'flex'; }
         window.acceptAgreement = () => { document.getElementById('agreeModal').style.display = 'none'; document.getElementById('secTitle').innerText = "REGISTRASI WAJAH"; document.getElementById('btnMainAction').innerText = "SCAN & SIMPAN WAJAH"; document.getElementById('btnMainAction').style.display = 'block'; document.getElementById('btnSwitch').style.display = 'none'; startCamera(); };
         function showLoginScreen() { document.getElementById('secTitle').innerText = "VERIFIKASI"; document.getElementById('btnMainAction').style.display = 'none'; startCamera(); }
@@ -263,7 +282,6 @@
         };
 
         function stopCamera() { if (stream) stream.getTracks().forEach(t => t.stop()); if (detectInterval) clearInterval(detectInterval); }
-
         window.switchMode = () => { isFaceMode = !isFaceMode; if (isFaceMode) { startCamera(); document.getElementById('btnSwitch').innerText = "Gunakan PIN (6 Digit)"; } else { stopCamera(); document.getElementById('camWrap').style.display = 'none'; document.getElementById('pinArea').style.display = 'flex'; document.getElementById('btnSwitch').innerText = "Gunakan Face ID"; } };
         window.pressPin = (n) => { if (currentPinInput.length < 6) { currentPinInput += n; updatePinDots(); if (currentPinInput.length === 6) processPin(); } };
         window.delPin = () => { currentPinInput = currentPinInput.slice(0, -1); updatePinDots(); };
@@ -302,9 +320,7 @@
         window.renderMembers = (arr) => {
             const cont = document.getElementById('adminMemberList'); cont.innerHTML = "";
             arr.forEach(m => {
-                // TAMPILKAN SALDO DI SINI (REQUEST BAPAK)
                 const saldoMember = m.saldoTabungan ? m.saldoTabungan.toLocaleString('id-ID') : '0';
-                
                 cont.innerHTML += `
                 <div class="member-row">
                     <div>
@@ -333,7 +349,73 @@
         }
 
         window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
-        window.openDepositModal = (id, name) => { document.getElementById('depMemberId').value=id; document.getElementById('depMemberName').innerText=name; document.getElementById('modalDeposit').style.display='flex'; }
+        
+        window.openDepositModal = (id, name) => { 
+            document.getElementById('depMemberId').value=id; 
+            document.getElementById('depMemberName').innerText=name; 
+            document.getElementById('modalDeposit').style.display='flex'; 
+            loadAdminRecentTrx(id);
+        }
+
+        // LOAD HISTORY FOR ADMIN TO EDIT
+        async function loadAdminRecentTrx(memberId) {
+            const cont = document.getElementById('adminRecentTrx');
+            cont.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-spin"></i></div>';
+            
+            const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", memberId), orderBy("timestamp", "desc"), limit(5));
+            const snap = await getDocs(q);
+            
+            cont.innerHTML = "";
+            snap.forEach(d => {
+                const data = d.data();
+                const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+                const isPlus = data.type === 'IN';
+                
+                cont.innerHTML += `
+                <div class="admin-hist-item">
+                    <div style="font-size:11px;">
+                        <div style="font-weight:700;">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div>
+                        <div style="color:#aaa;">${dateStr}</div>
+                    </div>
+                    <button class="btn-edit" onclick="openEditTrx('${d.id}', ${data.amount})"><i class="fas fa-pencil-alt"></i></button>
+                </div>`;
+            });
+        }
+
+        window.openEditTrx = (trxId, amount) => {
+            document.getElementById('editTrxId').value = trxId;
+            document.getElementById('editOldAmount').value = amount;
+            document.getElementById('editNewAmount').value = amount;
+            document.getElementById('modalEditTrx').style.display = 'flex';
+        }
+
+        window.saveEditTrx = async () => {
+            const trxId = document.getElementById('editTrxId').value;
+            const oldAmt = parseInt(document.getElementById('editOldAmount').value);
+            const newAmt = parseInt(document.getElementById('editNewAmount').value);
+            const memberId = document.getElementById('depMemberId').value;
+
+            if(!newAmt) return alert("Nominal tidak valid");
+
+            await runTransaction(db, async(t) => {
+                const memRef = doc(db, "mlu_members", memberId);
+                const trxRef = doc(db, "mlu_tabungan_trx", trxId);
+                const memDoc = await t.get(memRef);
+                
+                const currentBal = memDoc.data().saldoTabungan || 0;
+                // LOGIKA KOREKSI: Saldo Baru = Saldo Lama - TrxLama + TrxBaru
+                const diff = newAmt - oldAmt;
+                const finalBal = currentBal + diff;
+
+                t.update(memRef, { saldoTabungan: finalBal });
+                t.update(trxRef, { amount: newAmt });
+            });
+
+            document.getElementById('modalEditTrx').style.display = 'none';
+            loadAdminRecentTrx(memberId); // Refresh List
+            alert("Berhasil dikoreksi!");
+        }
+
         window.processDeposit = async () => {
             const id = document.getElementById('depMemberId').value; const amt = parseInt(document.getElementById('depAmount').value);
             await runTransaction(db, async(t)=>{
@@ -369,7 +451,8 @@
                 if(arr.length===0) { list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada transaksi.</div>`; return; }
                 arr.forEach(d => {
                     const color = d.type === 'IN' ? 'var(--success)' : 'var(--danger)'; const sign = d.type === 'IN' ? '+' : '-';
-                    list.innerHTML += `<div class="trx-item"><div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc}</div></div><div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div></div>`;
+                    const dateStr = new Date(d.timestamp).toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+                    list.innerHTML += `<div class="trx-item"><div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc}</div><div style="font-size:10px; color:#aaa;">${dateStr}</div></div><div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div></div>`;
                 });
             });
         }
