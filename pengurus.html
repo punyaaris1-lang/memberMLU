@@ -133,7 +133,7 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // MAPPING FOTO MANUAL
+        // MAPPING FOTO MANUAL (SUDAH DIPERBAIKI UNTUK JET LEE)
         const localPhotos = {
             "AMAR": "amar.jpg", "AJI": "aji.jpg", "DONI": "doni.jpg", "UBAY": "ubay.jpg",
             "AHMAD": "akiaki.jpg", 
@@ -141,7 +141,11 @@
             "IPUNG": "ipung.jpg",   // VARIANT
             "PUR": "ipung.jpg",     // VARIANT
             "DAYYAN": "dayan.jpg",
-            "HENDRO": "hendro.jpg", "IWAN": "iwan.jpg", "JETLEE": "jetlee.jpg", "SANDI": "sandi.jpg"
+            "HENDRO": "hendro.jpg", 
+            "IWAN": "iwan.jpg", 
+            "JET LEE": "jetlee.jpg", // Prioritas pertama Jet Lee
+            "WIHARTA": "jetlee.jpg", // Kata kunci cadangan Jet Lee
+            "SANDI": "sandi.jpg"     // Sandi ditaruh di bawah agar tidak menimpa Jet Lee
         };
 
         function renderCard(containerId, data, isKetum = false, isSmall = false) {
