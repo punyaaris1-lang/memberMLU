@@ -18,20 +18,30 @@
             --danger: #EF4444; --success: #10B981; --warning: #F59E0B;
         }
         body { margin:0; background:var(--bg-surface); font-family:'Inter',sans-serif; color:var(--text-main); overflow-x:hidden; user-select:none; }
+        * { box-sizing: border-box; }
         
         /* SECURITY UI */
         #securityScreen { position: fixed; inset: 0; background: #F8FAFC; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s; }
         .sec-icon-box { width: 90px; height: 90px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 50px rgba(45,99,237,0.2); margin-bottom: 20px; position: relative; overflow: hidden; }
         .sec-icon-box i { font-size: 35px; color: var(--electric-blue); z-index: 2; }
-        .scan-laser { position: absolute; width: 100%; height: 3px; background: var(--success); top: 0; animation: scanDown 1.5s infinite; opacity: 0.7; box-shadow: 0 0 15px var(--success); z-index: 1; }
-        @keyframes scanDown { 0% {top:0;} 50% {top:100%;} 100% {top:0;} }
         
         .camera-container { width: 220px; height: 220px; border-radius: 40px; overflow: hidden; position: relative; border: 4px solid white; box-shadow: 0 20px 60px rgba(0,0,0,0.15); background: #000; display: none; margin-bottom: 20px; }
         #videoInput { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        .face-frame { position: absolute; inset: 20px; border: 2px dashed rgba(255,255,255,0.6); border-radius: 30px; }
-
-        .btn-action { width: 100%; max-width: 250px; padding: 16px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.25); background: var(--electric-blue); color: white; }
         
+        /* ANIMASI FRAME VERMUK ALA GOJEK */
+        .face-frame { position: absolute; inset: 20px; border: 2px dashed rgba(255,255,255,0.6); border-radius: 30px; transition: 0.3s; pointer-events: none; }
+        .face-frame.scanning { 
+            border-color: #10B981; border-style: solid;
+            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.4), 0 0 15px rgba(16, 185, 129, 0.4); 
+            animation: facePulse 1s infinite alternate; 
+        }
+        @keyframes facePulse { from { transform: scale(1); opacity: 0.8;} to { transform: scale(1.02); opacity: 1;} }
+
+        /* BUTTONS SECURITY */
+        .btn-action { width: 100%; max-width: 250px; padding: 16px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.25); background: var(--electric-blue); color: white; }
+        .btn-outline { background: rgba(45,99,237,0.05); color: var(--electric-blue); border: 2px solid var(--electric-blue); box-shadow: none; padding: 14px; }
+        .btn-ghost { background: transparent; color: #94A3B8; box-shadow: none; font-size: 12px; margin-top: 5px; }
+
         /* PIN PAD */
         .pin-area { display: none; width: 100%; max-width: 280px; flex-direction: column; align-items: center; }
         .pin-display { display: flex; gap: 10px; margin-bottom: 30px; }
@@ -62,31 +72,23 @@
         
         .app-card { background:white; padding:15px; border-radius:16px; margin-bottom:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); display:flex; justify-content:space-between; align-items:center; }
         
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 85vh; overflow-y: auto; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 85vh; overflow-y: auto; animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
+
         .form-group { margin-bottom:20px; text-align: left;}
+        .form-label { display:block; font-size:11px; font-weight:800; color:#64748B; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;}
         .form-input { width:100%; padding:15px; border:1px solid #E2E8F0; border-radius:14px; font-family:'Space Grotesk'; font-weight:700; font-size:16px; background:#F8FAFC; outline:none; }
-        .btn-submit { width:100%; padding:16px; border:none; border-radius:16px; font-weight:800; color:white; cursor:pointer; margin-top:10px; }
-        .bg-sukses { background:var(--success); } .bg-cancel { background:#E2E8F0; color:#475569; box-shadow:none; }
+        .form-input:focus { border-color: var(--electric-blue); background: white; }
+        .btn-submit { width:100%; padding:16px; border:none; border-radius:16px; font-weight:800; color:white; cursor:pointer; margin-top:10px; font-family:'Space Grotesk'; font-size:13px; }
+        .bg-sukses { background:var(--success); box-shadow: 0 10px 25px rgba(16,185,129,0.3); } 
+        .bg-cancel { background:#E2E8F0; color:#475569; box-shadow:none; }
         
         .admin-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        .btn-edit { background: none; border: none; color: var(--electric-blue); cursor: pointer; padding: 5px; font-size: 14px; }
+        .btn-edit { background: rgba(0,0,0,0.05); border: none; color: var(--electric-blue); cursor: pointer; width: 30px; height: 30px; border-radius: 8px; font-size: 12px; display:flex; align-items:center; justify-content:center; }
         
-        /* TOMBOL NABUNG USER */
-        .btn-nabung {
-            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5);
-            color: white; padding: 8px 15px; border-radius: 50px; font-size: 11px; 
-            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;
-            margin: 15px auto 0;
-        }
-        .btn-nabung:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
-
-        .btn-danger-reset {
-            display: none; width: 100%; padding: 15px; margin-top: 30px;
-            background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5;
-            border-radius: 12px; font-weight: 800; cursor: pointer;
-            font-size: 11px; letter-spacing: 1px;
-        }
+        .btn-nabung { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 8px 15px; border-radius: 50px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; margin: 15px auto 0; }
+        .btn-danger-reset { display: none; width: 100%; padding: 15px; margin-top: 30px; background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px; }
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); }
@@ -102,11 +104,17 @@
 
     <div id="securityScreen">
         <div class="sec-icon-box"><div class="scan-laser"></div><i class="fas fa-wallet" id="secIcon"></i></div>
-        <div class="sec-title" id="secTitle">DOMPET TABUNGAN</div>
-        <div class="sec-desc" id="secDesc">Keamanan 6 Digit PIN.</div>
-        <div class="camera-container" id="camWrap"><video id="videoInput" autoplay muted playsinline></video><div class="face-frame"></div></div>
+        <div class="sec-title" id="secTitle" style="font-family:'Outfit'; font-weight:900; font-size:22px; color:var(--royal-blue);">DOMPET TABUNGAN</div>
+        <div class="sec-desc" id="secDesc" style="font-size:12px; color:#64748B; margin-bottom:20px;">Keamanan 6 Digit PIN.</div>
+        
+        <div class="camera-container" id="camWrap">
+            <video id="videoInput" autoplay muted playsinline></video>
+            <div class="face-frame" id="faceFrame"></div>
+        </div>
+
         <button class="btn-action" id="btnMainAction" style="display:none;" onclick="handleAction()">MULAI SCAN</button>
-        <div id="scanStatus" style="font-size:12px; font-weight:800; color:var(--electric-blue); margin-top:10px; height:20px;"></div>
+        <div id="scanStatus" style="font-size:12px; font-weight:800; color:var(--electric-blue); height:20px;"></div>
+        
         <div class="pin-area" id="pinArea">
             <div class="pin-display"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
             <div class="pin-grid">
@@ -118,8 +126,25 @@
                 <div class="pin-key" style="color:var(--danger);" onclick="delPin()"><i class="fas fa-backspace"></i></div>
             </div>
         </div>
-        <button class="btn-link" id="btnSwitch" onclick="switchMode()" style="margin-top:20px;">Gunakan PIN (6 Digit)</button>
-        <button class="btn-link" style="color:#94A3B8; text-decoration:none;" onclick="window.location.href='dashboard.html'">BATAL / KEMBALI</button>
+
+        <div style="display:flex; flex-direction:column; gap:5px; width:100%; max-width:250px; margin-top:20px;" id="btnBawahKamera">
+            <button class="btn-action btn-outline" id="btnSwitch" onclick="switchMode()">Gunakan PIN (6 Digit)</button>
+            <button class="btn-action btn-ghost" onclick="window.location.href='dashboard.html'">BATAL / KEMBALI</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="customAlertModal" style="z-index: 30000;">
+        <div class="modal-box" style="padding: 30px;">
+            <div id="camTitle" style="font-family:'Outfit'; font-size:20px; color:var(--royal-blue); margin-bottom:10px; font-weight:900;"></div>
+            <div id="camMsg" style="font-size:13px; color:var(--text-main); margin-bottom:25px; line-height:1.6;"></div>
+            
+            <input type="password" id="camInput" class="form-input" style="display:none; margin-bottom:20px; text-align:center; font-size:20px; letter-spacing:5px;">
+            
+            <div style="display:flex; gap:10px;">
+                <button class="btn-submit bg-cancel" id="camBtnCancel">BATAL</button>
+                <button class="btn-submit bg-sukses" id="camBtnOk" style="background:var(--electric-blue);">OK, LANJUTKAN</button>
+            </div>
+        </div>
     </div>
 
     <div class="modal-overlay" id="agreeModal">
@@ -187,11 +212,25 @@
 
     <div class="modal-overlay" id="modalDeposit">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--royal-blue); font-family:'Outfit'; font-size:20px; margin-bottom:5px;">INPUT SETORAN MANUAL</h3>
+            <h3 style="margin-top:0; color:var(--royal-blue); font-family:'Outfit'; font-size:20px; margin-bottom:5px;">INPUT MANUAL</h3>
             <p id="depMemberName" style="font-size:12px; color:#64748B; margin-bottom:25px; font-weight:700; border-bottom:1px solid #eee; padding-bottom:10px;"></p>
             <input type="hidden" id="depMemberId">
             <div class="form-group"><label class="form-label">Nominal (Rp)</label><input type="number" id="depAmount" class="form-input" placeholder="Contoh: 20000"></div>
             <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalDeposit').style.display='none'">BATAL</button><button class="btn-submit bg-sukses" onclick="processDeposit()">SIMPAN</button></div>
+            
+            <div style="margin-top:25px; border-top:1px dashed #ddd; padding-top:15px;">
+                <div style="font-size:10px; font-weight:800; color:#94A3B8; margin-bottom:10px; text-transform:uppercase;">Transaksi Terakhir (Edit/Hapus)</div>
+                <div id="adminRecentTrx" style="max-height:150px; overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalEditTrx">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--warning); font-family:'Outfit'; font-size:18px;">KOREKSI NOMINAL</h3>
+            <input type="hidden" id="editTrxId"><input type="hidden" id="editOldAmount">
+            <div class="form-group"><label class="form-label">Nominal Baru (Rp)</label><input type="number" id="editNewAmount" class="form-input"></div>
+            <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalEditTrx').style.display='none'">BATAL</button><button class="btn-submit" style="background:var(--warning); color:white;" onclick="saveEditTrx()">UPDATE</button></div>
         </div>
     </div>
 
@@ -208,22 +247,13 @@
                 <div style="font-size:11px; color:#166534; font-weight:800;">YANG HARUS DI TRANSFER:</div>
                 <div id="totalNabungTxt" style="font-family:'Space Grotesk'; font-size:32px; font-weight:900; color:var(--success); margin:5px 0;">Rp 0</div>
                 <div style="font-size:10px; color:#15803D;">(Termasuk Kode Unik Anda: <b id="kodeUnikTxt">***</b>)</div>
-                <div style="font-size:9px; color:#DC2626; margin-top:5px;">Transfer nominal HARUS SESUAI hingga 3 angka terakhir agar terbaca sistem.</div>
             </div>
 
             <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:15px;">
-                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS Error?">
+                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;">
             </div>
 
-            <p style="font-size:11px; color:#64748B; line-height:1.4;">
-                <b>Langkah:</b><br>
-                1. Masukkan nominal di atas.<br>
-                2. Buka BCA/GoPay/OVO, scan QRIS ini.<br>
-                3. Masukkan angka hijau (Total Transfer).<br>
-                4. Jika sudah berhasil transfer, klik tombol di bawah.
-            </p>
-
-            <div style="display:flex; gap:10px; margin-top:20px;">
+            <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">BATAL</button>
                 <button class="btn-submit bg-sukses" onclick="submitKlaimNabung()">SAYA SUDAH TRANSFER</button>
             </div>
@@ -240,15 +270,53 @@
         let u = null; try { u = JSON.parse(localStorage.getItem('maka_user')); } catch(e) {}
         if(!u || !u.id) window.location.href='index.html';
 
-        // ADMIN CONFIG
+        // --- CUSTOM POPUP MODAL LOGIC ---
+        window.showConfirm = (title, msg, isPrompt = false) => {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customAlertModal');
+                document.getElementById('camTitle').innerHTML = title;
+                document.getElementById('camMsg').innerHTML = msg;
+                const input = document.getElementById('camInput');
+                const btnCancel = document.getElementById('camBtnCancel');
+                const btnOk = document.getElementById('camBtnOk');
+                
+                if(isPrompt) { input.style.display = 'block'; input.value = ''; input.focus(); }
+                else { input.style.display = 'none'; }
+                
+                btnCancel.style.display = 'block';
+                btnOk.style.background = 'var(--electric-blue)';
+                
+                modal.style.display = 'flex';
+
+                btnCancel.onclick = () => { modal.style.display = 'none'; resolve(false); };
+                btnOk.onclick = () => { 
+                    modal.style.display = 'none'; 
+                    resolve(isPrompt ? input.value : true); 
+                };
+            });
+        };
+
+        window.showAlert = (title, msg) => {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customAlertModal');
+                document.getElementById('camTitle').innerHTML = title;
+                document.getElementById('camMsg').innerHTML = msg;
+                document.getElementById('camInput').style.display = 'none';
+                document.getElementById('camBtnCancel').style.display = 'none'; // Sembunyikan Batal
+                document.getElementById('camBtnOk').style.background = 'var(--success)';
+                
+                modal.style.display = 'flex';
+                document.getElementById('camBtnOk').onclick = () => { modal.style.display = 'none'; resolve(true); };
+            });
+        };
+
+        // ADMIN CONFIG (DITAMBAH IWAN B 4650 SWE)
         const cleanPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
-        const isTrueAdmin = (cleanPlat === "B4248SWF") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
+        const isTrueAdmin = (cleanPlat === "B4248SWF") || (cleanPlat === "B4650SWE") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
         let isViewAdminVisible = isTrueAdmin; 
         const isSuperAdmin = (cleanPlat === "B4248SWF");
 
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
-        
-        // KODE UNIK GLOBAL
         window.myKodeUnik = 0;
 
         // INIT
@@ -256,76 +324,59 @@
             faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights')
-        ]).then(() => { checkUserStatus(); }).catch(() => { alert("Gagal memuat AI."); });
+        ]).then(() => { checkUserStatus(); }).catch(() => { showAlert("ERROR", "Gagal memuat sistem AI. Pastikan internet stabil."); });
 
         function checkUserStatus() {
             onSnapshot(doc(db, "mlu_members", u.id), (docSnap) => {
                 if(docSnap.exists()) {
                     const d = docSnap.data();
-
-                    // --- SISTEM GENERATE KODE UNIK OTOMATIS ---
                     if(d.kodeUnik === undefined) {
-                        const newCode = Math.floor(Math.random() * 899) + 100; // Generate 100-999
+                        const newCode = Math.floor(Math.random() * 899) + 100;
                         updateDoc(doc(db, "mlu_members", u.id), { kodeUnik: newCode });
-                        return; // Berhenti, biarkan snapshot refresh ulang
+                        return;
                     }
                     window.myKodeUnik = d.kodeUnik;
                     document.getElementById('kodeUnikTxt').innerText = myKodeUnik;
-                    // ------------------------------------------
 
                     document.getElementById('loaderOverlay').style.display = 'none';
                     document.getElementById('myBalance').innerText = `Rp ${(d.saldoTabungan||0).toLocaleString('id-ID')}`;
                     loadHistory();
                     updateAdminView();
                     if(isTrueAdmin) initAdminData();
-
                     if(isSuperAdmin) document.getElementById('btnResetData').style.display = 'block';
 
                     if (d.pin_tabungan) {
                         userPinTabungan = d.pin_tabungan; isSetupMode = false; 
                         if(d.faceDescriptor) { userFaceDesc = new Float32Array(Object.values(d.faceDescriptor)); showLoginScreen(); } 
-                        else { document.getElementById('btnSwitch').style.display = 'none'; switchMode(); }
+                        else { document.getElementById('btnBawahKamera').style.display = 'none'; switchMode(); }
                     } else { isSetupMode = true; showActivationScreen(); }
                 }
             });
         }
 
-        // --- KALKULATOR REALTIME KLAIM ---
         window.calcTotalTransfer = () => {
             let base = parseInt(document.getElementById('inputNabungBase').value) || 0;
-            if(base === 0) {
-                document.getElementById('totalNabungTxt').innerText = "Rp 0";
-                return;
-            }
-            let total = base + window.myKodeUnik;
-            document.getElementById('totalNabungTxt').innerText = "Rp " + total.toLocaleString('id-ID');
+            if(base === 0) { document.getElementById('totalNabungTxt').innerText = "Rp 0"; return; }
+            document.getElementById('totalNabungTxt').innerText = "Rp " + (base + window.myKodeUnik).toLocaleString('id-ID');
         }
 
-        // --- USER SUBMIT KLAIM SETORAN ---
         window.submitKlaimNabung = async () => {
             let base = parseInt(document.getElementById('inputNabungBase').value);
-            if(!base || base < 5000) return alert("Minimal nabung Rp 5.000");
-            
+            if(!base || base < 5000) return showAlert("PERHATIAN", "Minimal nabung Rp 5.000");
             let total = base + window.myKodeUnik;
 
-            if(confirm(`Yakin sudah transfer sebesar Rp ${total.toLocaleString('id-ID')} ke QRIS?\n\nKlaim palsu akan ditolak Admin.`)) {
+            const konfirm = await showConfirm("KONFIRMASI", `Yakin sudah transfer sebesar <b>Rp ${total.toLocaleString('id-ID')}</b> ke QRIS MLU?<br><br><span style='color:red;'>Klaim palsu/asal-asalan akan ditolak Admin.</span>`);
+            if(konfirm) {
                 await addDoc(collection(db, "mlu_tabungan_trx"), {
-                    memberId: u.id,
-                    memberName: u.namaKtp || "Member MLU",
-                    type: 'IN', // IN = Setor
-                    amount: total,
-                    desc: 'Klaim Setoran (QRIS)',
-                    timestamp: Date.now(),
-                    status: 'PENDING'
+                    memberId: u.id, memberName: u.namaKtp || "Member MLU",
+                    type: 'IN', amount: total, desc: 'Klaim Setoran (QRIS)', timestamp: Date.now(), status: 'PENDING'
                 });
-                alert("Klaim berhasil dikirim!\nSilakan tunggu persetujuan Admin.");
+                await showAlert("SUKSES", "Klaim berhasil dikirim! Silakan tunggu persetujuan Admin.");
                 document.getElementById('modalQris').style.display = 'none';
-                document.getElementById('inputNabungBase').value = '';
-                calcTotalTransfer();
+                document.getElementById('inputNabungBase').value = ''; calcTotalTransfer();
             }
         }
 
-        // STEALTH ADMIN TOGGLE
         window.toggleStealthAdmin = () => {
             if(!isTrueAdmin) return;
             isViewAdminVisible = !isViewAdminVisible;
@@ -342,9 +393,12 @@
         }
 
         window.resetAllSystem = async () => {
-            if(!confirm("⚠️ PERINGATAN KERAS ⚠️\nAnda akan MENGHAPUS SEMUA DATA SALDO & RIWAYAT.\nKlik OK jika yakin.")) return;
-            let pass = prompt("MASUKKAN PASSWORD KONFIRMASI:");
-            if(pass !== "MLU2025") return alert("PASSWORD SALAH!");
+            const konf1 = await showConfirm("⚠️ PERINGATAN KERAS", "Anda akan <b>MENGHAPUS SEMUA DATA SALDO & RIWAYAT</b> seluruh member. Tindakan ini tidak bisa di-undo.");
+            if(!konf1) return;
+            
+            let pass = await showConfirm("OTORISASI", "MASUKKAN PASSWORD KONFIRMASI:", true);
+            if(pass !== "MLU2025") return showAlert("GAGAL", "Password Salah!");
+
             document.getElementById('loaderOverlay').style.display = 'flex';
             try {
                 const membersSnap = await getDocs(collection(db, "mlu_members"));
@@ -353,12 +407,12 @@
                 const trxSnap = await getDocs(collection(db, "mlu_tabungan_trx"));
                 trxSnap.forEach(doc => { promises.push(deleteDoc(doc.ref)); });
                 await Promise.all(promises);
-                alert("RESET BERHASIL!"); location.reload();
-            } catch (e) { alert("Gagal: " + e.message); document.getElementById('loaderOverlay').style.display = 'none'; }
+                await showAlert("SUKSES", "Semua saldo dan riwayat telah di-reset."); location.reload();
+            } catch (e) { document.getElementById('loaderOverlay').style.display = 'none'; showAlert("ERROR", e.message); }
         }
 
         function showActivationScreen() { document.getElementById('agreeModal').style.display = 'flex'; }
-        window.acceptAgreement = () => { document.getElementById('agreeModal').style.display = 'none'; document.getElementById('secTitle').innerText = "REGISTRASI WAJAH"; document.getElementById('btnMainAction').innerText = "SCAN & SIMPAN WAJAH"; document.getElementById('btnMainAction').style.display = 'block'; document.getElementById('btnSwitch').style.display = 'none'; startCamera(); };
+        window.acceptAgreement = () => { document.getElementById('agreeModal').style.display = 'none'; document.getElementById('secTitle').innerText = "REGISTRASI WAJAH"; document.getElementById('btnMainAction').innerText = "SCAN & SIMPAN WAJAH"; document.getElementById('btnMainAction').style.display = 'block'; document.getElementById('btnBawahKamera').style.display = 'none'; startCamera(); };
         function showLoginScreen() { document.getElementById('secTitle').innerText = "VERIFIKASI"; document.getElementById('btnMainAction').style.display = 'none'; startCamera(); }
 
         async function startCamera() {
@@ -369,6 +423,9 @@
                 videoEl.addEventListener('play', () => {
                     if (!isSetupMode) {
                         document.getElementById('scanStatus').innerText = "Mendeteksi...";
+                        const frame = document.getElementById('faceFrame');
+                        frame.classList.add('scanning'); // NYALAKAN KEDIP HIJAU
+                        
                         detectInterval = setInterval(async () => {
                             if (!isFaceMode) return;
                             const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
@@ -379,104 +436,86 @@
                         }, 500);
                     }
                 });
-            } catch (e) { alert("Kamera error. Pakai PIN."); switchMode(); }
+            } catch (e) { switchMode(); }
         }
 
         window.handleAction = async () => {
             if (isSetupMode) {
                 document.getElementById('btnMainAction').innerText = "MEMINDAI...";
+                document.getElementById('faceFrame').classList.add('scanning');
                 const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
                 if (detection) {
                     userFaceDesc = detection.descriptor; stopCamera();
                     document.getElementById('secTitle').innerText = "BUAT PIN 6 DIGIT"; document.getElementById('camWrap').style.display = 'none'; document.getElementById('pinArea').style.display = 'flex'; document.getElementById('btnMainAction').style.display = 'none'; isFaceMode = false;
-                } else { alert("Wajah tidak terdeteksi."); document.getElementById('btnMainAction').innerText = "SCAN ULANG"; }
+                } else { document.getElementById('faceFrame').classList.remove('scanning'); document.getElementById('btnMainAction').innerText = "SCAN ULANG"; }
             }
         };
 
-        function stopCamera() { if (stream) stream.getTracks().forEach(t => t.stop()); if (detectInterval) clearInterval(detectInterval); }
-        window.switchMode = () => { isFaceMode = !isFaceMode; if (isFaceMode) { startCamera(); document.getElementById('btnSwitch').innerText = "Gunakan PIN (6 Digit)"; } else { stopCamera(); document.getElementById('camWrap').style.display = 'none'; document.getElementById('pinArea').style.display = 'flex'; document.getElementById('btnSwitch').innerText = "Gunakan Face ID"; } };
+        function stopCamera() { if (stream) stream.getTracks().forEach(t => t.stop()); if (detectInterval) clearInterval(detectInterval); document.getElementById('faceFrame').classList.remove('scanning'); }
+        window.switchMode = () => { isFaceMode = !isFaceMode; if (isFaceMode) { startCamera(); document.getElementById('btnSwitch').innerText = "Gunakan PIN (6 Digit)"; document.getElementById('btnSwitch').classList.add('btn-outline'); document.getElementById('btnSwitch').style.background='rgba(45,99,237,0.05)'; document.getElementById('btnSwitch').style.color='var(--electric-blue)'; } else { stopCamera(); document.getElementById('camWrap').style.display = 'none'; document.getElementById('pinArea').style.display = 'flex'; document.getElementById('btnSwitch').innerText = "Gunakan Face ID"; document.getElementById('btnSwitch').classList.remove('btn-outline'); document.getElementById('btnSwitch').style.background='var(--electric-blue)'; document.getElementById('btnSwitch').style.color='white'; } };
         window.pressPin = (n) => { if (currentPinInput.length < 6) { currentPinInput += n; updatePinDots(); if (currentPinInput.length === 6) processPin(); } };
         window.delPin = () => { currentPinInput = currentPinInput.slice(0, -1); updatePinDots(); };
         window.clearPin = () => { currentPinInput = ""; updatePinDots(); };
         function updatePinDots() { document.querySelectorAll('.pin-dot').forEach((d, i) => { if (i < currentPinInput.length) d.classList.add('filled'); else d.classList.remove('filled'); }); }
         
-        function processPin() {
+        window.processPin = async () => {
             if (isSetupMode) {
-                if(confirm(`Set PIN Tabungan: ${currentPinInput}?`)) {
+                const conf = await showConfirm("SIMPAN PIN", `Jadikan <b>${currentPinInput}</b> sebagai PIN Dompet Anda?`);
+                if(conf) {
                     const faceObj = { ...userFaceDesc }; 
-                    updateDoc(doc(db, "mlu_members", u.id), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { alert("Dompet Aktif!"); unlockApp(); });
+                    updateDoc(doc(db, "mlu_members", u.id), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { unlockApp(); });
                 } else { clearPin(); }
             } else {
-                if (currentPinInput === userPinTabungan) unlockApp(); else { alert("PIN Salah!"); clearPin(); }
+                if (currentPinInput === userPinTabungan) unlockApp(); else { await showAlert("GAGAL", "PIN yang Anda masukkan salah!"); clearPin(); }
             }
         }
         function unlockApp() { document.getElementById('securityScreen').style.opacity = 0; setTimeout(() => { document.getElementById('securityScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; }, 500); }
 
         function initAdminData() {
-            // LOAD MEMBERS FOR MANUAL INPUT (OPTIONAL)
             getDocs(query(collection(db, "mlu_members"))).then(snap => {
                 let allMembers = []; snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
                 allMembers.sort((a,b) => (a.namaKtp||'').localeCompare(b.namaKtp||''));
                 window.allMembersCache = allMembers; renderMembers(allMembers);
             });
-
-            // LOAD APPROVALS (KLAIM NABUNG & PENARIKAN)
             const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "==", "PENDING"));
             onSnapshot(qApp, (snap) => {
                 const cont = document.getElementById('approvalList'); cont.innerHTML = "";
                 if(snap.empty) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8;">Tidak ada antrean klaim.</div>`; return;}
-                
                 let arrApp = []; snap.forEach(d => arrApp.push({id: d.id, ...d.data()}));
-                arrApp.sort((a,b) => a.timestamp - b.timestamp); // Urut paling lama
-
+                arrApp.sort((a,b) => a.timestamp - b.timestamp);
                 arrApp.forEach(data => {
                     const isNabung = data.type === 'IN';
                     const titleText = isNabung ? "Nabung (Setor)" : "Penarikan Dana";
                     const color = isNabung ? "var(--success)" : "var(--danger)";
-
                     cont.innerHTML += `
                     <div class="app-card" style="border-left:5px solid ${color}">
-                        <div>
-                            <div style="font-size:10px; color:#64748B;">${new Date(data.timestamp).toLocaleString('id-ID')}</div>
-                            <h4 style="margin:5px 0; color:var(--royal-blue);">${data.memberName}</h4>
-                            <div style="font-size:11px; color:#64748B;">${titleText}</div>
-                            <div style="font-family:'Space Grotesk'; font-weight:900; font-size:16px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div>
-                        </div>
-                        <div style="display:flex; flex-direction:column; gap:5px;">
-                            <button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">TERIMA</button>
-                            <button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="rejectKlaim('${data.id}')">TOLAK</button>
-                        </div>
+                        <div><div style="font-size:10px; color:#64748B;">${new Date(data.timestamp).toLocaleString('id-ID')}</div><h4 style="margin:5px 0; color:var(--royal-blue);">${data.memberName}</h4><div style="font-size:11px; color:#64748B;">${titleText}</div><div style="font-family:'Space Grotesk'; font-weight:900; font-size:16px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div></div>
+                        <div style="display:flex; flex-direction:column; gap:5px;"><button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">TERIMA</button><button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="rejectKlaim('${data.id}')">TOLAK</button></div>
                     </div>`;
                 });
             });
         }
 
-        // --- FUNGSI ADMIN: TERIMA & TOLAK KLAIM ---
         window.approveKlaim = async (trxId, type, amount, memberId) => {
-            if(!confirm("Yakin sudah cek mutasi bank dan dana benar-benar masuk?")) return;
-            
+            const konf = await showConfirm("PERSETUJUAN", "Yakin sudah cek mutasi bank dan dana benar-benar masuk/sesuai?");
+            if(!konf) return;
             await runTransaction(db, async(t) => {
                 const r = doc(db, "mlu_tabungan_trx", trxId);
                 const mRef = doc(db, "mlu_members", memberId);
                 const mDoc = await t.get(mRef);
-                
                 let currentSaldo = mDoc.data().saldoTabungan || 0;
-                
-                if (type === 'IN') currentSaldo += amount; // Saldo Nambah
-                else if (type === 'OUT') currentSaldo -= amount; // Saldo Berkurang (Tarik)
-                
-                t.update(mRef, { saldoTabungan: currentSaldo });
-                t.update(r, { status: 'SUCCESS' });
+                if (type === 'IN') currentSaldo += amount; else if (type === 'OUT') currentSaldo -= amount; 
+                t.update(mRef, { saldoTabungan: currentSaldo }); t.update(r, { status: 'SUCCESS' });
             });
-            alert("Berhasil disetujui! Saldo member telah bertambah.");
+            showAlert("SUKSES", "Persetujuan berhasil! Saldo member telah diupdate.");
         }
 
         window.rejectKlaim = async (trxId) => {
-            if(!confirm("Tolak klaim ini?\nData klaim akan dihapus permanen.")) return;
+            const konf = await showConfirm("TOLAK KLAIM", "Tolak klaim ini? Data klaim akan dihapus permanen.");
+            if(!konf) return;
             await deleteDoc(doc(db, "mlu_tabungan_trx", trxId));
-            alert("Klaim Ditolak & Dihapus.");
+            showAlert("INFO", "Klaim telah ditolak dan dihapus.");
         }
-        // -------------------------------------------
 
         window.renderMembers = (arr) => {
             const cont = document.getElementById('adminMemberList'); cont.innerHTML = "";
@@ -484,33 +523,91 @@
                 const saldoMember = m.saldoTabungan ? m.saldoTabungan.toLocaleString('id-ID') : '0';
                 cont.innerHTML += `
                 <div class="member-row">
-                    <div>
-                        <div class="m-name">${m.namaKtp||'TANPA NAMA'}</div>
-                        <div class="m-plat">${m.plat||'-'}</div>
-                        <div style="font-size:10px; color:#10B981; font-weight:700;">Rp ${saldoMember}</div>
-                    </div>
-                    <div style="display:flex;">
-                        <button class="btn-reset" onclick="resetMember('${m.id}', '${m.namaKtp}')"><i class="fas fa-key"></i></button>
-                        <button class="btn-plus" onclick="document.getElementById('modalDeposit').style.display='flex'; document.getElementById('depMemberId').value='${m.id}'; document.getElementById('depMemberName').innerText='${m.namaKtp}';"><i class="fas fa-plus"></i></button>
+                    <div><div class="m-name">${m.namaKtp||'TANPA NAMA'}</div><div class="m-plat">${m.plat||'-'}</div><div style="font-size:10px; color:#10B981; font-weight:700;">Rp ${saldoMember}</div></div>
+                    <div style="display:flex;"><button class="btn-reset" onclick="resetMember('${m.id}', '${m.namaKtp}')"><i class="fas fa-key"></i></button><button class="btn-plus" onclick="document.getElementById('modalDeposit').style.display='flex'; document.getElementById('depMemberId').value='${m.id}'; document.getElementById('depMemberName').innerText='${m.namaKtp}'; loadAdminRecentTrx('${m.id}');"><i class="fas fa-plus"></i></button></div>
+                </div>`;
+            });
+        }
+
+        window.resetMember = async (id, name) => {
+            const konf = await showConfirm("RESET KUNCI", `Reset Kunci Face ID & PIN untuk <b>${name}</b>?`);
+            if(konf) updateDoc(doc(db, "mlu_members", id), { pin_tabungan: null, faceDescriptor: null }).then(() => showAlert("SUKSES", "Akun berhasil di-reset."));
+        };
+
+        window.changePinSelf = async () => {
+            const konf = await showConfirm("GANTI KEAMANAN", "Anda akan menghapus Wajah & PIN lama, dan akan diminta mendaftar ulang saat login berikutnya.");
+            if(konf) updateDoc(doc(db, "mlu_members", u.id), { pin_tabungan: null, faceDescriptor: null }).then(() => location.reload());
+        }
+
+        window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
+        
+        async function loadAdminRecentTrx(memberId) {
+            const cont = document.getElementById('adminRecentTrx');
+            cont.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-spin"></i></div>';
+            const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", memberId));
+            const snap = await getDocs(q);
+            let dataArr = []; snap.forEach(d => dataArr.push({id: d.id, ...d.data()}));
+            dataArr.sort((a, b) => b.timestamp - a.timestamp); dataArr = dataArr.slice(0, 5);
+            cont.innerHTML = "";
+            if(dataArr.length === 0) { cont.innerHTML = '<div style="text-align:center; font-size:10px; color:#aaa; margin-top:10px;">Belum ada transaksi.</div>'; return; }
+            dataArr.forEach(data => {
+                const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+                const isPlus = data.type === 'IN';
+                // TOMBOL DELETE DITAMBAHKAN DISINI
+                cont.innerHTML += `
+                <div class="admin-hist-item">
+                    <div style="font-size:11px;"><div style="font-weight:700;">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div><div style="color:#aaa;">${dateStr}</div></div>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn-edit" onclick="openEditTrx('${data.id}', ${data.amount})"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn-edit" style="color:var(--danger); background:rgba(239,68,68,0.1);" onclick="deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>`;
             });
         }
 
-        window.resetMember = (id, name) => {
-            if(confirm(`Reset Kunci Dompet untuk ${name}?`)) {
-                updateDoc(doc(db, "mlu_members", id), { pin_tabungan: null, faceDescriptor: null }).then(() => alert("Berhasil di-reset."));
-            }
-        };
-
-        window.changePinSelf = () => {
-            if(confirm("Ganti PIN Dompet (6 Digit)?")) {
-                updateDoc(doc(db, "mlu_members", u.id), { pin_tabungan: null, faceDescriptor: null }).then(() => location.reload());
-            }
+        window.openEditTrx = (trxId, amount) => {
+            document.getElementById('editTrxId').value = trxId; document.getElementById('editOldAmount').value = amount; document.getElementById('editNewAmount').value = amount; document.getElementById('modalEditTrx').style.display = 'flex';
         }
 
-        window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
-        
+        window.saveEditTrx = async () => {
+            const trxId = document.getElementById('editTrxId').value; const oldAmt = parseInt(document.getElementById('editOldAmount').value); const newAmt = parseInt(document.getElementById('editNewAmount').value); const memberId = document.getElementById('depMemberId').value;
+            if(!newAmt) return;
+            await runTransaction(db, async(t) => {
+                const memRef = doc(db, "mlu_members", memberId); const trxRef = doc(db, "mlu_tabungan_trx", trxId); const memDoc = await t.get(memRef);
+                const currentBal = memDoc.data().saldoTabungan || 0; const diff = newAmt - oldAmt; const finalBal = currentBal + diff;
+                t.update(memRef, { saldoTabungan: finalBal }); t.update(trxRef, { amount: newAmt });
+            });
+            document.getElementById('modalEditTrx').style.display = 'none'; loadAdminRecentTrx(memberId);
+        }
+
+        // --- FITUR HAPUS TRANSAKSI DENGAN PASSWORD ---
+        window.deleteTrx = async (trxId, amount, type, memberId) => {
+            const konf1 = await showConfirm("HAPUS TRANSAKSI", "Yakin ingin menghapus transaksi ini?<br>Saldo member akan otomatis disesuaikan kembali.");
+            if(!konf1) return;
+
+            const pass = await showConfirm("OTORISASI", "Masukkan Password Admin:", true);
+            if(pass !== "MLU2025") return showAlert("GAGAL", "Password Salah!");
+
+            document.getElementById('loaderOverlay').style.display = 'flex';
+            try {
+                await runTransaction(db, async(t) => {
+                    const memRef = doc(db, "mlu_members", memberId);
+                    const trxRef = doc(db, "mlu_tabungan_trx", trxId);
+                    const memDoc = await t.get(memRef);
+                    let currentBal = memDoc.data().saldoTabungan || 0;
+                    
+                    if(type === 'IN') currentBal -= amount; // Hapus setoran = saldo minus
+                    else if (type === 'OUT') currentBal += amount; // Hapus tarikan = saldo balik
+                    
+                    t.update(memRef, { saldoTabungan: currentBal });
+                    t.delete(trxRef);
+                });
+                document.getElementById('loaderOverlay').style.display = 'none';
+                await showAlert("SUKSES", "Transaksi dihapus & Saldo telah dikoreksi.");
+                loadAdminRecentTrx(memberId);
+            } catch (e) { document.getElementById('loaderOverlay').style.display = 'none'; showAlert("ERROR", e.message); }
+        }
+
         window.processDeposit = async () => {
             const id = document.getElementById('depMemberId').value; const amt = parseInt(document.getElementById('depAmount').value);
             if(!amt) return;
@@ -519,7 +616,7 @@
                 t.update(mRef, {saldoTabungan: (mDoc.data().saldoTabungan||0)+amt});
                 t.set(doc(collection(db,"mlu_tabungan_trx")), {memberId:id, memberName:mDoc.data().namaKtp, type:'IN', amount:amt, desc:'Setoran Manual (Admin)', timestamp:Date.now(), status:'SUCCESS'});
             });
-            document.getElementById('modalDeposit').style.display='none'; alert("Berhasil!");
+            document.getElementById('depAmount').value = ''; loadAdminRecentTrx(id);
         }
 
         window.switchTab = (tab) => {
@@ -539,19 +636,12 @@
                     const color = d.type === 'IN' ? 'var(--success)' : 'var(--danger)'; 
                     const sign = d.type === 'IN' ? '+' : '-';
                     const dateStr = new Date(d.timestamp).toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-                    
-                    // Tanda kalau masih antre
                     const pendingTag = d.status === 'PENDING' ? `<span style="background:var(--warning); color:white; padding:2px 5px; border-radius:5px; font-size:8px; margin-left:5px;">PROSES ACC</span>` : '';
 
                     list.innerHTML += `
                     <div class="trx-item">
-                        <div>
-                            <div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${pendingTag}</div>
-                            <div style="font-size:10px; color:#aaa;">${dateStr}</div>
-                        </div>
-                        <div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${d.status==='PENDING'?'#ccc':color};">
-                            ${sign} Rp ${d.amount.toLocaleString('id-ID')}
-                        </div>
+                        <div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${pendingTag}</div><div style="font-size:10px; color:#aaa;">${dateStr}</div></div>
+                        <div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${d.status==='PENDING'?'#ccc':color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
                     </div>`;
                 });
             });
