@@ -3,199 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - Clean Record</title>
-    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;700&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
-    
+    <title>Mockup Animasi Login MLU</title>
     <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 0;
-            background: #000;
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Rajdhani', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-        }
+        /* RESET & BASIC */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #050505; font-family: sans-serif; overflow: hidden; }
 
-        /* TOMBOL TAHAP 1: SIAPKAN LAYAR */
-        #btnSetup {
-            position: fixed; z-index: 9999;
-            background: #fff; color: #000; 
-            border: 2px solid #D4AF37; padding: 15px 30px;
-            font-size: 16px; font-weight: 800; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 20px #D4AF37;
-        }
-
-        /* TOMBOL TAHAP 2: MULAI AKSI (MUNCUL NANTI) */
-        #btnAction {
-            position: fixed; z-index: 9999; display: none;
-            background: #D4AF37; color: #000; 
-            border: none; padding: 20px 50px;
-            font-size: 20px; font-weight: 900; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 40px #D4AF37;
-            animation: pulseBtn 1s infinite;
-        }
-
-        @keyframes pulseBtn { 0%{transform:scale(1);} 50%{transform:scale(1.1);} 100%{transform:scale(1);} }
-
-        /* CONTAINER UTAMA */
-        .poster-container {
-            width: 100vw; height: 100vh;
-            background: #050505;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* === LAYER KONTEN === */
-        .content-layer {
+        /* SIMULASI DASHBOARD (DI BELAKANG) */
+        .dashboard-mockup {
             position: absolute; inset: 0;
-            display: flex; flex-direction: column; 
-            align-items: center; justify-content: space-between;
-            padding: 60px 20px 120px 20px;
-            z-index: 1;
+            background: linear-gradient(135deg, #0A2259 0%, #15398F 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; z-index: 1;
+            opacity: 0; transform: scale(0.9); transition: all 1s ease-out;
+        }
+        .dashboard-mockup.show { opacity: 1; transform: scale(1); }
+        .dashboard-mockup h1 { font-size: 30px; letter-spacing: 2px; margin-bottom: 10px; }
+        .dashboard-mockup p { color: #93C5FD; }
+
+        /* OVERLAY ANIMASI (PINTU GERBANG) */
+        .gate-overlay {
+            position: absolute; inset: 0;
+            background: #000; z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.5s;
+        }
+        .gate-overlay.fade-out { background: transparent; pointer-events: none; }
+
+        /* WADAH LOGO YANG AKAN DIBELAH */
+        .logo-container {
+            position: relative;
+            width: 250px; height: 250px;
+            /* Efek getar pelan sebelum dipotong */
+            animation: floatLogo 3s ease-in-out infinite; 
         }
 
-        /* FOTO BACKGROUND (TERANG) */
-        .photo-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-        }
-        .photo-bg img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            object-position: top center; 
-            filter: brightness(1.1) contrast(1.05); 
-        }
-        .gradient-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; 
-            background: linear-gradient(to top, #000 30%, transparent 100%);
-            z-index: 0; opacity: 0.9;
+        /* BAGIAN LOGO ATAS & BAWAH */
+        .logo-half {
+            position: absolute; left: 0; width: 100%; height: 100%;
+            background-image: url('logomlumaster.png'); /* PANGGIL LOGO MLU */
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            transition: transform 1.2s cubic-bezier(0.86, 0, 0.07, 1), opacity 1s;
         }
 
-        /* LOGO BESAR */
-        .logo-area {
-            width: 220px; 
-            filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8));
-            animation: floatLogo 3s ease-in-out infinite;
-            margin-top: 30px;
-            position: relative; z-index: 2;
-        }
-        .logo-area img { width: 100%; }
+        /* MEMOTONG LOGO PAKAI CSS CLIP-PATH */
+        /* Setengah Atas */
+        .logo-top { clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%); top: 0; }
+        /* Setengah Bawah */
+        .logo-bottom { clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%); top: 0; }
 
-        /* TEKS NAMA */
-        .text-area { text-align: center; position: relative; z-index: 2; }
-        .jabatan {
-            display: inline-block; background: #D4AF37; color: #000;
-            padding: 5px 30px; font-weight: 800; letter-spacing: 2px;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-            margin-bottom: 10px;
-            box-shadow: 0 0 10px rgba(212,175,55,0.5);
-        }
-        .nama {
-            font-family: 'Teko', sans-serif;
-            font-size: 75px; line-height: 0.9; color: white;
-            text-transform: uppercase; margin: 0;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
-        }
-        .org {
-            color: #ccc; letter-spacing: 5px; font-size: 14px; margin-top: 5px;
-            text-shadow: 0 0 5px #000;
-        }
+        /* ANIMASI KETIKA TERBELAH */
+        .logo-top.split { transform: translateY(-150vh) rotate(-5deg); opacity: 0; }
+        .logo-bottom.split { transform: translateY(150vh) rotate(5deg); opacity: 0; }
 
-        /* === CURTAIN (LAYER PENUTUP) === */
-        .curtain {
-            position: absolute; top: 0; left: 0; 
-            width: 100%; height: 100%;
-            background: #000;
-            z-index: 100;
-            display: flex; align-items: center;
-            transition: width 2.5s cubic-bezier(0.65, 0, 0.35, 1);
+        /* EFEK KILAT (LIGHTNING SLASH) */
+        .slash-line {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 0%; height: 4px;
+            background: #fff;
+            box-shadow: 0 0 20px #00f2fe, 0 0 40px #00f2fe, 0 0 80px #fff;
+            border-radius: 10px; z-index: 20; opacity: 0;
         }
         
-        .saber-line {
-            position: absolute; right: -5px; top: 0;
-            width: 8px; height: 100%;
-            background: #fff;
-            box-shadow: 0 0 20px #D4AF37, 0 0 50px #D4AF37;
-            z-index: 101;
-            display: none;
+        .slash-line.strike { animation: slashAnim 0.6s ease-out forwards; }
+
+        @keyframes slashAnim {
+            0% { width: 0%; opacity: 1; height: 2px; }
+            40% { width: 150vw; opacity: 1; height: 8px; box-shadow: 0 0 50px #00f2fe, 0 0 100px #fff; }
+            100% { width: 200vw; opacity: 0; height: 0px; }
         }
 
-        /* BORDER MEWAH */
-        .border-frame {
-            position: absolute; inset: 15px;
-            border: 2px solid #D4AF37;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-            border-radius: 15px;
-            z-index: 50;
-            pointer-events: none;
+        /* EFEK KILAT LAYAR (FLASH BLIND) */
+        .screen-flash {
+            position: absolute; inset: 0; background: white; z-index: 100;
+            opacity: 0; pointer-events: none;
+        }
+        .screen-flash.flash { animation: flashAnim 0.8s ease-out forwards; }
+
+        @keyframes flashAnim {
+            0% { opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { opacity: 0; }
         }
 
-        @keyframes floatLogo { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
-        .anim-reveal { width: 0%; }
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
+            50% { transform: translateY(-10px); filter: drop-shadow(0 0 20px rgba(212,175,55,0.6)); }
+        }
+
+        /* TOMBOL UNTUK MENTRIGGER ANIMASI */
+        .btn-trigger {
+            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+            padding: 15px 30px; background: #D4AF37; color: black; border: none;
+            font-weight: bold; border-radius: 30px; cursor: pointer; z-index: 1000;
+            font-size: 16px; box-shadow: 0 5px 20px rgba(212,175,55,0.4);
+        }
+        .btn-trigger:active { transform: translateX(-50%) scale(0.95); }
 
     </style>
 </head>
 <body>
 
-    <button id="btnSetup" onclick="setupScreen()">1. SIAPKAN LAYAR</button>
+    <div class="screen-flash" id="screenFlash"></div>
 
-    <button id="btnAction" onclick="playShow()">● MULAI AKSI</button>
+    <div class="dashboard-mockup" id="dashboardMockup">
+        <h1>DASHBOARD MLU</h1>
+        <p>Login Berhasil. Memuat Data...</p>
+    </div>
 
-    <div class="poster-container">
-        <div class="border-frame"></div>
-
-        <div class="curtain" id="curtainLayer">
-            <div class="saber-line" id="saberLine"></div>
-        </div>
-
-        <div class="content-layer">
-            <div class="logo-area">
-                <img src="logomlu.png" alt="Logo MLU">
-            </div>
-
-            <div class="photo-bg">
-                <img src="iwan.jpg" alt="Foto">
-                <div class="gradient-overlay"></div>
-            </div>
-
-            <div class="text-area">
-                <div class="jabatan">PEMBINA</div>
-                <h1 class="nama">IWAN</h1>
-                <div class="org">MAKA LINTAS UTARA</div>
-            </div>
+    <div class="gate-overlay" id="gateOverlay">
+        <div class="logo-container" id="logoContainer">
+            <div class="slash-line" id="slashLine"></div>
+            
+            <div class="logo-half logo-top" id="logoTop"></div>
+            <div class="logo-half logo-bottom" id="logoBottom"></div>
         </div>
     </div>
 
+    <button class="btn-trigger" id="btnTrigger" onclick="playCinematic()">SIMULASI LOGIN</button>
+
     <script>
-        function setupScreen() {
-            // 1. Masuk Fullscreen
-            try {
-                var elem = document.documentElement;
-                if (elem.requestFullscreen) elem.requestFullscreen();
-                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-            } catch(e) {}
+        function playCinematic() {
+            // Sembunyikan tombol
+            document.getElementById('btnTrigger').style.display = 'none';
 
-            // 2. Ganti Tombol
-            document.getElementById('btnSetup').style.display = 'none';
-            
-            // Tampilkan tombol ACTION setelah jeda sebentar
-            setTimeout(() => {
-                document.getElementById('btnAction').style.display = 'block';
-            }, 500);
-        }
+            const topHalf = document.getElementById('logoTop');
+            const botHalf = document.getElementById('logoBottom');
+            const slash = document.getElementById('slashLine');
+            const flash = document.getElementById('screenFlash');
+            const gate = document.getElementById('gateOverlay');
+            const dash = document.getElementById('dashboardMockup');
+            const container = document.getElementById('logoContainer');
 
-        function playShow() {
-            // Hilangkan semua tombol
-            document.getElementById('btnAction').style.display = 'none';
-            
-            // Nyalakan Saber
-            document.getElementById('saberLine').style.display = 'block';
-            
-            // Jalankan Animasi
+            // Hentikan efek melayang (kunci posisi)
+            container.style.animation = 'none';
+
+            // 1. Munculkan garis kilat & layar berkedip putih
+            slash.classList.add('strike');
+            flash.classList.add('flash');
+
+            // 2. Beri jeda sangat sedikit (0.1 detik) agar kilat terasa menebas logo
             setTimeout(() => {
-                document.getElementById('curtainLayer').classList.add('anim-reveal'); 
-            }, 100); 
+                // Logo terbelah ke atas & bawah
+                topHalf.classList.add('split');
+                botHalf.classList.add('split');
+                
+                // Hilangkan background hitam pekat
+                gate.classList.add('fade-out');
+
+                // Munculkan Dashboard (Zoom in perlahan)
+                dash.classList.add('show');
+            }, 150);
         }
     </script>
 
