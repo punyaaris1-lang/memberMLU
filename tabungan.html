@@ -28,14 +28,14 @@
         .camera-container { width: 220px; height: 220px; border-radius: 40px; overflow: hidden; position: relative; border: 4px solid white; box-shadow: 0 20px 60px rgba(0,0,0,0.15); background: #000; display: none; margin-bottom: 20px; }
         #videoInput { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         
-        /* ANIMASI FRAME VERMUK ALA GOJEK */
-        .face-frame { position: absolute; inset: 20px; border: 2px dashed rgba(255,255,255,0.6); border-radius: 30px; transition: 0.3s; pointer-events: none; }
+        /* ANIMASI FRAME VERMUK ALA GOJEK (DIPERBAIKI BIAR MAKIN JELAS) */
+        .face-frame { position: absolute; inset: 15px; border: 3px dashed rgba(255,255,255,0.8); border-radius: 30px; transition: all 0.3s; pointer-events: none; }
         .face-frame.scanning { 
-            border-color: #10B981; border-style: solid;
-            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.4), 0 0 15px rgba(16, 185, 129, 0.4); 
-            animation: facePulse 1s infinite alternate; 
+            border: 4px solid #10B981; 
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.8); 
+            animation: facePulse 0.8s infinite alternate; 
         }
-        @keyframes facePulse { from { transform: scale(1); opacity: 0.8;} to { transform: scale(1.02); opacity: 1;} }
+        @keyframes facePulse { 0% { transform: scale(0.98); opacity: 0.7;} 100% { transform: scale(1.02); opacity: 1;} }
 
         /* BUTTONS SECURITY */
         .btn-action { width: 100%; max-width: 250px; padding: 16px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.25); background: var(--electric-blue); color: white; }
@@ -84,10 +84,15 @@
         .bg-sukses { background:var(--success); box-shadow: 0 10px 25px rgba(16,185,129,0.3); } 
         .bg-cancel { background:#E2E8F0; color:#475569; box-shadow:none; }
         
-        .admin-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        .btn-edit { background: rgba(0,0,0,0.05); border: none; color: var(--electric-blue); cursor: pointer; width: 30px; height: 30px; border-radius: 8px; font-size: 12px; display:flex; align-items:center; justify-content:center; }
+        /* ADMIN TRX LIST ITEM */
+        .admin-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #E2E8F0; text-align: left; }
+        .admin-hist-item:last-child { border-bottom: none; }
+        .btn-edit { background: rgba(0,0,0,0.05); border: none; color: var(--electric-blue); cursor: pointer; width: 35px; height: 35px; border-radius: 10px; font-size: 14px; display:flex; align-items:center; justify-content:center; transition:0.2s;}
+        .btn-edit:active { transform:scale(0.9); }
         
         .btn-nabung { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 8px 15px; border-radius: 50px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; margin: 15px auto 0; }
+        .btn-nabung:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
+
         .btn-danger-reset { display: none; width: 100%; padding: 15px; margin-top: 30px; background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px; }
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
@@ -138,11 +143,11 @@
             <div id="camTitle" style="font-family:'Outfit'; font-size:20px; color:var(--royal-blue); margin-bottom:10px; font-weight:900;"></div>
             <div id="camMsg" style="font-size:13px; color:var(--text-main); margin-bottom:25px; line-height:1.6;"></div>
             
-            <input type="password" id="camInput" class="form-input" style="display:none; margin-bottom:20px; text-align:center; font-size:20px; letter-spacing:5px;">
+            <input type="password" id="camInput" class="form-input" style="display:none; margin-bottom:20px; text-align:center; font-size:20px; letter-spacing:5px;" placeholder="Password">
             
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" id="camBtnCancel">BATAL</button>
-                <button class="btn-submit bg-sukses" id="camBtnOk" style="background:var(--electric-blue);">OK, LANJUTKAN</button>
+                <button class="btn-submit bg-sukses" id="camBtnOk" style="background:var(--electric-blue);">OK</button>
             </div>
         </div>
     </div>
@@ -179,7 +184,7 @@
                 </div>
                 
                 <button class="btn-nabung" onclick="document.getElementById('modalQris').style.display='flex'">
-                    <i class="fas fa-qrcode"></i> ISI SALDO (KLAIM)
+                    <i class="fas fa-qrcode"></i> SETOR (NABUNG)
                 </button>
 
                 <div id="adminIndicator" style="display:none; font-size:9px; margin-top:5px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
@@ -220,7 +225,7 @@
             
             <div style="margin-top:25px; border-top:1px dashed #ddd; padding-top:15px;">
                 <div style="font-size:10px; font-weight:800; color:#94A3B8; margin-bottom:10px; text-transform:uppercase;">Transaksi Terakhir (Edit/Hapus)</div>
-                <div id="adminRecentTrx" style="max-height:150px; overflow-y:auto;"></div>
+                <div id="adminRecentTrx" style="max-height:180px; overflow-y:auto; background:#F8FAFC; border-radius:12px; padding:5px;"></div>
             </div>
         </div>
     </div>
@@ -250,7 +255,7 @@
             </div>
 
             <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:15px;">
-                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;">
+                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS">
             </div>
 
             <div style="display:flex; gap:10px;">
@@ -262,7 +267,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, orderBy, limit, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
@@ -302,7 +307,7 @@
                 document.getElementById('camTitle').innerHTML = title;
                 document.getElementById('camMsg').innerHTML = msg;
                 document.getElementById('camInput').style.display = 'none';
-                document.getElementById('camBtnCancel').style.display = 'none'; // Sembunyikan Batal
+                document.getElementById('camBtnCancel').style.display = 'none';
                 document.getElementById('camBtnOk').style.background = 'var(--success)';
                 
                 modal.style.display = 'flex';
@@ -310,7 +315,7 @@
             });
         };
 
-        // ADMIN CONFIG (DITAMBAH IWAN B 4650 SWE)
+        // ADMIN CONFIG: RIZKY + IWAN B4650SWE + PENGURUS
         const cleanPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         const isTrueAdmin = (cleanPlat === "B4248SWF") || (cleanPlat === "B4650SWE") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
         let isViewAdminVisible = isTrueAdmin; 
@@ -324,7 +329,7 @@
             faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights')
-        ]).then(() => { checkUserStatus(); }).catch(() => { showAlert("ERROR", "Gagal memuat sistem AI. Pastikan internet stabil."); });
+        ]).then(() => { checkUserStatus(); }).catch(() => { showAlert("ERROR", "Gagal memuat AI. Cek koneksi internet."); });
 
         function checkUserStatus() {
             onSnapshot(doc(db, "mlu_members", u.id), (docSnap) => {
@@ -348,7 +353,7 @@
                     if (d.pin_tabungan) {
                         userPinTabungan = d.pin_tabungan; isSetupMode = false; 
                         if(d.faceDescriptor) { userFaceDesc = new Float32Array(Object.values(d.faceDescriptor)); showLoginScreen(); } 
-                        else { document.getElementById('btnBawahKamera').style.display = 'none'; switchMode(); }
+                        else { document.getElementById('btnBawahKamera').style.display = 'none'; window.switchMode(); }
                     } else { isSetupMode = true; showActivationScreen(); }
                 }
             });
@@ -365,7 +370,7 @@
             if(!base || base < 5000) return showAlert("PERHATIAN", "Minimal nabung Rp 5.000");
             let total = base + window.myKodeUnik;
 
-            const konfirm = await showConfirm("KONFIRMASI", `Yakin sudah transfer sebesar <b>Rp ${total.toLocaleString('id-ID')}</b> ke QRIS MLU?<br><br><span style='color:red;'>Klaim palsu/asal-asalan akan ditolak Admin.</span>`);
+            const konfirm = await showConfirm("KONFIRMASI", `Yakin sudah transfer sebesar <b>Rp ${total.toLocaleString('id-ID')}</b> ke QRIS MLU?<br><br><span style='color:red;'>Klaim palsu akan ditolak Admin.</span>`);
             if(konfirm) {
                 await addDoc(collection(db, "mlu_tabungan_trx"), {
                     memberId: u.id, memberName: u.namaKtp || "Member MLU",
@@ -382,7 +387,7 @@
             isViewAdminVisible = !isViewAdminVisible;
             updateAdminView();
             if(navigator.vibrate) navigator.vibrate(50);
-            if(!isViewAdminVisible) switchTab('member');
+            if(!isViewAdminVisible) window.switchTab('member');
         }
 
         function updateAdminView() {
@@ -421,11 +426,10 @@
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 videoEl.srcObject = stream;
                 videoEl.addEventListener('play', () => {
+                    document.getElementById('faceFrame').classList.add('scanning'); // SELALU NYALA KEDIP HIJAU
+                    
                     if (!isSetupMode) {
-                        document.getElementById('scanStatus').innerText = "Mendeteksi...";
-                        const frame = document.getElementById('faceFrame');
-                        frame.classList.add('scanning'); // NYALAKAN KEDIP HIJAU
-                        
+                        document.getElementById('scanStatus').innerText = "Mendeteksi Wajah...";
                         detectInterval = setInterval(async () => {
                             if (!isFaceMode) return;
                             const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
@@ -436,24 +440,23 @@
                         }, 500);
                     }
                 });
-            } catch (e) { switchMode(); }
+            } catch (e) { window.switchMode(); }
         }
 
         window.handleAction = async () => {
             if (isSetupMode) {
                 document.getElementById('btnMainAction').innerText = "MEMINDAI...";
-                document.getElementById('faceFrame').classList.add('scanning');
                 const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
                 if (detection) {
                     userFaceDesc = detection.descriptor; stopCamera();
                     document.getElementById('secTitle').innerText = "BUAT PIN 6 DIGIT"; document.getElementById('camWrap').style.display = 'none'; document.getElementById('pinArea').style.display = 'flex'; document.getElementById('btnMainAction').style.display = 'none'; isFaceMode = false;
-                } else { document.getElementById('faceFrame').classList.remove('scanning'); document.getElementById('btnMainAction').innerText = "SCAN ULANG"; }
+                } else { document.getElementById('btnMainAction').innerText = "SCAN ULANG"; }
             }
         };
 
         function stopCamera() { if (stream) stream.getTracks().forEach(t => t.stop()); if (detectInterval) clearInterval(detectInterval); document.getElementById('faceFrame').classList.remove('scanning'); }
         window.switchMode = () => { isFaceMode = !isFaceMode; if (isFaceMode) { startCamera(); document.getElementById('btnSwitch').innerText = "Gunakan PIN (6 Digit)"; document.getElementById('btnSwitch').classList.add('btn-outline'); document.getElementById('btnSwitch').style.background='rgba(45,99,237,0.05)'; document.getElementById('btnSwitch').style.color='var(--electric-blue)'; } else { stopCamera(); document.getElementById('camWrap').style.display = 'none'; document.getElementById('pinArea').style.display = 'flex'; document.getElementById('btnSwitch').innerText = "Gunakan Face ID"; document.getElementById('btnSwitch').classList.remove('btn-outline'); document.getElementById('btnSwitch').style.background='var(--electric-blue)'; document.getElementById('btnSwitch').style.color='white'; } };
-        window.pressPin = (n) => { if (currentPinInput.length < 6) { currentPinInput += n; updatePinDots(); if (currentPinInput.length === 6) processPin(); } };
+        window.pressPin = (n) => { if (currentPinInput.length < 6) { currentPinInput += n; updatePinDots(); if (currentPinInput.length === 6) window.processPin(); } };
         window.delPin = () => { currentPinInput = currentPinInput.slice(0, -1); updatePinDots(); };
         window.clearPin = () => { currentPinInput = ""; updatePinDots(); };
         function updatePinDots() { document.querySelectorAll('.pin-dot').forEach((d, i) => { if (i < currentPinInput.length) d.classList.add('filled'); else d.classList.remove('filled'); }); }
@@ -464,9 +467,9 @@
                 if(conf) {
                     const faceObj = { ...userFaceDesc }; 
                     updateDoc(doc(db, "mlu_members", u.id), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { unlockApp(); });
-                } else { clearPin(); }
+                } else { window.clearPin(); }
             } else {
-                if (currentPinInput === userPinTabungan) unlockApp(); else { await showAlert("GAGAL", "PIN yang Anda masukkan salah!"); clearPin(); }
+                if (currentPinInput === userPinTabungan) unlockApp(); else { await showAlert("GAGAL", "PIN yang Anda masukkan salah!"); window.clearPin(); }
             }
         }
         function unlockApp() { document.getElementById('securityScreen').style.opacity = 0; setTimeout(() => { document.getElementById('securityScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; }, 500); }
@@ -475,7 +478,7 @@
             getDocs(query(collection(db, "mlu_members"))).then(snap => {
                 let allMembers = []; snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
                 allMembers.sort((a,b) => (a.namaKtp||'').localeCompare(b.namaKtp||''));
-                window.allMembersCache = allMembers; renderMembers(allMembers);
+                window.allMembersCache = allMembers; window.renderMembers(allMembers);
             });
             const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "==", "PENDING"));
             onSnapshot(qApp, (snap) => {
@@ -490,7 +493,7 @@
                     cont.innerHTML += `
                     <div class="app-card" style="border-left:5px solid ${color}">
                         <div><div style="font-size:10px; color:#64748B;">${new Date(data.timestamp).toLocaleString('id-ID')}</div><h4 style="margin:5px 0; color:var(--royal-blue);">${data.memberName}</h4><div style="font-size:11px; color:#64748B;">${titleText}</div><div style="font-family:'Space Grotesk'; font-weight:900; font-size:16px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div></div>
-                        <div style="display:flex; flex-direction:column; gap:5px;"><button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">TERIMA</button><button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="rejectKlaim('${data.id}')">TOLAK</button></div>
+                        <div style="display:flex; flex-direction:column; gap:5px;"><button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="window.approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">TERIMA</button><button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="window.rejectKlaim('${data.id}')">TOLAK</button></div>
                     </div>`;
                 });
             });
@@ -524,7 +527,7 @@
                 cont.innerHTML += `
                 <div class="member-row">
                     <div><div class="m-name">${m.namaKtp||'TANPA NAMA'}</div><div class="m-plat">${m.plat||'-'}</div><div style="font-size:10px; color:#10B981; font-weight:700;">Rp ${saldoMember}</div></div>
-                    <div style="display:flex;"><button class="btn-reset" onclick="resetMember('${m.id}', '${m.namaKtp}')"><i class="fas fa-key"></i></button><button class="btn-plus" onclick="document.getElementById('modalDeposit').style.display='flex'; document.getElementById('depMemberId').value='${m.id}'; document.getElementById('depMemberName').innerText='${m.namaKtp}'; loadAdminRecentTrx('${m.id}');"><i class="fas fa-plus"></i></button></div>
+                    <div style="display:flex;"><button class="btn-reset" onclick="window.resetMember('${m.id}', '${m.namaKtp}')"><i class="fas fa-key"></i></button><button class="btn-plus" onclick="document.getElementById('modalDeposit').style.display='flex'; document.getElementById('depMemberId').value='${m.id}'; document.getElementById('depMemberName').innerText='${m.namaKtp}'; window.loadAdminRecentTrx('${m.id}');"><i class="fas fa-plus"></i></button></div>
                 </div>`;
             });
         }
@@ -539,27 +542,33 @@
             if(konf) updateDoc(doc(db, "mlu_members", u.id), { pin_tabungan: null, faceDescriptor: null }).then(() => location.reload());
         }
 
-        window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
+        window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); window.renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
         
-        async function loadAdminRecentTrx(memberId) {
+        // --- FUNGSI LOAD HISTORY ADMIN (SUDAH FIX TERBACA OLEH TOMBOL) ---
+        window.loadAdminRecentTrx = async (memberId) => {
             const cont = document.getElementById('adminRecentTrx');
-            cont.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-spin"></i></div>';
+            cont.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="font-size:24px; color:var(--electric-blue);"></i></div>';
+            
             const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", memberId));
             const snap = await getDocs(q);
             let dataArr = []; snap.forEach(d => dataArr.push({id: d.id, ...d.data()}));
-            dataArr.sort((a, b) => b.timestamp - a.timestamp); dataArr = dataArr.slice(0, 5);
+            
+            dataArr.sort((a, b) => b.timestamp - a.timestamp); 
+            dataArr = dataArr.slice(0, 5); // 5 Transaksi terakhir
+            
             cont.innerHTML = "";
             if(dataArr.length === 0) { cont.innerHTML = '<div style="text-align:center; font-size:10px; color:#aaa; margin-top:10px;">Belum ada transaksi.</div>'; return; }
+            
             dataArr.forEach(data => {
                 const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
                 const isPlus = data.type === 'IN';
-                // TOMBOL DELETE DITAMBAHKAN DISINI
+                
                 cont.innerHTML += `
                 <div class="admin-hist-item">
-                    <div style="font-size:11px;"><div style="font-weight:700;">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div><div style="color:#aaa;">${dateStr}</div></div>
+                    <div style="font-size:11px;"><div style="font-weight:700; color:${isPlus?'#10B981':'#EF4444'};">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div><div style="color:#aaa;">${dateStr}</div></div>
                     <div style="display:flex; gap:5px;">
-                        <button class="btn-edit" onclick="openEditTrx('${data.id}', ${data.amount})"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn-edit" style="color:var(--danger); background:rgba(239,68,68,0.1);" onclick="deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>
+                        <button class="btn-edit" onclick="window.openEditTrx('${data.id}', ${data.amount})"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn-edit" style="color:var(--danger); background:rgba(239,68,68,0.1);" onclick="window.deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>`;
             });
@@ -577,15 +586,15 @@
                 const currentBal = memDoc.data().saldoTabungan || 0; const diff = newAmt - oldAmt; const finalBal = currentBal + diff;
                 t.update(memRef, { saldoTabungan: finalBal }); t.update(trxRef, { amount: newAmt });
             });
-            document.getElementById('modalEditTrx').style.display = 'none'; loadAdminRecentTrx(memberId);
+            document.getElementById('modalEditTrx').style.display = 'none'; window.loadAdminRecentTrx(memberId);
         }
 
-        // --- FITUR HAPUS TRANSAKSI DENGAN PASSWORD ---
+        // --- FITUR HAPUS TRANSAKSI (HANYA DENGAN PASSWORD) ---
         window.deleteTrx = async (trxId, amount, type, memberId) => {
-            const konf1 = await showConfirm("HAPUS TRANSAKSI", "Yakin ingin menghapus transaksi ini?<br>Saldo member akan otomatis disesuaikan kembali.");
+            const konf1 = await showConfirm("HAPUS TRANSAKSI", "Yakin ingin menghapus transaksi ini?<br><br><span style='color:red;'>Saldo member akan otomatis disesuaikan (dikurangi/ditambah).</span>");
             if(!konf1) return;
 
-            const pass = await showConfirm("OTORISASI", "Masukkan Password Admin:", true);
+            const pass = await showConfirm("OTORISASI ADMIN", "Masukkan Password Admin untuk menghapus:", true);
             if(pass !== "MLU2025") return showAlert("GAGAL", "Password Salah!");
 
             document.getElementById('loaderOverlay').style.display = 'flex';
@@ -596,15 +605,15 @@
                     const memDoc = await t.get(memRef);
                     let currentBal = memDoc.data().saldoTabungan || 0;
                     
-                    if(type === 'IN') currentBal -= amount; // Hapus setoran = saldo minus
-                    else if (type === 'OUT') currentBal += amount; // Hapus tarikan = saldo balik
+                    if(type === 'IN') currentBal -= amount; // Hapus uang masuk = Saldo berkurang
+                    else if (type === 'OUT') currentBal += amount; // Hapus uang ditarik = Saldo kembali
                     
                     t.update(memRef, { saldoTabungan: currentBal });
                     t.delete(trxRef);
                 });
                 document.getElementById('loaderOverlay').style.display = 'none';
-                await showAlert("SUKSES", "Transaksi dihapus & Saldo telah dikoreksi.");
-                loadAdminRecentTrx(memberId);
+                await showAlert("SUKSES", "Transaksi dihapus & Saldo telah dikoreksi otomatis.");
+                window.loadAdminRecentTrx(memberId);
             } catch (e) { document.getElementById('loaderOverlay').style.display = 'none'; showAlert("ERROR", e.message); }
         }
 
@@ -616,7 +625,8 @@
                 t.update(mRef, {saldoTabungan: (mDoc.data().saldoTabungan||0)+amt});
                 t.set(doc(collection(db,"mlu_tabungan_trx")), {memberId:id, memberName:mDoc.data().namaKtp, type:'IN', amount:amt, desc:'Setoran Manual (Admin)', timestamp:Date.now(), status:'SUCCESS'});
             });
-            document.getElementById('depAmount').value = ''; loadAdminRecentTrx(id);
+            document.getElementById('depAmount').value = ''; 
+            window.loadAdminRecentTrx(id); // Reload list transaksinya
         }
 
         window.switchTab = (tab) => {
