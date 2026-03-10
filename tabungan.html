@@ -59,10 +59,11 @@
         .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02);}
         .btn-plus { width:40px; height:40px; background:linear-gradient(135deg, #10B981, #059669); color:white; border-radius:12px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:16px; box-shadow:0 5px 15px rgba(16,185,129,0.3);}
         .btn-reset { width:40px; height:40px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--warning); cursor:pointer; font-size:16px; margin-right: 8px;}
-        .app-card { background:white; border-left:5px solid var(--warning); padding:15px; border-radius:16px; margin-bottom:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); }
+        
+        .app-card { background:white; padding:15px; border-radius:16px; margin-bottom:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); display:flex; justify-content:space-between; align-items:center; }
         
         .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 80vh; overflow-y: auto; }
+        .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 85vh; overflow-y: auto; }
         .form-group { margin-bottom:20px; text-align: left;}
         .form-input { width:100%; padding:15px; border:1px solid #E2E8F0; border-radius:14px; font-family:'Space Grotesk'; font-weight:700; font-size:16px; background:#F8FAFC; outline:none; }
         .btn-submit { width:100%; padding:16px; border:none; border-radius:16px; font-weight:800; color:white; cursor:pointer; margin-top:10px; }
@@ -73,23 +74,15 @@
         
         /* TOMBOL NABUNG USER */
         .btn-nabung {
-            background: rgba(255,255,255,0.2); 
-            border: 1px solid rgba(255,255,255,0.5);
-            color: white; 
-            padding: 8px 15px; 
-            border-radius: 50px; 
-            font-size: 11px; 
-            font-weight: 700; 
-            cursor: pointer;
-            display: flex; align-items: center; gap: 5px;
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5);
+            color: white; padding: 8px 15px; border-radius: 50px; font-size: 11px; 
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;
             margin: 15px auto 0;
         }
         .btn-nabung:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
 
-        /* TOMBOL RESET ADMIN (DEFAULT HIDDEN) */
         .btn-danger-reset {
-            display: none; /* RAHASIA! */
-            width: 100%; padding: 15px; margin-top: 30px;
+            display: none; width: 100%; padding: 15px; margin-top: 30px;
             background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5;
             border-radius: 12px; font-weight: 800; cursor: pointer;
             font-size: 11px; letter-spacing: 1px;
@@ -161,7 +154,7 @@
                 </div>
                 
                 <button class="btn-nabung" onclick="document.getElementById('modalQris').style.display='flex'">
-                    <i class="fas fa-qrcode"></i> ISI SALDO / NABUNG
+                    <i class="fas fa-qrcode"></i> ISI SALDO (KLAIM)
                 </button>
 
                 <div id="adminIndicator" style="display:none; font-size:9px; margin-top:5px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
@@ -185,7 +178,7 @@
 
         <div id="viewApproval" class="content-area">
             <div id="approvalList">
-                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px;">Tidak ada permintaan penarikan.</div>
+                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px;">Memuat antrean...</div>
             </div>
         </div>
 
@@ -194,47 +187,52 @@
 
     <div class="modal-overlay" id="modalDeposit">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--royal-blue); font-family:'Outfit'; font-size:20px; margin-bottom:5px;">INPUT SETORAN</h3>
+            <h3 style="margin-top:0; color:var(--royal-blue); font-family:'Outfit'; font-size:20px; margin-bottom:5px;">INPUT SETORAN MANUAL</h3>
             <p id="depMemberName" style="font-size:12px; color:#64748B; margin-bottom:25px; font-weight:700; border-bottom:1px solid #eee; padding-bottom:10px;"></p>
             <input type="hidden" id="depMemberId">
             <div class="form-group"><label class="form-label">Nominal (Rp)</label><input type="number" id="depAmount" class="form-input" placeholder="Contoh: 20000"></div>
-            <div class="form-group"><label class="form-label">Tanggal Setor</label><input type="date" id="depDate" class="form-input"></div>
             <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalDeposit').style.display='none'">BATAL</button><button class="btn-submit bg-sukses" onclick="processDeposit()">SIMPAN</button></div>
-            
-            <div style="margin-top:25px; border-top:1px dashed #ddd; padding-top:15px;">
-                <div style="font-size:10px; font-weight:800; color:#94A3B8; margin-bottom:10px; text-transform:uppercase;">5 Transaksi Terakhir (Klik Pensil utk Edit)</div>
-                <div id="adminRecentTrx" style="max-height:150px; overflow-y:auto;"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalEditTrx">
-        <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--warning); font-family:'Outfit'; font-size:18px;">KOREKSI TRANSAKSI</h3>
-            <input type="hidden" id="editTrxId"><input type="hidden" id="editOldAmount">
-            <div class="form-group"><label class="form-label">Nominal Baru (Rp)</label><input type="number" id="editNewAmount" class="form-input"></div>
-            <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalEditTrx').style.display='none'">BATAL</button><button class="btn-submit" style="background:var(--electric-blue); color:white;" onclick="saveEditTrx()">UPDATE</button></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="modalQris">
-        <div class="modal-box" style="background:white; border-radius:20px; padding:30px;">
-            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue);">SCAN QRIS NABUNG</h3>
-            <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:20px;">
-                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS Error? Cek File qrisnabung.jpg">
+        <div class="modal-box" style="background:white; border-radius:20px; padding:30px; text-align:left;">
+            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue); text-align:center;">KLAIM SETORAN</h3>
+            
+            <div class="form-group">
+                <label class="form-label">1. Nominal Tabungan (Bulat)</label>
+                <input type="number" id="inputNabungBase" class="form-input" placeholder="Contoh: 50000" onkeyup="calcTotalTransfer()" onchange="calcTotalTransfer()">
             </div>
-            <p style="font-size:12px; color:#64748B;">
-                1. Scan kode di atas.<br>
-                2. Transfer sesuai nominal tabungan.<br>
-                3. Kirim bukti ke Admin untuk diinput.
+
+            <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px;">
+                <div style="font-size:11px; color:#166534; font-weight:800;">YANG HARUS DI TRANSFER:</div>
+                <div id="totalNabungTxt" style="font-family:'Space Grotesk'; font-size:32px; font-weight:900; color:var(--success); margin:5px 0;">Rp 0</div>
+                <div style="font-size:10px; color:#15803D;">(Termasuk Kode Unik Anda: <b id="kodeUnikTxt">***</b>)</div>
+                <div style="font-size:9px; color:#DC2626; margin-top:5px;">Transfer nominal HARUS SESUAI hingga 3 angka terakhir agar terbaca sistem.</div>
+            </div>
+
+            <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:15px;">
+                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS Error?">
+            </div>
+
+            <p style="font-size:11px; color:#64748B; line-height:1.4;">
+                <b>Langkah:</b><br>
+                1. Masukkan nominal di atas.<br>
+                2. Buka BCA/GoPay/OVO, scan QRIS ini.<br>
+                3. Masukkan angka hijau (Total Transfer).<br>
+                4. Jika sudah berhasil transfer, klik tombol di bawah.
             </p>
-            <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">TUTUP</button>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">BATAL</button>
+                <button class="btn-submit bg-sukses" onclick="submitKlaimNabung()">SAYA SUDAH TRANSFER</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, orderBy, limit, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, orderBy, limit, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
@@ -246,11 +244,12 @@
         const cleanPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         const isTrueAdmin = (cleanPlat === "B4248SWF") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
         let isViewAdminVisible = isTrueAdmin; 
-
-        // CEK APAKAH INI RIZKY (SUPER ADMIN)
         const isSuperAdmin = (cleanPlat === "B4248SWF");
 
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
+        
+        // KODE UNIK GLOBAL
+        window.myKodeUnik = 0;
 
         // INIT
         Promise.all([
@@ -263,16 +262,24 @@
             onSnapshot(doc(db, "mlu_members", u.id), (docSnap) => {
                 if(docSnap.exists()) {
                     const d = docSnap.data();
+
+                    // --- SISTEM GENERATE KODE UNIK OTOMATIS ---
+                    if(d.kodeUnik === undefined) {
+                        const newCode = Math.floor(Math.random() * 899) + 100; // Generate 100-999
+                        updateDoc(doc(db, "mlu_members", u.id), { kodeUnik: newCode });
+                        return; // Berhenti, biarkan snapshot refresh ulang
+                    }
+                    window.myKodeUnik = d.kodeUnik;
+                    document.getElementById('kodeUnikTxt').innerText = myKodeUnik;
+                    // ------------------------------------------
+
                     document.getElementById('loaderOverlay').style.display = 'none';
                     document.getElementById('myBalance').innerText = `Rp ${(d.saldoTabungan||0).toLocaleString('id-ID')}`;
                     loadHistory();
                     updateAdminView();
                     if(isTrueAdmin) initAdminData();
 
-                    // KHUSUS RIZKY: TAMPILKAN TOMBOL RESET
-                    if(isSuperAdmin) {
-                        document.getElementById('btnResetData').style.display = 'block';
-                    }
+                    if(isSuperAdmin) document.getElementById('btnResetData').style.display = 'block';
 
                     if (d.pin_tabungan) {
                         userPinTabungan = d.pin_tabungan; isSetupMode = false; 
@@ -281,6 +288,41 @@
                     } else { isSetupMode = true; showActivationScreen(); }
                 }
             });
+        }
+
+        // --- KALKULATOR REALTIME KLAIM ---
+        window.calcTotalTransfer = () => {
+            let base = parseInt(document.getElementById('inputNabungBase').value) || 0;
+            if(base === 0) {
+                document.getElementById('totalNabungTxt').innerText = "Rp 0";
+                return;
+            }
+            let total = base + window.myKodeUnik;
+            document.getElementById('totalNabungTxt').innerText = "Rp " + total.toLocaleString('id-ID');
+        }
+
+        // --- USER SUBMIT KLAIM SETORAN ---
+        window.submitKlaimNabung = async () => {
+            let base = parseInt(document.getElementById('inputNabungBase').value);
+            if(!base || base < 5000) return alert("Minimal nabung Rp 5.000");
+            
+            let total = base + window.myKodeUnik;
+
+            if(confirm(`Yakin sudah transfer sebesar Rp ${total.toLocaleString('id-ID')} ke QRIS?\n\nKlaim palsu akan ditolak Admin.`)) {
+                await addDoc(collection(db, "mlu_tabungan_trx"), {
+                    memberId: u.id,
+                    memberName: u.namaKtp || "Member MLU",
+                    type: 'IN', // IN = Setor
+                    amount: total,
+                    desc: 'Klaim Setoran (QRIS)',
+                    timestamp: Date.now(),
+                    status: 'PENDING'
+                });
+                alert("Klaim berhasil dikirim!\nSilakan tunggu persetujuan Admin.");
+                document.getElementById('modalQris').style.display = 'none';
+                document.getElementById('inputNabungBase').value = '';
+                calcTotalTransfer();
+            }
         }
 
         // STEALTH ADMIN TOGGLE
@@ -299,44 +341,22 @@
             document.getElementById('adminIndicator').style.display = display;
         }
 
-        // RESET ALL DATA (PROTECTED WITH PASSWORD)
         window.resetAllSystem = async () => {
-            if(!confirm("⚠️ PERINGATAN KERAS ⚠️\n\nAnda akan MENGHAPUS SEMUA DATA SALDO & RIWAYAT seluruh member.\n\nKlik OK jika Anda yakin.")) return;
-            
-            // MINTA PASSWORD
+            if(!confirm("⚠️ PERINGATAN KERAS ⚠️\nAnda akan MENGHAPUS SEMUA DATA SALDO & RIWAYAT.\nKlik OK jika yakin.")) return;
             let pass = prompt("MASUKKAN PASSWORD KONFIRMASI:");
-            
-            // PASSWORD HARDCODED (Bisa diganti)
-            if(pass !== "MLU2025") {
-                return alert("PASSWORD SALAH! Akses ditolak.");
-            }
-
+            if(pass !== "MLU2025") return alert("PASSWORD SALAH!");
             document.getElementById('loaderOverlay').style.display = 'flex';
-            
             try {
-                // 1. Reset Saldo Member jadi 0
                 const membersSnap = await getDocs(collection(db, "mlu_members"));
                 const promises = [];
-                membersSnap.forEach(doc => {
-                    promises.push(updateDoc(doc.ref, { saldoTabungan: 0 }));
-                });
-
-                // 2. Hapus Semua History Transaksi
+                membersSnap.forEach(doc => { promises.push(updateDoc(doc.ref, { saldoTabungan: 0 })); });
                 const trxSnap = await getDocs(collection(db, "mlu_tabungan_trx"));
-                trxSnap.forEach(doc => {
-                    promises.push(deleteDoc(doc.ref));
-                });
-
+                trxSnap.forEach(doc => { promises.push(deleteDoc(doc.ref)); });
                 await Promise.all(promises);
-                alert("RESET BERHASIL!\nSemua saldo dan riwayat telah dihapus.");
-                location.reload();
-            } catch (e) {
-                alert("Gagal Reset: " + e.message);
-                document.getElementById('loaderOverlay').style.display = 'none';
-            }
+                alert("RESET BERHASIL!"); location.reload();
+            } catch (e) { alert("Gagal: " + e.message); document.getElementById('loaderOverlay').style.display = 'none'; }
         }
 
-        // SECURITY LOGIC
         function showActivationScreen() { document.getElementById('agreeModal').style.display = 'flex'; }
         window.acceptAgreement = () => { document.getElementById('agreeModal').style.display = 'none'; document.getElementById('secTitle').innerText = "REGISTRASI WAJAH"; document.getElementById('btnMainAction').innerText = "SCAN & SIMPAN WAJAH"; document.getElementById('btnMainAction').style.display = 'block'; document.getElementById('btnSwitch').style.display = 'none'; startCamera(); };
         function showLoginScreen() { document.getElementById('secTitle').innerText = "VERIFIKASI"; document.getElementById('btnMainAction').style.display = 'none'; startCamera(); }
@@ -393,21 +413,70 @@
         function unlockApp() { document.getElementById('securityScreen').style.opacity = 0; setTimeout(() => { document.getElementById('securityScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; }, 500); }
 
         function initAdminData() {
+            // LOAD MEMBERS FOR MANUAL INPUT (OPTIONAL)
             getDocs(query(collection(db, "mlu_members"))).then(snap => {
                 let allMembers = []; snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
                 allMembers.sort((a,b) => (a.namaKtp||'').localeCompare(b.namaKtp||''));
                 window.allMembersCache = allMembers; renderMembers(allMembers);
             });
-            const qApp = query(collection(db, "mlu_tabungan_trx"), where("type", "==", "OUT"), where("status", "==", "PENDING"));
+
+            // LOAD APPROVALS (KLAIM NABUNG & PENARIKAN)
+            const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "==", "PENDING"));
             onSnapshot(qApp, (snap) => {
                 const cont = document.getElementById('approvalList'); cont.innerHTML = "";
-                if(snap.empty) { cont.innerHTML = `<div style="text-align:center; padding:20px; color:#94A3B8;">Tidak ada permintaan.</div>`; return;}
-                snap.forEach(d => {
-                    const data = d.data();
-                    cont.innerHTML += `<div class="app-card"><div>${data.memberName} - Rp ${data.amount.toLocaleString('id-ID')}</div><button class="btn-approve" onclick="approveTrx('${d.id}')">SETUJUI</button></div>`;
+                if(snap.empty) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8;">Tidak ada antrean klaim.</div>`; return;}
+                
+                let arrApp = []; snap.forEach(d => arrApp.push({id: d.id, ...d.data()}));
+                arrApp.sort((a,b) => a.timestamp - b.timestamp); // Urut paling lama
+
+                arrApp.forEach(data => {
+                    const isNabung = data.type === 'IN';
+                    const titleText = isNabung ? "Nabung (Setor)" : "Penarikan Dana";
+                    const color = isNabung ? "var(--success)" : "var(--danger)";
+
+                    cont.innerHTML += `
+                    <div class="app-card" style="border-left:5px solid ${color}">
+                        <div>
+                            <div style="font-size:10px; color:#64748B;">${new Date(data.timestamp).toLocaleString('id-ID')}</div>
+                            <h4 style="margin:5px 0; color:var(--royal-blue);">${data.memberName}</h4>
+                            <div style="font-size:11px; color:#64748B;">${titleText}</div>
+                            <div style="font-family:'Space Grotesk'; font-weight:900; font-size:16px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:5px;">
+                            <button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">TERIMA</button>
+                            <button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="rejectKlaim('${data.id}')">TOLAK</button>
+                        </div>
+                    </div>`;
                 });
             });
         }
+
+        // --- FUNGSI ADMIN: TERIMA & TOLAK KLAIM ---
+        window.approveKlaim = async (trxId, type, amount, memberId) => {
+            if(!confirm("Yakin sudah cek mutasi bank dan dana benar-benar masuk?")) return;
+            
+            await runTransaction(db, async(t) => {
+                const r = doc(db, "mlu_tabungan_trx", trxId);
+                const mRef = doc(db, "mlu_members", memberId);
+                const mDoc = await t.get(mRef);
+                
+                let currentSaldo = mDoc.data().saldoTabungan || 0;
+                
+                if (type === 'IN') currentSaldo += amount; // Saldo Nambah
+                else if (type === 'OUT') currentSaldo -= amount; // Saldo Berkurang (Tarik)
+                
+                t.update(mRef, { saldoTabungan: currentSaldo });
+                t.update(r, { status: 'SUCCESS' });
+            });
+            alert("Berhasil disetujui! Saldo member telah bertambah.");
+        }
+
+        window.rejectKlaim = async (trxId) => {
+            if(!confirm("Tolak klaim ini?\nData klaim akan dihapus permanen.")) return;
+            await deleteDoc(doc(db, "mlu_tabungan_trx", trxId));
+            alert("Klaim Ditolak & Dihapus.");
+        }
+        // -------------------------------------------
 
         window.renderMembers = (arr) => {
             const cont = document.getElementById('adminMemberList'); cont.innerHTML = "";
@@ -422,7 +491,7 @@
                     </div>
                     <div style="display:flex;">
                         <button class="btn-reset" onclick="resetMember('${m.id}', '${m.namaKtp}')"><i class="fas fa-key"></i></button>
-                        <button class="btn-plus" onclick="openDepositModal('${m.id}', '${m.namaKtp}')"><i class="fas fa-plus"></i></button>
+                        <button class="btn-plus" onclick="document.getElementById('modalDeposit').style.display='flex'; document.getElementById('depMemberId').value='${m.id}'; document.getElementById('depMemberName').innerText='${m.namaKtp}';"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>`;
             });
@@ -442,102 +511,15 @@
 
         window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
         
-        window.openDepositModal = (id, name) => { 
-            document.getElementById('depMemberId').value=id; 
-            document.getElementById('depMemberName').innerText=name; 
-            document.getElementById('modalDeposit').style.display='flex'; 
-            loadAdminRecentTrx(id);
-        }
-
-        // LOAD HISTORY BYPASS INDEX (SORT CLIENT SIDE)
-        async function loadAdminRecentTrx(memberId) {
-            const cont = document.getElementById('adminRecentTrx');
-            cont.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-spin"></i></div>';
-            
-            // QUERY TANPA ORDER BY (BIAR GA PERLU INDEX)
-            const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", memberId));
-            const snap = await getDocs(q);
-            
-            let dataArr = [];
-            snap.forEach(d => dataArr.push({id: d.id, ...d.data()}));
-            
-            // SORTING MANUAL DI HP (CLIENT SIDE) - AMAN TANPA INDEX FIREBASE
-            dataArr.sort((a, b) => b.timestamp - a.timestamp);
-            dataArr = dataArr.slice(0, 5); // Ambil 5 teratas
-
-            cont.innerHTML = "";
-            if(dataArr.length === 0) {
-                cont.innerHTML = '<div style="text-align:center; font-size:10px; color:#aaa; margin-top:10px;">Belum ada transaksi.</div>';
-                return;
-            }
-
-            dataArr.forEach(data => {
-                const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-                const isPlus = data.type === 'IN';
-                
-                cont.innerHTML += `
-                <div class="admin-hist-item">
-                    <div style="font-size:11px;">
-                        <div style="font-weight:700;">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div>
-                        <div style="color:#aaa;">${dateStr}</div>
-                    </div>
-                    <button class="btn-edit" onclick="openEditTrx('${data.id}', ${data.amount})"><i class="fas fa-pencil-alt"></i></button>
-                </div>`;
-            });
-        }
-
-        window.openEditTrx = (trxId, amount) => {
-            document.getElementById('editTrxId').value = trxId;
-            document.getElementById('editOldAmount').value = amount;
-            document.getElementById('editNewAmount').value = amount;
-            document.getElementById('modalEditTrx').style.display = 'flex';
-        }
-
-        window.saveEditTrx = async () => {
-            const trxId = document.getElementById('editTrxId').value;
-            const oldAmt = parseInt(document.getElementById('editOldAmount').value);
-            const newAmt = parseInt(document.getElementById('editNewAmount').value);
-            const memberId = document.getElementById('depMemberId').value;
-
-            if(!newAmt) return alert("Nominal tidak valid");
-
-            await runTransaction(db, async(t) => {
-                const memRef = doc(db, "mlu_members", memberId);
-                const trxRef = doc(db, "mlu_tabungan_trx", trxId);
-                const memDoc = await t.get(memRef);
-                
-                const currentBal = memDoc.data().saldoTabungan || 0;
-                // LOGIKA KOREKSI: Saldo Baru = Saldo Lama - TrxLama + TrxBaru
-                const diff = newAmt - oldAmt;
-                const finalBal = currentBal + diff;
-
-                t.update(memRef, { saldoTabungan: finalBal });
-                t.update(trxRef, { amount: newAmt });
-            });
-
-            document.getElementById('modalEditTrx').style.display = 'none';
-            loadAdminRecentTrx(memberId); // Refresh List
-            alert("Berhasil dikoreksi!");
-        }
-
         window.processDeposit = async () => {
             const id = document.getElementById('depMemberId').value; const amt = parseInt(document.getElementById('depAmount').value);
+            if(!amt) return;
             await runTransaction(db, async(t)=>{
                 const mRef=doc(db,"mlu_members",id); const mDoc=await t.get(mRef);
                 t.update(mRef, {saldoTabungan: (mDoc.data().saldoTabungan||0)+amt});
-                t.set(doc(collection(db,"mlu_tabungan_trx")), {memberId:id, memberName:mDoc.data().namaKtp, type:'IN', amount:amt, desc:'Setoran Tabungan', timestamp:Date.now(), status:'SUCCESS'});
+                t.set(doc(collection(db,"mlu_tabungan_trx")), {memberId:id, memberName:mDoc.data().namaKtp, type:'IN', amount:amt, desc:'Setoran Manual (Admin)', timestamp:Date.now(), status:'SUCCESS'});
             });
             document.getElementById('modalDeposit').style.display='none'; alert("Berhasil!");
-        }
-        window.approveTrx = async (id) => {
-            if(!confirm("Setujui?")) return;
-            await runTransaction(db, async(t)=>{
-                const r=doc(db,"mlu_tabungan_trx",id); const d=(await t.get(r)).data();
-                t.update(r, {status:'SUCCESS'});
-                const mRef=doc(db,"mlu_members",d.memberId); const mDoc=await t.get(mRef);
-                t.update(mRef, {saldoTabungan:(mDoc.data().saldoTabungan||0)-d.amount});
-            });
-            alert("Disetujui!");
         }
 
         window.switchTab = (tab) => {
@@ -554,9 +536,23 @@
                 list.innerHTML = ""; let arr = []; snap.forEach(d => arr.push(d.data())); arr.sort((a,b) => b.timestamp - a.timestamp);
                 if(arr.length===0) { list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada transaksi.</div>`; return; }
                 arr.forEach(d => {
-                    const color = d.type === 'IN' ? 'var(--success)' : 'var(--danger)'; const sign = d.type === 'IN' ? '+' : '-';
+                    const color = d.type === 'IN' ? 'var(--success)' : 'var(--danger)'; 
+                    const sign = d.type === 'IN' ? '+' : '-';
                     const dateStr = new Date(d.timestamp).toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-                    list.innerHTML += `<div class="trx-item"><div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc}</div><div style="font-size:10px; color:#aaa;">${dateStr}</div></div><div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div></div>`;
+                    
+                    // Tanda kalau masih antre
+                    const pendingTag = d.status === 'PENDING' ? `<span style="background:var(--warning); color:white; padding:2px 5px; border-radius:5px; font-size:8px; margin-left:5px;">PROSES ACC</span>` : '';
+
+                    list.innerHTML += `
+                    <div class="trx-item">
+                        <div>
+                            <div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${pendingTag}</div>
+                            <div style="font-size:10px; color:#aaa;">${dateStr}</div>
+                        </div>
+                        <div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${d.status==='PENDING'?'#ccc':color};">
+                            ${sign} Rp ${d.amount.toLocaleString('id-ID')}
+                        </div>
+                    </div>`;
                 });
             });
         }
