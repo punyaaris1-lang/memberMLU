@@ -24,11 +24,13 @@
         #securityScreen { position: fixed; inset: 0; background: #F8FAFC; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s; }
         .sec-icon-box { width: 90px; height: 90px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 50px rgba(45,99,237,0.2); margin-bottom: 20px; position: relative; overflow: hidden; }
         .sec-icon-box i { font-size: 35px; color: var(--electric-blue); z-index: 2; }
+        .scan-laser { position: absolute; width: 100%; height: 3px; background: var(--success); top: 0; animation: scanDown 1.5s infinite; opacity: 0.7; box-shadow: 0 0 15px var(--success); z-index: 1; }
+        @keyframes scanDown { 0% {top:0;} 50% {top:100%;} 100% {top:0;} }
         
         .camera-container { width: 220px; height: 220px; border-radius: 40px; overflow: hidden; position: relative; border: 4px solid white; box-shadow: 0 20px 60px rgba(0,0,0,0.15); background: #000; display: none; margin-bottom: 20px; }
         #videoInput { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         
-        /* ANIMASI FRAME VERMUK ALA GOJEK (DIPERBAIKI BIAR MAKIN JELAS) */
+        /* ANIMASI FRAME VERMUK ALA GOJEK */
         .face-frame { position: absolute; inset: 15px; border: 3px dashed rgba(255,255,255,0.8); border-radius: 30px; transition: all 0.3s; pointer-events: none; }
         .face-frame.scanning { 
             border: 4px solid #10B981; 
@@ -37,7 +39,6 @@
         }
         @keyframes facePulse { 0% { transform: scale(0.98); opacity: 0.7;} 100% { transform: scale(1.02); opacity: 1;} }
 
-        /* BUTTONS SECURITY */
         .btn-action { width: 100%; max-width: 250px; padding: 16px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.25); background: var(--electric-blue); color: white; }
         .btn-outline { background: rgba(45,99,237,0.05); color: var(--electric-blue); border: 2px solid var(--electric-blue); box-shadow: none; padding: 14px; }
         .btn-ghost { background: transparent; color: #94A3B8; box-shadow: none; font-size: 12px; margin-top: 5px; }
@@ -66,7 +67,9 @@
         .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 20px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
         .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
         
-        .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02);}
+        .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02); transition: 0.3s background;}
+        .member-row.updated { background: #ECFDF5; } /* Animasi kalau saldo berubah */
+        
         .btn-plus { width:40px; height:40px; background:linear-gradient(135deg, #10B981, #059669); color:white; border-radius:12px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:16px; box-shadow:0 5px 15px rgba(16,185,129,0.3);}
         .btn-reset { width:40px; height:40px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--warning); cursor:pointer; font-size:16px; margin-right: 8px;}
         
@@ -142,9 +145,7 @@
         <div class="modal-box" style="padding: 30px;">
             <div id="camTitle" style="font-family:'Outfit'; font-size:20px; color:var(--royal-blue); margin-bottom:10px; font-weight:900;"></div>
             <div id="camMsg" style="font-size:13px; color:var(--text-main); margin-bottom:25px; line-height:1.6;"></div>
-            
             <input type="password" id="camInput" class="form-input" style="display:none; margin-bottom:20px; text-align:center; font-size:20px; letter-spacing:5px;" placeholder="Password">
-            
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" id="camBtnCancel">BATAL</button>
                 <button class="btn-submit bg-sukses" id="camBtnOk" style="background:var(--electric-blue);">OK</button>
@@ -182,11 +183,9 @@
                 <div style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:20px; display:inline-block;">
                     <i class="fas fa-shield-alt"></i> TERVERIFIKASI
                 </div>
-                
                 <button class="btn-nabung" onclick="document.getElementById('modalQris').style.display='flex'">
-                    <i class="fas fa-qrcode"></i> SETOR (NABUNG)
+                    <i class="fas fa-qrcode"></i> SETORAN (NABUNG)
                 </button>
-
                 <div id="adminIndicator" style="display:none; font-size:9px; margin-top:5px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
             </div>
             <div class="trx-list" id="historyList">
@@ -230,7 +229,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalEditTrx">
+    <div class="modal-overlay" id="modalEditTrx" style="z-index: 20000;">
         <div class="modal-box">
             <h3 style="margin-top:0; color:var(--warning); font-family:'Outfit'; font-size:18px;">KOREKSI NOMINAL</h3>
             <input type="hidden" id="editTrxId"><input type="hidden" id="editOldAmount">
@@ -241,23 +240,19 @@
 
     <div class="modal-overlay" id="modalQris">
         <div class="modal-box" style="background:white; border-radius:20px; padding:30px; text-align:left;">
-            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue); text-align:center;">KLAIM SETORAN</h3>
-            
+            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue); text-align:center;">SETORAN</h3>
             <div class="form-group">
                 <label class="form-label">1. Nominal Tabungan (Bulat)</label>
                 <input type="number" id="inputNabungBase" class="form-input" placeholder="Contoh: 50000" onkeyup="calcTotalTransfer()" onchange="calcTotalTransfer()">
             </div>
-
             <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px;">
                 <div style="font-size:11px; color:#166534; font-weight:800;">YANG HARUS DI TRANSFER:</div>
                 <div id="totalNabungTxt" style="font-family:'Space Grotesk'; font-size:32px; font-weight:900; color:var(--success); margin:5px 0;">Rp 0</div>
                 <div style="font-size:10px; color:#15803D;">(Termasuk Kode Unik Anda: <b id="kodeUnikTxt">***</b>)</div>
             </div>
-
             <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:15px;">
                 <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS">
             </div>
-
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">BATAL</button>
                 <button class="btn-submit bg-sukses" onclick="submitKlaimNabung()">SAYA SUDAH TRANSFER</button>
@@ -290,14 +285,10 @@
                 
                 btnCancel.style.display = 'block';
                 btnOk.style.background = 'var(--electric-blue)';
-                
                 modal.style.display = 'flex';
 
                 btnCancel.onclick = () => { modal.style.display = 'none'; resolve(false); };
-                btnOk.onclick = () => { 
-                    modal.style.display = 'none'; 
-                    resolve(isPrompt ? input.value : true); 
-                };
+                btnOk.onclick = () => { modal.style.display = 'none'; resolve(isPrompt ? input.value : true); };
             });
         };
 
@@ -309,22 +300,23 @@
                 document.getElementById('camInput').style.display = 'none';
                 document.getElementById('camBtnCancel').style.display = 'none';
                 document.getElementById('camBtnOk').style.background = 'var(--success)';
-                
                 modal.style.display = 'flex';
                 document.getElementById('camBtnOk').onclick = () => { modal.style.display = 'none'; resolve(true); };
             });
         };
 
-        // ADMIN CONFIG: RIZKY + IWAN B4650SWE + PENGURUS
+        // ADMIN CONFIG (Iwan B 4650 SWE termasuk)
         const cleanPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         const isTrueAdmin = (cleanPlat === "B4248SWF") || (cleanPlat === "B4650SWE") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
         let isViewAdminVisible = isTrueAdmin; 
+        
+        // HANYA RIZKY YANG BISA HAPUS TRX & RESET DATA
         const isSuperAdmin = (cleanPlat === "B4248SWF");
 
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
         window.myKodeUnik = 0;
 
-        // INIT
+        // INIT AI
         Promise.all([
             faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
@@ -426,7 +418,7 @@
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 videoEl.srcObject = stream;
                 videoEl.addEventListener('play', () => {
-                    document.getElementById('faceFrame').classList.add('scanning'); // SELALU NYALA KEDIP HIJAU
+                    document.getElementById('faceFrame').classList.add('scanning'); // NYALAKAN KEDIP HIJAU (FIX)
                     
                     if (!isSetupMode) {
                         document.getElementById('scanStatus').innerText = "Mendeteksi Wajah...";
@@ -475,11 +467,16 @@
         function unlockApp() { document.getElementById('securityScreen').style.opacity = 0; setTimeout(() => { document.getElementById('securityScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; }, 500); }
 
         function initAdminData() {
-            getDocs(query(collection(db, "mlu_members"))).then(snap => {
+            // FIX: GUNAKAN ONSNAPSHOT AGAR SALDO MEMBER REALTIME UPDATE TANPA REFRESH
+            onSnapshot(query(collection(db, "mlu_members")), (snap) => {
                 let allMembers = []; snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
                 allMembers.sort((a,b) => (a.namaKtp||'').localeCompare(b.namaKtp||''));
-                window.allMembersCache = allMembers; window.renderMembers(allMembers);
+                window.allMembersCache = allMembers;
+                
+                const searchKey = document.getElementById('searchMem').value;
+                if(searchKey) window.filterMembers(); else window.renderMembers(allMembers);
             });
+
             const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "==", "PENDING"));
             onSnapshot(qApp, (snap) => {
                 const cont = document.getElementById('approvalList'); cont.innerHTML = "";
@@ -510,7 +507,7 @@
                 if (type === 'IN') currentSaldo += amount; else if (type === 'OUT') currentSaldo -= amount; 
                 t.update(mRef, { saldoTabungan: currentSaldo }); t.update(r, { status: 'SUCCESS' });
             });
-            showAlert("SUKSES", "Persetujuan berhasil! Saldo member telah diupdate.");
+            showAlert("SUKSES", "Persetujuan berhasil! Saldo member telah diupdate otomatis.");
         }
 
         window.rejectKlaim = async (trxId) => {
@@ -544,7 +541,7 @@
 
         window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); window.renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
         
-        // --- FUNGSI LOAD HISTORY ADMIN (SUDAH FIX TERBACA OLEH TOMBOL) ---
+        // --- FIX FUNGSI LOAD HISTORY ADMIN (AGAR MUNCUL) ---
         window.loadAdminRecentTrx = async (memberId) => {
             const cont = document.getElementById('adminRecentTrx');
             cont.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="font-size:24px; color:var(--electric-blue);"></i></div>';
@@ -554,7 +551,7 @@
             let dataArr = []; snap.forEach(d => dataArr.push({id: d.id, ...d.data()}));
             
             dataArr.sort((a, b) => b.timestamp - a.timestamp); 
-            dataArr = dataArr.slice(0, 5); // 5 Transaksi terakhir
+            dataArr = dataArr.slice(0, 5); 
             
             cont.innerHTML = "";
             if(dataArr.length === 0) { cont.innerHTML = '<div style="text-align:center; font-size:10px; color:#aaa; margin-top:10px;">Belum ada transaksi.</div>'; return; }
@@ -563,12 +560,15 @@
                 const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
                 const isPlus = data.type === 'IN';
                 
+                // TOMBOL HAPUS HANYA MUNCUL JIKA PLAT B4248SWF (BAPAK)
+                const btnDelete = isSuperAdmin ? `<button class="btn-edit" style="color:var(--danger); background:rgba(239,68,68,0.1);" onclick="window.deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>` : ``;
+
                 cont.innerHTML += `
                 <div class="admin-hist-item">
                     <div style="font-size:11px;"><div style="font-weight:700; color:${isPlus?'#10B981':'#EF4444'};">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div><div style="color:#aaa;">${dateStr}</div></div>
                     <div style="display:flex; gap:5px;">
                         <button class="btn-edit" onclick="window.openEditTrx('${data.id}', ${data.amount})"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn-edit" style="color:var(--danger); background:rgba(239,68,68,0.1);" onclick="window.deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>
+                        ${btnDelete}
                     </div>
                 </div>`;
             });
@@ -586,10 +586,10 @@
                 const currentBal = memDoc.data().saldoTabungan || 0; const diff = newAmt - oldAmt; const finalBal = currentBal + diff;
                 t.update(memRef, { saldoTabungan: finalBal }); t.update(trxRef, { amount: newAmt });
             });
-            document.getElementById('modalEditTrx').style.display = 'none'; window.loadAdminRecentTrx(memberId);
+            document.getElementById('modalEditTrx').style.display = 'none'; 
+            window.loadAdminRecentTrx(memberId); // Tidak perlu location.reload
         }
 
-        // --- FITUR HAPUS TRANSAKSI (HANYA DENGAN PASSWORD) ---
         window.deleteTrx = async (trxId, amount, type, memberId) => {
             const konf1 = await showConfirm("HAPUS TRANSAKSI", "Yakin ingin menghapus transaksi ini?<br><br><span style='color:red;'>Saldo member akan otomatis disesuaikan (dikurangi/ditambah).</span>");
             if(!konf1) return;
@@ -605,15 +605,15 @@
                     const memDoc = await t.get(memRef);
                     let currentBal = memDoc.data().saldoTabungan || 0;
                     
-                    if(type === 'IN') currentBal -= amount; // Hapus uang masuk = Saldo berkurang
-                    else if (type === 'OUT') currentBal += amount; // Hapus uang ditarik = Saldo kembali
+                    if(type === 'IN') currentBal -= amount; 
+                    else if (type === 'OUT') currentBal += amount; 
                     
                     t.update(memRef, { saldoTabungan: currentBal });
                     t.delete(trxRef);
                 });
                 document.getElementById('loaderOverlay').style.display = 'none';
                 await showAlert("SUKSES", "Transaksi dihapus & Saldo telah dikoreksi otomatis.");
-                window.loadAdminRecentTrx(memberId);
+                window.loadAdminRecentTrx(memberId); // Tidak perlu location.reload
             } catch (e) { document.getElementById('loaderOverlay').style.display = 'none'; showAlert("ERROR", e.message); }
         }
 
@@ -626,7 +626,7 @@
                 t.set(doc(collection(db,"mlu_tabungan_trx")), {memberId:id, memberName:mDoc.data().namaKtp, type:'IN', amount:amt, desc:'Setoran Manual (Admin)', timestamp:Date.now(), status:'SUCCESS'});
             });
             document.getElementById('depAmount').value = ''; 
-            window.loadAdminRecentTrx(id); // Reload list transaksinya
+            window.loadAdminRecentTrx(id); // Reload list transaksinya tanpa refresh halaman
         }
 
         window.switchTab = (tab) => {
