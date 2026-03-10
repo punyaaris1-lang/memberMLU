@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mockup Animasi Login MLU</title>
+    <title>Mockup Animasi Login MLU - V2 (Electric)</title>
     <style>
         /* RESET & BASIC */
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #050505; font-family: sans-serif; overflow: hidden; }
@@ -14,88 +14,147 @@
             background: linear-gradient(135deg, #0A2259 0%, #15398F 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: white; z-index: 1;
-            opacity: 0; transform: scale(0.9); transition: all 1s ease-out;
+            opacity: 0; transform: scale(0.95); transition: all 2s ease-out;
         }
         .dashboard-mockup.show { opacity: 1; transform: scale(1); }
-        .dashboard-mockup h1 { font-size: 30px; letter-spacing: 2px; margin-bottom: 10px; }
+        .dashboard-mockup h1 { font-size: 30px; letter-spacing: 2px; margin-bottom: 10px; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .dashboard-mockup p { color: #93C5FD; }
 
-        /* OVERLAY ANIMASI (PINTU GERBANG) */
+        /* OVERLAY PINTU GERBANG */
         .gate-overlay {
             position: absolute; inset: 0;
             background: #000; z-index: 10;
             display: flex; align-items: center; justify-content: center;
-            transition: background 0.5s;
+            transition: background 1.5s;
         }
         .gate-overlay.fade-out { background: transparent; pointer-events: none; }
 
-        /* WADAH LOGO YANG AKAN DIBELAH */
+        /* WADAH LOGO (LEBIH BESAR) */
         .logo-container {
             position: relative;
-            width: 250px; height: 250px;
-            /* Efek getar pelan sebelum dipotong */
+            width: 380px; height: 380px; /* DIPERBESAR */
+            max-width: 85vw; max-height: 85vw; /* Agar tidak tumpah di HP kecil */
             animation: floatLogo 3s ease-in-out infinite; 
+            z-index: 15;
+        }
+
+        /* LOGO KESETRUM (GETAR) */
+        .logo-container.shock {
+            animation: electroShock 0.1s infinite;
         }
 
         /* BAGIAN LOGO ATAS & BAWAH */
         .logo-half {
             position: absolute; left: 0; width: 100%; height: 100%;
-            background-image: url('logomlumaster.png'); /* PANGGIL LOGO MLU */
+            background-image: url('logomlu.png'); /* PANGGIL LOGO MLU */
             background-size: contain; background-repeat: no-repeat; background-position: center;
-            transition: transform 1.2s cubic-bezier(0.86, 0, 0.07, 1), opacity 1s;
+            /* DURASI DIBUAT LEBIH LAMBAT (2.5 detik) */
+            transition: transform 2.5s cubic-bezier(0.68, -0.05, 0.265, 1.15), opacity 2s ease-in;
         }
 
-        /* MEMOTONG LOGO PAKAI CSS CLIP-PATH */
-        /* Setengah Atas */
+        /* CSS CLIP-PATH MEMOTONG TENGAH */
         .logo-top { clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%); top: 0; }
-        /* Setengah Bawah */
         .logo-bottom { clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%); top: 0; }
 
-        /* ANIMASI KETIKA TERBELAH */
-        .logo-top.split { transform: translateY(-150vh) rotate(-5deg); opacity: 0; }
-        .logo-bottom.split { transform: translateY(150vh) rotate(5deg); opacity: 0; }
+        /* ANIMASI TERBELAH LAMBAT */
+        .logo-top.split { transform: translateY(-120vh) rotate(-3deg); opacity: 0; }
+        .logo-bottom.split { transform: translateY(120vh) rotate(3deg); opacity: 0; }
 
-        /* EFEK KILAT (LIGHTNING SLASH) */
-        .slash-line {
+        /* --- EFEK LISTRIK WARNA WARNI --- */
+        .electricity-layer {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 0%; height: 4px;
-            background: #fff;
-            box-shadow: 0 0 20px #00f2fe, 0 0 40px #00f2fe, 0 0 80px #fff;
-            border-radius: 10px; z-index: 20; opacity: 0;
+            width: 100%; height: 100%; z-index: 20; pointer-events: none; display: none;
         }
-        
-        .slash-line.strike { animation: slashAnim 0.6s ease-out forwards; }
+        .electricity-layer.active { display: block; }
 
-        @keyframes slashAnim {
-            0% { width: 0%; opacity: 1; height: 2px; }
-            40% { width: 150vw; opacity: 1; height: 8px; box-shadow: 0 0 50px #00f2fe, 0 0 100px #fff; }
-            100% { width: 200vw; opacity: 0; height: 0px; }
+        /* TEBASAN UTAMA TENGAH */
+        .electric-slash {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 0%; height: 6px;
+            background: linear-gradient(90deg, #00f2fe, #fe0979, #fcd34d, #00ff00, #00f2fe);
+            background-size: 300% 300%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px #00f2fe, 0 0 40px #fe0979, 0 0 80px #fff;
+            opacity: 0;
+        }
+        .electric-slash.strike {
+            animation: slashAnim 1.5s ease-out forwards, rgbFlow 0.3s linear infinite, flicker 0.08s infinite;
         }
 
-        /* EFEK KILAT LAYAR (FLASH BLIND) */
+        /* PERCIKAN CABANG LISTRIK (BRANCHES) */
+        .branch {
+            position: absolute; top: 50%; left: 50%;
+            height: 3px; border-radius: 50px; opacity: 0;
+            background: linear-gradient(90deg, #fff, transparent);
+            transform-origin: left center;
+            box-shadow: 0 0 15px #fff;
+        }
+        .branch.strike { animation: branchAnim 0.8s ease-out forwards, flicker 0.05s infinite; }
+
+        .b1 { transform: translateY(-50%) rotate(15deg); box-shadow: 0 0 20px #00f2fe; animation-delay: 0.1s !important; }
+        .b2 { transform: translateY(-50%) rotate(-25deg); box-shadow: 0 0 20px #fe0979; animation-delay: 0.15s !important; }
+        .b3 { transform: translateY(-50%) rotate(165deg); box-shadow: 0 0 20px #fcd34d; animation-delay: 0.05s !important; }
+        .b4 { transform: translateY(-50%) rotate(190deg); box-shadow: 0 0 20px #00ff00; animation-delay: 0.2s !important; }
+        .b5 { transform: translateY(-50%) rotate(70deg); box-shadow: 0 0 20px #00f2fe; animation-delay: 0.25s !important; }
+        .b6 { transform: translateY(-50%) rotate(250deg); box-shadow: 0 0 20px #fe0979; animation-delay: 0.1s !important; }
+
+        /* FLASH BLIND PUTIH */
         .screen-flash {
             position: absolute; inset: 0; background: white; z-index: 100;
             opacity: 0; pointer-events: none;
         }
-        .screen-flash.flash { animation: flashAnim 0.8s ease-out forwards; }
+        .screen-flash.flash { animation: flashAnim 1.5s ease-out forwards; }
+
+
+        /* === KEYFRAMES (ANIMASI) === */
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 15px rgba(212,175,55,0.4)); }
+            50% { transform: translateY(-15px); filter: drop-shadow(0 0 30px rgba(212,175,55,0.8)); }
+        }
+
+        @keyframes electroShock {
+            0% { transform: translate(0, 0) scale(1); filter: brightness(1); }
+            25% { transform: translate(-4px, 4px) scale(1.02); filter: brightness(1.5) hue-rotate(90deg); }
+            50% { transform: translate(4px, -4px) scale(0.98); filter: brightness(2) invert(1); }
+            75% { transform: translate(-4px, -4px) scale(1.03); filter: brightness(1.2); }
+            100% { transform: translate(4px, 4px) scale(1); filter: brightness(1); }
+        }
+
+        @keyframes slashAnim {
+            0% { width: 0%; opacity: 1; height: 2px; }
+            20% { width: 120vw; opacity: 1; height: 10px; box-shadow: 0 0 50px #00f2fe, 0 0 100px #fff; }
+            100% { width: 250vw; opacity: 0; height: 0px; }
+        }
+
+        @keyframes branchAnim {
+            0% { width: 0; opacity: 1; }
+            40% { width: 80vw; opacity: 1; }
+            100% { width: 120vw; opacity: 0; }
+        }
+
+        @keyframes rgbFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
 
         @keyframes flashAnim {
             0% { opacity: 0; }
-            10% { opacity: 0.8; }
+            10% { opacity: 0.6; }
             100% { opacity: 0; }
-        }
-
-        @keyframes floatLogo {
-            0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
-            50% { transform: translateY(-10px); filter: drop-shadow(0 0 20px rgba(212,175,55,0.6)); }
         }
 
         /* TOMBOL UNTUK MENTRIGGER ANIMASI */
         .btn-trigger {
             position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-            padding: 15px 30px; background: #D4AF37; color: black; border: none;
-            font-weight: bold; border-radius: 30px; cursor: pointer; z-index: 1000;
-            font-size: 16px; box-shadow: 0 5px 20px rgba(212,175,55,0.4);
+            padding: 15px 30px; background: linear-gradient(135deg, #D4AF37, #B45309); color: white; border: none;
+            font-weight: 900; border-radius: 30px; cursor: pointer; z-index: 1000;
+            font-size: 14px; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(212,175,55,0.4);
+            border: 2px solid white;
         }
         .btn-trigger:active { transform: translateX(-50%) scale(0.95); }
 
@@ -111,9 +170,19 @@
     </div>
 
     <div class="gate-overlay" id="gateOverlay">
+        
         <div class="logo-container" id="logoContainer">
-            <div class="slash-line" id="slashLine"></div>
             
+            <div class="electricity-layer" id="electricityLayer">
+                <div class="electric-slash" id="slashLine"></div>
+                <div class="branch b1"></div>
+                <div class="branch b2"></div>
+                <div class="branch b3"></div>
+                <div class="branch b4"></div>
+                <div class="branch b5"></div>
+                <div class="branch b6"></div>
+            </div>
+
             <div class="logo-half logo-top" id="logoTop"></div>
             <div class="logo-half logo-bottom" id="logoBottom"></div>
         </div>
@@ -133,26 +202,38 @@
             const gate = document.getElementById('gateOverlay');
             const dash = document.getElementById('dashboardMockup');
             const container = document.getElementById('logoContainer');
+            const elecLayer = document.getElementById('electricityLayer');
+            const branches = document.querySelectorAll('.branch');
 
-            // Hentikan efek melayang (kunci posisi)
+            // 1. Hentikan efek melayang perlahan, ganti dengan efek KESETRUM GETAR HEBAT
             container.style.animation = 'none';
+            container.classList.add('shock');
 
-            // 1. Munculkan garis kilat & layar berkedip putih
-            slash.classList.add('strike');
+            // 2. Munculkan kilat layar putih
             flash.classList.add('flash');
 
-            // 2. Beri jeda sangat sedikit (0.1 detik) agar kilat terasa menebas logo
+            // 3. Nyalakan Listrik Warna-Warni
+            elecLayer.classList.add('active');
+            slash.classList.add('strike');
+            branches.forEach(b => b.classList.add('strike'));
+
+            // 4. Beri jeda 0.4 detik (Biar logo bergetar & tersetrum dulu sebelum putus)
             setTimeout(() => {
-                // Logo terbelah ke atas & bawah
+                
+                // Hentikan getaran
+                container.classList.remove('shock');
+
+                // Logo mulai terbelah ke atas & bawah secara Slow-Motion
                 topHalf.classList.add('split');
                 botHalf.classList.add('split');
                 
-                // Hilangkan background hitam pekat
+                // Transisikan background gerbang menjadi tembus pandang
                 gate.classList.add('fade-out');
 
-                // Munculkan Dashboard (Zoom in perlahan)
+                // Munculkan Dashboard pelan-pelan dari belakang
                 dash.classList.add('show');
-            }, 150);
+
+            }, 400); // 400 milidetik waktu kesetrum
         }
     </script>
 
