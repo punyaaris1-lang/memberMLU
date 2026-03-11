@@ -1,17 +1,9 @@
 {
-  "name": "MLU Super App",
+  "name": "MLU Premium",
   "short_name": "MLU",
-  "description": "Aplikasi Resmi Komunitas Maka Lintas Utara",
-  "start_url": "/memberMLU/index.html",
+  "start_url": "/dashboard.html",
   "display": "standalone",
-  "background_color": "#0A2259",
+  "background_color": "#F0F4F8",
   "theme_color": "#0A2259",
-  "icons": [
-    {
-      "src": "logomlu2.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+  "gcm_sender_id": "103953800507"
 }
