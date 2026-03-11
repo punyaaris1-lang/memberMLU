@@ -323,38 +323,42 @@
         window.showConfirm = (msg, callback) => { document.getElementById('confirmMsg').innerText = msg; const modal = document.getElementById('confirmModal'); modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10); window.confirmCallback = callback; }
         window.closeConfirm = (res) => { const modal = document.getElementById('confirmModal'); modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
 
-        // === FUNGSI COPY TOKEN & MINTA IZIN GABUNGAN ===
+        // === FUNGSI "SAPU JAGAT" COPY TOKEN (MENGATASI PUSH SERVICE ERROR) ===
         window.salinTokenSaya = async () => {
             try {
-                // 1. Pancing pop-up izin saat tombol diklik
+                // 1. HAPUS PAKSA SEMUA SATPAM LAMA YANG NYANGKUT
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (let reg of registrations) {
+                    await reg.unregister();
+                }
+
+                // 2. Minta Izin Notifikasi
                 const permission = await Notification.requestPermission();
                 
                 if (permission === 'granted') {
-                    // 2. Daftar Satpam
+                    // 3. Daftarkan Ulang Satpam Baru dari Nol
                     const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-                    await registration.update(); // Paksa update cache
+                    await navigator.serviceWorker.ready; // Tunggu sampai Satpam 100% Siap
                     
-                    // 3. Ambil Token
+                    // 4. Ambil Token
                     const currentToken = await getToken(messaging, {
                         vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4',
                         serviceWorkerRegistration: registration 
                     });
 
                     if (currentToken) {
-                        // 4. Simpan ke Database
+                        // 5. Simpan dan Copy
                         await updateDoc(doc(db, "mlu_members", uData.id), { fcmToken: currentToken });
-                        
-                        // 5. Langsung Copy ke Clipboard HP
                         navigator.clipboard.writeText(currentToken).then(() => {
                             alert("✅ TOKEN BERHASIL DI-COPY!\n\nSekarang buka Firebase -> Klik 'Send test message' -> Paste tokennya di sana.");
                         }).catch(err => {
                             prompt("Silakan Copy manual teks di bawah ini:", currentToken);
                         });
                     } else {
-                        alert("❌ Token gagal dibuat oleh sistem Google.");
+                        alert("❌ Token ditolak oleh server Google.");
                     }
                 } else {
-                    alert("⚠️ IZIN DITOLAK BROWSER!\n\nSilakan klik ikon GEMBOK di pojok kiri atas (sebelah alamat web) -> Pilih 'Izin' -> Ubah Notifikasi menjadi IZINKAN.");
+                    alert("⚠️ IZIN DITOLAK BROWSER!");
                 }
             } catch (err) {
                 alert("Error Sistem: " + err.message);
@@ -379,8 +383,6 @@
             const roleEl = document.getElementById('userRole');
             if (myPlatClean === "B4248SWF") { roleEl.innerText = "KELUARGA MLU"; uData.isSuperAdmin = true; } else { roleEl.innerText = uData.role || "MEMBER"; }
 
-            // (Perhatikan: aktifkanNotifikasi() otomatis sudah dihapus dari sini agar tidak diblokir Chrome)
-
             onSnapshot(doc(db, "pengaturan", "dashboard"), (docSnap) => { if (docSnap.exists() && docSnap.data().event_aktif === true) document.getElementById('eventSection').style.display = 'block'; else document.getElementById('eventSection').style.display = 'none'; });
             const now = new Date(); if (now >= new Date(2026, 2, 12, 23, 50) && now <= new Date(2026, 2, 25, 8, 0)) document.getElementById('annoPopup').style.display = 'flex';
             const savedLoc = localStorage.getItem('maka_loc_share'); if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
@@ -399,6 +401,5 @@
         function calculateDist(lat1, lon1, lat2, lon2) { const p = 0.017453292519943295, c = Math.cos; const a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2; return 12742 * Math.asin(Math.sqrt(a)); }
         window.sendSos = () => { if(!navigator.geolocation) return alert("GPS Wajib aktif untuk SOS!"); navigator.geolocation.getCurrentPosition(pos => { const url = `https://wa.me/?text=${encodeURIComponent(`*🚨 SOS MLU ALERT 🚨*\n\n👤 Nama: ${myName}\n🔢 Plat: ${myPlat}\n\n📍 Lokasi Darurat:\nhttp://maps.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}\n\n📝 Keterangan:\n${document.getElementById('sosDesc').value}`)}`; window.location.href = url; }, () => alert("Gagal ambil lokasi. Pastikan GPS nyala!")); };
     </script>
-
 </body>
 </html>
