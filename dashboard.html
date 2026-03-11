@@ -34,8 +34,8 @@
 
         /* HEADER */
         .dashboard-header { padding: 40px 20px 15px; position: relative; z-index: 10; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .greeting { font-family: 'Outfit'; font-size: 32px; font-weight: 900; color: var(--royal-blue); line-height: 1; letter-spacing: -1px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .greeting { font-family: 'Outfit'; font-size: 32px; font-weight: 900; color: var(--royal-blue); line-height: 1; letter-spacing: -1px; margin-bottom: 8px;}
         .date-text { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
         .btn-settings { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--royal-blue); box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
 
@@ -70,41 +70,24 @@
         /* WIDGETS - DASH CONTAINER */
         .dash-container { padding: 0 20px; margin-bottom: 20px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
         
-        .fc-banner { 
-            border-radius: 24px; padding: 20px; 
-            display: flex; align-items: center; justify-content: space-between; 
-            position: relative; overflow: hidden; cursor: pointer; gap: 10px;
-        }
+        .fc-banner { border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; cursor: pointer; gap: 10px; }
         .banner-left { flex: 1; min-width: 0; } 
         .banner-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
-        
         .banner-title { font-family: 'Outfit'; font-size: 14px; font-weight: 800; color: var(--royal-blue); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; white-space: nowrap; }
         .banner-desc { font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 4px;}
         .banner-val { font-family: 'Outfit'; font-size: 18px; font-weight: 900; line-height: 1.2; color: var(--text-main); }
         .banner-lbl { font-size: 8px; font-weight: 800; color: #94A3B8; letter-spacing: 1px; margin-top: 2px; text-transform: uppercase; }
         
-        /* === NEW: CUSTOM TIKTOK PREMIUM CARD === */
-        .tiktok-premium-card {
-            display: flex; align-items: center; justify-content: space-between;
-            background: linear-gradient(135deg, #050505 0%, #1a1a1a 100%);
-            border-radius: 24px; padding: 22px 20px; position: relative; overflow: hidden;
-            text-decoration: none; border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: 0.3s;
-        }
+        /* TIKTOK PREMIUM CARD */
+        .tiktok-premium-card { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #050505 0%, #1a1a1a 100%); border-radius: 24px; padding: 22px 20px; position: relative; overflow: hidden; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: 0.3s; }
         .tiktok-premium-card:active { transform: scale(0.96); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        
-        /* Neon Glow Effect */
         .tk-glow { position: absolute; width: 100px; height: 100px; filter: blur(40px); border-radius: 50%; opacity: 0.6; z-index: 1; }
-        .tk-cyan { top: -20px; left: -20px; background: #00f2fe; }
-        .tk-magenta { bottom: -20px; right: 20%; background: #fe0979; }
-        
+        .tk-cyan { top: -20px; left: -20px; background: #00f2fe; } .tk-magenta { bottom: -20px; right: 20%; background: #fe0979; }
         .tk-content { display: flex; align-items: center; gap: 15px; z-index: 2; flex: 1; }
         .tk-icon-wrap { width: 50px; height: 50px; border-radius: 16px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); flex-shrink: 0; }
         .tk-icon-wrap i { font-size: 28px; color: white; filter: drop-shadow(2px 2px 0px #00f2fe) drop-shadow(-2px -2px 0px #fe0979); }
-        
         .tk-text h4 { margin: 0 0 5px 0; color: white; font-family: 'Outfit'; font-size: 16px; font-weight: 800; letter-spacing: 0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .tk-text p { margin: 0; color: #CBD5E1; font-size: 11px; font-family: 'Inter'; font-weight: 500; line-height: 1.4; padding-right: 5px; }
-        
         .tk-btn { background: white; color: black; font-family: 'Space Grotesk'; font-weight: 900; font-size: 11px; padding: 10px 18px; border-radius: 50px; z-index: 2; display: flex; align-items: center; gap: 6px; box-shadow: 0 5px 15px rgba(255,255,255,0.2); flex-shrink: 0; }
         
         #radarContainer { display: none; width: 100%; border-radius: 24px; overflow: hidden; border: 4px solid white; position: relative; height: 220px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
@@ -114,30 +97,17 @@
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .menu-btn { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.9); border-radius: 24px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(10, 34, 89, 0.04); cursor: pointer; transition: 0.2s; }
         .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.9); }
-        
         .icon-box { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-        .ic-anggota { background: linear-gradient(135deg, #60A5FA 0%, #2563EB 100%); } 
-        .ic-pengurus { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); } 
-        .ic-keuangan { background: linear-gradient(135deg, #94a3b8 0%, #475569 100%); } 
-        .ic-tabungan { background: linear-gradient(135deg, #34D399 0%, #059669 100%); } 
-        .ic-game { background: linear-gradient(135deg, #c084fc 0%, #7c3aed 100%); } 
-        .ic-reminder { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); } 
-        .ic-info { background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%); } 
-        .ic-pasar { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); } 
+        .ic-anggota { background: linear-gradient(135deg, #60A5FA 0%, #2563EB 100%); } .ic-pengurus { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); } .ic-keuangan { background: linear-gradient(135deg, #94a3b8 0%, #475569 100%); } .ic-tabungan { background: linear-gradient(135deg, #34D399 0%, #059669 100%); } .ic-game { background: linear-gradient(135deg, #c084fc 0%, #7c3aed 100%); } .ic-reminder { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); } .ic-info { background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%); } .ic-pasar { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); } 
         .menu-title { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: var(--royal-blue); }
 
         /* FLOATING BTNS (WA CS & SOS) */
         .float-container { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 2000; }
-        
-        /* Tombol SOS */
         .btn-sos { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 2px solid white; transition: 0.2s; background: linear-gradient(135deg, #ef4444, #b91c1c); animation: pulseSOS 2s infinite; }
         .btn-sos:active { transform: scale(0.9); }
         @keyframes pulseSOS { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } }
-
-        /* Tombol WA CS MAKA */
         .btn-wa-cs { background: linear-gradient(135deg, #25D366, #128C7E); color: white; border-radius: 50px; padding: 12px 20px; display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; text-decoration: none; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3); border: 2px solid white; transition: 0.2s; }
-        .btn-wa-cs i { font-size: 18px; }
-        .btn-wa-cs:active { transform: scale(0.95); }
+        .btn-wa-cs i { font-size: 18px; } .btn-wa-cs:active { transform: scale(0.95); }
 
         /* MODAL KHUSUS */
         .modal-glass-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
@@ -209,6 +179,8 @@
             <div>
                 <div class="date-text" id="displayDate">HARI INI</div>
                 <div class="greeting" id="greetingText">Halo!</div>
+                
+                <button onclick="window.salinTokenSaya()" style="background: var(--electric-blue); color: white; padding: 6px 14px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; border: none; box-shadow: 0 5px 15px rgba(45,99,237,0.3); cursor: pointer; letter-spacing: 1px;"><i class="fas fa-copy"></i> COPY TOKEN SAYA</button>
             </div>
             <a href="settings.html" class="btn-settings"><i class="fas fa-cog"></i></a>
         </div>
@@ -251,7 +223,6 @@
     </div>
 
     <div class="dash-container">
-        
         <div class="fc-banner glass-panel" onclick="window.location.href='antrian.html'">
             <div class="banner-left">
                 <div class="banner-title"><i class="fas fa-charging-station" style="color:var(--electric-blue);"></i> STATUS STASIUN</div>
@@ -265,17 +236,13 @@
         <a href="https://www.tiktok.com/@.maka.lintas.utara" target="_blank" class="tiktok-premium-card">
             <div class="tk-glow tk-cyan"></div>
             <div class="tk-glow tk-magenta"></div>
-            
             <div class="tk-content">
-                <div class="tk-icon-wrap">
-                    <i class="fab fa-tiktok"></i>
-                </div>
+                <div class="tk-icon-wrap"><i class="fab fa-tiktok"></i></div>
                 <div class="tk-text">
                     <h4>@.maka.lintas.utara</h4>
                     <p>Ikuti keseruan & update info terbaru di TikTok Resmi MLU!</p>
                 </div>
             </div>
-            
             <div class="tk-btn">FOLLOW <i class="fas fa-chevron-right"></i></div>
         </a>
 
@@ -289,46 +256,21 @@
 
     <div class="dash-container" style="margin-top: 0;">
         <div class="menu-grid">
-            <a href="data_anggota.html" class="menu-btn">
-                <div class="icon-box ic-anggota"><i class="fas fa-users"></i></div>
-                <div class="menu-title">Data Anggota</div>
-            </a>
-            <a href="pengurus.html" class="menu-btn">
-                <div class="icon-box ic-pengurus"><i class="fas fa-sitemap"></i></div>
-                <div class="menu-title">Pengurus</div>
-            </a>
-            <a href="keuangan.html" class="menu-btn">
-                <div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div>
-                <div class="menu-title">Uang Kas</div>
-            </a>
-            <a href="tabungan.html" class="menu-btn">
-                <div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div>
-                <div class="menu-title">Tabungan</div>
-            </a>
-            <a href="game.html" class="menu-btn">
-                <div class="icon-box ic-game"><i class="fas fa-gamepad"></i></div>
-                <div class="menu-title">Game Center</div>
-            </a>
-            <a href="reminder.html" class="menu-btn">
-                <div class="icon-box ic-reminder"><i class="fas fa-bell"></i></div>
-                <div class="menu-title">Garasi Pintar</div>
-            </a>
-            <a href="info_mlu.html" class="menu-btn">
-                <div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div>
-                <div class="menu-title">Info MLU</div>
-            </a>
-            <a href="store.html" class="menu-btn">
-                <div class="icon-box ic-pasar"><i class="fas fa-store"></i></div>
-                <div class="menu-title">Pasar MLU</div>
-            </a>
+            <a href="data_anggota.html" class="menu-btn"><div class="icon-box ic-anggota"><i class="fas fa-users"></i></div><div class="menu-title">Data Anggota</div></a>
+            <a href="pengurus.html" class="menu-btn"><div class="icon-box ic-pengurus"><i class="fas fa-sitemap"></i></div><div class="menu-title">Pengurus</div></a>
+            <a href="keuangan.html" class="menu-btn"><div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div><div class="menu-title">Uang Kas</div></a>
+            <a href="tabungan.html" class="menu-btn"><div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div><div class="menu-title">Tabungan</div></a>
+            <a href="game.html" class="menu-btn"><div class="icon-box ic-game"><i class="fas fa-gamepad"></i></div><div class="menu-title">Game Center</div></a>
+            <a href="reminder.html" class="menu-btn"><div class="icon-box ic-reminder"><i class="fas fa-bell"></i></div><div class="menu-title">Garasi Pintar</div></a>
+            <a href="info_mlu.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info MLU</div></a>
+            <a href="store.html" class="menu-btn"><div class="icon-box ic-pasar"><i class="fas fa-store"></i></div><div class="menu-title">Pasar MLU</div></a>
         </div>
     </div>
 
     <div class="float-container">
         <div class="btn-sos" onclick="openSosModal()"><i class="fas fa-ambulance"></i></div>
         <a href="https://wa.me/6287722285445?text=Halo%20MAKA%20CS,%20saya%20member%20MLU%20ingin%20bertanya..." target="_blank" class="btn-wa-cs">
-            <i class="fab fa-whatsapp"></i>
-            <span>MAKA CS</span>
+            <i class="fab fa-whatsapp"></i><span>MAKA CS</span>
         </a>
     </div>
 
@@ -359,15 +301,11 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
-        // IMPORT MODULE MESSAGING UNTUK NOTIFIKASI
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
-        
-        // AKTIFKAN FITUR PESAN (MESSAGING)
         const messaging = getMessaging(app);
 
         const appFC = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppFC");
@@ -382,49 +320,50 @@
         const myPlat = uData.plat || "B XXXX XX";
         let map = null, markers = {}, watchId = null;
 
-        // FUNGSI UMUM MODAL
         window.openSosModal = () => { const m = document.getElementById('sosModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
         window.showConfirm = (msg, callback) => { document.getElementById('confirmMsg').innerText = msg; const modal = document.getElementById('confirmModal'); modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10); window.confirmCallback = callback; }
         window.closeConfirm = (res) => { const modal = document.getElementById('confirmModal'); modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
 
-        // === FUNGSI INTI: MEMINTA IZIN & DAFTAR SATPAM (DIPERBAIKI) ===
+        // FUNGSI COPY TOKEN OTOMATIS
+        window.salinTokenSaya = () => {
+            if(window.myFcmToken_MLU) {
+                navigator.clipboard.writeText(window.myFcmToken_MLU).then(() => {
+                    alert("✅ TOKEN BERHASIL DI-COPY!\n\nSekarang buka Firebase -> Klik 'Send test message' -> Paste tokennya di sana.");
+                }).catch(err => {
+                    prompt("Silakan Copy manual teks panjang di bawah ini:", window.myFcmToken_MLU);
+                });
+            } else {
+                alert("⏳ Token belum siap. Harap tunggu beberapa detik, atau pastikan izin notifikasi sudah ditekan 'Allow'.");
+            }
+        };
+
+        // MEMINTA IZIN & DAFTAR SATPAM
         async function aktifkanNotifikasi() {
             try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
-                    console.log('Izin Notifikasi Diberikan!');
-                    
-                    // JALUR PAKSA: Daftarkan Satpam (Service Worker) secara eksplisit
                     const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-                    console.log('Satpam Notif berhasil didaftarkan!', registration);
-
-                    // Panggil Token dengan menyertakan sang Satpam
+                    
                     const currentToken = await getToken(messaging, {
                         vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4',
                         serviceWorkerRegistration: registration 
                     });
 
                     if (currentToken) {
-                        await updateDoc(doc(db, "mlu_members", uData.id), {
-                            fcmToken: currentToken
-                        });
-                        console.log('Token HP berhasil diamankan!');
+                        window.myFcmToken_MLU = currentToken; // Simpan ke global untuk di-copy
+                        await updateDoc(doc(db, "mlu_members", uData.id), { fcmToken: currentToken });
                     }
                 }
-            } catch (err) {
-                console.log('Gagal meminta token notif: ', err);
-            }
+            } catch (err) { console.log('Gagal meminta token: ', err); }
         }
 
-        // === RADAR PENGECEK (FOREGROUND LISTENER) ===
-        // Script ini bertugas menangkap notif kalau aplikasi SEDANG DIBUKA
+        // RADAR PENGECEK (FOREGROUND LISTENER)
         onMessage(messaging, (payload) => {
-            console.log('Pesan diterima saat aplikasi terbuka: ', payload);
+            console.log('Pesan masuk saat aplikasi buka: ', payload);
             alert(`📢 NOTIFIKASI MLU MASUK:\n\n${payload.notification.title}\n${payload.notification.body}`);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // SET TEXT & INFO USER
             document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             const hr = new Date().getHours();
             document.getElementById('greetingText').innerText = hr<10?"Selamat Pagi,":hr<15?"Selamat Siang,":hr<18?"Selamat Sore,":"Selamat Malam,";
@@ -436,23 +375,16 @@
             const roleEl = document.getElementById('userRole');
             if (myPlatClean === "B4248SWF") { roleEl.innerText = "KELUARGA MLU"; uData.isSuperAdmin = true; } else { roleEl.innerText = uData.role || "MEMBER"; }
 
-            // PANGGIL FUNGSI NOTIFIKASI SAAT DASHBOARD TERBUKA
+            // PANGGIL NOTIF
             aktifkanNotifikasi();
 
-            onSnapshot(doc(db, "pengaturan", "dashboard"), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().event_aktif === true) document.getElementById('eventSection').style.display = 'block'; else document.getElementById('eventSection').style.display = 'none';
-            });
-
-            const now = new Date();
-            if (now >= new Date(2026, 2, 12, 23, 50) && now <= new Date(2026, 2, 25, 8, 0)) document.getElementById('annoPopup').style.display = 'flex';
-
-            const savedLoc = localStorage.getItem('maka_loc_share');
-            if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
+            onSnapshot(doc(db, "pengaturan", "dashboard"), (docSnap) => { if (docSnap.exists() && docSnap.data().event_aktif === true) document.getElementById('eventSection').style.display = 'block'; else document.getElementById('eventSection').style.display = 'none'; });
+            const now = new Date(); if (now >= new Date(2026, 2, 12, 23, 50) && now <= new Date(2026, 2, 25, 8, 0)) document.getElementById('annoPopup').style.display = 'flex';
+            const savedLoc = localStorage.getItem('maka_loc_share'); if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
             
             cekJarakFC(); initDataListeners();
         });
 
-        // ... (Kode Radar Lokasi & SOS tetap sama persis seperti sebelumnya) ...
         window.toggleLoc = (el) => { if(el.checked) { showConfirm("Aktifkan lokasi? Peta Radar akan muncul.", (res) => { if(res) { localStorage.setItem('maka_loc_share', 'ON'); showRadar(); startTracking(); } else { el.checked = false; } }); } else { localStorage.setItem('maka_loc_share', 'OFF'); hideRadar(); stopTracking(); } }
         function showRadar() { const c = document.getElementById('radarContainer'); c.style.display = 'block'; setTimeout(() => { if(!map) { map = L.map('radarMap').setView([-6.1754, 106.8272], 10); L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); loadMembers(); } map.invalidateSize(); }, 300); }
         function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
