@@ -356,15 +356,20 @@
         <a href="plan_route.html" class="nav-item"><i class="fas fa-route"></i><span class="nav-text">RUTE</span></a>
     </div>
 
-    <script type="module">
+        <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // Konfigurasi Database Utama MLU
-        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         
-        // Konfigurasi Database Antrian Stasiun
+        // IMPORT MODULE MESSAGING UNTUK NOTIFIKASI
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
+        
+        // AKTIFKAN FITUR PESAN (MESSAGING)
+        const messaging = getMessaging(app);
+
         const appFC = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppFC");
         const dbFC = getFirestore(appFC);
         const fcRef = doc(dbFC, "antrian", "utama");
@@ -379,17 +384,34 @@
 
         // FUNGSI UMUM MODAL
         window.openSosModal = () => { const m = document.getElementById('sosModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
-        
-        window.showConfirm = (msg, callback) => {
-            document.getElementById('confirmMsg').innerText = msg;
-            const modal = document.getElementById('confirmModal');
-            modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10);
-            window.confirmCallback = callback;
-        }
-        window.closeConfirm = (res) => {
-            const modal = document.getElementById('confirmModal');
-            modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300);
-            if(window.confirmCallback) window.confirmCallback(res);
+        window.showConfirm = (msg, callback) => { document.getElementById('confirmMsg').innerText = msg; const modal = document.getElementById('confirmModal'); modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10); window.confirmCallback = callback; }
+        window.closeConfirm = (res) => { const modal = document.getElementById('confirmModal'); modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
+
+        // === FUNGSI INTI: MEMINTA IZIN & SIMPAN TOKEN NOTIFIKASI ===
+        async function aktifkanNotifikasi() {
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    console.log('Izin Notifikasi Diberikan!');
+                    
+                    // GANTI TULISAN DI BAWAH DENGAN VAPID KEY DARI FIREBASE
+                    const currentToken = await getToken(messaging, {
+                        vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4' 
+                    });
+
+                    if (currentToken) {
+                        // Simpan Token unik ini ke Database Profil Member
+                        await updateDoc(doc(db, "mlu_members", uData.id), {
+                            fcmToken: currentToken
+                        });
+                        console.log('Token HP berhasil disimpan ke Database!');
+                    }
+                } else {
+                    console.log('User Menolak Izin Notifikasi.');
+                }
+            } catch (err) {
+                console.log('Gagal meminta token notif: ', err);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -403,124 +425,35 @@
 
             const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
             const roleEl = document.getElementById('userRole');
-            if (myPlatClean === "B4248SWF") {
-                roleEl.innerText = "KELUARGA MLU"; 
-                uData.isSuperAdmin = true; 
-            } else {
-                roleEl.innerText = uData.role || "MEMBER";
-            }
+            if (myPlatClean === "B4248SWF") { roleEl.innerText = "KELUARGA MLU"; uData.isSuperAdmin = true; } else { roleEl.innerText = uData.role || "MEMBER"; }
 
-            // CEK EVENT AKTIF
+            // PANGGIL FUNGSI NOTIFIKASI SAAT DASHBOARD TERBUKA
+            aktifkanNotifikasi();
+
             onSnapshot(doc(db, "pengaturan", "dashboard"), (docSnap) => {
-                if (docSnap.exists() && docSnap.data().event_aktif === true) {
-                    document.getElementById('eventSection').style.display = 'block';
-                } else {
-                    document.getElementById('eventSection').style.display = 'none';
-                }
+                if (docSnap.exists() && docSnap.data().event_aktif === true) document.getElementById('eventSection').style.display = 'block'; else document.getElementById('eventSection').style.display = 'none';
             });
 
-            // POPUP PENGUMUMAN
             const now = new Date();
-            if (now >= new Date(2026, 2, 12, 23, 50) && now <= new Date(2026, 2, 25, 8, 0)) {
-                document.getElementById('annoPopup').style.display = 'flex';
-            }
+            if (now >= new Date(2026, 2, 12, 23, 50) && now <= new Date(2026, 2, 25, 8, 0)) document.getElementById('annoPopup').style.display = 'flex';
 
-            // RADAR LOKASI
             const savedLoc = localStorage.getItem('maka_loc_share');
-            if(savedLoc === 'ON') {
-                document.getElementById('toggleLocation').checked = true;
-                showRadar(); startTracking();
-            } else {
-                hideRadar();
-            }
+            if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
             
-            cekJarakFC();
-            initDataListeners();
+            cekJarakFC(); initDataListeners();
         });
 
-        window.toggleLoc = (el) => {
-            if(el.checked) {
-                showConfirm("Aktifkan lokasi? Peta Radar akan muncul.", (res) => {
-                    if(res) { localStorage.setItem('maka_loc_share', 'ON'); showRadar(); startTracking(); }
-                    else { el.checked = false; }
-                });
-            } else {
-                localStorage.setItem('maka_loc_share', 'OFF'); hideRadar(); stopTracking();
-            }
-        }
-
-        function showRadar() {
-            const c = document.getElementById('radarContainer');
-            c.style.display = 'block';
-            setTimeout(() => {
-                if(!map) {
-                    map = L.map('radarMap').setView([-6.1754, 106.8272], 10);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map);
-                    loadMembers();
-                }
-                map.invalidateSize();
-            }, 300);
-        }
+        // ... (Kode Radar Lokasi & SOS tetap sama persis seperti sebelumnya) ...
+        window.toggleLoc = (el) => { if(el.checked) { showConfirm("Aktifkan lokasi? Peta Radar akan muncul.", (res) => { if(res) { localStorage.setItem('maka_loc_share', 'ON'); showRadar(); startTracking(); } else { el.checked = false; } }); } else { localStorage.setItem('maka_loc_share', 'OFF'); hideRadar(); stopTracking(); } }
+        function showRadar() { const c = document.getElementById('radarContainer'); c.style.display = 'block'; setTimeout(() => { if(!map) { map = L.map('radarMap').setView([-6.1754, 106.8272], 10); L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); loadMembers(); } map.invalidateSize(); }, 300); }
         function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
-
-        function loadMembers() {
-            onSnapshot(collection(db, "mlu_members"), (snap) => {
-                snap.forEach(doc => {
-                    const m = doc.data();
-                    if(m.isSharing && m.lat && m.lng) {
-                        const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] });
-                        if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]);
-                        else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map);
-                    } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; }
-                });
-            });
-        }
-
-        function startTracking() {
-            if(navigator.geolocation) {
-                watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true});
-            }
-        }
-        function stopTracking() {
-            if(watchId) navigator.geolocation.clearWatch(watchId);
-            updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false});
-        }
-
-        function initDataListeners() {
-            onSnapshot(fcRef, (snap) => {
-                if(!snap.exists()) return;
-                const d = snap.data();
-                let qLen = (d.waitingQueue||[]).length;
-                let html = qLen > 0 ? `<span style="color:var(--text-main); font-weight:900; font-size:20px;">${qLen}</span> <span style="font-weight:800; font-size:12px;">ANTRIAN</span>` : `<span style="color:var(--success); font-size:16px; font-weight:800;">TERSEDIA</span>`;
-                
-                document.getElementById('fcStatusRight').innerHTML = `
-                    <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                        ${html}
-                        <span class="banner-lbl" style="font-size:9px; margin-top:2px;">REALTIME INFO</span>
-                    </div>`;
-            });
-        }
-
-        function cekJarakFC() {
-            if(navigator.geolocation) navigator.geolocation.getCurrentPosition(pos => {
-                const d = calculateDist(-6.159389, 106.901416, pos.coords.latitude, pos.coords.longitude);
-                document.getElementById('fcDistInfo').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${d.toFixed(1)} KM (${Math.ceil((d/25)*60)} mnt)`;
-            });
-        }
-        function calculateDist(lat1, lon1, lat2, lon2) {
-            const p = 0.017453292519943295, c = Math.cos;
-            const a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2;
-            return 12742 * Math.asin(Math.sqrt(a));
-        }
-
-        // FUNGSI DARURAT SOS VIA WHATSAPP
-        window.sendSos = () => {
-            if(!navigator.geolocation) return alert("GPS Wajib aktif untuk SOS!");
-            navigator.geolocation.getCurrentPosition(pos => {
-                const url = `https://wa.me/?text=${encodeURIComponent(`*🚨 SOS MLU ALERT 🚨*\n\n👤 Nama: ${myName}\n🔢 Plat: ${myPlat}\n\n📍 Lokasi Darurat:\nhttp://maps.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}\n\n📝 Keterangan:\n${document.getElementById('sosDesc').value}`)}`;
-                window.location.href = url;
-            }, () => alert("Gagal ambil lokasi. Pastikan GPS nyala!"));
-        };
+        function loadMembers() { onSnapshot(collection(db, "mlu_members"), (snap) => { snap.forEach(doc => { const m = doc.data(); if(m.isSharing && m.lat && m.lng) { const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] }); if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; } }); }); }
+        function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
+        function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); }
+        function initDataListeners() { onSnapshot(fcRef, (snap) => { if(!snap.exists()) return; const d = snap.data(); let qLen = (d.waitingQueue||[]).length; let html = qLen > 0 ? `<span style="color:var(--text-main); font-weight:900; font-size:20px;">${qLen}</span> <span style="font-weight:800; font-size:12px;">ANTRIAN</span>` : `<span style="color:var(--success); font-size:16px; font-weight:800;">TERSEDIA</span>`; document.getElementById('fcStatusRight').innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;">${html}<span class="banner-lbl" style="font-size:9px; margin-top:2px;">REALTIME INFO</span></div>`; }); }
+        function cekJarakFC() { if(navigator.geolocation) navigator.geolocation.getCurrentPosition(pos => { const d = calculateDist(-6.159389, 106.901416, pos.coords.latitude, pos.coords.longitude); document.getElementById('fcDistInfo').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${d.toFixed(1)} KM (${Math.ceil((d/25)*60)} mnt)`; }); }
+        function calculateDist(lat1, lon1, lat2, lon2) { const p = 0.017453292519943295, c = Math.cos; const a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2; return 12742 * Math.asin(Math.sqrt(a)); }
+        window.sendSos = () => { if(!navigator.geolocation) return alert("GPS Wajib aktif untuk SOS!"); navigator.geolocation.getCurrentPosition(pos => { const url = `https://wa.me/?text=${encodeURIComponent(`*🚨 SOS MLU ALERT 🚨*\n\n👤 Nama: ${myName}\n🔢 Plat: ${myPlat}\n\n📍 Lokasi Darurat:\nhttp://maps.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}\n\n📝 Keterangan:\n${document.getElementById('sosDesc').value}`)}`; window.location.href = url; }, () => alert("Gagal ambil lokasi. Pastikan GPS nyala!")); };
     </script>
 </body>
 </html>
