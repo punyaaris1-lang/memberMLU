@@ -61,6 +61,11 @@
         .content-area.active { display:block; }
         
         .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 15px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
+        
+        /* KOTAK TOTAL GLOBAL */
+        .global-vault-card { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: 20px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); color: white; }
+        .gvc-icon { width: 45px; height: 45px; border-radius: 14px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--warning); backdrop-filter: blur(5px); }
+
         .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
         
         .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02); transition: 0.3s background;}
@@ -174,8 +179,8 @@
         <div id="viewMember" class="content-area active">
             
             <div class="saldo-card">
-                <button onclick="changePinSelf()" style="position:absolute; top:15px; right:15px; background:rgba(255,255,255,0.2); color:white; padding:5px 10px; border-radius:12px; font-size:9px; font-weight:800; cursor:pointer; border:1px solid rgba(255,255,255,0.4);">GANTI PIN 6 DIGIT</button>
-                <div style="font-size:10px; opacity:0.8; letter-spacing:2px; cursor:pointer;" ondblclick="toggleStealthAdmin()">TOTAL SALDO</div>
+                <button onclick="changePinSelf()" style="position:absolute; top:15px; right:15px; background:rgba(255,255,255,0.2); color:white; padding:5px 10px; border-radius:12px; font-size:9px; font-weight:800; cursor:pointer; border:1px solid rgba(255,255,255,0.4);">GANTI PIN</button>
+                <div style="font-size:10px; opacity:0.8; letter-spacing:2px; cursor:pointer;" ondblclick="toggleStealthAdmin()">SALDO PRIBADI SAYA</div>
                 <div class="saldo-val" id="myBalance" style="font-family:'Space Grotesk'; font-size:36px; font-weight:900; margin:10px 0;">Rp 0</div>
                 <div style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:20px; display:inline-block;">
                     <i class="fas fa-shield-alt"></i> TERVERIFIKASI
@@ -185,6 +190,20 @@
                     <i class="fas fa-qrcode" style="font-size:18px;"></i> TAMBAH SETORAN (NABUNG)
                 </button>
                 <div id="adminIndicator" style="display:none; font-size:9px; margin-top:8px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
+            </div>
+
+            <div class="global-vault-card">
+                <div>
+                    <div style="font-size: 10px; font-weight: 800; color: #94A3B8; letter-spacing: 1.5px; margin-bottom: 5px;">
+                        <i class="fas fa-globe" style="color: var(--warning);"></i> TOTAL ASET MLU
+                    </div>
+                    <div id="globalBalance" style="font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; color: var(--success); letter-spacing: 0.5px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size:16px;"></i> Menghitung...
+                    </div>
+                </div>
+                <div class="gvc-icon">
+                    <i class="fas fa-vault"></i>
+                </div>
             </div>
 
             <button onclick="document.getElementById('videoModal').style.display='flex'" style="width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 16px; border: 2px dashed var(--electric-blue); font-family: 'Outfit'; font-weight: 800; font-size: 13px; color: var(--royal-blue); display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.8); cursor: pointer; transition: 0.2s;">
@@ -337,7 +356,24 @@
             faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights')
-        ]).then(() => { checkUserStatus(); }).catch(() => { showAlert("ERROR", "Gagal memuat AI Keamanan. Cek koneksi internet Anda."); });
+        ]).then(() => { 
+            checkUserStatus(); 
+            listenGlobalSaldo(); // <-- Panggil fungsi total global di sini
+        }).catch(() => { showAlert("ERROR", "Gagal memuat AI Keamanan. Cek koneksi internet Anda."); });
+
+        // FUNGSI UNTUK MENGHITUNG TOTAL TABUNGAN SELURUH MEMBER
+        function listenGlobalSaldo() {
+            onSnapshot(collection(db, "mlu_members"), (snap) => {
+                let totalTabunganGlobal = 0;
+                snap.forEach(doc => {
+                    const data = doc.data();
+                    if(data.saldoTabungan) {
+                        totalTabunganGlobal += data.saldoTabungan;
+                    }
+                });
+                document.getElementById('globalBalance').innerText = `Rp ${totalTabunganGlobal.toLocaleString('id-ID')}`;
+            });
+        }
 
         function checkUserStatus() {
             onSnapshot(doc(db, "mlu_members", uData.id), (docSnap) => {
