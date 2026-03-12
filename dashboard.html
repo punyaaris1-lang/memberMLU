@@ -68,26 +68,6 @@
 
         .dash-container { padding: 0 20px; margin-bottom: 20px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
         
-        /* === KOTAK STASIUN PINTAR === */
-        .fc-banner { border-radius: 24px; padding: 20px; display: flex; flex-direction: column; position: relative; overflow: hidden; cursor: pointer; transition: 0.3s; }
-        .fc-banner-inner { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px;}
-        .banner-left { flex: 1; min-width: 0; } 
-        .banner-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
-        
-        .banner-title { font-family: 'Outfit'; font-size: 14px; font-weight: 800; color: var(--royal-blue); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; white-space: nowrap; transition: 0.3s; }
-        .banner-desc { font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 4px; transition: 0.3s;}
-        
-        .banner-val { font-family: 'Outfit'; font-size: 18px; font-weight: 900; line-height: 1.2; color: var(--text-main); }
-        .banner-lbl { font-size: 8px; font-weight: 800; color: #94A3B8; letter-spacing: 1px; margin-top: 2px; text-transform: uppercase; }
-
-        /* Mode FC Jauh (Warning) */
-        .fc-banner.mode-jauh { background: rgba(254, 243, 199, 0.8); border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15); }
-        .fc-banner.mode-jauh .banner-title { color: #B45309; }
-        .fc-banner.mode-jauh .banner-desc { color: #D97706; }
-        
-        .btn-arah-fc { display: none; width: 100%; margin-top: 15px; padding: 12px; border-radius: 12px; background: var(--electric-blue); color: white; text-align: center; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(45,99,237,0.3); text-decoration: none; align-items: center; justify-content: center; gap: 8px;}
-        .fc-banner.mode-jauh .btn-arah-fc { display: flex; }
-        
         /* TIKTOK PREMIUM CARD */
         .tiktok-premium-card { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #050505 0%, #1a1a1a 100%); border-radius: 24px; padding: 22px 20px; position: relative; overflow: hidden; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.3); transition: 0.3s; }
         .tiktok-premium-card:active { transform: scale(0.96); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
@@ -231,18 +211,36 @@
 
     <div class="dash-container">
         
-        <div id="fcSmartBanner" class="fc-banner glass-panel" onclick="handleFCBannerClick()">
-            <div class="fc-banner-inner">
-                <div class="banner-left">
-                    <div class="banner-title" id="fcBoxTitle"><i class="fas fa-charging-station" style="color:var(--electric-blue);"></i> MENCARI STASIUN...</div>
-                    <div class="banner-desc" id="fcBoxDesc"><i class="fas fa-spinner fa-spin"></i> Membaca GPS Anda...</div>
-                </div>
-                <div class="banner-right" id="fcStatusRight">
+        <div class="glass-panel" style="border-radius:24px; padding:20px; display:flex; flex-direction:column; gap:15px;">
+            
+            <div onclick="window.location.href='antrian.html'" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                <div>
+                    <div style="font-family:'Outfit'; font-size:14px; font-weight:900; color:var(--royal-blue); margin-bottom:4px;">
+                        <i class="fas fa-charging-station" style="color:var(--electric-blue);"></i> FC KELAPA GADING 
                     </div>
+                    <div id="gadingDistText" style="font-size:11px; font-weight:600; color:var(--text-muted);">
+                        <i class="fas fa-map-marker-alt"></i> Menghitung jarak...
+                    </div>
+                </div>
+                <div id="fcStatusRight" style="text-align:right;">
+                    <span style="font-size:11px; color:#94A3B8;">Memuat...</span>
+                </div>
             </div>
-            <a href="#" id="btnArahkanFC" target="_blank" class="btn-arah-fc"><i class="fas fa-location-arrow"></i> ARAHKAN KE LOKASI</a>
-        </div>
 
+            <div style="height:1px; background:rgba(0,0,0,0.06); width:100%;"></div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <div style="font-size:9px; font-weight:800; color:#94A3B8; letter-spacing:1px; margin-bottom:4px;">📍 RADAR STASIUN TERDEKAT:</div>
+                    <div id="nearestName" style="font-family:'Outfit'; font-size:15px; font-weight:900; color:#B45309;">Mencari Lokasi...</div>
+                    <div id="nearestDist" style="font-size:11px; font-weight:700; color:#D97706; margin-top:2px;">Mohon nyalakan GPS</div>
+                </div>
+                <a href="#" id="btnArahkanFC" target="_blank" style="background:var(--electric-blue); color:white; padding:10px 18px; border-radius:14px; font-family:'Space Grotesk'; font-size:11px; font-weight:800; text-decoration:none; box-shadow:0 5px 15px rgba(45,99,237,0.3); display:none; align-items:center; gap:6px;">
+                    <i class="fas fa-location-arrow"></i> GO
+                </a>
+            </div>
+            
+        </div>
         <a href="https://www.tiktok.com/@.maka.lintas.utara" target="_blank" class="tiktok-premium-card">
             <div class="tk-glow tk-cyan"></div>
             <div class="tk-glow tk-magenta"></div>
@@ -371,7 +369,7 @@
             const savedLoc = localStorage.getItem('maka_loc_share'); if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
             
             initDataListeners();
-            initSmartStation(); // JALANKAN SISTEM STASIUN PINTAR
+            initSmartStation(); // JALANKAN LOGIKA STASIUN PINTAR SPLIT
         });
 
         window.toggleLoc = (el) => { if(el.checked) { showConfirm("Aktifkan lokasi? Peta Radar akan muncul.", (res) => { if(res) { localStorage.setItem('maka_loc_share', 'ON'); showRadar(); startTracking(); } else { el.checked = false; } }); } else { localStorage.setItem('maka_loc_share', 'OFF'); hideRadar(); stopTracking(); } }
@@ -380,18 +378,17 @@
         function loadMembers() { onSnapshot(collection(db, "mlu_members"), (snap) => { snap.forEach(doc => { const m = doc.data(); if(m.isSharing && m.lat && m.lng) { const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] }); if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; } }); }); }
         function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
         function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); }
+        
         function initDataListeners() { 
             onSnapshot(fcRef, (snap) => { 
                 if(!snap.exists()) return; 
                 const d = snap.data(); let qLen = (d.waitingQueue||[]).length; 
-                let html = qLen > 0 ? `<span style="color:var(--text-main); font-weight:900; font-size:20px;">${qLen}</span> <span style="font-weight:800; font-size:12px;">ANTRIAN</span>` : `<span style="color:var(--success); font-size:16px; font-weight:800;">TERSEDIA</span>`; 
-                document.getElementById('fcStatusRight').innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-end;">${html}<span class="banner-lbl" style="font-size:9px; margin-top:2px;">REALTIME INFO</span></div>`; 
+                let html = qLen > 0 ? `<span style="color:var(--text-main); font-weight:900; font-size:20px;">${qLen}</span><br><span style="font-weight:800; font-size:10px; color:#64748B;">ANTRIAN LIVE</span>` : `<span style="color:var(--success); font-size:16px; font-weight:900;">TERSEDIA</span>`; 
+                document.getElementById('fcStatusRight').innerHTML = html; 
             }); 
         }
 
-        // === SISTEM STASIUN PINTAR (SMART STATION LOGIC) ===
-        let isGadingNearest = true; // Default asumsi Gading
-
+        // === SISTEM STASIUN PINTAR SPLIT (ATAS & BAWAH) ===
         async function initSmartStation() {
             if(!navigator.geolocation) { setFallbackGading(); return; }
             
@@ -399,8 +396,12 @@
                 const uLat = pos.coords.latitude;
                 const uLng = pos.coords.longitude;
                 
+                // 1. UPDATE JARAK KE FC GADING (BAGIAN ATAS)
+                const distGading = calculateDist(-6.159389, 106.901416, uLat, uLng);
+                document.getElementById('gadingDistText').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${distGading.toFixed(1)} KM`;
+
+                // 2. CARI STASIUN TERDEKAT DARI DATABASE EXCEL (BAGIAN BAWAH)
                 try {
-                    // Ambil Data Excel Lokasi FC
                     const URL_LOKASI = "https://docs.google.com/spreadsheets/d/1EJOTMMfGpBMFPqR0LzbMbh7tZUcTCZld4x387OO9aJM/export?format=csv";
                     const txtLoc = await fetch(URL_LOKASI).then(r=>r.text());
                     const rows = txtLoc.split('\n').slice(1);
@@ -422,57 +423,31 @@
                         }
                     });
 
-                    // JIKA TIDAK ADA DATA EXCEL, KEMBALI KE GADING
                     if(nearestDist === 99999) { setFallbackGading(uLat, uLng); return; }
 
-                    // UPDATE KOTAK SESUAI HASIL TERDEKAT
-                    const box = document.getElementById('fcSmartBanner');
-                    const title = document.getElementById('fcBoxTitle');
-                    const desc = document.getElementById('fcBoxDesc');
-                    const rightPanel = document.getElementById('fcStatusRight');
-                    const btnArahkan = document.getElementById('btnArahkanFC');
-
+                    // UPDATE TAMPILAN BAGIAN BAWAH (TERDEKAT)
+                    document.getElementById('nearestName').innerText = nearestName;
                     let timeMins = Math.ceil((nearestDist / 25) * 60);
-
-                    // CEK APAKAH GADING YANG TERDEKAT
-                    if(nearestName.toUpperCase().includes("GADING")) {
-                        isGadingNearest = true;
-                        box.classList.remove('mode-jauh');
-                        title.innerHTML = `<i class="fas fa-charging-station" style="color:var(--electric-blue);"></i> ${nearestName} (Terdekat)`;
-                        desc.innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${nearestDist.toFixed(1)} KM (${timeMins} mnt)`;
-                        rightPanel.style.display = 'block'; // Munculkan Antrean
-                    } else {
-                        isGadingNearest = false;
-                        box.classList.add('mode-jauh');
-                        title.innerHTML = `<i class="fas fa-charging-station"></i> ${nearestName} (Terdekat)`;
-                        desc.innerHTML = `<i class="fas fa-map-marker-alt"></i> Jarak: ${nearestDist.toFixed(1)} KM (${timeMins} mnt)`;
-                        rightPanel.style.display = 'none'; // Sembunyikan Antrean karena beda stasiun
-                        
-                        let finalLink = (nearestMap && nearestMap.startsWith("http")) ? nearestMap : `http://googleusercontent.com/maps.google.com/maps?saddr=${uLat},${uLng}&daddr=${nearestLat},${nearestLng}`;
-                        btnArahkan.href = finalLink;
-                    }
+                    document.getElementById('nearestDist').innerText = `${nearestDist.toFixed(1)} KM (${timeMins} mnt)`;
+                    
+                    const btnArahkan = document.getElementById('btnArahkanFC');
+                    btnArahkan.style.display = 'flex';
+                    btnArahkan.href = (nearestMap && nearestMap.startsWith("http")) ? nearestMap : `http://googleusercontent.com/maps.google.com/maps?saddr=${uLat},${uLng}&daddr=${nearestLat},${nearestLng}`;
 
                 } catch(e) { setFallbackGading(uLat, uLng); }
             }, () => { setFallbackGading(); });
         }
 
         function setFallbackGading(uLat = null, uLng = null) {
-            isGadingNearest = true;
-            document.getElementById('fcSmartBanner').classList.remove('mode-jauh');
-            document.getElementById('fcBoxTitle').innerHTML = `<i class="fas fa-charging-station" style="color:var(--electric-blue);"></i> FC Kelapa Gading`;
-            document.getElementById('fcStatusRight').style.display = 'block';
-            
+            document.getElementById('nearestName').innerText = "Lokasi Tidak Diketahui";
             if(uLat && uLng) {
-                const d = calculateDist(-6.159389, 106.901416, uLat, uLng);
-                document.getElementById('fcBoxDesc').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${d.toFixed(1)} KM (${Math.ceil((d/25)*60)} mnt)`;
+                const distGading = calculateDist(-6.159389, 106.901416, uLat, uLng);
+                document.getElementById('gadingDistText').innerHTML = `<i class="fas fa-map-marker-alt"></i> ~${distGading.toFixed(1)} KM`;
+                document.getElementById('nearestDist').innerText = "Gagal memuat data Cabang FC.";
             } else {
-                document.getElementById('fcBoxDesc').innerHTML = `<i class="fas fa-map-marker-alt"></i> Jarak tidak diketahui (GPS Mati)`;
+                document.getElementById('gadingDistText').innerHTML = `<i class="fas fa-map-marker-alt"></i> GPS Tidak Aktif`;
+                document.getElementById('nearestDist').innerText = "Nyalakan GPS HP Anda.";
             }
-        }
-
-        window.handleFCBannerClick = () => {
-            // Kalau Gading yang terdekat, masuk ke Antrian. Kalau bukan, biarkan tombol Arahkan yang diklik.
-            if(isGadingNearest) window.location.href = 'antrian.html';
         }
 
         function calculateDist(lat1, lon1, lat2, lon2) { const p = 0.017453292519943295, c = Math.cos; const a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2; return 12742 * Math.asin(Math.sqrt(a)); }
