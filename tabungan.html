@@ -60,7 +60,7 @@
         .content-area { padding:20px; display:none; margin-top: 10px;}
         .content-area.active { display:block; }
         
-        .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 20px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
+        .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 15px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
         .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
         
         .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02); transition: 0.3s background;}
@@ -96,9 +96,6 @@
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
         .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); }
-
-        /* KOTAK VIDEO TIKTOK (GLASSMORPHISM) */
-        .glass-panel-tiktok { border-radius: 24px; padding: 20px; text-align: center; margin-bottom: 25px; background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.9); box-shadow: 0 10px 40px rgba(10, 34, 89, 0.05); }
     </style>
 </head>
 <body>
@@ -190,20 +187,9 @@
                 <div id="adminIndicator" style="display:none; font-size:9px; margin-top:8px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
             </div>
 
-            <div class="glass-panel-tiktok">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 5px;">
-                    <i class="fab fa-tiktok" style="font-size: 20px; color: #000; filter: drop-shadow(2px 0px 0px #00f2fe) drop-shadow(-2px 0px 0px #fe0979);"></i>
-                    <h3 style="font-family: 'Outfit'; color: var(--royal-blue); margin: 0; font-size: 16px; font-weight: 900; letter-spacing: 0.5px;">
-                        CARA MENABUNG MLU
-                    </h3>
-                </div>
-                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px; font-weight: 600; padding: 0 10px;">
-                    Tonton panduan singkat ini agar setor tabungan berjalan lancar tanpa bingung.
-                </p>
-                <div style="position: relative; width: 100%; max-width: 320px; margin: 0 auto; border-radius: 16px; overflow: hidden; border: 3px solid white; box-shadow: 0 15px 35px rgba(0,0,0,0.15); background: #111;">
-                    <iframe style="width: 100%; height: 580px; display: block;" src="https://www.tiktok.com/embed/v2/7616071100727971092" title="Tutorial Menabung MLU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            </div>
+            <button onclick="document.getElementById('videoModal').style.display='flex'" style="width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 16px; border: 2px dashed var(--electric-blue); font-family: 'Outfit'; font-weight: 800; font-size: 13px; color: var(--royal-blue); display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.8); cursor: pointer; transition: 0.2s;">
+                <i class="fab fa-tiktok" style="font-size: 20px; color: #000; filter: drop-shadow(2px 0px 0px #00f2fe) drop-shadow(-2px 0px 0px #fe0979);"></i> LIHAT TUTORIAL MENABUNG
+            </button>
             
             <div style="font-family:'Outfit'; font-size:16px; font-weight:800; color:var(--royal-blue); margin-bottom:15px; padding-left:5px;">Mutasi Terakhir</div>
             <div class="trx-list" id="historyList">
@@ -278,6 +264,19 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="videoModal" style="z-index: 25000;">
+        <div class="modal-box" style="padding: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); font-size: 16px;"><i class="fab fa-tiktok"></i> TUTORIAL SETORAN</div>
+                <button onclick="document.getElementById('videoModal').style.display='none'" style="background:rgba(239,68,68,0.1); color:var(--danger); border:none; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="position: relative; width: 100%; max-width: 320px; margin: 0 auto; border-radius: 16px; overflow: hidden; border: 2px solid #E2E8F0; background: #000;">
+                <iframe style="width: 100%; height: 500px; display: block;" src="https://www.tiktok.com/embed/v2/7616071100727971092" title="Tutorial Menabung MLU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <button class="btn-submit bg-cancel" style="margin-top:15px; font-weight: 800;" onclick="document.getElementById('videoModal').style.display='none'">TUTUP VIDEO</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -285,7 +284,6 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // BAGIAN YANG DIPERBAIKI (CEK LOGIN LOCALSTORAGE)
         let uData = null;
         try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
         if (!uData || !uData.plat) window.location.href = 'index.html'; 
