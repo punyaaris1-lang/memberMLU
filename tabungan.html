@@ -32,11 +32,7 @@
         
         /* ANIMASI FRAME VERMUK ALA GOJEK */
         .face-frame { position: absolute; inset: 15px; border: 3px dashed rgba(255,255,255,0.8); border-radius: 30px; transition: all 0.3s; pointer-events: none; }
-        .face-frame.scanning { 
-            border: 4px solid #10B981; 
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.8); 
-            animation: facePulse 0.8s infinite alternate; 
-        }
+        .face-frame.scanning { border: 4px solid #10B981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.8); animation: facePulse 0.8s infinite alternate; }
         @keyframes facePulse { 0% { transform: scale(0.98); opacity: 0.7;} 100% { transform: scale(1.02); opacity: 1;} }
 
         .btn-action { width: 100%; max-width: 250px; padding: 16px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.25); background: var(--electric-blue); color: white; }
@@ -53,7 +49,7 @@
         .pin-key:active { background: #F1F5F9; transform: scale(0.95); }
 
         /* APP UI */
-        #mainApp { display: none; }
+        #mainApp { display: none; padding-bottom: 90px; }
         .header-main { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 35px 20px 80px; border-bottom-left-radius:30px; border-bottom-right-radius:30px; color:white; text-align:center; box-shadow:0 10px 30px rgba(10,34,89,0.3); }
         .main-title { font-family:'Outfit'; font-size:24px; font-weight:900; margin:0; }
         .sub-tag { font-size:11px; opacity:0.8; font-weight:600; display:block; margin-top:5px; font-family:'Space Grotesk'; letter-spacing:2px;}
@@ -64,11 +60,11 @@
         .content-area { padding:20px; display:none; margin-top: 10px;}
         .content-area.active { display:block; }
         
-        .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 20px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
+        .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 15px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
         .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
         
         .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02); transition: 0.3s background;}
-        .member-row.updated { background: #ECFDF5; } /* Animasi kalau saldo berubah */
+        .member-row.updated { background: #ECFDF5; } 
         
         .btn-plus { width:40px; height:40px; background:linear-gradient(135deg, #10B981, #059669); color:white; border-radius:12px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:16px; box-shadow:0 5px 15px rgba(16,185,129,0.3);}
         .btn-reset { width:40px; height:40px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--warning); cursor:pointer; font-size:16px; margin-right: 8px;}
@@ -93,13 +89,13 @@
         .btn-edit { background: rgba(0,0,0,0.05); border: none; color: var(--electric-blue); cursor: pointer; width: 35px; height: 35px; border-radius: 10px; font-size: 14px; display:flex; align-items:center; justify-content:center; transition:0.2s;}
         .btn-edit:active { transform:scale(0.9); }
         
-        .btn-nabung { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 8px 15px; border-radius: 50px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px; margin: 15px auto 0; }
+        .btn-nabung { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 15px auto 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.2s; }
         .btn-nabung:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
 
         .btn-danger-reset { display: none; width: 100%; padding: 15px; margin-top: 30px; background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px; }
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
-        .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); }
+        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); }
     </style>
 </head>
 <body>
@@ -157,7 +153,7 @@
         <div class="modal-box">
             <div style="font-family:'Outfit'; font-weight:900; font-size:18px; color:var(--royal-blue); margin-bottom:15px;">AKTIVASI DOMPET</div>
             <div style="height:150px; overflow-y:auto; text-align:left; font-size:11px; color:#475569; margin-bottom:20px; background:#F8FAFC; padding:15px; border-radius:12px;">
-                <b>PENTING:</b><br><br>1. PIN KHUSUS TABUNGAN (6 Digit).<br>2. BEDA DENGAN PIN LOGIN (4 Digit).<br>3. Wajah direkam sebagai kunci.<br>4. Saldo aman.
+                <b>PENTING:</b><br><br>1. PIN KHUSUS TABUNGAN (6 Digit).<br>2. BEDA DENGAN PIN LOGIN (4 Digit).<br>3. Wajah direkam sebagai kunci ganda.<br>4. Saldo Anda Dijamin Aman.
             </div>
             <button class="btn-submit" style="background:var(--success); color:white;" onclick="acceptAgreement()">BUAT KUNCI SEKARANG</button>
         </div>
@@ -172,22 +168,30 @@
         <div class="tab-container">
             <button class="tab-btn active" onclick="switchTab('member')">SAYA</button>
             <button class="tab-btn" onclick="switchTab('admin')" id="btnTabAdmin" style="display:none; color:var(--electric-blue); border:1px solid var(--electric-blue);">INPUT SETORAN</button>
-            <button class="tab-btn" onclick="switchTab('approval')" id="btnTabApprove" style="display:none; color:var(--warning); border:1px solid var(--warning);">APPROVAL</button>
+            <button class="tab-btn" onclick="switchTab('approval')" id="btnTabApprove" style="display:none; color:var(--warning); border:1px solid var(--warning);">VALIDASI</button>
         </div>
 
         <div id="viewMember" class="content-area active">
+            
             <div class="saldo-card">
                 <button onclick="changePinSelf()" style="position:absolute; top:15px; right:15px; background:rgba(255,255,255,0.2); color:white; padding:5px 10px; border-radius:12px; font-size:9px; font-weight:800; cursor:pointer; border:1px solid rgba(255,255,255,0.4);">GANTI PIN 6 DIGIT</button>
                 <div style="font-size:10px; opacity:0.8; letter-spacing:2px; cursor:pointer;" ondblclick="toggleStealthAdmin()">TOTAL SALDO</div>
-                <div class="saldo-val" id="myBalance">Rp 0</div>
+                <div class="saldo-val" id="myBalance" style="font-family:'Space Grotesk'; font-size:36px; font-weight:900; margin:10px 0;">Rp 0</div>
                 <div style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:20px; display:inline-block;">
                     <i class="fas fa-shield-alt"></i> TERVERIFIKASI
                 </div>
+                
                 <button class="btn-nabung" onclick="document.getElementById('modalQris').style.display='flex'">
-                    <i class="fas fa-qrcode"></i> ISI SALDO (KLAIM)
+                    <i class="fas fa-qrcode" style="font-size:18px;"></i> TAMBAH SETORAN (NABUNG)
                 </button>
-                <div id="adminIndicator" style="display:none; font-size:9px; margin-top:5px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
+                <div id="adminIndicator" style="display:none; font-size:9px; margin-top:8px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
             </div>
+
+            <button onclick="document.getElementById('videoModal').style.display='flex'" style="width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 16px; border: 2px dashed var(--electric-blue); font-family: 'Outfit'; font-weight: 800; font-size: 13px; color: var(--royal-blue); display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.8); cursor: pointer; transition: 0.2s;">
+                <i class="fab fa-tiktok" style="font-size: 20px; color: #000; filter: drop-shadow(2px 0px 0px #00f2fe) drop-shadow(-2px 0px 0px #fe0979);"></i> LIHAT TUTORIAL MENABUNG
+            </button>
+            
+            <div style="font-family:'Outfit'; font-size:16px; font-weight:800; color:var(--royal-blue); margin-bottom:15px; padding-left:5px;">Mutasi Terakhir</div>
             <div class="trx-list" id="historyList">
                 <div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Memuat riwayat...</div>
             </div>
@@ -195,19 +199,19 @@
 
         <div id="viewAdmin" class="content-area">
             <div style="background:#EFF6FF; padding:15px; border-radius:16px; border:1px solid #BFDBFE; font-size:11px; color:#1D4ED8; margin-bottom:20px;">
-                <b>AREA ADMIN:</b> Gunakan tombol KUNCI untuk Reset PIN member.
+                <b>AREA PENGURUS:</b> Gunakan tombol IKON KUNCI untuk melakukan Reset PIN / Wajah member.
             </div>
-            <input type="text" id="searchMem" class="form-input" placeholder="Cari Nama / Plat..." style="margin-bottom:15px;" onkeyup="filterMembers()">
+            <input type="text" id="searchMem" class="form-input" placeholder="Cari Nama / Plat Anggota..." style="margin-bottom:15px;" onkeyup="filterMembers()">
             <div id="adminMemberList"></div>
 
             <button id="btnResetData" class="btn-danger-reset" onclick="resetAllSystem()">
-                ⚠️ RESET SEMUA DATA (HAPUS SALDO & RIWAYAT)
+                ⚠️ RESET SEMUA DATA (HAPUS SALDO & RIWAYAT PERMANEN)
             </button>
         </div>
 
         <div id="viewApproval" class="content-area">
             <div id="approvalList">
-                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px;">Memuat antrean...</div>
+                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px;">Memuat antrean validasi...</div>
             </div>
         </div>
 
@@ -216,11 +220,11 @@
 
     <div class="modal-overlay" id="modalDeposit">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--royal-blue); font-family:'Outfit'; font-size:20px; margin-bottom:5px;">INPUT MANUAL</h3>
+            <h3 style="margin-top:0; color:var(--royal-blue); font-family:'Outfit'; font-size:20px; margin-bottom:5px;">INPUT SETORAN</h3>
             <p id="depMemberName" style="font-size:12px; color:#64748B; margin-bottom:25px; font-weight:700; border-bottom:1px solid #eee; padding-bottom:10px;"></p>
             <input type="hidden" id="depMemberId">
             <div class="form-group"><label class="form-label">Nominal (Rp)</label><input type="number" id="depAmount" class="form-input" placeholder="Contoh: 20000"></div>
-            <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalDeposit').style.display='none'">BATAL</button><button class="btn-submit bg-sukses" onclick="processDeposit()">SIMPAN</button></div>
+            <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalDeposit').style.display='none'">BATAL</button><button class="btn-submit bg-sukses" onclick="processDeposit()">SIMPAN DATA</button></div>
             
             <div style="margin-top:25px; border-top:1px dashed #ddd; padding-top:15px;">
                 <div style="font-size:10px; font-weight:800; color:#94A3B8; margin-bottom:10px; text-transform:uppercase;">Transaksi Terakhir (Edit/Hapus)</div>
@@ -240,23 +244,36 @@
 
     <div class="modal-overlay" id="modalQris">
         <div class="modal-box" style="background:white; border-radius:20px; padding:30px; text-align:left;">
-            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue); text-align:center;">KLAIM SETORAN</h3>
+            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue); text-align:center;">FORM PENGAJUAN SETORAN</h3>
             <div class="form-group">
-                <label class="form-label">1. Nominal Tabungan (Bulat)</label>
+                <label class="form-label">1. Masukkan Nominal (Bulat)</label>
                 <input type="number" id="inputNabungBase" class="form-input" placeholder="Contoh: 50000" onkeyup="calcTotalTransfer()" onchange="calcTotalTransfer()">
             </div>
             <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px;">
-                <div style="font-size:11px; color:#166534; font-weight:800;">YANG HARUS DI TRANSFER:</div>
+                <div style="font-size:11px; color:#166534; font-weight:800;">JUMLAH YANG HARUS DI TRANSFER:</div>
                 <div id="totalNabungTxt" style="font-family:'Space Grotesk'; font-size:32px; font-weight:900; color:var(--success); margin:5px 0;">Rp 0</div>
-                <div style="font-size:10px; color:#15803D;">(Termasuk Kode Unik Anda: <b id="kodeUnikTxt">***</b>)</div>
+                <div style="font-size:10px; color:#15803D;">(Sudah termasuk Kode Unik Anda: <b id="kodeUnikTxt">***</b>)</div>
             </div>
             <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:15px;">
                 <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS">
             </div>
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">BATAL</button>
-                <button class="btn-submit bg-sukses" onclick="submitKlaimNabung()">SAYA SUDAH TRANSFER</button>
+                <button class="btn-submit bg-sukses" onclick="submitKlaimNabung()">KONFIRMASI TRANSFER</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="videoModal" style="z-index: 25000;">
+        <div class="modal-box" style="padding: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); font-size: 16px;"><i class="fab fa-tiktok"></i> TUTORIAL SETORAN</div>
+                <button onclick="document.getElementById('videoModal').style.display='none'" style="background:rgba(239,68,68,0.1); color:var(--danger); border:none; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="position: relative; width: 100%; max-width: 320px; margin: 0 auto; border-radius: 16px; overflow: hidden; border: 2px solid #E2E8F0; background: #000;">
+                <iframe style="width: 100%; height: 500px; display: block;" src="https://www.tiktok.com/embed/v2/7616071100727971092" title="Tutorial Menabung MLU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <button class="btn-submit bg-cancel" style="margin-top:15px; font-weight: 800;" onclick="document.getElementById('videoModal').style.display='none'">TUTUP VIDEO</button>
         </div>
     </div>
 
@@ -267,10 +284,13 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        let u = null; try { u = JSON.parse(localStorage.getItem('maka_user')); } catch(e) {}
-        if(!u || !u.id) window.location.href='index.html';
+        let uData = null;
+        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        if (!uData || !uData.plat) window.location.href = 'index.html'; 
 
-        // --- CUSTOM POPUP MODAL LOGIC ---
+        const myName = uData.namaKtp || uData.namaWa || "User";
+        const myPlat = uData.plat || "B XXXX XX";
+
         window.showConfirm = (title, msg, isPrompt = false) => {
             return new Promise((resolve) => {
                 const modal = document.getElementById('customAlertModal');
@@ -305,31 +325,27 @@
             });
         };
 
-        // ADMIN CONFIG (Iwan B 4650 SWE termasuk)
-        const cleanPlat = (u.plat || "").replace(/\s+/g, '').toUpperCase();
-        const isTrueAdmin = (cleanPlat === "B4248SWF") || (cleanPlat === "B4650SWE") || (u.role && (u.role.includes("KETUA") || u.role.includes("WAKIL")));
+        const cleanPlat = (uData.plat || "").replace(/\s+/g, '').toUpperCase();
+        const isTrueAdmin = (cleanPlat === "B4248SWF") || (cleanPlat === "B4650SWE") || (uData.role && (uData.role.includes("KETUA") || uData.role.includes("WAKIL")));
         let isViewAdminVisible = isTrueAdmin; 
-        
-        // HANYA RIZKY YANG BISA HAPUS TRX & RESET DATA
         const isSuperAdmin = (cleanPlat === "B4248SWF");
 
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
         window.myKodeUnik = 0;
 
-        // INIT AI
         Promise.all([
             faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceRecognitionNet.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights')
-        ]).then(() => { checkUserStatus(); }).catch(() => { showAlert("ERROR", "Gagal memuat AI. Cek koneksi internet."); });
+        ]).then(() => { checkUserStatus(); }).catch(() => { showAlert("ERROR", "Gagal memuat AI Keamanan. Cek koneksi internet Anda."); });
 
         function checkUserStatus() {
-            onSnapshot(doc(db, "mlu_members", u.id), (docSnap) => {
+            onSnapshot(doc(db, "mlu_members", uData.id), (docSnap) => {
                 if(docSnap.exists()) {
                     const d = docSnap.data();
                     if(d.kodeUnik === undefined) {
                         const newCode = Math.floor(Math.random() * 899) + 100;
-                        updateDoc(doc(db, "mlu_members", u.id), { kodeUnik: newCode });
+                        updateDoc(doc(db, "mlu_members", uData.id), { kodeUnik: newCode });
                         return;
                     }
                     window.myKodeUnik = d.kodeUnik;
@@ -359,16 +375,16 @@
 
         window.submitKlaimNabung = async () => {
             let base = parseInt(document.getElementById('inputNabungBase').value);
-            if(!base || base < 5000) return showAlert("PERHATIAN", "Minimal nabung Rp 5.000");
+            if(!base || base < 5000) return showAlert("PERHATIAN", "Setoran minimal Rp 5.000");
             let total = base + window.myKodeUnik;
 
-            const konfirm = await showConfirm("KONFIRMASI", `Yakin sudah transfer sebesar <b>Rp ${total.toLocaleString('id-ID')}</b> ke QRIS MLU?<br><br><span style='color:red;'>Klaim palsu akan ditolak Admin.</span>`);
+            const konfirm = await showConfirm("KONFIRMASI", `Apakah Anda sudah berhasil transfer dana sebesar <b>Rp ${total.toLocaleString('id-ID')}</b> ke QRIS MLU?<br><br><span style='color:red; font-size:11px;'>*Bukti palsu akan otomatis ditolak oleh sistem Admin.</span>`);
             if(konfirm) {
                 await addDoc(collection(db, "mlu_tabungan_trx"), {
-                    memberId: u.id, memberName: u.namaKtp || "Member MLU",
-                    type: 'IN', amount: total, desc: 'Klaim Setoran (QRIS)', timestamp: Date.now(), status: 'PENDING'
+                    memberId: uData.id, memberName: myName,
+                    type: 'IN', amount: total, desc: 'Pengajuan Setoran', timestamp: Date.now(), status: 'PENDING'
                 });
-                await showAlert("SUKSES", "Klaim berhasil dikirim! Silakan tunggu persetujuan Admin.");
+                await showAlert("SUKSES", "Pengajuan berhasil dikirim! Saldo akan masuk setelah divalidasi oleh Admin.");
                 document.getElementById('modalQris').style.display = 'none';
                 document.getElementById('inputNabungBase').value = ''; calcTotalTransfer();
             }
@@ -390,11 +406,11 @@
         }
 
         window.resetAllSystem = async () => {
-            const konf1 = await showConfirm("⚠️ PERINGATAN KERAS", "Anda akan <b>MENGHAPUS SEMUA DATA SALDO & RIWAYAT</b> seluruh member. Tindakan ini tidak bisa di-undo.");
+            const konf1 = await showConfirm("⚠️ PERINGATAN KERAS", "Anda akan <b>MENGHAPUS SEMUA DATA SALDO & RIWAYAT MUTASI</b> seluruh member. Tindakan ini tidak bisa di-undo.");
             if(!konf1) return;
             
             let pass = await showConfirm("OTORISASI", "MASUKKAN PASSWORD KONFIRMASI:", true);
-            if(pass !== "MLU2025") return showAlert("GAGAL", "Password Salah!");
+            if(pass !== "MLU2025") return showAlert("GAGAL", "Password Akses Salah!");
 
             document.getElementById('loaderOverlay').style.display = 'flex';
             try {
@@ -404,13 +420,13 @@
                 const trxSnap = await getDocs(collection(db, "mlu_tabungan_trx"));
                 trxSnap.forEach(doc => { promises.push(deleteDoc(doc.ref)); });
                 await Promise.all(promises);
-                await showAlert("SUKSES", "Semua saldo dan riwayat telah di-reset."); location.reload();
+                await showAlert("SUKSES", "Seluruh Saldo dan Riwayat Mutasi telah di-reset ke Nol."); location.reload();
             } catch (e) { document.getElementById('loaderOverlay').style.display = 'none'; showAlert("ERROR", e.message); }
         }
 
         function showActivationScreen() { document.getElementById('agreeModal').style.display = 'flex'; }
         window.acceptAgreement = () => { document.getElementById('agreeModal').style.display = 'none'; document.getElementById('secTitle').innerText = "REGISTRASI WAJAH"; document.getElementById('btnMainAction').innerText = "SCAN & SIMPAN WAJAH"; document.getElementById('btnMainAction').style.display = 'block'; document.getElementById('btnBawahKamera').style.display = 'none'; startCamera(); };
-        function showLoginScreen() { document.getElementById('secTitle').innerText = "VERIFIKASI"; document.getElementById('btnMainAction').style.display = 'none'; startCamera(); }
+        function showLoginScreen() { document.getElementById('secTitle').innerText = "VERIFIKASI WAJAH"; document.getElementById('btnMainAction').style.display = 'none'; startCamera(); }
 
         async function startCamera() {
             document.getElementById('camWrap').style.display = 'block'; document.getElementById('pinArea').style.display = 'none'; isFaceMode = true;
@@ -418,10 +434,10 @@
                 stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 videoEl.srcObject = stream;
                 videoEl.addEventListener('play', () => {
-                    document.getElementById('faceFrame').classList.add('scanning'); // NYALAKAN KEDIP HIJAU (FIX)
+                    document.getElementById('faceFrame').classList.add('scanning');
                     
                     if (!isSetupMode) {
-                        document.getElementById('scanStatus').innerText = "Mendeteksi Wajah...";
+                        document.getElementById('scanStatus').innerText = "Mencocokkan Wajah...";
                         detectInterval = setInterval(async () => {
                             if (!isFaceMode) return;
                             const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
@@ -437,12 +453,12 @@
 
         window.handleAction = async () => {
             if (isSetupMode) {
-                document.getElementById('btnMainAction').innerText = "MEMINDAI...";
+                document.getElementById('btnMainAction').innerText = "MEMINDAI WAJAH...";
                 const detection = await faceapi.detectSingleFace(videoEl, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
                 if (detection) {
                     userFaceDesc = detection.descriptor; stopCamera();
                     document.getElementById('secTitle').innerText = "BUAT PIN 6 DIGIT"; document.getElementById('camWrap').style.display = 'none'; document.getElementById('pinArea').style.display = 'flex'; document.getElementById('btnMainAction').style.display = 'none'; isFaceMode = false;
-                } else { document.getElementById('btnMainAction').innerText = "SCAN ULANG"; }
+                } else { document.getElementById('btnMainAction').innerText = "GAGAL! SCAN ULANG"; }
             }
         };
 
@@ -455,19 +471,18 @@
         
         window.processPin = async () => {
             if (isSetupMode) {
-                const conf = await showConfirm("SIMPAN PIN", `Jadikan <b>${currentPinInput}</b> sebagai PIN Dompet Anda?`);
+                const conf = await showConfirm("SIMPAN PIN", `Jadikan <b>${currentPinInput}</b> sebagai PIN Dompet Tabungan Anda?`);
                 if(conf) {
                     const faceObj = { ...userFaceDesc }; 
-                    updateDoc(doc(db, "mlu_members", u.id), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { unlockApp(); });
+                    updateDoc(doc(db, "mlu_members", uData.id), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { unlockApp(); });
                 } else { window.clearPin(); }
             } else {
-                if (currentPinInput === userPinTabungan) unlockApp(); else { await showAlert("GAGAL", "PIN yang Anda masukkan salah!"); window.clearPin(); }
+                if (currentPinInput === userPinTabungan) unlockApp(); else { await showAlert("AKSES DITOLAK", "PIN yang Anda masukkan Salah!"); window.clearPin(); }
             }
         }
         function unlockApp() { document.getElementById('securityScreen').style.opacity = 0; setTimeout(() => { document.getElementById('securityScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; }, 500); }
 
         function initAdminData() {
-            // FIX: GUNAKAN ONSNAPSHOT AGAR SALDO MEMBER REALTIME UPDATE TANPA REFRESH
             onSnapshot(query(collection(db, "mlu_members")), (snap) => {
                 let allMembers = []; snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
                 allMembers.sort((a,b) => (a.namaKtp||'').localeCompare(b.namaKtp||''));
@@ -480,24 +495,24 @@
             const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "==", "PENDING"));
             onSnapshot(qApp, (snap) => {
                 const cont = document.getElementById('approvalList'); cont.innerHTML = "";
-                if(snap.empty) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8;">Tidak ada antrean klaim.</div>`; return;}
+                if(snap.empty) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8;">Tidak ada antrean validasi pengajuan.</div>`; return;}
                 let arrApp = []; snap.forEach(d => arrApp.push({id: d.id, ...d.data()}));
                 arrApp.sort((a,b) => a.timestamp - b.timestamp);
                 arrApp.forEach(data => {
                     const isNabung = data.type === 'IN';
-                    const titleText = isNabung ? "Nabung (Setor)" : "Penarikan Dana";
+                    const titleText = isNabung ? "Setoran Tabungan" : "Penarikan Dana";
                     const color = isNabung ? "var(--success)" : "var(--danger)";
                     cont.innerHTML += `
                     <div class="app-card" style="border-left:5px solid ${color}">
                         <div><div style="font-size:10px; color:#64748B;">${new Date(data.timestamp).toLocaleString('id-ID')}</div><h4 style="margin:5px 0; color:var(--royal-blue);">${data.memberName}</h4><div style="font-size:11px; color:#64748B;">${titleText}</div><div style="font-family:'Space Grotesk'; font-weight:900; font-size:16px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div></div>
-                        <div style="display:flex; flex-direction:column; gap:5px;"><button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="window.approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">TERIMA</button><button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="window.rejectKlaim('${data.id}')">TOLAK</button></div>
+                        <div style="display:flex; flex-direction:column; gap:5px;"><button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="window.approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">VALIDASI</button><button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="window.rejectKlaim('${data.id}')">TOLAK</button></div>
                     </div>`;
                 });
             });
         }
 
         window.approveKlaim = async (trxId, type, amount, memberId) => {
-            const konf = await showConfirm("PERSETUJUAN", "Yakin sudah cek mutasi bank dan dana benar-benar masuk/sesuai?");
+            const konf = await showConfirm("VALIDASI TRANSAKSI", "Anda yakin dana sudah berhasil masuk ke rekening/QRIS dan sesuai nominal?");
             if(!konf) return;
             await runTransaction(db, async(t) => {
                 const r = doc(db, "mlu_tabungan_trx", trxId);
@@ -507,14 +522,14 @@
                 if (type === 'IN') currentSaldo += amount; else if (type === 'OUT') currentSaldo -= amount; 
                 t.update(mRef, { saldoTabungan: currentSaldo }); t.update(r, { status: 'SUCCESS' });
             });
-            showAlert("SUKSES", "Persetujuan berhasil! Saldo member telah diupdate otomatis.");
+            showAlert("BERHASIL", "Setoran divalidasi. Saldo tabungan member telah bertambah otomatis.");
         }
 
         window.rejectKlaim = async (trxId) => {
-            const konf = await showConfirm("TOLAK KLAIM", "Tolak klaim ini? Data klaim akan dihapus permanen.");
+            const konf = await showConfirm("TOLAK PENGAJUAN", "Tolak pengajuan setoran ini? Data pengajuan akan dihapus secara permanen.");
             if(!konf) return;
             await deleteDoc(doc(db, "mlu_tabungan_trx", trxId));
-            showAlert("INFO", "Klaim telah ditolak dan dihapus.");
+            showAlert("INFO", "Pengajuan setoran telah ditolak dan dihapus dari antrean.");
         }
 
         window.renderMembers = (arr) => {
@@ -530,18 +545,17 @@
         }
 
         window.resetMember = async (id, name) => {
-            const konf = await showConfirm("RESET KUNCI", `Reset Kunci Face ID & PIN untuk <b>${name}</b>?`);
-            if(konf) updateDoc(doc(db, "mlu_members", id), { pin_tabungan: null, faceDescriptor: null }).then(() => showAlert("SUKSES", "Akun berhasil di-reset."));
+            const konf = await showConfirm("RESET KEAMANAN", `Anda yakin ingin me-reset Wajah (Face ID) & PIN milik <b>${name}</b>?`);
+            if(konf) updateDoc(doc(db, "mlu_members", id), { pin_tabungan: null, faceDescriptor: null }).then(() => showAlert("SUKSES", "Keamanan akun tersebut berhasil di-reset."));
         };
 
         window.changePinSelf = async () => {
-            const konf = await showConfirm("GANTI KEAMANAN", "Anda akan menghapus Wajah & PIN lama, dan akan diminta mendaftar ulang saat login berikutnya.");
-            if(konf) updateDoc(doc(db, "mlu_members", u.id), { pin_tabungan: null, faceDescriptor: null }).then(() => location.reload());
+            const konf = await showConfirm("UBAH SISTEM KEAMANAN", "Anda akan menghapus Data Wajah & PIN lama. Anda akan diminta untuk mendaftarkan Wajah/PIN baru pada saat login berikutnya. Lanjutkan?");
+            if(konf) updateDoc(doc(db, "mlu_members", uData.id), { pin_tabungan: null, faceDescriptor: null }).then(() => location.reload());
         }
 
         window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); window.renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.plat&&m.plat.includes(k)))); }
         
-        // --- FIX FUNGSI LOAD HISTORY ADMIN (AGAR MUNCUL) ---
         window.loadAdminRecentTrx = async (memberId) => {
             const cont = document.getElementById('adminRecentTrx');
             cont.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="font-size:24px; color:var(--electric-blue);"></i></div>';
@@ -554,13 +568,12 @@
             dataArr = dataArr.slice(0, 5); 
             
             cont.innerHTML = "";
-            if(dataArr.length === 0) { cont.innerHTML = '<div style="text-align:center; font-size:10px; color:#aaa; margin-top:10px;">Belum ada transaksi.</div>'; return; }
+            if(dataArr.length === 0) { cont.innerHTML = '<div style="text-align:center; font-size:10px; color:#aaa; margin-top:10px;">Belum ada Riwayat Transaksi.</div>'; return; }
             
             dataArr.forEach(data => {
                 const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
                 const isPlus = data.type === 'IN';
                 
-                // TOMBOL HAPUS HANYA MUNCUL JIKA PLAT B4248SWF (BAPAK)
                 const btnDelete = isSuperAdmin ? `<button class="btn-edit" style="color:var(--danger); background:rgba(239,68,68,0.1);" onclick="window.deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>` : ``;
 
                 cont.innerHTML += `
@@ -587,15 +600,15 @@
                 t.update(memRef, { saldoTabungan: finalBal }); t.update(trxRef, { amount: newAmt });
             });
             document.getElementById('modalEditTrx').style.display = 'none'; 
-            window.loadAdminRecentTrx(memberId); // Tidak perlu location.reload
+            window.loadAdminRecentTrx(memberId); 
         }
 
         window.deleteTrx = async (trxId, amount, type, memberId) => {
-            const konf1 = await showConfirm("HAPUS TRANSAKSI", "Yakin ingin menghapus transaksi ini?<br><br><span style='color:red;'>Saldo member akan otomatis disesuaikan (dikurangi/ditambah).</span>");
+            const konf1 = await showConfirm("HAPUS MUTASI", "Yakin ingin menghapus data transaksi ini secara permanen?<br><br><span style='color:red;'>Peringatan: Saldo tabungan member akan otomatis disesuaikan (dikurangi/ditambah).</span>");
             if(!konf1) return;
 
-            const pass = await showConfirm("OTORISASI ADMIN", "Masukkan Password Admin untuk menghapus:", true);
-            if(pass !== "MLU2025") return showAlert("GAGAL", "Password Salah!");
+            const pass = await showConfirm("OTORISASI ADMIN", "Masukkan Password Admin (Wajib):", true);
+            if(pass !== "MLU2025") return showAlert("AKSES DITOLAK", "Password Administrator Salah!");
 
             document.getElementById('loaderOverlay').style.display = 'flex';
             try {
@@ -612,9 +625,9 @@
                     t.delete(trxRef);
                 });
                 document.getElementById('loaderOverlay').style.display = 'none';
-                await showAlert("SUKSES", "Transaksi dihapus & Saldo telah dikoreksi otomatis.");
-                window.loadAdminRecentTrx(memberId); // Tidak perlu location.reload
-            } catch (e) { document.getElementById('loaderOverlay').style.display = 'none'; showAlert("ERROR", e.message); }
+                await showAlert("BERHASIL", "Data Transaksi berhasil dihapus dan Saldo member telah dikoreksi secara otomatis.");
+                window.loadAdminRecentTrx(memberId); 
+            } catch (e) { document.getElementById('loaderOverlay').style.display = 'none'; showAlert("ERROR SISTEM", e.message); }
         }
 
         window.processDeposit = async () => {
@@ -623,10 +636,10 @@
             await runTransaction(db, async(t)=>{
                 const mRef=doc(db,"mlu_members",id); const mDoc=await t.get(mRef);
                 t.update(mRef, {saldoTabungan: (mDoc.data().saldoTabungan||0)+amt});
-                t.set(doc(collection(db,"mlu_tabungan_trx")), {memberId:id, memberName:mDoc.data().namaKtp, type:'IN', amount:amt, desc:'Setoran Manual (Admin)', timestamp:Date.now(), status:'SUCCESS'});
+                t.set(doc(collection(db,"mlu_tabungan_trx")), {memberId:id, memberName:mDoc.data().namaKtp, type:'IN', amount:amt, desc:'Setoran Tunai (Via Admin)', timestamp:Date.now(), status:'SUCCESS'});
             });
             document.getElementById('depAmount').value = ''; 
-            window.loadAdminRecentTrx(id); // Reload list transaksinya tanpa refresh halaman
+            window.loadAdminRecentTrx(id); 
         }
 
         window.switchTab = (tab) => {
@@ -638,19 +651,19 @@
 
         function loadHistory() {
             const list = document.getElementById('historyList');
-            const qHist = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", u.id));
+            const qHist = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", uData.id));
             onSnapshot(qHist, (snap) => {
                 list.innerHTML = ""; let arr = []; snap.forEach(d => arr.push(d.data())); arr.sort((a,b) => b.timestamp - a.timestamp);
-                if(arr.length===0) { list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada transaksi.</div>`; return; }
+                if(arr.length===0) { list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada Riwayat Mutasi Rekening.</div>`; return; }
                 arr.forEach(d => {
                     const color = d.type === 'IN' ? 'var(--success)' : 'var(--danger)'; 
                     const sign = d.type === 'IN' ? '+' : '-';
                     const dateStr = new Date(d.timestamp).toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-                    const pendingTag = d.status === 'PENDING' ? `<span style="background:var(--warning); color:white; padding:2px 5px; border-radius:5px; font-size:8px; margin-left:5px;">PROSES ACC</span>` : '';
+                    const pendingTag = d.status === 'PENDING' ? `<span style="background:var(--warning); color:white; padding:2px 5px; border-radius:5px; font-size:8px; margin-left:5px; font-weight:900;">TUNGGU VALIDASI</span>` : '';
 
                     list.innerHTML += `
                     <div class="trx-item">
-                        <div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${pendingTag}</div><div style="font-size:10px; color:#aaa;">${dateStr}</div></div>
+                        <div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${pendingTag}</div><div style="font-size:10px; color:#aaa; margin-top:3px;">${dateStr}</div></div>
                         <div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${d.status==='PENDING'?'#ccc':color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
                     </div>`;
                 });
