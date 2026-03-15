@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MCC - Kelola Lokasi FC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { 
+            --bg-dark: #050A15; --panel-bg: #0A1128; --border-neon: #2D63ED;
+            --text-main: #F8FAFC; --text-muted: #64748B;
+            --success: #10B981; --danger: #EF4444; --warning: #F59E0B;
+        }
+        body { margin: 0; background: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden; padding-bottom: 50px;}
+        * { box-sizing: border-box; outline: none; }
+
+        /* HEADER COMMAND CENTER */
+        .header { background: linear-gradient(180deg, #0A1128 0%, #050A15 100%); padding: 30px 20px 20px; border-bottom: 1px solid rgba(45,99,237,0.3); text-align: center; position: relative; box-shadow: 0 10px 30px rgba(45,99,237,0.1); }
+        .title { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(45,99,237,0.6); margin: 0; letter-spacing: 2px;}
+        .subtitle { font-family: 'Space Grotesk'; font-size: 10px; color: var(--border-neon); letter-spacing: 4px; margin-top: 5px; text-transform: uppercase;}
+
+        .container { padding: 20px; }
+
+        /* KOTAK IMPORT EXCEL */
+        .import-box { background: rgba(16, 185, 129, 0.05); border: 2px dashed var(--success); border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 25px; animation: pulseGlow 2s infinite alternate;}
+        @keyframes pulseGlow { from { box-shadow: 0 0 10px rgba(16,185,129,0.1); } to { box-shadow: 0 0 20px rgba(16,185,129,0.3); } }
+        .btn-import { background: var(--success); color: #000; border: none; padding: 15px 25px; border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 5px 15px rgba(16,185,129,0.3); transition: 0.2s; display: inline-flex; align-items: center; gap: 10px;}
+        .btn-import:active { transform: scale(0.95); }
+
+        /* LIST LOKASI */
+        .header-list { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;}
+        .hl-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 800; color: var(--text-main); }
+        .btn-add { background: var(--border-neon); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 800; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px;}
+
+        .loc-card { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .loc-card.off { opacity: 0.6; border-color: rgba(239, 68, 68, 0.3); }
+        .lc-left { flex: 1; }
+        .lc-name { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
+        .lc-coord { font-size: 10px; color: var(--text-muted); font-family: monospace; }
+        
+        .badge-on { background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 900; border: 1px solid var(--success); }
+        .badge-off { background: rgba(239, 68, 68, 0.2); color: var(--danger); padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 900; border: 1px solid var(--danger); }
+
+        .lc-actions { display: flex; gap: 8px; }
+        .btn-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; border: none; cursor: pointer; transition: 0.2s;}
+        .btn-icon:active { transform: scale(0.9); }
+        .btn-toggle { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-delete { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-box { background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 20px; width: 90%; max-width: 400px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 5px; text-transform: uppercase;}
+        .form-input { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-family: 'Inter'; outline: none;}
+        .form-input:focus { border-color: var(--border-neon); }
+        .btn-submit { width: 100%; padding: 15px; background: var(--border-neon); color: white; border: none; border-radius: 10px; font-family: 'Space Grotesk'; font-weight: 800; margin-top: 10px; cursor: pointer;}
+        .btn-cancel { width: 100%; padding: 15px; background: transparent; color: var(--text-muted); border: none; font-weight: 800; margin-top: 5px; cursor: pointer;}
+
+        /* LOADER */
+        #loader { position: fixed; inset: 0; background: rgba(5,10,21,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(45,99,237,0.2); border-top: 4px solid var(--border-neon); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <div id="loaderText" style="margin-top: 20px; font-family: 'Space Grotesk'; font-weight: 800; color: var(--border-neon); letter-spacing: 2px;">SINKRONISASI DATA...</div>
+    </div>
+
+    <div id="authScreen" style="position:fixed; inset:0; background:var(--bg-dark); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+        <i class="fas fa-shield-alt" style="font-size:50px; color:var(--danger); margin-bottom:20px;"></i>
+        <h2 style="font-family:'Orbitron'; margin:0 0 5px; color:#fff;">RESTRICTED AREA</h2>
+        <p style="color:var(--text-muted); font-size:12px; margin-bottom:25px;">Masukkan Kode Otorisasi Command Center</p>
+        <input type="password" id="passInput" style="padding:15px; width:100%; max-width:300px; text-align:center; font-family:'Space Grotesk'; font-size:20px; letter-spacing:5px; border-radius:12px; border:2px solid var(--danger); background:#000; color:#fff; outline:none; margin-bottom:15px;">
+        <button onclick="checkAuth()" style="padding:15px 30px; background:var(--danger); color:#fff; border:none; border-radius:12px; font-weight:900; cursor:pointer;">VERIFIKASI AKSES</button>
+    </div>
+
+    <div class="header">
+        <h1 class="title">COMMAND CENTER</h1>
+        <div class="subtitle">LOKASI STASIUN FC MASTER</div>
+    </div>
+
+    <div class="container">
+        
+        <div class="import-box" id="importBox">
+            <div style="font-size: 11px; color: var(--success); font-weight: 800; margin-bottom: 10px;">DATABASE EXCEL LAMA TERDETEKSI!</div>
+            <button class="btn-import" onclick="importFromExcel()">
+                <i class="fas fa-cloud-download-alt"></i> SEDOT SEMUA DATA EXCEL
+            </button>
+            <div style="font-size: 9px; color: var(--text-muted); margin-top: 10px;">*Tindakan ini akan memindahkan data dari Google Sheets ke Firebase Brankas MLU.</div>
+        </div>
+
+        <div class="header-list">
+            <div class="hl-title">Daftar Stasiun (<span id="totalLoc">0</span>)</div>
+            <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> LOKASI BARU</button>
+        </div>
+
+        <div id="locList">
+            <div style="text-align: center; color: var(--text-muted); padding: 30px; font-size: 12px;">Memuat Data Firebase...</div>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="modalLoc">
+        <div class="modal-box">
+            <h3 style="margin-top:0; font-family:'Space Grotesk'; color:var(--border-neon); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">DATA STASIUN BARU</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Nama FC (Contoh: FC Sunter)</label>
+                <input type="text" id="inpName" class="form-input" placeholder="Masukkan nama...">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Latitude</label>
+                    <input type="text" id="inpLat" class="form-input" placeholder="-6.123456">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Longitude</label>
+                    <input type="text" id="inpLng" class="form-input" placeholder="106.123456">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Link Google Maps (Opsional)</label>
+                <input type="text" id="inpMap" class="form-input" placeholder="https://maps.app.goo.gl/...">
+            </div>
+
+            <button class="btn-submit" onclick="saveLocation()">SIMPAN LOKASI</button>
+            <button class="btn-cancel" onclick="document.getElementById('modalLoc').style.display='none'">BATAL</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalToggle">
+        <div class="modal-box">
+            <h3 style="margin-top:0; font-family:'Space Grotesk'; color:var(--danger); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">MATIKAN STASIUN</h3>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">Berikan alasan kenapa stasiun ini dimatikan (Misal: Mati Lampu, Perbaikan, dll). Pesan ini akan muncul di HP semua member.</div>
+            <input type="hidden" id="toggleId">
+            <input type="text" id="inpReason" class="form-input" placeholder="Contoh: Sedang Mati Lampu">
+            <button class="btn-submit" style="background:var(--danger);" onclick="confirmToggleOff()">MATIKAN SEKARANG</button>
+            <button class="btn-cancel" onclick="document.getElementById('modalToggle').style.display='none'">BATAL</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // KONEKSI FIREBASE MLU (BRANKAS UTAMA)
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const locRef = collection(db, "fc_locations");
+
+        // OTORISASI PASSWORD
+        window.checkAuth = () => {
+            const p = document.getElementById('passInput').value;
+            if(p === "MLU2025" || p === "250585") {
+                document.getElementById('authScreen').style.display = 'none';
+                sessionStorage.setItem('mcc_auth', 'OK');
+            } else { alert("AKSES DITOLAK! KODE SALAH."); }
+        }
+        if(sessionStorage.getItem('mcc_auth') === 'OK') document.getElementById('authScreen').style.display = 'none';
+
+        function showLoading(txt) { document.getElementById('loaderText').innerText = txt; document.getElementById('loader').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loader').style.display = 'none'; }
+
+        // MENGAMBIL DATA DARI FIREBASE SECARA REALTIME
+        onSnapshot(locRef, (snap) => {
+            const list = document.getElementById('locList');
+            list.innerHTML = "";
+            document.getElementById('totalLoc').innerText = snap.size;
+
+            if(snap.empty) {
+                list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 30px; font-size: 12px; border:1px dashed rgba(255,255,255,0.1); border-radius:12px;">Database Kosong. Silakan Sedot Data Excel di Atas.</div>`;
+                document.getElementById('importBox').style.display = 'block';
+                return;
+            } else {
+                // Sembunyikan tombol sedot kalau data sudah ada (Biar ga dobel)
+                document.getElementById('importBox').style.display = 'none';
+            }
+
+            let arr = []; snap.forEach(d => arr.push({id: d.id, ...d.data()}));
+            // Sort by name
+            arr.sort((a,b) => a.name.localeCompare(b.name));
+
+            arr.forEach(loc => {
+                const isOff = loc.isActive === false;
+                const statusBadge = isOff ? `<span class="badge-off"><i class="fas fa-ban"></i> OFF</span>` : `<span class="badge-on"><i class="fas fa-check-circle"></i> ON</span>`;
+                const reasonHtml = isOff ? `<div style="font-size:10px; color:var(--danger); margin-top:3px; font-weight:800;">Note: ${loc.statusMsg || 'Perbaikan'}</div>` : ``;
+
+                list.innerHTML += `
+                <div class="loc-card ${isOff ? 'off' : ''}">
+                    <div class="lc-left">
+                        <div class="lc-name">${loc.name} ${statusBadge}</div>
+                        <div class="lc-coord"><i class="fas fa-satellite-dish"></i> ${loc.lat}, ${loc.lng}</div>
+                        ${reasonHtml}
+                    </div>
+                    <div class="lc-actions">
+                        <button class="btn-icon btn-toggle" onclick="toggleStatus('${loc.id}', ${loc.isActive})" title="Nyalakan/Matikan">
+                            <i class="fas fa-power-off" style="color:${isOff ? '#aaa' : 'var(--success)'}"></i>
+                        </button>
+                        <button class="btn-icon btn-delete" onclick="deleteLoc('${loc.id}', '${loc.name}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>`;
+            });
+        });
+
+        // ==========================================
+        // FITUR SULAP (SEDOT DATA EXCEL)
+        // ==========================================
+        window.importFromExcel = async () => {
+            if(!confirm("Mulai menyedot data dari Excel MLU?")) return;
+            showLoading("MENYEDOT DATA EXCEL...");
+            
+            try {
+                const URL_LOKASI = "https://docs.google.com/spreadsheets/d/1EJOTMMfGpBMFPqR0LzbMbh7tZUcTCZld4x387OO9aJM/export?format=csv";
+                const res = await fetch(URL_LOKASI);
+                const txtLoc = await res.text();
+                
+                const rows = txtLoc.split('\n').slice(1); // Potong baris pertama (Header)
+                let successCount = 0;
+
+                for (let r of rows) {
+                    const c = r.split(',');
+                    let name = c[0] ? c[0].replace(/"/g, '').trim() : "";
+                    let latVal = parseFloat(c[4] ? c[4].replace(/"/g, '').replace(',', '.') : '');
+                    let lngVal = parseFloat(c[5] ? c[5].replace(/"/g, '').replace(',', '.') : '');
+                    let mapLink = c[6] ? c[6].replace(/"/g, '').trim() : '';
+
+                    // Jika data valid dan bukan Gading/KC (Karena Gading & KC punya sistem antrean sendiri)
+                    if(name && !isNaN(latVal) && !isNaN(lngVal) && !name.toUpperCase().includes("GADING") && !name.toUpperCase().includes("CHANDRA")) {
+                        
+                        // Bikin ID unik dari nama (Hilangkan spasi)
+                        let docId = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                        
+                        await setDoc(doc(db, "fc_locations", docId), {
+                            name: name,
+                            lat: latVal,
+                            lng: lngVal,
+                            mapLink: mapLink,
+                            isActive: true,
+                            statusMsg: ""
+                        });
+                        successCount++;
+                    }
+                }
+                hideLoading();
+                alert(`SEDOT SELESAI! ${successCount} Lokasi berhasil dipindahkan ke Firebase.`);
+            } catch (e) {
+                hideLoading();
+                alert("Gagal menyedot data: " + e.message);
+            }
+        }
+
+        // ==========================================
+        // FITUR KELOLA LOKASI
+        // ==========================================
+        window.openModal = () => {
+            document.getElementById('inpName').value = '';
+            document.getElementById('inpLat').value = '';
+            document.getElementById('inpLng').value = '';
+            document.getElementById('inpMap').value = '';
+            document.getElementById('modalLoc').style.display = 'flex';
+        }
+
+        window.saveLocation = async () => {
+            const name = document.getElementById('inpName').value;
+            const lat = parseFloat(document.getElementById('inpLat').value);
+            const lng = parseFloat(document.getElementById('inpLng').value);
+            const mapLink = document.getElementById('inpMap').value;
+
+            if(!name || isNaN(lat) || isNaN(lng)) return alert("Nama dan Koordinat wajib diisi dengan benar!");
+
+            showLoading("MENYIMPAN LOKASI...");
+            let docId = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            try {
+                await setDoc(doc(db, "fc_locations", docId), {
+                    name: name,
+                    lat: lat,
+                    lng: lng,
+                    mapLink: mapLink,
+                    isActive: true,
+                    statusMsg: ""
+                });
+                hideLoading();
+                document.getElementById('modalLoc').style.display = 'none';
+            } catch(e) { hideLoading(); alert(e.message); }
+        }
+
+        window.deleteLoc = async (id, name) => {
+            if(!confirm(`HAPUS FC ${name} SECARA PERMANEN DARI PETA?`)) return;
+            showLoading("MENGHAPUS...");
+            await deleteDoc(doc(db, "fc_locations", id));
+            hideLoading();
+        }
+
+        // SAKLAR MATI/NYALA STASIUN
+        window.toggleStatus = async (id, currentIsActive) => {
+            if (currentIsActive) {
+                // Kalau lagi nyala, mau dimatiin (Tanya Alasan)
+                document.getElementById('toggleId').value = id;
+                document.getElementById('inpReason').value = '';
+                document.getElementById('modalToggle').style.display = 'flex';
+            } else {
+                // Kalau lagi mati, mau dinyalain (Langsung Nyalakan)
+                if(!confirm("Nyalakan kembali stasiun ini? Fitur radar member akan aktif lagi untuk lokasi ini.")) return;
+                showLoading("MENYALAKAN STASIUN...");
+                await updateDoc(doc(db, "fc_locations", id), { isActive: true, statusMsg: "" });
+                hideLoading();
+            }
+        }
+
+        window.confirmToggleOff = async () => {
+            const id = document.getElementById('toggleId').value;
+            let reason = document.getElementById('inpReason').value;
+            if(!reason) reason = "Sedang Perbaikan"; // Default kalau kosong
+
+            showLoading("MEMATIKAN STASIUN...");
+            await updateDoc(doc(db, "fc_locations", id), { isActive: false, statusMsg: reason });
+            hideLoading();
+            document.getElementById('modalToggle').style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>
