@@ -144,6 +144,17 @@
         </div>
     </div>
 
+    <div class="modal-glass-overlay" id="broadcastModal">
+        <div class="modal-glass-box" style="text-align:center; border-color:var(--gold-lux);">
+            <div style="width:60px; height:60px; background:rgba(212,175,55,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:var(--gold-lux); font-size:24px; box-shadow:0 0 20px rgba(212,175,55,0.4);">
+                <i class="fa-solid fa-bullhorn fa-shake"></i>
+            </div>
+            <h3 id="bcTitle" style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin:0 0 10px; font-size:18px; text-transform:uppercase;">INFO PENTING</h3>
+            <p id="bcBody" style="font-size:13px; color:var(--text-main); margin-bottom:25px; line-height:1.6; font-weight:500;">Isi pengumuman...</p>
+            <button class="btn-modal" style="background:var(--electric-blue); color:white; width:100%; box-shadow:0 10px 20px rgba(45,99,237,0.3);" onclick="tutupBroadcast()">SAYA MENGERTI</button>
+        </div>
+    </div>
+
     <div class="dashboard-header">
         <div class="top-bar">
             <div>
@@ -278,7 +289,7 @@
         }
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
         // 1. KONEKSI FIREBASE UTAMA (MLU)
@@ -399,7 +410,6 @@
                 const distGading = calculateDist(latGading, lngGading, uLat, uLng);
                 const distKC = calculateDist(latKC, lngKC, uLat, uLng);
 
-                // === BACA DATA DARI FIREBASE YANG BARU ===
                 let nearestFirebaseName = ""; 
                 let nearestFirebaseDist = 99999; 
                 let nearestFirebaseMap = "";
@@ -407,7 +417,6 @@
 
                 try {
                     const locRef = collection(db, "fc_locations");
-                    // HANYA ambil lokasi yang tombolnya ON di Admin
                     const qLoc = query(locRef, where("isActive", "==", true));
                     const snapLoc = await getDocs(qLoc);
                     
@@ -425,14 +434,12 @@
                     console.log("Gagal baca lokasi dari Firebase:", e);
                 }
 
-                // Tentukan siapa Kotak Utamanya
                 if(distKC < distGading) {
                     setUtamaKC(distKC);
                 } else {
                     setUtamaGading(distGading);
                 }
 
-                // LOGIKA RADAR BAWAH DENGAN FIREBASE
                 let absoluteMinDist = Math.min(distGading, distKC, nearestFirebaseDist);
                 
                 if (absoluteMinDist === distGading) {
@@ -441,7 +448,6 @@
                     if(nearestFirebaseName) {
                         document.getElementById('radarTerdekatBox').style.display = 'flex';
                         
-                        // Cek kalau ada pesan status dari admin (meskipun ON, siapa tau ada info)
                         if(stasiunStatusText) {
                             document.getElementById('lblRadarExtra').innerHTML = `📍 RADAR STASIUN TERDEKAT: <span style="color:var(--danger);">${stasiunStatusText}</span>`;
                         } else {
@@ -495,6 +501,89 @@
         function loadMembers() { onSnapshot(collection(db, "mlu_members"), (snap) => { snap.forEach(doc => { const m = doc.data(); if(m.isSharing && m.lat && m.lng) { const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] }); if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; } }); }); }
         function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
         function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); }
+
+
+        // ==========================================
+        // FUNGSI MENGIRIM DARURAT SOS DARI MEMBER KE MCC
+        // ==========================================
+        window.sendSos = async () => {
+            if(!navigator.geolocation) return alert("Sistem GPS tidak didukung di HP Anda.");
+            
+            // Mengambil tombol dari dalam modal (elemen terakhir dari 2 tombol)
+            const btn = document.querySelector('#sosModal .btn-modal:last-child');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "MENCARI LOKASI...";
+            
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                try {
+                    await addDoc(collection(db, "mlu_sos"), {
+                        memberId: uData.id,
+                        nama: myName,
+                        plat: myPlat,
+                        foto: uData.foto || '',
+                        hp: uData.hp || '',
+                        jenis: document.getElementById('sosType').value,
+                        keterangan: document.getElementById('sosDesc').value,
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                        timestamp: Date.now(),
+                        status: 'ACTIVE'
+                    });
+                    
+                    document.getElementById('sosModal').classList.remove('show');
+                    setTimeout(() => document.getElementById('sosModal').style.display = 'none', 300);
+                    alert("🚨 DARURAT S.O.S BERHASIL DIKIRIM!\n\nCommand Center sedang memproses lokasi Anda dan mencari bantuan terdekat.");
+                    btn.innerHTML = originalText;
+                } catch(e) { 
+                    alert("Gagal mengirim SOS: " + e.message); 
+                    btn.innerHTML = originalText;
+                }
+            }, () => { 
+                alert("⚠️ AKSES DITOLAK!\nBapak/Ibu harus MENGIZINKAN akses Lokasi (GPS) agar bantuan bisa dikirim ke titik yang tepat!"); 
+                btn.innerHTML = originalText;
+            }, { enableHighAccuracy: true });
+        };
+
+        // ==========================================
+        // MESIN PENERIMA NOTIFIKASI BROADCAST MCC
+        // ==========================================
+        window.tutupBroadcast = () => {
+            const m = document.getElementById('broadcastModal');
+            m.classList.remove('show');
+            setTimeout(() => m.style.display = 'none', 300);
+        };
+
+        // Fungsi Reset Notifikasi
+        window.salinTokenSaya = () => {
+            localStorage.setItem('last_bc_time', '0');
+            alert("Notifikasi telah di-reset! Jika ada pengumuman terbaru, akan muncul kembali.");
+            window.location.reload();
+        };
+
+        // Listener Broadcast
+        const qBroadcast = query(collection(db, "mlu_broadcasts"), orderBy("timestamp", "desc"), limit(1));
+        onSnapshot(qBroadcast, (snap) => {
+            if(snap.empty) return;
+            
+            const bcData = snap.docs[0].data();
+            const lastSeenTime = parseInt(localStorage.getItem('last_bc_time') || '0');
+
+            let targetCocok = false;
+            if(bcData.target === 'ALL') targetCocok = true;
+            else if(bcData.target === 'PENGURUS' && uData.role && uData.role !== 'MEMBER' && uData.role !== 'KELUARGA MLU') targetCocok = true;
+            else if(bcData.target === 'RTO' && uData.divisi === 'RTO') targetCocok = true;
+
+            if(bcData.timestamp > lastSeenTime && targetCocok) {
+                document.getElementById('bcTitle').innerText = bcData.title;
+                document.getElementById('bcBody').innerText = bcData.body;
+                
+                const m = document.getElementById('broadcastModal');
+                m.style.display = 'flex';
+                setTimeout(() => m.classList.add('show'), 50);
+
+                localStorage.setItem('last_bc_time', bcData.timestamp.toString());
+            }
+        });
     </script>
 </body>
 </html>
