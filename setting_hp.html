@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pengaturan KC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --kc-yellow: #D4FF00; --kc-green: #10B981; --bg-black: #000000; }
+        body { margin: 0; background: var(--bg-black); font-family: 'Inter', sans-serif; color: #fff; -webkit-tap-highlight-color: transparent;}
+        * { box-sizing: border-box; outline: none; text-decoration: none; }
+
+        .header { background: rgba(15,15,15,0.95); backdrop-filter: blur(20px); padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 100;}
+        .btn-back { color: white; font-size: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .header-title h1 { margin: 0; font-family: 'Space Grotesk'; font-size: 18px; color: var(--kc-yellow); letter-spacing: 1px; }
+
+        .container { padding: 25px 20px; display: flex; flex-direction: column; gap: 20px; }
+
+        /* KARTU PROFIL SETTING */
+        .profile-card { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 30px 20px; text-align: center; position: relative; overflow: hidden;}
+        
+        .photo-preview { width: 100px; height: 100px; border-radius: 20px; background: #000; border: 2px dashed var(--kc-yellow); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; background-image: url('bg_maka.jpg'); background-size: cover; background-position: center;}
+        .photo-preview img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; background: transparent;}
+        
+        .btn-upload { background: rgba(212,255,0,0.1); color: var(--kc-yellow); border: 1px solid var(--kc-yellow); padding: 10px 20px; border-radius: 12px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;}
+        input[type="file"] { display: none; }
+
+        .info-group { margin-top: 20px; background: #0a0a0a; padding: 15px; border-radius: 16px; text-align: left; border: 1px solid rgba(255,255,255,0.05);}
+        .info-label { font-size: 10px; color: #64748b; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; font-family: 'Space Grotesk';}
+        .info-val { font-size: 15px; font-weight: 700; color: white;}
+
+        .btn-logout { background: rgba(239,68,68,0.1); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); padding: 18px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; text-align: center; cursor: pointer; width: 100%; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px;}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard_kc.html" class="btn-back"><i class="fas fa-chevron-left"></i></a>
+        <div class="header-title">
+            <h1>PENGATURAN KC</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="profile-card">
+            <div class="photo-preview">
+                <img id="previewImg" src="" onerror="this.style.display='none'">
+            </div>
+            
+            <label class="btn-upload">
+                <i class="fas fa-camera"></i> GANTI FOTO PROFIL (PNG)
+                <input type="file" id="fileInput" accept="image/png, image/jpeg">
+            </label>
+            <div style="font-size: 10px; color: #64748b; margin-top: 10px;">Gunakan file PNG transparan untuk hasil terbaik.</div>
+
+            <div class="info-group">
+                <div class="info-label">Nama Lengkap</div>
+                <div class="info-val" id="setNama">Memuat...</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Plat Nomor</div>
+                <div class="info-val" id="setPlat">...</div>
+            </div>
+            <div class="info-group">
+                <div class="info-label">Jabatan KC</div>
+                <div class="info-val" id="setRole" style="color: var(--kc-yellow);">...</div>
+            </div>
+        </div>
+
+        <div class="btn-logout" onclick="logoutKC()">
+            <i class="fas fa-sign-out-alt"></i> KELUAR APLIKASI
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Koneksi Database Utama MLU (Karena data profil menginduk ke sini)
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
+
+        let uData = null;
+        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        if (!uData) window.location.href = 'index_kc.html';
+
+        // Tampilkan Data
+        document.getElementById('setNama').innerText = uData.namaKtp || uData.namaWa || "-";
+        document.getElementById('setPlat').innerText = uData.plat || "-";
+        document.getElementById('setRole').innerText = uData.role || "MEMBER";
+        
+        const imgEl = document.getElementById('previewImg');
+        if(uData.foto) {
+            imgEl.src = uData.foto;
+            imgEl.style.display = 'block';
+        }
+
+        // FUNGSI UPLOAD FOTO (Murni menjaga transparansi)
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            // Jika ukuran foto lebih dari 2MB, tolak (biar database ga jebol)
+            if(file.size > 2 * 1024 * 1024) {
+                alert("Ukuran foto terlalu besar! Maksimal 2MB.");
+                return;
+            }
+
+            const btn = document.querySelector('.btn-upload');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MENYIMPAN...';
+
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64Data = reader.result;
+                
+                try {
+                    // 1. Update ke Firebase
+                    await updateDoc(doc(db, "mlu_members", uData.id), { foto: base64Data });
+                    
+                    // 2. Update Local Storage
+                    uData.foto = base64Data;
+                    localStorage.setItem('maka_user', JSON.stringify(uData));
+                    
+                    // 3. Update Tampilan
+                    imgEl.src = base64Data;
+                    imgEl.style.display = 'block';
+                    
+                    btn.innerHTML = '<i class="fas fa-check"></i> BERHASIL';
+                    setTimeout(() => btn.innerHTML = originalText, 2000);
+                    
+                } catch(error) {
+                    alert("Gagal menyimpan: " + error.message);
+                    btn.innerHTML = originalText;
+                }
+            };
+            reader.readAsDataURL(file); // Ini akan mengonversi foto secara murni tanpa mengubah format PNG jadi JPG!
+        });
+
+        // FUNGSI LOGOUT
+        window.logoutKC = () => {
+            if(confirm("Yakin ingin keluar dari KC?")) {
+                localStorage.removeItem('maka_user');
+                localStorage.removeItem('maka_loc_share');
+                window.location.href = 'index_kc.html';
+            }
+        };
+    </script>
+</body>
+</html>
