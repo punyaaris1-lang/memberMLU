@@ -5,23 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KC - Dashboard Premium</title>
     
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest_kc.json">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         /* === TEMA HITAM PEKAT (PITCH BLACK KC) === */
         :root { 
-            --royal-blue: #D4FF00; /* Neon Yellow khas KC */
-            --electric-blue: #10B981; /* Emerald Green */
+            --royal-blue: #D4FF00; 
+            --electric-blue: #10B981; 
             --gold-lux: #D4AF37;
-            --bg-surface: #000000; /* Hitam Pekat Murni */
+            --bg-surface: #000000; 
             --text-main: #F8FAFC; 
             --text-muted: #94A3B8; 
-            --glass-bg: rgba(15, 15, 15, 0.85); /* Abu-abu sangat gelap transparan */
+            --glass-bg: rgba(15, 15, 15, 0.85); 
             --glass-border: rgba(255, 255, 255, 0.1);
             --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.8);
             --success: #10B981; --warning: #F59E0B; --danger: #EF4444;
@@ -30,7 +27,6 @@
         body { margin: 0; background: #000000; font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; overflow-x: hidden; position: relative; -webkit-tap-highlight-color: transparent; min-height: 100vh;}
         * { box-sizing: border-box; outline: none; text-decoration: none; }
 
-        /* Cahaya di latar belakang tetap ada, tapi lebih soft di atas hitam pekat */
         .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.15; animation: floatLight 10s infinite alternate; }
         .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #D4FF00; }
         .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: #10B981; animation-delay: 2s; }
@@ -47,8 +43,12 @@
         .profile-card { border-radius: 28px; padding: 20px; display: flex; flex-direction: column; }
         .pc-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .p-left { display: flex; align-items: center; gap: 15px; flex: 1; overflow: hidden; z-index: 2; }
-        .photo-wrap { position: relative; width: 60px; height: 60px; border-radius: 20px; background: #111; display: flex; align-items: center; justify-content: center; border: 2px solid var(--royal-blue); flex-shrink: 0; box-shadow: 0 0 15px rgba(212, 255, 0, 0.2);}
-        .p-photo { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
+        
+        /* FIX BACKGROUND FOTO PROFIL */
+        .photo-wrap { position: relative; width: 60px; height: 60px; border-radius: 20px; background: #111; display: flex; align-items: center; justify-content: center; border: 2px solid var(--royal-blue); flex-shrink: 0; box-shadow: 0 0 15px rgba(212, 255, 0, 0.2); overflow: hidden;}
+        .photo-bg-dash { position: absolute; inset: 0; background-image: url('bg_maka.jpg'); background-size: cover; background-position: center; opacity: 0.8; z-index: 1; }
+        .p-photo { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 2; border-radius: 18px; }
+        
         .p-info { display: flex; flex-direction: column; justify-content: center; }
         .p-role { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 900; background: var(--royal-blue); color: black; padding: 2px 8px; border-radius: 50px; display: inline-block; margin-bottom: 4px; width: fit-content; text-transform: uppercase;}
         .p-name { font-family: 'Outfit'; font-size: 18px; font-weight: 800; color: white; margin-bottom: 2px; line-height: 1.2; }
@@ -63,7 +63,6 @@
         input:checked + .slider { background-color: var(--electric-blue); border-color: var(--electric-blue);}
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* PAPAN PENGUMUMAN FIXED KC */
         .board-pengumuman { background: linear-gradient(90deg, rgba(212,255,0,0.1) 0%, rgba(16,185,129,0.05) 100%); border-left: 4px solid var(--royal-blue); border-radius: 12px; padding: 15px; margin-top: 20px; display: flex; gap: 12px; align-items: flex-start; }
         .board-icon { font-size: 20px; color: var(--royal-blue); animation: pulse 2s infinite; }
         .board-content h4 { margin: 0 0 5px 0; font-family: 'Space Grotesk'; font-size: 12px; color: var(--royal-blue); letter-spacing: 1px; }
@@ -72,7 +71,6 @@
 
         .dash-container { padding: 0 20px; margin-bottom: 20px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
         
-        /* BANNER ANTREAN KHUSUS KC */
         .fc-banner { border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; cursor: pointer; gap: 10px; transition: 0.5s; }
         .fc-banner.mode-kc { background: linear-gradient(135deg, #111 0%, #000 100%); border: 1px solid rgba(212, 255, 0, 0.3); box-shadow: 0 15px 40px rgba(0,0,0,0.8); }
         .banner-left { flex: 1; min-width: 0; } 
@@ -83,23 +81,20 @@
         .fc-banner.mode-kc .banner-val { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: var(--kc-green); text-shadow: 0 0 15px rgba(212, 255, 0, 0.4); line-height: 1;}
         .fc-banner.mode-kc .banner-lbl { font-size: 8px; font-weight: 800; color: #fff; letter-spacing: 1px; margin-top: 4px; text-transform: uppercase; }
 
-        /* MENU GRID (BERSIH) */
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .menu-btn { background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transition: 0.2s; }
         .menu-btn:active { transform: scale(0.96); background: rgba(30, 30, 30, 0.9); }
         .icon-box { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         
-        /* WARNA IKON DARK MODE */
         .ic-anggota { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); } 
         .ic-pengurus { background: linear-gradient(135deg, #eab308 0%, #a16207 100%); } 
         .ic-keuangan { background: linear-gradient(135deg, #64748b 0%, #334155 100%); } 
         .ic-tabungan { background: linear-gradient(135deg, #10b981 0%, #047857 100%); } 
         .ic-info { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%); } 
-        .ic-chat { background: linear-gradient(135deg, #d4ff00 0%, #84cc16 100%); color: #000 !important; } /* CHAT ROOM */
+        .ic-chat { background: linear-gradient(135deg, #d4ff00 0%, #84cc16 100%); color: #000 !important; }
 
         .menu-title { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: #e2e8f0; }
 
-        /* TIKTOK CARD */
         .tiktok-premium-card { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #111 0%, #000 100%); border-radius: 24px; padding: 22px 20px; position: relative; overflow: hidden; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 15px 40px rgba(0,0,0,0.8); transition: 0.3s; margin-top: 15px; }
         .tiktok-premium-card:active { transform: scale(0.96); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .tk-glow { position: absolute; width: 100px; height: 100px; filter: blur(40px); border-radius: 50%; opacity: 0.5; z-index: 1; }
@@ -111,20 +106,17 @@
         .tk-text p { margin: 0; color: #CBD5E1; font-size: 11px; font-family: 'Inter'; font-weight: 500; line-height: 1.4; padding-right: 5px; }
         .tk-btn { background: white; color: black; font-family: 'Space Grotesk'; font-weight: 900; font-size: 11px; padding: 10px 18px; border-radius: 50px; z-index: 2; display: flex; align-items: center; gap: 6px; box-shadow: 0 5px 15px rgba(255,255,255,0.2); flex-shrink: 0; }
 
-        /* FLOATING ACTION BUTTONS */
         .float-container { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 2000; }
         .btn-sos { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.2); background: linear-gradient(135deg, #ef4444, #991b1b); animation: pulseSOS 2s infinite; }
         .btn-sos:active { transform: scale(0.9); }
         @keyframes pulseSOS { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } }
 
-        /* MODAL SOS KUSTOM KC */
         .modal-glass-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
         .modal-glass-overlay.show { opacity: 1; }
         .modal-glass-box { background: #111; border-radius: 25px; padding: 25px; width: 85%; max-width: 350px; text-align: left; box-shadow: 0 30px 80px rgba(0,0,0,0.8); transform: scale(0.9); transition: 0.3s; border: 1px solid rgba(255,255,255,0.15);}
         .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
         .btn-modal { padding: 14px 25px; border-radius: 14px; font-weight: 800; font-size: 14px; border: none; cursor: pointer; flex: 1; margin: 0 5px;}
 
-        /* BOTTOM DOCK */
         .dock-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 88%; max-width: 380px; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15); padding: 15px 35px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; transition: 0.3s; gap: 4px; }
         .nav-item.active { color: var(--royal-blue); transform: translateY(-4px);}
@@ -148,7 +140,10 @@
         <div class="profile-card glass-panel">
             <div class="pc-top">
                 <div class="p-left">
-                    <div class="photo-wrap" id="secretGodBtn"><img src="" id="userPhoto" class="p-photo" onerror="this.src='https://ui-avatars.com/api/?background=D4FF00&color=000&bold=true&name=KC';"></div>
+                    <div class="photo-wrap" id="secretGodBtn">
+                        <div class="photo-bg-dash"></div>
+                        <img src="" id="userPhoto" class="p-photo" onerror="this.style.display='none'">
+                    </div>
                     <div class="p-info">
                         <div class="p-role" id="userRole">MEMBER</div>
                         <div class="p-name" id="userName">Memuat...</div>
@@ -204,15 +199,15 @@
 
     <div class="dash-container" style="margin-top: 0;">
         <div class="menu-grid">
-            <a href="data_anggota.html" class="menu-btn"><div class="icon-box ic-anggota"><i class="fas fa-users"></i></div><div class="menu-title">Data Anggota</div></a>
+            <a href="data_anggota_kc.html" class="menu-btn"><div class="icon-box ic-anggota"><i class="fas fa-users"></i></div><div class="menu-title">Data Anggota</div></a>
             
             <a href="pengurus_kc.html" class="menu-btn"><div class="icon-box ic-pengurus"><i class="fas fa-sitemap"></i></div><div class="menu-title">Pengurus KC</div></a>
             
             <a href="chat_kc.html" class="menu-btn"><div class="icon-box ic-chat"><i class="fas fa-comments"></i></div><div class="menu-title">Ruang Obrolan</div></a>
             
-            <a href="keuangan.html" class="menu-btn"><div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div><div class="menu-title">Uang Kas</div></a>
-            <a href="tabungan.html" class="menu-btn"><div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div><div class="menu-title">Tabungan</div></a>
-            <a href="info_mlu.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info Pusat</div></a>
+            <a href="keuangan_kc.html" class="menu-btn"><div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div><div class="menu-title">Uang Kas KC</div></a>
+            <a href="tabungan_kc.html" class="menu-btn"><div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div><div class="menu-title">Tabungan KC</div></a>
+            <a href="info_kc.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info KC</div></a>
         </div>
     </div>
 
@@ -250,21 +245,20 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // Koneksi Firebase dummy
         const appKC = initializeApp({ apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" }, "AppKC");
         const dbKC = getFirestore(appKC);
         const refKC = doc(dbKC, "antrian", "utama");
 
-        // Dummy data user
-        let uData = {id: 'ghost_dino', namaKtp: 'PA BOS', plat: 'B 4248 SWF', role: 'MEMBER'}; 
-        try { uData = JSON.parse(localStorage.getItem('maka_user')) || uData; } catch (e) {}
+        let uData = null;
+        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        if (!uData || !uData.plat) window.location.href = 'index_kc.html'; 
 
         const myName = uData.namaKtp || uData.namaWa || "User";
         const myPlat = uData.plat || "B XXXX XX";
 
-        // Bypass dummy plat B 4248 SWF
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             const hr = new Date().getHours();
@@ -286,7 +280,6 @@
             initKCData(); 
         });
 
-        // Dummy listeners
         function initKCData() {
             onSnapshot(refKC, (snap) => { 
                 if(!snap.exists()) return; 
@@ -321,15 +314,9 @@
             setTimeout(()=>m.classList.add('show'),10); 
         };
 
-        // Fungsi SOS dummy WA
         window.sendSosURC = () => {
-            const nomorURC = "628XXXXXXXXXX"; 
+            const nomorURC = "6287711069877"; 
             
-            if(nomorURC === "628XXXXXXXXXX") {
-                alert("Nomor WA URC belum di-setting oleh Admin!");
-                return;
-            }
-
             if(!navigator.geolocation) return alert("GPS tidak didukung di HP Anda.");
             
             const btn = document.querySelector('.btn-modal[onclick="sendSosURC()"]');
@@ -365,3 +352,4 @@
     </script>
 </body>
 </html>
+
