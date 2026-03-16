@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Info KC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { margin: 0; background: #000; font-family: 'Inter', sans-serif; color: #fff; }
+        .header { background: rgba(15,15,15,0.9); padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .btn-back { color: white; font-size: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;}
+        .header-title h1 { margin: 0; font-family: 'Space Grotesk'; font-size: 20px; color: #D4FF00; }
+        
+        .container { padding: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;}
+        input, textarea { width: 100%; padding: 15px; border-radius: 12px; background: #111; border: 1px solid rgba(255,255,255,0.1); color: white; font-family: 'Inter'; font-size: 14px; outline: none; box-sizing: border-box;}
+        input:focus, textarea:focus { border-color: #D4FF00; }
+        
+        .btn-save { width: 100%; background: #D4FF00; color: black; border: none; padding: 16px; border-radius: 14px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; margin-top: 10px;}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="dashboard_kc.html" class="btn-back"><i class="fas fa-chevron-left"></i></a>
+        <div class="header-title"><h1>REMOTE INFO KC</h1></div>
+    </div>
+    <div class="container" id="adminPanel" style="display:none;">
+        <div class="form-group">
+            <label>Judul Pengumuman</label>
+            <input type="text" id="infoTitle" placeholder="Contoh: INFO KOPDAR KC">
+        </div>
+        <div class="form-group">
+            <label>Isi Pesan</label>
+            <textarea id="infoDesc" rows="4" placeholder="Ketik isi pengumuman di sini..."></textarea>
+        </div>
+        <button class="btn-save" onclick="updateInfo()">UPDATE PAPAN PENGUMUMAN</button>
+    </div>
+    <div id="noAccess" style="padding:40px 20px; text-align:center; color:#EF4444; font-weight:bold;">
+        <i class="fas fa-lock" style="font-size:40px; margin-bottom:15px;"></i><br>AKSES DITOLAK.<br>Hanya Pengurus yang bisa mengubah Info KC.
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const appKC = initializeApp({ apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" }, "AppKC");
+        const dbKC = getFirestore(appKC);
+
+        let uData = null;
+        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        
+        const role = (uData?.role || "").toUpperCase();
+        const plat = (uData?.plat || "").replace(/\s+/g, '').toUpperCase();
+
+        if(role.includes("PENGURUS") || role.includes("KETUA") || plat === "B4248SWF") {
+            document.getElementById('noAccess').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            
+            // Tarik data lama
+            getDoc(doc(dbKC, "settings", "board_info")).then(docSnap => {
+                if(docSnap.exists()) {
+                    document.getElementById('infoTitle').value = docSnap.data().title;
+                    document.getElementById('infoDesc').value = docSnap.data().desc;
+                }
+            });
+        }
+
+        window.updateInfo = async () => {
+            const title = document.getElementById('infoTitle').value.trim();
+            const desc = document.getElementById('infoDesc').value.trim();
+            
+            if(!title || !desc) return alert("Judul dan Isi tidak boleh kosong!");
+            
+            document.querySelector('.btn-save').innerText = "MENYIMPAN...";
+            try {
+                await setDoc(doc(dbKC, "settings", "board_info"), { title: title, desc: desc });
+                alert("Berhasil! Papan Pengumuman di Dashboard KC sudah berubah.");
+                window.location.href = 'dashboard_kc.html';
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        };
+    </script>
+</body>
+</html>
