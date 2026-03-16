@@ -3,355 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - Antrean Kartika Chandra</title>
+    <title>Antrean Live KC</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* === TEMA HITAM PEKAT (KC) === */
         :root { 
-            --kc-lime: #D4FF00; 
-            --kc-dark: #0a0e05; 
-            --royal-blue: #0A2259; 
-            --bg-surface: #F0F4F8; 
-            --text-main: #0F172A; 
-            --white: #FFFFFF; 
-            --danger: #EF4444; 
-            --success: #10B981; 
+            --kc-yellow: #D4FF00; 
+            --kc-green: #10B981; 
+            --bg-black: #000000;
+            --glass-bg: rgba(15, 15, 15, 0.9); 
         }
-        body { margin:0; background:var(--bg-surface); font-family:'Inter',sans-serif; color:var(--text-main); overflow-x:hidden; user-select:none; padding-bottom: 40px;}
-        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg-black); font-family: 'Inter', sans-serif; color: #fff; padding-bottom: 100px; -webkit-tap-highlight-color: transparent;}
+        * { box-sizing: border-box; text-decoration: none; outline: none;}
 
-        .header { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--kc-dark) 100%); padding: 30px 20px 40px; border-bottom-left-radius:30px; border-bottom-right-radius:30px; color:white; text-align:center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .btn-back { position: absolute; top: 30px; left: 20px; background: rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; text-decoration: none; backdrop-filter: blur(5px); transition: 0.2s;}
-        .btn-back:active { transform: scale(0.9); }
-        .title { font-family:'Outfit'; font-size:22px; font-weight:900; margin: 0 0 5px; color: var(--kc-lime); text-shadow: 0 0 15px rgba(212, 255, 0, 0.4); letter-spacing: 1px;}
-        .subtitle { font-family:'Space Grotesk'; font-size:11px; letter-spacing:2px; opacity:0.8; }
+        /* HEADER FIXED */
+        .header { background: rgba(10,10,10,0.95); backdrop-filter: blur(20px); padding: 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .btn-back { color: white; font-size: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .header-title h1 { margin: 0; font-family: 'Space Grotesk'; font-size: 18px; color: var(--kc-yellow); letter-spacing: 1px; }
+        .header-title p { margin: 0; font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 1px; }
+        .live-indicator { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; color: #EF4444; font-family: 'Space Grotesk'; background: rgba(239,68,68,0.1); padding: 4px 8px; border-radius: 12px; border: 1px solid rgba(239,68,68,0.2);}
+        .live-dot { width: 6px; height: 6px; background: #EF4444; border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        .status-container { margin: -25px 20px 20px; background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); border-radius: 20px; padding: 20px; display: flex; justify-content: space-around; box-shadow: 0 15px 35px rgba(0,0,0,0.08); border: 1px solid rgba(212, 255, 0, 0.5); }
-        .stat-box { text-align: center; }
-        .stat-lbl { font-size: 9px; font-weight: 800; color: #64748B; letter-spacing: 1px; margin-bottom: 5px; text-transform: uppercase;}
-        .stat-val { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; color: var(--royal-blue); line-height: 1;}
+        .container { padding: 20px; }
 
-        .main-content { padding: 0 20px; }
+        /* STATUS BANNER */
+        .status-banner { background: linear-gradient(135deg, #111 0%, #050505 100%); border: 1px solid rgba(212,255,0,0.2); border-radius: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .sb-left h3 { margin: 0 0 5px 0; font-family: 'Space Grotesk'; font-size: 14px; color: #94a3b8; }
+        .sb-left p { margin: 0; font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: white; }
+        .sb-right { text-align: right; }
+        .sb-right h3 { margin: 0 0 5px 0; font-family: 'Space Grotesk'; font-size: 14px; color: #94a3b8; }
+        .sb-right p { margin: 0; font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: var(--kc-yellow); }
 
-        .form-group { margin-bottom: 20px; }
-        .form-label { display:block; font-size:11px; font-weight:800; color:#64748B; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;}
-        .inp-box { width:100%; padding:18px; border:2px solid #E2E8F0; border-radius:16px; font-family:'Space Grotesk'; font-weight:900; font-size:20px; text-align:center; outline:none; background: #fff; transition: 0.3s;}
-        .inp-box:focus { border-color: var(--kc-lime); box-shadow: 0 0 15px rgba(212, 255, 0, 0.2); }
+        /* GRID SLOT CHARGING (5 SLOT KC) */
+        .section-title { font-family: 'Space Grotesk'; font-size: 14px; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; letter-spacing: 1px;}
+        .slot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 30px; }
+        /* Slot ke-5 dibuat membentang penuh di bawah */
+        .slot-grid .slot-card:last-child:nth-child(odd) { grid-column: 1 / -1; } 
+
+        .slot-card { background: #111; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; text-align: center; position: relative; overflow: hidden; transition: 0.3s; }
+        .slot-card.filled { border-color: var(--kc-yellow); background: linear-gradient(180deg, rgba(212,255,0,0.05) 0%, #050505 100%); }
+        .slot-card.mine { border-color: var(--kc-green); background: linear-gradient(180deg, rgba(16,185,129,0.1) 0%, #050505 100%); box-shadow: 0 0 20px rgba(16,185,129,0.2);}
         
-        .btn-action { width: 100%; padding: 18px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; letter-spacing: 1px;}
-        .btn-action:active { transform: scale(0.96); }
-        .btn-daftar { background: linear-gradient(135deg, var(--kc-lime) 0%, #8DAA00 100%); color: #000; box-shadow: 0 10px 25px rgba(212, 255, 0, 0.3); }
-        .btn-batal { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 2px dashed var(--danger); margin-top: 15px; font-size: 13px;}
-        .btn-stop { background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3); padding: 20px; font-size: 18px; animation: pulseRed 2s infinite;}
+        .slot-num { font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 5px; }
+        .slot-status { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: #334155; }
+        .slot-card.filled .slot-status { color: white; font-size: 18px; margin: 5px 0;}
+        .slot-name { font-size: 11px; color: var(--kc-yellow); font-weight: 700; }
+        .slot-card.mine .slot-name { color: var(--kc-green); }
+        .btn-finish { background: #EF4444; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; margin-top: 10px; cursor: pointer; width: 100%;}
 
-        .slot-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px;}
-        .slot-card { background: white; border-radius: 16px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #E2E8F0; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
-        .slot-card.empty { border-left: 5px solid var(--kc-lime); }
-        .slot-card.filled { border-left: 5px solid #CBD5E1; opacity: 0.7;}
-        .sc-left { display: flex; flex-direction: column; }
-        .sc-no { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); line-height: 1.2;}
-        .sc-desc { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase;}
-        .btn-pilih-slot { background: var(--kc-lime); color: #000; border: none; padding: 10px 15px; border-radius: 10px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 5px 10px rgba(212, 255, 0, 0.3); }
+        /* WAITING LIST */
+        .queue-list { display: flex; flex-direction: column; gap: 10px; }
+        .queue-item { background: #111; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .queue-item.mine { border-left: 4px solid var(--kc-green); background: rgba(16,185,129,0.05); }
+        .q-left { display: flex; align-items: center; gap: 15px; }
+        .q-no { width: 35px; height: 35px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--kc-yellow); }
+        .queue-item.mine .q-no { background: var(--kc-green); color: black; }
+        .q-info h4 { margin: 0 0 3px 0; font-family: 'Space Grotesk'; font-size: 16px; color: white; }
+        .q-info p { margin: 0; font-size: 11px; color: #94a3b8; font-weight: 500;}
+        .q-batt { font-size: 12px; font-weight: 800; color: #cbd5e1; background: #222; padding: 4px 8px; border-radius: 8px;}
 
-        #loaderOverlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(5px); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #E2E8F0; border-top: 5px solid var(--kc-lime); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        /* FLOATING ACTION BUTTON */
+        .bottom-action { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px; z-index: 1000; }
+        .btn-main { width: 100%; padding: 18px; border-radius: 20px; border: none; font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.3s; box-shadow: 0 15px 30px rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; gap: 10px;}
+        .btn-main.join { background: var(--kc-yellow); color: black; box-shadow: 0 10px 25px rgba(212,255,0,0.2); }
+        .btn-main.cancel { background: #1e293b; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .btn-main:active { transform: scale(0.95); }
 
-        .view-section { display: none; animation: fadeIn 0.5s; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* MODAL INPUT BATERAI */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center; }
+        .modal-box { background: #111; width: 85%; max-width: 320px; border-radius: 24px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); text-align: center;}
+        .modal-title { font-family: 'Space Grotesk'; font-size: 18px; color: var(--kc-yellow); margin: 0 0 15px 0;}
+        .modal-desc { font-size: 12px; color: #94a3b8; margin-bottom: 20px; }
+        .batt-input { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: #000; color: white; font-family: 'Space Grotesk'; font-size: 24px; text-align: center; outline: none; margin-bottom: 20px;}
+        .batt-input:focus { border-color: var(--kc-yellow); }
+        .modal-btns { display: flex; gap: 10px; }
+        .btn-modal { flex: 1; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 13px; border: none; cursor: pointer; font-family: 'Space Grotesk';}
+        .btn-modal.no { background: #222; color: white; }
+        .btn-modal.yes { background: var(--kc-yellow); color: black; }
     </style>
 </head>
 <body>
 
-    <div id="loaderOverlay">
-        <div class="spinner"></div>
-        <div id="loaderText" style="margin-top: 15px; font-family: 'Space Grotesk'; font-weight: 800; color: var(--royal-blue); font-size: 14px; letter-spacing: 1px;">SINKRONISASI SISTEM...</div>
-    </div>
-
     <div class="header">
-        <a href="dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i></a>
-        <h1 class="title">KARTIKA CHANDRA</h1>
-        <div class="subtitle">SISTEM ANTREAN TERPADU MLU</div>
+        <div class="header-left">
+            <a href="dashboard_kc.html" class="btn-back"><i class="fas fa-chevron-left"></i></a>
+            <div class="header-title">
+                <h1>ANTREAN KC</h1>
+                <p>STASIUN KARTIKA CHANDRA</p>
+            </div>
+        </div>
+        <div class="live-indicator"><div class="live-dot"></div> LIVE</div>
     </div>
 
-    <div class="status-container">
-        <div class="stat-box">
-            <div class="stat-lbl">TOTAL ANTREAN</div>
-            <div class="stat-val" id="statQueue">...</div>
+    <div class="container">
+        <div class="status-banner">
+            <div class="sb-left">
+                <h3>SLOT TERSEDIA</h3>
+                <p id="txtAvailable">...</p>
+            </div>
+            <div class="sb-right">
+                <h3>MENUNGGU</h3>
+                <p id="txtWaiting">...</p>
+            </div>
         </div>
-        <div style="width: 1px; background: #E2E8F0;"></div>
-        <div class="stat-box">
-            <div class="stat-lbl">SLOT TERSEDIA</div>
-            <div class="stat-val" id="statSlot" style="color: var(--success);">...</div>
+
+        <div class="section-title"><i class="fas fa-plug" style="color:var(--kc-yellow);"></i> STATUS COLOKAN</div>
+        <div class="slot-grid" id="slotGrid">
+            <div style="text-align:center; grid-column:1/-1; color:#64748b; font-size:12px;">Memuat data stasiun...</div>
+        </div>
+
+        <div class="section-title"><i class="fas fa-users" style="color:var(--kc-yellow);"></i> DAFTAR TUNGGU</div>
+        <div class="queue-list" id="queueList">
+            <div style="text-align:center; color:#64748b; font-size:12px; padding: 20px;">Memuat antrean...</div>
         </div>
     </div>
 
-    <div class="main-content">
-        
-        <div id="viewRegister" class="view-section">
-            <div style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px;">
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                    <div style="width: 50px; height: 50px; border-radius: 15px; background: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 24px;"><i class="fas fa-motorcycle" style="color: var(--royal-blue);"></i></div>
-                    <div>
-                        <div style="font-family: 'Outfit'; font-size: 18px; font-weight: 900; color: var(--royal-blue);" id="displayNama">Memuat...</div>
-                        <div style="font-size: 12px; font-weight: 700; color: #64748B;" id="displayPlat">...</div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">SISA BATERAI MOTOR ANDA (%)</label>
-                    <input type="number" id="inpBat" class="inp-box" placeholder="Contoh: 15" max="100" min="0">
-                </div>
-                
-                <button class="btn-action btn-daftar" onclick="daftarAntreanKC()">
-                    <i class="fas fa-qrcode"></i> AMBIL NOMOR ANTREAN
-                </button>
-            </div>
-            <div style="text-align: center; font-size: 10px; color: #94A3B8; font-weight: 600; padding: 0 20px;">
-                <i class="fas fa-shield-alt"></i> Dilengkapi keamanan GPS. Pendaftaran hanya bisa dilakukan dalam radius 70m dari stasiun.
+    <div class="bottom-action">
+        <button class="btn-main join" id="btnAction" onclick="showJoinModal()" style="display: none;"><i class="fas fa-ticket-alt"></i> AMBIL ANTREAN</button>
+    </div>
+
+    <div class="modal-overlay" id="joinModal">
+        <div class="modal-box">
+            <h2 class="modal-title">SISA BATERAI?</h2>
+            <p class="modal-desc">Masukkan sisa persentase baterai motor Anda saat ini agar admin bisa memprioritaskan yang darurat.</p>
+            <input type="number" id="inputBatt" class="batt-input" placeholder="0 - 100" min="0" max="100">
+            <div class="modal-btns">
+                <button class="btn-modal no" onclick="document.getElementById('joinModal').style.display='none'">BATAL</button>
+                <button class="btn-modal yes" onclick="prosesAmbilAntrean()">GABUNG</button>
             </div>
         </div>
-
-        <div id="viewQueue" class="view-section">
-            <div style="background: linear-gradient(135deg, var(--royal-blue) 0%, #15398F 100%); padding: 25px; border-radius: 20px; color: white; text-align: center; box-shadow: 0 15px 35px rgba(10,34,89,0.3); margin-bottom: 20px;">
-                <div style="font-size: 11px; font-weight: 800; color: var(--kc-lime); letter-spacing: 2px; margin-bottom: 5px;">NOMOR ANTREAN ANDA</div>
-                <div style="font-family: 'Space Grotesk'; font-size: 50px; font-weight: 900; line-height: 1;" id="myQueueNumber">#0</div>
-                <div style="font-size: 12px; margin-top: 10px; color: #CBD5E1;" id="queueMsgText">Harap tunggu giliran Anda.</div>
-            </div>
-
-            <div style="font-family: 'Outfit'; font-size: 14px; font-weight: 800; color: var(--royal-blue);">STATUS MESIN CHARGER</div>
-            <div class="slot-grid" id="slotListContainer"></div>
-
-            <button class="btn-action btn-batal" onclick="batalAntrean()">BATALKAN ANTREAN SAYA</button>
-        </div>
-
-        <div id="viewCharging" class="view-section">
-            <div style="background: white; padding: 30px 20px; border-radius: 24px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 2px solid var(--success);">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 15px;">
-                    <i class="fas fa-bolt"></i>
-                </div>
-                <div style="font-family: 'Outfit'; font-size: 22px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px;">SEDANG MENGISI DAYA</div>
-                <div style="font-size: 13px; font-weight: 700; color: #64748B; margin-bottom: 30px;" id="chargeLocationText">Di Mesin Slot 0</div>
-                
-                <button class="btn-action btn-stop" onclick="stopChargingKC()">
-                    <i class="fas fa-power-off"></i> STOP CHARGING
-                </button>
-            </div>
-        </div>
-
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, runTransaction, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONEKSI FIREBASE KARTIKA CHANDRA
-        const firebaseConfig = { apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc", storageBucket: "kartikachandrafc.firebasestorage.app", messagingSenderId: "677704449500", appId: "1:677704449500:web:671df8ae5cf6e66d0b6319" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const mainRef = doc(db, "antrian", "utama");
-        const historyRef = collection(db, "riwayatCharging");
+        // KONEKSI DATABASE KHUSUS KC
+        const appKC = initializeApp({ apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" }, "AppKC");
+        const dbKC = getFirestore(appKC);
+        const refKC = doc(dbKC, "antrian", "utama");
 
-        // DATA MEMBER (DARI MLU)
-        let uData = null; try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
-        if (!uData || !uData.plat) window.location.href = 'index.html'; 
+        // AMBIL DATA MEMBER
+        let uData = null;
+        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        if (!uData || !uData.plat) window.location.href = 'index_kc.html'; 
 
-        const myName = (uData.namaKtp || uData.namaWa || "Member").toUpperCase();
-        const platAsli = uData.plat.toUpperCase();
-        const myPlat = platAsli.replace(/\s/g,''); // Versi rapat untuk logic
-        
+        const myName = uData.namaKtp || uData.namaWa || "Member KC";
+        const myPlat = uData.plat || "B XXXX XX";
         let myRole = uData.role || "MEMBER";
-        if(myPlat === "B4248SWF") myRole = "KELUARGA MLU";
+        
+        // Logika Dewa B4248SWF untuk bypass tampilan
+        if(myPlat.replace(/\s+/g, '').toUpperCase() === "B4248SWF") myRole = "PA BOS";
 
-        document.getElementById('displayNama').innerText = myName;
-        document.getElementById('displayPlat').innerText = platAsli;
+        let isMyTurn = false;
+        let isWaiting = false;
 
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-        }
-
-        function showLoading(text) {
-            document.getElementById('loaderText').innerText = text;
-            document.getElementById('loaderOverlay').style.display = 'flex';
-        }
-        function hideLoading() { document.getElementById('loaderOverlay').style.display = 'none'; }
-
-        onSnapshot(mainRef, (snap) => {
+        // LISTENER REALTIME FIREBASE
+        onSnapshot(refKC, (snap) => {
             if(!snap.exists()) return;
             const d = snap.data();
-            let q = d.waitingQueue || [];
-            let slots = d.chargingSlots || [null,null,null,null,null];
-            let dis = d.disabledSlots || [false,false,false,false,false];
+            const slots = d.chargingSlots || [null,null,null,null,null]; // 5 Slot untuk KC
+            const queue = d.waitingQueue || [];
 
-            document.getElementById('statQueue').innerText = q.length;
-            let avail = 0; for(let i=0; i<5; i++) { if(slots[i] === null && !dis[i]) avail++; }
-            document.getElementById('statSlot').innerText = avail;
+            isMyTurn = false;
+            isWaiting = false;
 
-            // CEK POSISI MEMBER (Rapat)
-            let mySlotIndex = slots.findIndex(s => s && s.plat.replace(/\s/g,'') === myPlat);
-            let myQIndex = q.findIndex(x => x.plat.replace(/\s/g,'') === myPlat);
+            // RENDER 5 SLOT
+            const grid = document.getElementById('slotGrid');
+            grid.innerHTML = '';
+            let available = 0;
 
-            if (mySlotIndex > -1) {
-                document.getElementById('chargeLocationText').innerText = `Mesin Kartika Chandra - Slot 0${mySlotIndex + 1}`;
-                switchView('viewCharging');
-            } 
-            else if (myQIndex > -1) {
-                document.getElementById('myQueueNumber').innerText = `#${myQIndex + 1}`;
-                
-                let isMyTurn = (myQIndex === 0);
-                if (isMyTurn && avail > 0) {
-                    document.getElementById('queueMsgText').innerHTML = `<span style="color:var(--kc-lime); font-weight:800;">GILIRAN ANDA! SILAKAN PILIH SLOT DI BAWAH ⚡</span>`;
+            slots.forEach((s, i) => {
+                if(!s) {
+                    available++;
+                    grid.innerHTML += `<div class="slot-card"><div class="slot-num">SLOT ${i+1}</div><div class="slot-status" style="color:#334155;">KOSONG</div></div>`;
+                } else if(s.isLocked) {
+                    grid.innerHTML += `<div class="slot-card"><div class="slot-num">SLOT ${i+1}</div><div class="slot-status" style="color:#ef4444;"><i class="fas fa-lock"></i> KUNCI</div></div>`;
                 } else {
-                    document.getElementById('queueMsgText').innerText = `Harap tunggu giliran Anda.`;
+                    const isMe = s.plat === myPlat;
+                    if(isMe) isMyTurn = true;
+                    
+                    const btnSelesai = isMe ? `<button class="btn-finish" onclick="cabutSendiri(${i})">SAYA SELESAI</button>` : '';
+                    
+                    grid.innerHTML += `
+                        <div class="slot-card ${isMe ? 'mine' : 'filled'}">
+                            <div class="slot-num">SLOT ${i+1}</div>
+                            <div class="slot-status">${s.plat}</div>
+                            <div class="slot-name">${s.userName.split(' ')[0]}</div>
+                            ${btnSelesai}
+                        </div>
+                    `;
                 }
+            });
 
-                const slotContainer = document.getElementById('slotListContainer');
-                slotContainer.innerHTML = '';
-                
-                slots.forEach((s, i) => {
-                    const isOff = dis[i];
-                    if (isOff) {
-                        slotContainer.innerHTML += `<div class="slot-card filled"><div class="sc-left"><span class="sc-no">SLOT 0${i+1}</span><span class="sc-desc">MAINTENANCE</span></div><div style="font-size:11px; font-weight:800; color:#EF4444;">OFFLINE</div></div>`;
-                    } else if (s) {
-                        slotContainer.innerHTML += `<div class="slot-card filled"><div class="sc-left"><span class="sc-no">SLOT 0${i+1}</span><span class="sc-desc" style="color:var(--royal-blue);">${s.plat}</span></div><div style="font-size:11px; font-weight:800; color:#64748B;">TERISI</div></div>`;
-                    } else {
-                        let btnHtml = (isMyTurn) ? `<button class="btn-pilih-slot" onclick="pilihSlotKC(${i})">PILIH SLOT ⚡</button>` : `<div style="font-size:11px; font-weight:800; color:var(--success);">KOSONG</div>`;
-                        slotContainer.innerHTML += `<div class="slot-card empty"><div class="sc-left"><span class="sc-no">SLOT 0${i+1}</span><span class="sc-desc">TERSEDIA</span></div>${btnHtml}</div>`;
-                    }
+            document.getElementById('txtAvailable').innerText = available;
+
+            // RENDER ANTREAN
+            const qList = document.getElementById('queueList');
+            qList.innerHTML = '';
+            
+            if(queue.length === 0) {
+                qList.innerHTML = '<div style="text-align:center; color:#64748b; font-size:12px; padding: 20px;">Belum ada antrean.</div>';
+            } else {
+                queue.forEach((q, i) => {
+                    const isMe = q.plat === myPlat;
+                    if(isMe) isWaiting = true;
+
+                    qList.innerHTML += `
+                        <div class="queue-item ${isMe ? 'mine' : ''}">
+                            <div class="q-left">
+                                <div class="q-no">${q.qNo}</div>
+                                <div class="q-info">
+                                    <h4>${q.plat}</h4>
+                                    <p>${isMe ? 'Anda' : q.userName} • ${q.role || 'MEMBER'}</p>
+                                </div>
+                            </div>
+                            <div class="q-batt"><i class="fas fa-battery-half" style="color:var(--kc-yellow);"></i> ${q.batreSisa}%</div>
+                        </div>
+                    `;
                 });
+            }
 
-                switchView('viewQueue');
-            } 
-            else {
-                switchView('viewRegister');
+            document.getElementById('txtWaiting').innerText = queue.length;
+
+            // UPDATE TOMBOL BAWAH
+            const btnAction = document.getElementById('btnAction');
+            btnAction.style.display = 'flex';
+            
+            if(isMyTurn) {
+                btnAction.className = 'btn-main';
+                btnAction.style.background = '#10B981';
+                btnAction.style.color = 'black';
+                btnAction.innerHTML = '<i class="fas fa-bolt"></i> SEDANG CHARGING';
+                btnAction.onclick = null;
+            } else if (isWaiting) {
+                btnAction.className = 'btn-main cancel';
+                btnAction.innerHTML = '<i class="fas fa-times"></i> BATAL ANTRE';
+                btnAction.onclick = batalAntre;
+            } else {
+                btnAction.className = 'btn-main join';
+                btnAction.innerHTML = '<i class="fas fa-ticket-alt"></i> AMBIL ANTREAN';
+                btnAction.onclick = showJoinModal;
             }
         });
 
-        // DAFTAR ANTREAN
-        window.daftarAntreanKC = async () => {
-            const bat = document.getElementById('inpBat').value;
-            if(!bat || bat < 0 || bat > 100) return alert("Masukkan sisa baterai yang valid (0-100)!");
+        // FUNGSI MODAL & TRANSAKSI
+        window.showJoinModal = () => { document.getElementById('joinModal').style.display = 'flex'; };
+        
+        window.prosesAmbilAntrean = () => {
+            const batt = document.getElementById('inputBatt').value;
+            if(!batt || batt < 0 || batt > 100) return alert("Masukkan persentase baterai yang benar (0-100)!");
+            
+            document.getElementById('joinModal').style.display = 'none';
+            document.getElementById('btnAction').innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMPROSES...';
 
-            // FUNGSI INTI TEMBAK FIREBASE (Dipakai oleh DINO maupun Member Asli)
-            const prosesTembakFirebase = async () => {
-                showLoading("MENYIMPAN DATA...");
-                try {
-                    await runTransaction(db, async (t) => {
-                        const d = (await t.get(mainRef)).data();
-                        let q = d.waitingQueue || [];
-                        
-                        if([...(d.chargingSlots||[]), ...q].some(u => u && u.plat.replace(/\s/g,'') === myPlat)) {
-                            throw "Anda sudah terdaftar di sistem!";
-                        }
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                let queue = d.waitingQueue || [];
+                let nextNo = (d.lastTicket || 0) + 1;
 
-                        const newTicket = (d.lastTicket || 0) + 1;
-                        
-                        // Push data persis dengan format KC (DINO akan masuk sebagai MEMBER)
-                        q.push({ userName: myName, plat: platAsli, role: myRole, batreSisa: bat.toString(), timestamp: Date.now(), qNo: newTicket });
-                        t.update(mainRef, { waitingQueue: q, lastTicket: newTicket });
+                // Cek apakah tiba-tiba ada slot kosong (Bypass antrean langsung masuk slot)
+                let emptySlotIndex = -1;
+                for(let i=0; i<5; i++) {
+                    if(!d.chargingSlots[i]) { emptySlotIndex = i; break; }
+                }
+
+                if(emptySlotIndex !== -1 && queue.length === 0) {
+                    // Masuk slot langsung karena sepi
+                    d.chargingSlots[emptySlotIndex] = {
+                        plat: myPlat,
+                        userName: myName,
+                        role: myRole,
+                        batreSisa: batt,
+                        startTime: Date.now()
+                    };
+                    t.update(refKC, { chargingSlots: d.chargingSlots });
+                } else {
+                    // Masuk antrean normal
+                    queue.push({
+                        qNo: nextNo,
+                        plat: myPlat,
+                        userName: myName,
+                        role: myRole,
+                        batreSisa: batt,
+                        joinTime: Date.now()
                     });
-                    
-                    // SUNTIKKAN INGATAN KE BROWSER AGAR WEB KC ASLI MENGENALI MEMBER INI
-                    localStorage.setItem('myPlat', platAsli);
-
-                    hideLoading();
-                } catch(e) {
-                    hideLoading();
-                    alert(e);
+                    t.update(refKC, { waitingQueue: queue, lastTicket: nextNo });
                 }
-            };
+            }).catch(e => alert("Gagal mengambil antrean: " + e.message));
+        };
 
-            // ==== JALUR TOL KHUSUS AKUN SILUMAN DINO (BYPASS GPS) ====
-            if (myPlat === "B1234XYZ") {
-                return prosesTembakFirebase();
-            }
-
-            // ==== JALUR MEMBER BIASA (WAJIB LIMIT 70 METER) ====
-            if(!navigator.geolocation) return alert("GPS Wajib nyala untuk antre di Kartika Chandra!");
-            
-            showLoading("MEMBACA LOKASI GPS...");
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const dist = calculateDist(-6.2285953, 106.819502, pos.coords.latitude, pos.coords.longitude);
-                if(dist > 0.07) { 
-                    hideLoading();
-                    return alert(`Gagal! Anda masih berjarak ${(dist*1000).toFixed(0)} meter dari FC Kartika Chandra. (Maksimal 70 meter).`);
-                }
-
-                // Lolos GPS, tembak data
-                prosesTembakFirebase();
-
-            }, () => {
-                hideLoading();
-                alert("Gagal membaca GPS. Izinkan akses lokasi di browser HP Anda.");
-            }, { enableHighAccuracy: true });
-        }
-
-        window.pilihSlotKC = async (slotIndex) => {
-            if(!confirm(`Yakin ingin masuk ke Slot 0${slotIndex + 1}?`)) return;
-            
-            showLoading("MENGUNCI SLOT...");
-            try {
-                await runTransaction(db, async(t) => { 
-                    const d = (await t.get(mainRef)).data(); 
-                    let q = d.waitingQueue || []; 
-                    
-                    const idx = q.findIndex(x => x.plat.replace(/\s/g,'') === myPlat); 
-                    if(idx === -1) throw "Data antrean tidak ditemukan!"; 
-                    
-                    const me = q.splice(idx, 1)[0]; 
-                    me.startTime = Date.now(); 
-                    d.chargingSlots[slotIndex] = me; 
-                    
-                    t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-                });
-                hideLoading();
-            } catch(e) { hideLoading(); alert(e); }
-        }
-
-        window.stopChargingKC = async () => {
-            if(!confirm("Anda yakin sudah selesai charge dan ingin mengeluarkan motor?")) return;
-            
-            showLoading("MENGHENTIKAN SESI...");
-            try {
-                await runTransaction(db, async(t) => { 
-                    const d = (await t.get(mainRef)).data(); 
-                    let slots = d.chargingSlots;
-                    
-                    let slotIndex = slots.findIndex(s => s && s.plat.replace(/\s/g,'') === myPlat);
-                    if(slotIndex === -1) throw "Anda tidak sedang di dalam slot.";
-
-                    const u = slots[slotIndex]; 
-                    if(u) await addDoc(historyRef, {...u, finishTime: new Date()}); 
-                    slots[slotIndex] = null; 
-                    t.update(mainRef, { chargingSlots: slots }); 
-                });
-                // Hapus ingatan saat selesai
-                localStorage.removeItem('myPlat');
-                hideLoading();
-            } catch(e) { hideLoading(); alert(e); }
-        }
-
-        window.batalAntrean = async () => {
+        window.batalAntre = () => {
             if(!confirm("Yakin ingin membatalkan antrean Anda?")) return;
+            document.getElementById('btnAction').innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMBATALKAN...';
             
-            showLoading("MEMBATALKAN...");
-            try {
-                await runTransaction(db, async(t) => { 
-                    const d = (await t.get(mainRef)).data(); 
-                    let q = d.waitingQueue || [];
-                    t.update(mainRef, { waitingQueue: q.filter(x => x.plat.replace(/\s/g,'') !== myPlat) }); 
-                });
-                localStorage.removeItem('myPlat');
-                hideLoading();
-            } catch(e) { hideLoading(); alert(e); }
-        }
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                const newQueue = d.waitingQueue.filter(q => q.plat !== myPlat);
+                
+                // Re-index sisa antrean
+                newQueue.forEach((q, i) => q.qNo = i + 1);
+                
+                t.update(refKC, { waitingQueue: newQueue, lastTicket: newQueue.length });
+            }).catch(e => alert("Gagal membatalkan: " + e.message));
+        };
 
-        function calculateDist(lat1, lon1, lat2, lon2) { const p = 0.017453292519943295, c = Math.cos; const a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2; return 12742 * Math.asin(Math.sqrt(a)); }
+        window.cabutSendiri = (index) => {
+            if(!confirm("Anda sudah selesai charging?")) return;
+            
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                d.chargingSlots[index] = null;
+                t.update(refKC, { chargingSlots: d.chargingSlots });
+            });
+        };
     </script>
 </body>
 </html>
