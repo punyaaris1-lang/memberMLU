@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Moderasi Antrean KC - Premium Console</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* === MODERN PITCH BLACK THEME === */
+        :root { --kc-yellow: #D4FF00; --kc-green: #10B981; --kc-red: #EF4444; --bg-surface: #000; --panel-bg: #0A0A0A; --border-color: rgba(255,255,255,0.08); }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: #fff; padding: 15px; overflow-x: hidden; -webkit-tap-highlight-color: transparent;}
+        * { box-sizing: border-box; outline: none; }
+
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; position: sticky; top: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 100;}
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .btn-back { color: white; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; border: 1px solid var(--border-color);}
+        h1 { margin: 0; font-family: 'Space Grotesk'; font-size: 18px; color: var(--kc-yellow); letter-spacing: 1px;}
+        .subtitle { margin: 0; font-size: 10px; color: #64748B; font-weight: 700; letter-spacing: 2px;}
+
+        /* GRID LAYOUT (Responsive) */
+        .grid-container { display: flex; flex-direction: column; gap: 20px; }
+        @media(min-width: 768px) { .grid-container { display: grid; grid-template-columns: 1fr 1.2fr; gap: 25px; } }
+
+        /* CARD STYLE (Glassmorphism + Neon) */
+        .card { background: var(--panel-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .card::before { content: ''; position: absolute; top: -50px; left: -50px; width: 100px; height: 100px; background: var(--kc-yellow); filter: blur(80px); opacity: 0.1; z-index: 0; }
+        .card > * { position: relative; z-index: 2; }
+        .card-title { font-family: 'Space Grotesk'; font-size: 13px; color: var(--kc-green); margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;}
+
+        /* INPUTS & BUTTONS */
+        .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+        input, select { flex: 1; padding: 14px; background: #111; border: 1px solid var(--border-color); color: #fff; border-radius: 12px; font-family: 'Inter'; font-size: 13px; transition: 0.3s;}
+        input:focus, select:focus { border-color: var(--kc-yellow); box-shadow: 0 0 10px rgba(212, 255, 0, 0.1);}
+        
+        .btn { padding: 14px; border: none; border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 12px; cursor: pointer; transition: 0.2s; text-align: center; text-transform: uppercase; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--kc-yellow); color: #000; box-shadow: 0 5px 15px rgba(212, 255, 0, 0.2);}
+        .btn-danger { background: rgba(239,68,68,0.1); color: var(--kc-red); border: 1px solid rgba(239,68,68,0.3);}
+        .btn-lock { background: #1A1A1A; color: #fff; border: 1px solid #333; }
+        .btn-success { background: rgba(16, 185, 129, 0.1); color: var(--kc-green); border: 1px solid rgba(16, 185, 129, 0.3);}
+
+        /* LIST ITEMS (Slots & Queue) */
+        .list-item { background: #141414; border: 1px solid var(--border-color); border-radius: 14px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;}
+        .list-item.active-slot { border-color: var(--kc-yellow); background: linear-gradient(90deg, rgba(212,255,0,0.05) 0%, transparent 100%);}
+        .list-item.locked { border-color: var(--kc-red); background: linear-gradient(90deg, rgba(239,68,68,0.05) 0%, transparent 100%);}
+        
+        .item-info h4 { margin: 0 0 4px 0; font-family: 'Space Grotesk'; font-size: 15px; color: #fff;}
+        .item-info p { margin: 0; font-size: 11px; color: #94a3b8; font-weight: 500;}
+        
+        .action-group { display: flex; gap: 8px; }
+        .btn-sm { padding: 8px 12px; font-size: 10px; border-radius: 8px;}
+
+        /* BANNED TAG */
+        .banned-tag { display: inline-block; background: var(--kc-red); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; font-family: 'Space Grotesk'; margin-left: 8px;}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-left">
+            <a href="dashboard_kc.html" class="btn-back"><i class="fas fa-chevron-left"></i></a>
+            <div>
+                <h1>MODERASI ANTREAN</h1>
+                <p class="subtitle">CONSOLE DEWA KARTIKA CHANDRA</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-bolt"></i> BYPASS SLOT (PAKSA MASUK)</h2>
+                <div class="input-row">
+                    <input type="text" id="bypassPlat" placeholder="Ketik Plat (Cth: B 1234 XX)" style="text-transform:uppercase;">
+                    <select id="bypassSlot" style="flex:0.6;">
+                        <option value="0">SLOT 1</option><option value="1">SLOT 2</option>
+                        <option value="2">SLOT 3</option><option value="3">SLOT 4</option><option value="4">SLOT 5</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="bypassMasuk()"><i class="fas fa-sign-in-alt"></i> EKSEKUSI BYPASS</button>
+            </div>
+
+            <div class="card" style="border-color: rgba(239,68,68,0.3);">
+                <h2 class="card-title" style="color: var(--kc-red);"><i class="fas fa-ban"></i> SISTEM BLACKLIST (BANNED)</h2>
+                <div class="input-row">
+                    <input type="text" id="banInput" placeholder="Plat yang mau di-Banned" style="text-transform:uppercase;">
+                    <button class="btn btn-danger" style="flex:0.6;" onclick="manualBan()">BLOKIR PLAT</button>
+                </div>
+                <div id="bannedList" style="margin-top: 15px; font-size: 11px; display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-plug"></i> STATUS 5 COLOKAN LIVE</h2>
+                <div id="adminSlots">
+                    <div style="text-align:center; color:#64748b; font-size:12px; padding:20px;">Memuat data colokan...</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-ol"></i> DAFTAR TUNGGU (QUEUE)</h2>
+                <div id="adminQueue">
+                    <div style="text-align:center; color:#64748b; font-size:12px; padding:20px;">Memuat antrean...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // KONEKSI DATABASE BARU KC (antriankcnew)
+        const appKC = initializeApp({ 
+            apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM", 
+            authDomain: "antriankcnew.firebaseapp.com", 
+            projectId: "antriankcnew" 
+        }, "AppKC");
+        const dbKC = getFirestore(appKC);
+        const refKC = doc(dbKC, "antrian", "utama");
+
+        // LISTENER REALTIME
+        onSnapshot(refKC, (snap) => {
+            if(!snap.exists()) return;
+            const d = snap.data();
+            const slots = d.chargingSlots || [null,null,null,null,null];
+            const queue = d.waitingQueue || [];
+            const banned = d.bannedList || [];
+
+            // 1. RENDER 5 SLOT
+            let slotHtml = '';
+            slots.forEach((s, i) => {
+                if(!s) {
+                    slotHtml += `
+                        <div class="list-item">
+                            <div class="item-info"><h4>SLOT ${i+1}</h4><p>KOSONG</p></div> 
+                            <button class="btn btn-lock btn-sm" onclick="kunciSlot(${i})"><i class="fas fa-lock"></i> KUNCI</button>
+                        </div>`;
+                } else if(s.isLocked) {
+                    slotHtml += `
+                        <div class="list-item locked">
+                            <div class="item-info"><h4 style="color:var(--kc-red);">SLOT ${i+1}</h4><p>DIKUNCI ADMIN</p></div> 
+                            <button class="btn btn-success btn-sm" onclick="bukaSlot(${i})"><i class="fas fa-unlock"></i> BUKA</button>
+                        </div>`;
+                } else {
+                    slotHtml += `
+                        <div class="list-item active-slot">
+                            <div class="item-info"><h4 style="color:var(--kc-yellow);">SLOT ${i+1} - ${s.plat}</h4><p>${s.userName}</p></div> 
+                            <button class="btn btn-danger btn-sm" onclick="kosongkanSlot(${i})"><i class="fas fa-eject"></i> CABUT</button>
+                        </div>`;
+                }
+            });
+            document.getElementById('adminSlots').innerHTML = slotHtml;
+
+            // 2. RENDER ANTREAN
+            let qHtml = '';
+            if(queue.length === 0) qHtml = '<div style="text-align:center; color:#64748b; font-size:12px; padding:20px;">Antrean kosong.</div>';
+            queue.forEach((q, i) => {
+                qHtml += `
+                    <div class="list-item" style="flex-direction:column; align-items:flex-start; gap:12px;">
+                        <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                            <div class="item-info">
+                                <h4 style="font-size:16px;">#${q.qNo} - ${q.plat}</h4>
+                                <p>${q.userName} | Sisa Baterai: <strong style="color:var(--kc-yellow);">${q.batreSisa || '-'}%</strong></p>
+                            </div>
+                            <button class="btn btn-danger btn-sm" style="padding:10px 15px;" onclick="kickAntrean('${q.plat}')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div style="width:100%; display:flex; gap:8px;">
+                            ${i > 0 ? `<button class="btn btn-success btn-sm" style="flex:1;" onclick="naikinAntrean(${i})"><i class="fas fa-arrow-up"></i> NAIK PANGKAT</button>` : ''}
+                            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="pindahKeSlot('${q.plat}')"><i class="fas fa-sign-in-alt"></i> MASUK SLOT</button>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('adminQueue').innerHTML = qHtml;
+
+            // 3. RENDER BANNED LIST
+            let bHtml = '';
+            if(banned.length === 0) bHtml = '<div style="color:#64748b; font-size:11px;">Tidak ada plat yang diblokir.</div>';
+            banned.forEach((b) => {
+                bHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#1A1A1A; padding:10px 15px; border-radius:10px; border-left:3px solid var(--kc-red);">
+                        <span style="font-weight:800; font-family:'Space Grotesk'; font-size:14px;">${b}</span> 
+                        <button class="btn btn-lock btn-sm" onclick="unbanPlat('${b}')">LEPAS BLOKIR</button>
+                    </div>`;
+            });
+            document.getElementById('bannedList').innerHTML = bHtml;
+        });
+
+        // ==========================================
+        // FUNGSI-FUNGSI DEWA (TRANSAKSI FIREBASE)
+        // ==========================================
+        
+        window.bypassMasuk = () => {
+            const plat = document.getElementById('bypassPlat').value.trim().toUpperCase();
+            const slotIdx = parseInt(document.getElementById('bypassSlot').value);
+            if(!plat) return alert("Ketik Plat Nomor dulu!");
+            
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                d.chargingSlots[slotIdx] = { plat: plat, userName: "Bypass Admin", batreSisa: "-", startTime: Date.now() };
+                t.update(refKC, { chargingSlots: d.chargingSlots });
+                document.getElementById('bypassPlat').value = '';
+            });
+        };
+
+        window.naikinAntrean = (index) => {
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                let q = d.waitingQueue;
+                let temp = q[index-1];
+                q[index-1] = q[index];
+                q[index] = temp;
+                q.forEach((item, idx) => item.qNo = idx + 1);
+                t.update(refKC, { waitingQueue: q });
+            });
+        };
+
+        window.pindahKeSlot = (platUser) => {
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                let emptyIdx = -1;
+                for(let i=0; i<5; i++) { if(!d.chargingSlots[i]) { emptyIdx = i; break; } }
+                if(emptyIdx === -1) return alert("GAGAL: Semua 5 slot sedang terisi atau dikunci!");
+
+                const targetQ = d.waitingQueue.find(q => q.plat === platUser);
+                if(!targetQ) return;
+
+                d.chargingSlots[emptyIdx] = { plat: targetQ.plat, userName: targetQ.userName, batreSisa: targetQ.batreSisa, startTime: Date.now() };
+                const newQ = d.waitingQueue.filter(q => q.plat !== platUser);
+                newQ.forEach((item, idx) => item.qNo = idx + 1);
+
+                t.update(refKC, { chargingSlots: d.chargingSlots, waitingQueue: newQ });
+            });
+        };
+
+        window.manualBan = () => {
+            const plat = document.getElementById('banInput').value.trim().toUpperCase();
+            if(!plat) return;
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                let bList = d.bannedList || [];
+                if(!bList.includes(plat)) bList.push(plat);
+                
+                const newQ = d.waitingQueue.filter(q => q.plat !== plat);
+                newQ.forEach((item, idx) => item.qNo = idx + 1);
+
+                t.update(refKC, { bannedList: bList, waitingQueue: newQ });
+                document.getElementById('banInput').value = '';
+            });
+        };
+
+        window.unbanPlat = (platUser) => {
+            runTransaction(dbKC, async(t) => {
+                const d = (await t.get(refKC)).data();
+                let bList = d.bannedList || [];
+                bList = bList.filter(b => b !== platUser);
+                t.update(refKC, { bannedList: bList });
+            });
+        };
+
+        window.kosongkanSlot = (idx) => { runTransaction(dbKC, async(t) => { const d = (await t.get(refKC)).data(); d.chargingSlots[idx] = null; t.update(refKC, { chargingSlots: d.chargingSlots }); }); };
+        window.kunciSlot = (idx) => { runTransaction(dbKC, async(t) => { const d = (await t.get(refKC)).data(); d.chargingSlots[idx] = { isLocked: true }; t.update(refKC, { chargingSlots: d.chargingSlots }); }); };
+        window.bukaSlot = (idx) => { runTransaction(dbKC, async(t) => { const d = (await t.get(refKC)).data(); d.chargingSlots[idx] = null; t.update(refKC, { chargingSlots: d.chargingSlots }); }); };
+        window.kickAntrean = (plat) => { 
+            if(!confirm(`Hapus ${plat} dari antrean?`)) return;
+            runTransaction(dbKC, async(t) => { 
+                const d = (await t.get(refKC)).data(); 
+                const newQ = d.waitingQueue.filter(q => q.plat !== plat); 
+                newQ.forEach((item, idx) => item.qNo = idx + 1);
+                t.update(refKC, { waitingQueue: newQ }); 
+            }); 
+        };
+    </script>
+</body>
+</html>
