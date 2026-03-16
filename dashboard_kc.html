@@ -46,7 +46,6 @@
         /* === DESAIN PROFIL DI TENGAH (CENTERED) === */
         .profile-card { border-radius: 28px; padding: 30px 20px 25px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
         
-        /* Posisi Radar di Kanan Atas Kartu Profil */
         .loc-toggle { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 10;}
         .loc-label { font-size: 8px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
         .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
@@ -56,22 +55,54 @@
         input:checked + .slider { background-color: var(--electric-blue); border-color: var(--electric-blue);}
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* === FIX TOTAL: BINGKAI FOTO MEWAH overlay === */
-        /* Kotak luar yang gagah */
-        .photo-wrap { position: relative; width: 100px; height: 100px; border-radius: 25px; background: #000; display: flex; align-items: center; justify-content: center; border: 4px solid var(--kc-green); flex-shrink: 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); overflow: hidden; margin-bottom: 15px; z-index: 2;}
+        /* ========================================================= */
+        /* FIX TOTAL: MURNI KOTAK, NO LINGKARAN HITAM, NO BORDER DALAM */
+        /* ========================================================= */
+        .photo-wrap { 
+            position: relative; 
+            width: 100px; 
+            height: 100px; 
+            border-radius: 25px; /* Sudut kotak membulat ala KC */
+            background: #000; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: 2px solid var(--kc-green); /* Garis neon luar */
+            flex-shrink: 0; 
+            box-shadow: 0 10px 25px rgba(212, 255, 0, 0.3); 
+            overflow: hidden; /* Mencegah foto bocor dari kotak */
+            margin-bottom: 15px; 
+            z-index: 2;
+        }
         
-        /* Gambar Background Gahar (bg_maka.jpg) di dalam bingkai, lapisan bawah (z-index: 1) */
-        .photo-bg-dash { position: absolute; inset: 0; background-image: url('bg_maka.jpg'); background-size: cover; background-position: center; opacity: 0.9; z-index: 1; border-radius: 20px;}
+        .photo-bg-dash { 
+            position: absolute; 
+            inset: 0; 
+            background-image: url('bg_maka.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            opacity: 1; /* Terang sempurna */
+            z-index: 1; 
+        }
         
-        /* Foto Member (Mengisi penuh, potong bulat di tengah), lapisan atas (z-index: 2) */
-        /* HAPUS BACKGROUND HIJAU SOLID! Biarkan transparan */
-        .p-photo { position: relative; width: 75px; height: 75px; object-fit: cover; z-index: 2; border-radius: 50%; border: 3px solid #000; box-shadow: 0 5px 15px rgba(0,0,0,0.8); background: transparent;}
+        /* Foto Member murni menempel, tidak ada efek apa-apa lagi! */
+        .p-photo { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            z-index: 2; 
+            background: transparent; /* Murni tembus pandang */
+            border: none; /* TIDAK ADA GARIS BORDER DALAM */
+            border-radius: 0; /* TIDAK BULAT */
+            box-shadow: none; /* TIDAK ADA BAYANGAN HITAM */
+        }
+        /* ========================================================= */
         
         .p-info { display: flex; flex-direction: column; align-items: center; z-index: 2;}
         .p-role { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 900; background: var(--royal-blue); color: black; padding: 3px 12px; border-radius: 50px; display: inline-block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
         .p-name { font-family: 'Outfit'; font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px; line-height: 1.2; text-transform: uppercase; }
         .p-plat { font-family: 'Inter'; font-size: 12px; font-weight: 700; color: var(--electric-blue); background: rgba(16,185,129,0.1); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(16,185,129,0.2);}
-        /* ========================================= */
 
         .board-pengumuman { background: linear-gradient(90deg, rgba(212,255,0,0.1) 0%, rgba(16,185,129,0.05) 100%); border-left: 4px solid var(--royal-blue); border-radius: 12px; padding: 15px; margin-top: 25px; display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%;}
         .board-icon { font-size: 20px; color: var(--royal-blue); animation: pulse 2s infinite; }
@@ -88,7 +119,6 @@
         .fc-banner.mode-kc .banner-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 6px; letter-spacing: 1px;}
         .fc-banner.mode-kc .banner-title i { color: var(--kc-green); margin-right: 5px;}
         .fc-banner.mode-kc .banner-desc { font-size: 11px; font-weight: 600; color: #aaa; }
-        .fc-banner.mode-kc .banner-val { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: var(--kc-green); text-shadow: 0 0 15px rgba(212, 255, 0, 0.4); line-height: 1;}
         .fc-banner.mode-kc .banner-val { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: var(--kc-green); text-shadow: 0 0 15px rgba(212, 255, 0, 0.4); line-height: 1;}
         .fc-banner.mode-kc .banner-lbl { font-size: 8px; font-weight: 800; color: #fff; letter-spacing: 1px; margin-top: 4px; text-transform: uppercase; }
 
@@ -238,7 +268,6 @@
 
     <div class="float-container">
         <a href="https://wa.me/6281234567890" target="_blank" class="btn-float btn-wa-cs"><i class="fab fa-whatsapp"></i></a>
-        
         <div class="btn-float btn-sos" onclick="openSosModal()"><i class="fas fa-ambulance"></i></div>
     </div>
 
@@ -296,27 +325,23 @@
             const hr = new Date().getHours();
             document.getElementById('greetingText').innerText = hr<10?"Selamat Pagi,":hr<15?"Selamat Siang,":hr<18?"Selamat Sore,":"Selamat Malam,";
             
-            // Tampilkan nama depan saja agar lebih rapi di tengah
             const shortName = myName.split(' ')[0];
             document.getElementById('userName').innerText = shortName;
             document.getElementById('userPlat').innerText = myPlat;
             
-            // MUNCULKAN FOTO DENGAN MULUS
             if (uData.foto && uData.foto.length > 10) {
                 const imgEl = document.getElementById('userPhoto');
                 imgEl.src = uData.foto;
-                imgEl.onload = () => { imgEl.style.opacity = '1'; }; // Munculkan foto setelah berhasil di-load
+                imgEl.onload = () => { imgEl.style.opacity = '1'; };
             }
 
             const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
             
-            // JABATAN TETAP MEMBER, TAPI FUNGSI DEWA AKTIF
             document.getElementById('userRole').innerText = uData.role || "MEMBER";
             if (myPlatClean === "B4248SWF") {
                 document.getElementById('secretGodBtn').onclick = () => { window.location.href = 'superadmin.html'; };
             }
 
-            // CEK STATUS RADAR SEBELUMNYA
             const savedLoc = localStorage.getItem('maka_loc_share'); 
             if(savedLoc === 'ON') { 
                 document.getElementById('toggleLocation').checked = true; 
@@ -355,7 +380,6 @@
             });
         }
 
-        // FUNGSI RADAR MEMBER MUNCUL KEMBALI
         window.toggleLoc = (el) => { 
             if(el.checked) { 
                 localStorage.setItem('maka_loc_share', 'ON'); 
@@ -373,7 +397,7 @@
             c.style.display = 'block'; 
             setTimeout(() => { 
                 if(!map) { 
-                    map = L.map('radarMap').setView([-6.2285953, 106.819502], 13); // Titik KC
+                    map = L.map('radarMap').setView([-6.2285953, 106.819502], 13); 
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); 
                     loadMembers(); 
                 } 
@@ -388,7 +412,6 @@
                 snap.forEach(doc => { 
                     const m = doc.data(); 
                     if(m.isSharing && m.lat && m.lng) { 
-                        // Ikon warna kuning/hijau neon khas KC
                         const iconHtml = `<div style="width:20px; height:20px; background:#D4FF00; border:2px solid #000; border-radius:50%; box-shadow:0 0 10px #D4FF00;"></div><div class="marker-label">${m.nama.split(' ')[0]}</div>`;
                         const icon = L.divIcon({ className: 'custom-div-icon', html: iconHtml, iconSize:[20,20], iconAnchor:[10,10] }); 
                         if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); 
@@ -412,14 +435,12 @@
             if(uData.id) updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); 
         }
 
-
         window.openSosModal = () => { 
             const m = document.getElementById('sosModal'); 
             m.style.display='flex'; 
             setTimeout(()=>m.classList.add('show'),10); 
         };
 
-        // FUNGSI S.O.S URC DENGAN NOMOR BRO RICKY
         window.sendSosURC = () => {
             const nomorURC = "6287711069877"; 
             
@@ -440,7 +461,7 @@
                               `🏍️ *Plat:* ${myPlat}\n` +
                               `⚠️ *Kasus:* ${jenis}\n` +
                               `📝 *Ket:* ${ket ? ket : '-'}\n\n` +
-                              `📍 *LOKASI KORBAN:* \nhttp://maps.google.com/?q=${lat},${lng}\n\n` +
+                              `📍 *LOKASI KORBAN:* \nhttps://maps.google.com/?q=${lat},${lng}\n\n` +
                               `_Mohon segera diluncurkan bantuan!_`;
 
                 const linkWA = `https://wa.me/${nomorURC}?text=${encodeURIComponent(pesan)}`;
