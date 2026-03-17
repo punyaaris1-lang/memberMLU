@@ -228,5 +228,20 @@
             window.location.href = 'dashboard_kc.html';
         }
     </script>
+        <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Pastikan ini manggil sw_kc.js, BUKAN sw.js
+                navigator.serviceWorker.register('sw_kc.js')
+                .then(registration => {
+                    console.log('PWA KC Berhasil jalan!', registration.scope);
+                })
+                .catch(err => {
+                    console.log('PWA KC Gagal:', err);
+                });
+            });
+        }
+        </script>
+    
 </body>
 </html>
