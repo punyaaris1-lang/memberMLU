@@ -65,8 +65,7 @@
         }
         .is-pengurus .m-photo-wrap { border-color: var(--royal-blue); box-shadow: 0 8px 20px rgba(212,255,0,0.2); }
         .m-photo-bg { position: absolute; inset: 0; background-image: url('bg_maka.jpg'); background-size: cover; background-position: center; z-index: 1; opacity: 0.6; }
-        .m-photo-img { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 3; background: transparent;}
-        .m-photo-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: rgba(255,255,255,0.7); z-index: 2; }
+        .m-photo { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 2; background: transparent; }
 
         .m-info { flex: 1; min-width: 0; }
         .m-name { font-family: 'Outfit'; font-size: 16px; font-weight: 800; color: white; text-transform: uppercase; margin-bottom: 6px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -264,7 +263,7 @@
         let membersData = [];
         let currentPhotoBase64 = "";
 
-        // KOMPRESOR FOTO 
+        // KOMPRESOR FOTO (DIGANTI KE PNG BIAR TEMBUS PANDANG)
         document.getElementById('formFoto').addEventListener('change', function(e) {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -275,7 +274,10 @@
                     let w = img.width; let h = img.height;
                     if (w > h) { if (w > 600) { h *= 600/w; w = 600; } } else { if (h > 600) { w *= 600/h; h = 600; } }
                     canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
-                    currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    
+                    // FIX: Simpan sebagai PNG supaya background tidak jadi hitam pekat
+                    currentPhotoBase64 = canvas.toDataURL('image/png');
+                    
                     document.getElementById('previewFoto').src = currentPhotoBase64;
                     document.getElementById('previewFoto').style.display = 'block';
                 }
@@ -283,47 +285,6 @@
             }
             reader.readAsDataURL(file);
         });
-
-        // === AUTO INJECT PENGURUS & ANGGOTA (SEKALI SAJA) ===
-        async function autoInjectAwal() {
-            const seedData = [
-                // 15 PENGURUS DARI FILE pengurus_kc.html
-                { plat: "B 4124 SWI", namaKtp: "AGUS SUKMANA", hp: "081316048252", type: "RTO", role: "KETUA UMUM", tabungan: 0 },
-                { plat: "B 4426 SWF", namaKtp: "RIFKY ALFIANSYAH", hp: "081283187508", type: "RTO", role: "WAKIL KETUA", tabungan: 0 },
-                { plat: "B 4995 SWJ", namaKtp: "JERRY", hp: "085931323303", type: "TRANSGO", role: "SEKRETARIS", tabungan: 0 },
-                { plat: "B 4934 SWG", namaKtp: "ARIEF SETYAWAN", hp: "08139965020", type: "TRANSGO", role: "BENDAHARA", tabungan: 0 },
-                { plat: "B 4295 SWE", namaKtp: "ANDRI PRASETYA", hp: "088210637387", type: "TRANSGO", role: "PEMBINA", tabungan: 0 },
-                { plat: "B 4617 SWH", namaKtp: "AWANG ROCK", hp: "08569288190", type: "TRANSGO", role: "PEMBINA", tabungan: 0 },
-                { plat: "B 4959 SWF", namaKtp: "ALFIAN", hp: "085280065304", type: "RTO", role: "HUMAS INTERNAL", tabungan: 0 },
-                { plat: "B 4372 SWJ", namaKtp: "FITO", hp: "087880692224", type: "RTO", role: "HUMAS EKSTERNAL", tabungan: 0 },
-                { plat: "B 4439 SWD", namaKtp: "DON THOBIAS CHOTOB", hp: "081321251955", type: "RTO", role: "HUMAS EKSTERNAL", tabungan: 0 },
-                { plat: "B 4903 SWG", namaKtp: "DINO THREE", hp: "08212349883", type: "TRANSGO", role: "KREATOR", tabungan: 0 },
-                { plat: "B 4766 SWJ", namaKtp: "ADI SETIAWAN", hp: "085892167827", type: "RTO", role: "KREATOR", tabungan: 0 },
-                { plat: "B 5739 TFN", namaKtp: "RICKY ALAMSYAH", hp: "087711069877", type: "URC", role: "URC", tabungan: 0 },
-                { plat: "B 4166 SWI", namaKtp: "TYAN", hp: "085121312930", type: "TRANSGO", role: "URC", tabungan: 0 },
-                { plat: "B 4728 SWJ", namaKtp: "M. SAUQI VANSURI", hp: "082249831918", type: "TRANSGO", role: "URC", tabungan: 0 },
-                { plat: "B 4174 SWI", namaKtp: "FRANKY SIMANJUNTAK", hp: "081385487429", type: "TRANSGO", role: "URC", tabungan: 0 },
-                // 5 MEMBER BARU
-                { plat: "B 4351 SWJ", namaKtp: "YAN SETIAWAN", hp: "", type: "TRANSGO", role: "MEMBER", tabungan: 0 },
-                { plat: "B 4761 SWE", namaKtp: "AJI PURWANTO", hp: "082128835198", type: "TRANSGO", role: "MEMBER", tabungan: 0 },
-                { plat: "B 4764 SWE", namaKtp: "MUHAMMAD SANJAYA", hp: "082326255739", type: "TRANSGO", role: "MEMBER", tabungan: 0 },
-                { plat: "B 4808 SWJ", namaKtp: "WAHYU", hp: "081212250545", type: "TRANSGO", role: "MEMBER", tabungan: 0 },
-                { plat: "B 4129 SWI", namaKtp: "ANGGA", hp: "087730732136", type: "TRANSGO", role: "MEMBER", tabungan: 0 }
-            ];
-
-            const cekPlat = doc(db, "anggota", "B4124SWI");
-            const snap = await getDoc(cekPlat);
-            
-            if (!snap.exists()) {
-                seedData.forEach(async (m) => {
-                    const idRapat = m.plat.replace(/\s+/g, '').toUpperCase();
-                    await setDoc(doc(db, "anggota", idRapat), {
-                        plat: m.plat, namaKtp: m.namaKtp, hp: m.hp, type: m.type, vendor: m.type, role: m.role, tabungan: m.tabungan, joinDate: Date.now()
-                    }, { merge: true });
-                });
-            }
-        }
-        autoInjectAwal();
 
         // LOGIKA KASTA JABATAN PENGURUS
         const roleWeight = { 
@@ -354,13 +315,9 @@
                 const cardClass = isPengurus ? 'member-card is-pengurus' : 'member-card';
                 const nama = m.namaKtp || m.nama || "-";
                 
-                // MENGGUNAKAN LOGIKA FOTO DENGAN BINGKAI BG_MAKA
-                let photoHtml = '';
-                if (m.foto && m.foto.length > 50) {
-                    photoHtml = `<img src="${m.foto}" class="m-photo-img" onerror="this.style.display='none'">`;
-                } else {
-                    photoHtml = `<div class="m-photo-fallback"><i class="fas fa-user"></i></div>`;
-                }
+                // Gunakan pixel transparan jika tidak ada foto (agar bg_maka terlihat)
+                const emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+                const photoSrc = m.foto && m.foto.length > 50 ? m.foto : emptyPixel;
 
                 let waLink = m.hp && m.hp !== "-" && m.hp !== "" ? `https://wa.me/62${m.hp.replace(/^0+/, '')}` : '#';
                 const saldo = m.tabungan ? parseInt(m.tabungan).toLocaleString('id-ID') : "0";
@@ -370,9 +327,9 @@
                 list.innerHTML += `
                     <div class="${cardClass}" style="animation-delay:${delay}s">
                         
-                        <div class="m-photo-wrap" onclick="viewPhoto('${m.foto && m.foto.length > 50 ? m.foto : ''}')">
+                        <div class="m-photo-wrap" onclick="viewPhoto('${photoSrc !== emptyPixel ? photoSrc : ''}')">
                             <div class="m-photo-bg"></div>
-                            ${photoHtml}
+                            <img src="${photoSrc}" class="m-photo" onerror="this.src='${emptyPixel}'">
                         </div>
 
                         <div class="m-info">
