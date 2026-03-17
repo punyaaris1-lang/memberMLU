@@ -31,14 +31,26 @@
         #btnInstallPwa { background: black; color: var(--kc-yellow); border: none; padding: 8px 16px; border-radius: 10px; font-weight: 900; font-family: 'Space Grotesk'; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: 0.2s;}
         #btnInstallPwa:active { transform: scale(0.9); }
 
-        /* LOADING SCREEN SETELAH LOGIN (LOGO SORE) */
+        /* === LOADING SCREEN SETELAH LOGIN (LOGO SORE YANG UDAH DIGEDEIN) === */
         #loader { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
-        .loader-img { width: 160px; height: auto; animation: floatSore 2s ease-in-out infinite alternate; filter: drop-shadow(0 0 25px rgba(212,255,0,0.4)); margin-bottom: 10px;}
-        .loader-text { margin-top: 15px; font-family: 'Space Grotesk'; font-weight: 800; color: var(--kc-yellow); letter-spacing: 4px; font-size: 14px; text-transform: uppercase;}
-        .loading-bar { width: 180px; height: 4px; background: #222; border-radius: 4px; overflow: hidden; margin-top: 15px; box-shadow: 0 0 10px rgba(212,255,0,0.2);}
-        .loading-progress { width: 0%; height: 100%; background: var(--kc-yellow); animation: fillBar 2.5s ease forwards; }
         
-        @keyframes floatSore { 0% { transform: translateY(0) scale(0.95); } 100% { transform: translateY(-15px) scale(1.05); } }
+        .loader-img { 
+            width: 80vw; /* MENTOK GEDE SAMPE 80% LEBAR HP LU */
+            max-width: 350px; 
+            height: auto; 
+            animation: floatSore 1.5s ease-in-out infinite alternate; 
+            margin-bottom: 25px;
+        }
+        
+        .loader-text { margin-top: 15px; font-family: 'Space Grotesk'; font-weight: 800; color: var(--kc-yellow); letter-spacing: 4px; font-size: 16px; text-transform: uppercase; text-shadow: 0 0 10px rgba(212,255,0,0.5);}
+        .loading-bar { width: 220px; height: 6px; background: #222; border-radius: 6px; overflow: hidden; margin-top: 20px; box-shadow: 0 0 15px rgba(212,255,0,0.2); border: 1px solid #333;}
+        .loading-progress { width: 0%; height: 100%; background: var(--kc-yellow); box-shadow: 0 0 10px var(--kc-yellow); animation: fillBar 2.5s ease forwards; }
+        
+        /* EFEK MENTUL-MENTUL DAN GLOW MAKSIMAL */
+        @keyframes floatSore { 
+            0% { transform: translateY(0) scale(0.95); filter: drop-shadow(0 0 20px rgba(212,255,0,0.4)); } 
+            100% { transform: translateY(-20px) scale(1.1); filter: drop-shadow(0 0 50px rgba(212,255,0,1)); } 
+        }
         @keyframes fillBar { to { width: 100%; } }
 
         /* BACKGROUND AMBIENT */
@@ -125,7 +137,7 @@
 
             <div class="pin-warning">
                 <i class="fas fa-exclamation-circle"></i>
-                <p><b>PERHATIAN:</b> Ini adalah PIN Khusus untuk masuk aplikasi. <b>BUKAN</b> PIN Tabungan Anda. Jangan sampai tertukar!</p>
+                <p><b>PERHATIAN:</b> Ini adalah PIN Khusus untuk masuk aplikasi. <b>BUKAN</b> PIN Tabungan Anda.</p>
             </div>
 
             <button class="btn-login" id="btnLogin" onclick="prosesLogin()">MASUK SYSTEM</button>
@@ -135,7 +147,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw_kc.js')
+                navigator.serviceWorker.register('sw_kc.js?v=2', { scope: './' })
                 .then(registration => { console.log('PWA KC Berhasil jalan!'); })
                 .catch(err => { console.log('PWA KC Gagal:', err); });
             });
@@ -255,7 +267,7 @@
             localStorage.setItem('maka_user', JSON.stringify(data));
             localStorage.setItem('myPlat', data.plat);
             
-            // 1. Munculkan Layar Animasi SORE
+            // 1. Munculkan Layar Animasi SORE (UKURAN RAKSASA)
             const loader = document.getElementById('loader');
             loader.style.display = 'flex';
             setTimeout(() => { loader.style.opacity = '1'; }, 10);
