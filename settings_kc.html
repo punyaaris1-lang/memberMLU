@@ -100,8 +100,9 @@
         </div>
         
         <div class="input-group">
-            <label class="input-label">Ubah PIN Keamanan (Opsional)</label>
+            <label class="input-label">Ubah PIN Login App</label>
             <div class="input-box"><i class="fas fa-lock"></i><input type="password" id="inpPin" class="form-control" placeholder="Kosongkan jika tidak diganti"></div>
+            <div style="font-size: 9px; color: var(--danger); margin-top: 5px; margin-left: 5px; font-weight: 600;">*Ini adalah PIN Login Aplikasi (Bukan PIN Tabungan)</div>
         </div>
 
         <button class="btn-save" onclick="saveProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
@@ -118,13 +119,23 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // TERHUBUNG KE DATABASE PUSAT MLU AGAR DATA TETAP SINKRON
-        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
+        // MURNI TERHUBUNG KE DATABASE KARTIKA CHANDRA (antriankcnew)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM",
+            authDomain: "antriankcnew.firebaseapp.com",
+            projectId: "antriankcnew",
+            storageBucket: "antriankcnew.firebasestorage.app",
+            messagingSenderId: "348986439499",
+            appId: "1:348986439499:web:99578753dc9547d727dace"
+        };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
         let uData = JSON.parse(localStorage.getItem('maka_user'));
-        if (!uData) window.location.href = 'index_kc.html';
+        if (!uData || !uData.plat) window.location.href = 'index_kc.html';
+
+        // Pastikan kita punya ID yang benar
+        const userId = uData.id || uData.plat.replace(/\s+/g, '').toUpperCase();
 
         // Tampilkan Data yang sudah ada
         document.getElementById('inpPlat').value = uData.plat;
@@ -153,7 +164,7 @@
                     
                     ctx.drawImage(img, 0, 0, w, h);
                     
-                    // FIX PALING PENTING: Ubah format ke image/png agar transparansi TIDAK berubah jadi hitam!
+                    // Format ke image/png agar transparansi TIDAK berubah jadi hitam!
                     currentPhotoBase64 = canvas.toDataURL('image/png');
                     document.getElementById('profileImg').src = currentPhotoBase64;
                 }
@@ -162,7 +173,7 @@
             reader.readAsDataURL(file);
         });
 
-        // SIMPAN PERUBAHAN KE FIREBASE
+        // SIMPAN PERUBAHAN KE FIREBASE KC
         window.saveProfile = async () => {
             document.getElementById('statusOverlay').style.display = 'flex';
             const newKtp = document.getElementById('inpKtp').value.trim().toUpperCase();
@@ -180,22 +191,31 @@
                     namaKtp: newKtp, namaWa: newWa, nama: newWa, hp: newHp, foto: currentPhotoBase64
                 };
                 
-                // Tambahkan ganti PIN jika kolomnya diisi
-                if (newPin !== "") updatePayload.pin = newPin;
+                // Tambahkan ganti PIN Login (disimpan di field 'pin_login' agar sinkron dgn index_kc.html)
+                if (newPin !== "") {
+                    updatePayload.pin_login = newPin;
+                }
 
-                await updateDoc(doc(db, "mlu_members", uData.id), updatePayload);
+                // SIMPAN KE KOLEKSI 'anggota' di DATABASE KC
+                await updateDoc(doc(db, "anggota", userId), updatePayload);
 
                 // Update Local Memori di HP Member
                 uData.namaKtp = newKtp; uData.namaWa = newWa; uData.nama = newWa; uData.hp = newHp; uData.foto = currentPhotoBase64;
+                if (newPin !== "") uData.pin_login = newPin;
+                
                 localStorage.setItem('maka_user', JSON.stringify(uData));
 
                 document.getElementById('statusIcon').className = 'fas fa-check-circle';
                 document.getElementById('statusIcon').style.color = 'var(--royal-blue)';
                 document.getElementById('statusText').innerText = 'Berhasil Disimpan!';
-                setTimeout(() => { document.getElementById('statusOverlay').style.display = 'none'; location.href = 'dashboard_kc.html'; }, 1000);
+                
+                setTimeout(() => { 
+                    document.getElementById('statusOverlay').style.display = 'none'; 
+                    location.href = 'dashboard_kc.html'; 
+                }, 1000);
 
             } catch (e) {
-                alert("Gagal sinkronisasi ke server: " + e.message);
+                alert("Gagal sinkronisasi ke server KC: " + e.message);
                 document.getElementById('statusOverlay').style.display = 'none';
             }
         };
@@ -204,6 +224,7 @@
             if(confirm("Yakin ingin keluar dari Aplikasi KC?")) { 
                 localStorage.removeItem('maka_user'); 
                 localStorage.removeItem('maka_loc_share');
+                localStorage.removeItem('myPlat');
                 window.location.href = 'index_kc.html'; 
             } 
         };
