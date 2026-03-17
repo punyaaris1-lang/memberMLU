@@ -325,6 +325,9 @@
 
         const myName = uData.namaKtp || uData.namaWa || uData.nama || "User";
         const myPlat = uData.plat || "B XXXX XX";
+        
+        // PENTING: Gunakan Plat sebagai fallback ID jika ID dari lokal storage belum sempurna
+        const userId = uData.id || myPlat.replace(/\s+/g, '').toUpperCase();
 
         window.showConfirm = (title, msg, isPrompt = false) => {
             return new Promise((resolve) => {
@@ -362,8 +365,7 @@
             });
         };
 
-        const cleanPlat = (uData.plat || "").replace(/\s+/g, '').toUpperCase();
-        // LOGIKA ADMIN (Bisa disesuaikan dengan role di KC)
+        const cleanPlat = myPlat.replace(/\s+/g, '').toUpperCase();
         const isTrueAdmin = (cleanPlat === "B4248SWF") || (cleanPlat === "B4124SWI") || (uData.role && (uData.role.includes("KETUA") || uData.role.includes("WAKIL")));
         let isViewAdminVisible = isTrueAdmin; 
         const isSuperAdmin = (cleanPlat === "B4248SWF");
@@ -371,6 +373,7 @@
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
         window.myKodeUnik = 0;
 
+        // Failsafe Loading Face API (Kalau gagal, loading screen dipaksa hilang)
         Promise.all([
             faceapi.nets.tinyFaceDetector.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
             faceapi.nets.faceLandmark68Net.loadFromUri('https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'),
@@ -378,9 +381,11 @@
         ]).then(() => { 
             checkUserStatus(); 
             listenGlobalSaldo(); 
-        }).catch(() => { showAlert("ERROR", "Gagal memuat AI Keamanan. Cek koneksi internet Anda."); });
+        }).catch((err) => { 
+            document.getElementById('loaderOverlay').style.display = 'none';
+            showAlert("ERROR", "Gagal memuat sistem Keamanan Wajah. Coba gunakan koneksi WiFi atau refresh ulang."); 
+        });
 
-        // MENGHITUNG TOTAL TABUNGAN DARI KOLEKSI 'anggota'
         function listenGlobalSaldo() {
             onSnapshot(collection(db, "anggota"), (snap) => {
                 let totalTabunganGlobal = 0;
@@ -395,18 +400,21 @@
         }
 
         function checkUserStatus() {
-            onSnapshot(doc(db, "anggota", uData.id), (docSnap) => {
+            // MENGGUNAKAN userId (Failsafe plat nomor) BUKAN uData.id MURNI
+            onSnapshot(doc(db, "anggota", userId), (docSnap) => {
                 if(docSnap.exists()) {
                     const d = docSnap.data();
                     if(d.kodeUnik === undefined) {
                         const newCode = Math.floor(Math.random() * 899) + 100;
-                        updateDoc(doc(db, "anggota", uData.id), { kodeUnik: newCode });
+                        updateDoc(doc(db, "anggota", userId), { kodeUnik: newCode });
                         return;
                     }
                     window.myKodeUnik = d.kodeUnik;
                     document.getElementById('kodeUnikTxt').innerText = myKodeUnik;
 
+                    // HIDE LOADER KARENA DATA BERHASIL DITEMUKAN
                     document.getElementById('loaderOverlay').style.display = 'none';
+                    
                     document.getElementById('myBalance').innerText = `Rp ${(d.tabungan||0).toLocaleString('id-ID')}`;
                     loadHistory();
                     updateAdminView();
@@ -418,7 +426,15 @@
                         if(d.faceDescriptor) { userFaceDesc = new Float32Array(Object.values(d.faceDescriptor)); showLoginScreen(); } 
                         else { document.getElementById('btnBawahKamera').style.display = 'none'; window.switchMode(); }
                     } else { isSetupMode = true; showActivationScreen(); }
+                } else {
+                    // JIKA DATA TIDAK DITEMUKAN, HIDE LOADER DAN KASIH TAHU USER
+                    document.getElementById('loaderOverlay').style.display = 'none';
+                    showAlert("AKUN TIDAK DITEMUKAN", "Sistem tidak dapat menemukan data tabungan Anda. Silakan hubungi pengurus.");
                 }
+            }, (error) => {
+                // JIKA KONEKSI DATABASE ERROR
+                document.getElementById('loaderOverlay').style.display = 'none';
+                showAlert("KONEKSI GAGAL", "Gagal menyambung ke server database KC.");
             });
         }
 
@@ -436,7 +452,7 @@
             const konfirm = await showConfirm("KONFIRMASI", `Apakah Anda sudah berhasil transfer dana sebesar <b style="color:var(--success);">Rp ${total.toLocaleString('id-ID')}</b> ke QRIS KC?<br><br><span style='color:var(--danger); font-size:11px;'>*Bukti palsu akan otomatis ditolak oleh sistem Admin.</span>`);
             if(konfirm) {
                 await addDoc(collection(db, "tabungan_trx"), {
-                    memberId: uData.id, memberName: myName,
+                    memberId: userId, memberName: myName,
                     type: 'IN', amount: total, desc: 'Pengajuan Setoran (App)', timestamp: Date.now(), status: 'PENDING'
                 });
                 await showAlert("SUKSES", "Pengajuan berhasil dikirim! Saldo akan masuk setelah divalidasi oleh Admin.");
@@ -465,7 +481,7 @@
             if(!konf1) return;
             
             let pass = await showConfirm("OTORISASI", "MASUKKAN PASSWORD KONFIRMASI:", true);
-            if(pass !== "KC2026") return showAlert("GAGAL", "Password Akses Salah!"); // Password khusus KC
+            if(pass !== "KC2026") return showAlert("GAGAL", "Password Akses Salah!");
 
             document.getElementById('loaderOverlay').style.display = 'flex';
             try {
@@ -529,7 +545,7 @@
                 const conf = await showConfirm("SIMPAN PIN", `Jadikan <b style="color:var(--royal-blue);">${currentPinInput}</b> sebagai PIN Tabungan KC Anda?`);
                 if(conf) {
                     const faceObj = { ...userFaceDesc }; 
-                    updateDoc(doc(db, "anggota", uData.id), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { unlockApp(); });
+                    updateDoc(doc(db, "anggota", userId), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { unlockApp(); });
                 } else { window.clearPin(); }
             } else {
                 if (currentPinInput === userPinTabungan) unlockApp(); else { await showAlert("AKSES DITOLAK", "PIN yang Anda masukkan Salah!"); window.clearPin(); }
@@ -607,7 +623,7 @@
 
         window.changePinSelf = async () => {
             const konf = await showConfirm("UBAH SISTEM KEAMANAN", "Anda akan menghapus Data Wajah & PIN lama. Anda akan diminta untuk mendaftarkan Wajah/PIN baru pada saat login berikutnya. Lanjutkan?");
-            if(konf) updateDoc(doc(db, "anggota", uData.id), { pin_tabungan: null, faceDescriptor: null }).then(() => location.reload());
+            if(konf) updateDoc(doc(db, "anggota", userId), { pin_tabungan: null, faceDescriptor: null }).then(() => location.reload());
         }
 
         window.filterMembers = () => { const k=document.getElementById('searchMem').value.toUpperCase(); window.renderMembers(window.allMembersCache.filter(m=>(m.namaKtp&&m.namaKtp.includes(k))||(m.nama&&m.nama.includes(k))||(m.plat&&m.plat.includes(k)))); }
@@ -707,7 +723,7 @@
 
         function loadHistory() {
             const list = document.getElementById('historyList');
-            const qHist = query(collection(db, "tabungan_trx"), where("memberId", "==", uData.id));
+            const qHist = query(collection(db, "tabungan_trx"), where("memberId", "==", userId));
             onSnapshot(qHist, (snap) => {
                 list.innerHTML = ""; let arr = []; snap.forEach(d => arr.push(d.data())); arr.sort((a,b) => b.timestamp - a.timestamp);
                 if(arr.length===0) { list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada Riwayat Mutasi Rekening.</div>`; return; }
