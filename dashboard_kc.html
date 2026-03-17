@@ -56,28 +56,25 @@
         input:checked + .slider { background-color: var(--electric-blue); border-color: var(--electric-blue);}
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* === FIX TOTAL: BINGKAI FOTO MEWAH overlay === */
-        /* Kotak luar yang gagah */
         .photo-wrap { position: relative; width: 100px; height: 100px; border-radius: 25px; background: #000; display: flex; align-items: center; justify-content: center; border: 4px solid var(--kc-green); flex-shrink: 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); overflow: hidden; margin-bottom: 15px; z-index: 2;}
-        
-        /* Gambar Background Gahar (bg_maka.jpg) di dalam bingkai, lapisan bawah (z-index: 1) */
         .photo-bg-dash { position: absolute; inset: 0; background-image: url('bg_maka.jpg'); background-size: cover; background-position: center; opacity: 1; z-index: 1; border-radius: 20px;}
-        
-        /* Foto Member (Mengisi penuh, potong bulat di tengah), lapisan atas (z-index: 2) */
-        /* HAPUS BACKGROUND HIJAU SOLID! Biarkan transparan */
         .p-photo { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 2; border-radius: 18px; border: none; box-shadow: none; background: transparent;}
         
         .p-info { display: flex; flex-direction: column; align-items: center; z-index: 2;}
         .p-role { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 900; background: var(--royal-blue); color: black; padding: 3px 12px; border-radius: 50px; display: inline-block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
         .p-name { font-family: 'Outfit'; font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px; line-height: 1.2; text-transform: uppercase; }
         .p-plat { font-family: 'Inter'; font-size: 12px; font-weight: 700; color: var(--electric-blue); background: rgba(16,185,129,0.1); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(16,185,129,0.2);}
-        /* ========================================= */
 
-        .board-pengumuman { background: linear-gradient(90deg, rgba(212,255,0,0.1) 0%, rgba(16,185,129,0.05) 100%); border-left: 4px solid var(--royal-blue); border-radius: 12px; padding: 15px; margin-top: 25px; display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%;}
+        .board-pengumuman { background: linear-gradient(90deg, rgba(212,255,0,0.1) 0%, rgba(16,185,129,0.05) 100%); border-left: 4px solid var(--royal-blue); border-radius: 12px; padding: 15px; margin-top: 25px; display: flex; gap: 12px; align-items: flex-start; text-align: left; width: 100%; position: relative;}
         .board-icon { font-size: 20px; color: var(--royal-blue); animation: pulse 2s infinite; }
+        .board-content { flex: 1; padding-right: 25px; }
         .board-content h4 { margin: 0 0 5px 0; font-family: 'Space Grotesk'; font-size: 12px; color: var(--royal-blue); letter-spacing: 1px; }
         .board-content p { margin: 0; font-size: 11px; color: #cbd5e1; line-height: 1.5; font-weight: 500;}
         @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* TOMBOL EDIT PENGUMUMAN (KHUSUS ADMIN) */
+        #btnEditBoard { position: absolute; right: 10px; top: 15px; cursor: pointer; color: var(--kc-yellow); font-size: 16px; padding: 5px; transition: 0.2s; display: none; }
+        #btnEditBoard:active { transform: scale(0.9); }
 
         .dash-container { padding: 0 20px; margin-bottom: 20px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
         
@@ -89,13 +86,12 @@
         .fc-banner.mode-kc .banner-title i { color: var(--kc-green); margin-right: 5px;}
         .fc-banner.mode-kc .banner-desc { font-size: 11px; font-weight: 600; color: #aaa; }
         .fc-banner.mode-kc .banner-val { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: var(--kc-green); text-shadow: 0 0 15px rgba(212, 255, 0, 0.4); line-height: 1;}
-        .fc-banner.mode-kc .banner-val { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: var(--kc-green); text-shadow: 0 0 15px rgba(212, 255, 0, 0.4); line-height: 1;}
         .fc-banner.mode-kc .banner-lbl { font-size: 8px; font-weight: 800; color: #fff; letter-spacing: 1px; margin-top: 4px; text-transform: uppercase; }
 
         /* RADAR MAP STYLES */
         .custom-div-icon { background: transparent; border: none; }
-        .marker-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); background: #111; color: #D4FF00; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 800; white-space: nowrap; border: 1px solid #D4FF00;}
-        #radarMap { width: 100%; height: 100%; filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+        .marker-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); background: #111; color: #D4FF00; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; white-space: nowrap; border: 1px solid #D4FF00; box-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+        #radarMap { width: 100%; height: 100%; }
 
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .menu-btn { background: rgba(15, 15, 15, 0.8); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; transition: 0.2s; }
@@ -108,6 +104,7 @@
         .ic-keuangan { background: linear-gradient(135deg, #64748b 0%, #334155 100%); } 
         .ic-tabungan { background: linear-gradient(135deg, #10b981 0%, #047857 100%); } 
         .ic-info { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%); } 
+        .ic-urc { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); }
 
         .menu-title { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: #e2e8f0; }
 
@@ -122,16 +119,12 @@
         .tk-text p { margin: 0; color: #CBD5E1; font-size: 11px; font-family: 'Inter'; font-weight: 500; line-height: 1.4; padding-right: 5px; }
         .tk-btn { background: white; color: black; font-family: 'Space Grotesk'; font-weight: 900; font-size: 11px; padding: 10px 18px; border-radius: 50px; z-index: 2; display: flex; align-items: center; gap: 6px; box-shadow: 0 5px 15px rgba(255,255,255,0.2); flex-shrink: 0; }
 
-        /* === DUAL FLOATING BUTTONS (SOS & WA CS) === */
         .float-container { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; z-index: 2000; }
         
         .btn-float { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #fff; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: 0.3s; text-decoration: none;}
         .btn-float:active { transform: scale(0.9); }
         
-        /* Tombol WA CS MAKA */
         .btn-wa-cs { background: linear-gradient(135deg, #25D366, #128C7E); border: 2px solid rgba(255,255,255,0.2); }
-        
-        /* Tombol SOS */
         .btn-sos { border: 2px solid rgba(255,255,255,0.2); background: linear-gradient(135deg, #ef4444, #991b1b); animation: pulseSOS 2s infinite; }
         @keyframes pulseSOS { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } }
 
@@ -140,6 +133,10 @@
         .modal-glass-box { background: #111; border-radius: 25px; padding: 25px; width: 85%; max-width: 350px; text-align: left; box-shadow: 0 30px 80px rgba(0,0,0,0.8); transform: scale(0.9); transition: 0.3s; border: 1px solid rgba(255,255,255,0.15);}
         .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
         .btn-modal { padding: 14px 25px; border-radius: 14px; font-weight: 800; font-size: 14px; border: none; cursor: pointer; flex: 1; margin: 0 5px;}
+
+        /* CLASS INPUT FORM UNTUK MODAL EDIT BOARD */
+        .form-input { width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #333; background: #000; color: white; font-family: 'Inter'; font-size: 14px; outline: none; }
+        .form-input:focus { border-color: var(--kc-yellow); }
 
         .dock-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 88%; max-width: 380px; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.15); padding: 15px 35px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; transition: 0.3s; gap: 4px; }
@@ -188,12 +185,15 @@
                     <h4 id="kcBoardTitle">INFO KARTIKA CHANDRA</h4>
                     <p id="kcBoardDesc">Selamat datang di Dashboard KC. Pastikan radar selalu aktif saat di perjalanan.</p>
                 </div>
+                <div id="btnEditBoard" onclick="openEditBoard()">
+                    <i class="fas fa-pen"></i>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="dash-container">
-        <div id="mainFcBanner" class="fc-banner mode-kc" onclick="window.location.href='antriankc.html'">
+        <div id="mainFcBanner" class="fc-banner mode-kc" onclick="window.location.href='system.html'">
             <div class="banner-left">
                 <div class="banner-title"><i class="fas fa-bolt"></i> FC KARTIKA CHANDRA</div>
                 <div class="banner-desc" id="mainFcDesc"><i class="fas fa-location-arrow"></i> Area Operasional</div>
@@ -233,6 +233,10 @@
             <a href="keuangan_kc.html" class="menu-btn"><div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div><div class="menu-title">Uang Kas KC</div></a>
             <a href="tabungan_kc.html" class="menu-btn"><div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div><div class="menu-title">Tabungan KC</div></a>
             <a href="info_kc.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info KC</div></a>
+            <a href="urc_kc.html" class="menu-btn">
+                <div class="icon-box ic-urc"><i class="fas fa-crosshairs"></i></div>
+                <div class="menu-title" style="color: var(--danger);">URC Command</div>
+            </a>
         </div>
     </div>
 
@@ -263,6 +267,22 @@
         </div>
     </div>
 
+    <div class="modal-glass-overlay" id="boardEditModal">
+        <div class="modal-glass-box">
+            <h3 style="font-family:'Outfit'; color:var(--kc-yellow); margin-top:0; margin-bottom:15px;"><i class="fas fa-pen"></i> EDIT INFO DASHBOARD</h3>
+            <label style="font-size:10px; color:var(--text-muted); font-weight:800; margin-bottom:5px; display:block;">Judul Info:</label>
+            <input type="text" id="inputBoardTitle" class="form-input" placeholder="Judul Info" style="margin-bottom:15px;">
+            
+            <label style="font-size:10px; color:var(--text-muted); font-weight:800; margin-bottom:5px; display:block;">Isi Pesan Singkat:</label>
+            <textarea id="inputBoardDesc" class="form-input" rows="3" placeholder="Isi pengumuman pendek..."></textarea>
+            
+            <div style="margin-top:20px; display:flex; gap:10px;">
+                <button class="btn-modal" style="background:#333; color:white;" onclick="document.getElementById('boardEditModal').classList.remove('show'); setTimeout(()=>document.getElementById('boardEditModal').style.display='none',300);">BATAL</button>
+                <button class="btn-modal" style="background:var(--kc-yellow); color:black;" onclick="saveBoardInfo()">SIMPAN</button>
+            </div>
+        </div>
+    </div>
+
     <div class="dock-container">
         <a href="lokasi_fc.html" class="nav-item"><i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI</span></a>
         <a href="dashboard_kc.html" class="nav-item active"><i class="fas fa-home"></i><span class="nav-text">HOME</span></a>
@@ -271,14 +291,20 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Koneksi Firebase dummy
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        const appKC = initializeApp({ apiKey: "AIzaSyDDVYQSjmJEn_RvIUotSxbh8L-ysJMCthk", authDomain: "kartikachandrafc.firebaseapp.com", projectId: "kartikachandrafc" }, "AppKC");
+        const appKC = initializeApp({ 
+            apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM",
+            authDomain: "antriankcnew.firebaseapp.com",
+            projectId: "antriankcnew",
+            storageBucket: "antriankcnew.firebasestorage.app",
+            messagingSenderId: "348986439499",
+            appId: "1:348986439499:web:99578753dc9547d727dace"
+        }, "AppKC");
         const dbKC = getFirestore(appKC);
         const refKC = doc(dbKC, "antrian", "utama");
 
@@ -286,8 +312,9 @@
         try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
         if (!uData || !uData.plat) window.location.href = 'index_kc.html'; 
 
-        const myName = uData.namaKtp || uData.namaWa || "User";
+        const myName = uData.namaKtp || uData.namaWa || uData.nama || "User";
         const myPlat = uData.plat || "B XXXX XX";
+        const myPhoto = uData.foto && uData.foto.length > 50 ? uData.foto : "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
         let map = null, markers = {}, watchId = null;
 
@@ -307,10 +334,17 @@
             }
 
             const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
+            const myRole = (uData.role || "").toUpperCase();
             
             document.getElementById('userRole').innerText = uData.role || "MEMBER";
             if (myPlatClean === "B4248SWF") {
                 document.getElementById('secretGodBtn').onclick = () => { window.location.href = 'superadmin.html'; };
+            }
+
+            // CEK ADMIN UNTUK MUNCULIN TOMBOL EDIT PAPAN PENGUMUMAN
+            const isAdmin = myRole.includes("KETUA") || myRole.includes("WAKIL") || myRole.includes("URC") || myPlatClean === "B4124SWI" || myPlatClean === "B4248SWF";
+            if(isAdmin) {
+                document.getElementById('btnEditBoard').style.display = 'block';
             }
 
             const savedLoc = localStorage.getItem('maka_loc_share'); 
@@ -342,6 +376,7 @@
                 }
             }); 
             
+            // BACA DATA PAPAN PENGUMUMAN DARI FIREBASE KC
             const refBoard = doc(dbKC, "settings", "board_info");
             onSnapshot(refBoard, (snap) => {
                 if(snap.exists()) {
@@ -350,6 +385,35 @@
                 }
             });
         }
+
+        // === FUNGSI EDIT PAPAN PENGUMUMAN DASHBOARD ===
+        window.openEditBoard = () => {
+            document.getElementById('inputBoardTitle').value = document.getElementById('kcBoardTitle').innerText;
+            document.getElementById('inputBoardDesc').value = document.getElementById('kcBoardDesc').innerText;
+            const m = document.getElementById('boardEditModal'); 
+            m.style.display='flex'; 
+            setTimeout(()=>m.classList.add('show'),10); 
+        };
+
+        window.saveBoardInfo = async () => {
+            const titleInput = document.getElementById('inputBoardTitle').value.trim();
+            const descInput = document.getElementById('inputBoardDesc').value.trim();
+            
+            if(!titleInput || !descInput) return alert("Judul dan pesan tidak boleh kosong!");
+
+            try {
+                // Simpan/Update data ke database KC
+                await setDoc(doc(dbKC, "settings", "board_info"), {
+                    title: titleInput,
+                    desc: descInput
+                }, { merge: true });
+                
+                document.getElementById('boardEditModal').classList.remove('show'); 
+                setTimeout(()=>document.getElementById('boardEditModal').style.display='none',300);
+            } catch (e) {
+                alert("Gagal menyimpan pengumuman: " + e.message);
+            }
+        };
 
         window.toggleLoc = (el) => { 
             if(el.checked) { 
@@ -369,7 +433,7 @@
             setTimeout(() => { 
                 if(!map) { 
                     map = L.map('radarMap').setView([-6.2285953, 106.819502], 13); 
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); 
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '© OpenStreetMap KC'}).addTo(map); 
                     loadMembers(); 
                 } 
                 map.invalidateSize(); 
@@ -379,18 +443,38 @@
         function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
         
         function loadMembers() { 
-            onSnapshot(collection(db, "mlu_members"), (snap) => { 
-                snap.forEach(doc => { 
-                    const m = doc.data(); 
-                    if(m.isSharing && m.lat && m.lng) { 
-                        const iconHtml = `<div style="width:20px; height:20px; background:#D4FF00; border:2px solid #000; border-radius:50%; box-shadow:0 0 10px #D4FF00;"></div><div class="marker-label">${m.nama.split(' ')[0]}</div>`;
-                        const icon = L.divIcon({ className: 'custom-div-icon', html: iconHtml, iconSize:[20,20], iconAnchor:[10,10] }); 
-                        if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); 
-                        else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); 
-                    } else if(markers[doc.id]) { 
-                        map.removeLayer(markers[doc.id]); delete markers[doc.id]; 
-                    } 
+            onSnapshot(collection(dbKC, "live_tracking"), (snap) => { 
+                const currentIds = [];
+                snap.forEach(docSnap => { 
+                    currentIds.push(docSnap.id);
+                    const m = docSnap.data(); 
+                    if(m.lat && m.lng) { 
+                        const photoUrl = (m.foto && m.foto.length > 50) ? m.foto : "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+                        const shortName = (m.nama || 'User').split(' ')[0];
+                        
+                        const iconHtml = `
+                            <div style="position:relative; width:30px; height:30px; border-radius:50%; border:2px solid #D4FF00; overflow:hidden; box-shadow:0 0 10px #D4FF00; background:#000;">
+                                <img src="${photoUrl}" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                            <div class="marker-label">${shortName}</div>
+                        `;
+                        const icon = L.divIcon({ className: 'custom-div-icon', html: iconHtml, iconSize:[30,30], iconAnchor:[15,15] }); 
+                        
+                        if(markers[docSnap.id]) { 
+                            markers[docSnap.id].setLatLng([m.lat, m.lng]); 
+                            markers[docSnap.id].setIcon(icon); 
+                        } else { 
+                            markers[docSnap.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); 
+                        } 
+                    }
                 }); 
+                
+                for(let id in markers) {
+                    if(!currentIds.includes(id)) {
+                        map.removeLayer(markers[id]);
+                        delete markers[id];
+                    }
+                }
             }); 
         }
 
@@ -398,12 +482,26 @@
             if(navigator.geolocation) { 
                 watchId = navigator.geolocation.watchPosition(pos => {
                     if(uData.id) updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true});
+                    
+                    const trackRef = doc(dbKC, "live_tracking", uData.id || myPlat.replace(/\s+/g, ''));
+                    setDoc(trackRef, {
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                        nama: myName,
+                        plat: myPlat,
+                        hp: uData.hp || uData.wa || uData.whatsapp || "",
+                        foto: myPhoto, 
+                        timestamp: Date.now()
+                    }, { merge: true }).catch(e => console.log(e));
+
                 }, null, {enableHighAccuracy:true}); 
             } 
         }
+
         function stopTracking() { 
             if(watchId) navigator.geolocation.clearWatch(watchId); 
-            if(uData.id) updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); 
+            const trackRef = doc(dbKC, "live_tracking", uData.id || myPlat.replace(/\s+/g, ''));
+            deleteDoc(trackRef).catch(e => console.log(e)); 
         }
 
         window.openSosModal = () => { 
@@ -426,6 +524,9 @@
                 const lng = pos.coords.longitude;
                 const jenis = document.getElementById('sosType').value;
                 const ket = document.getElementById('sosDesc').value;
+
+                const trackRef = doc(dbKC, "live_tracking", uData.id || myPlat.replace(/\s+/g, ''));
+                setDoc(trackRef, { isSOS: true, timestamp: Date.now() }, { merge: true }).catch(e => console.log(e));
 
                 const pesan = `🚨 *DARURAT S.O.S (KC)* 🚨\n\n` +
                               `👤 *Nama:* ${myName}\n` +
