@@ -52,33 +52,52 @@
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
         .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; line-height: 1.1; }
         
-        /* --- WIDGET SHOLAT GLOWING --- */
-        .ramadan-widget { 
-            margin-top: 25px; border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; 
-            background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.3);
-            box-shadow: var(--glow-green); position: relative; overflow: hidden; backdrop-filter: blur(5px);
+        /* === BANNER DARURAT DENDA (PENGGANTI WIDGET SAHUR) === */
+        .alert-banner {
+            background: linear-gradient(135deg, #EF4444 0%, #991B1B 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 25px; /* Spasi dari judul stasiun */
+            border: 2px solid #FCA5A5;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+            animation: pulseAlert 2s infinite;
+            text-align: center;
+            position: relative;
+            z-index: 5;
         }
-        .rw-left { display: flex; align-items: center; gap: 15px; position: relative; z-index: 2; }
-        .rw-icon { font-size: 28px; color: var(--success); animation: pulseGlow 2s infinite; filter: drop-shadow(0 0 8px rgba(16,185,129,0.5)); }
-        @keyframes pulseGlow { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
-        .rw-lbl { font-size: 9px; font-weight: 800; color: #CBD5E1; text-transform: uppercase; letter-spacing: 1px; }
-        .rw-time { font-family: 'Space Grotesk'; font-size: 24px; font-weight: 900; color: #fff; margin-top: 2px; text-shadow: 0 0 10px rgba(16,185,129,0.4);}
-        .rw-target { font-size: 11px; font-weight: 800; color: white; background: var(--success); padding: 6px 14px; border-radius: 12px; box-shadow: 0 4px 10px rgba(16,185,129,0.4); position: relative; z-index: 2; }
+        .alert-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #FEF2F2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .alert-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.6;
+            color: #FFFFFF;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        @keyframes pulseAlert {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
 
         .admin-badge { display: none; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 4px; box-shadow: var(--glow-red); }
         .gps-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: var(--warning); color: white; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; box-shadow: 0 5px 15px rgba(245,158,11,0.3); z-index: 15; white-space: nowrap; }
         .gps-badge.ok { background: var(--success); box-shadow: var(--glow-green); }
         .gps-badge.err { background: var(--danger); box-shadow: var(--glow-red); }
-
-        /* --- POP-UP BEDUG --- */
-        .buka-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; text-align: center; }
-        .buka-box { background: white; padding: 40px 20px; border-radius: 35px; box-shadow: var(--glow-gold); border: 1px solid rgba(212,175,55,0.3); width: 100%; max-width: 350px; transform: scale(0.8); animation: popBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes popBounce { to { transform: scale(1); } }
-        .bedug-icon { font-size: 70px; margin-bottom: 15px; animation: beatDrum 0.4s infinite alternate; display: inline-block; filter: drop-shadow(0 10px 15px rgba(212,175,55,0.3)); color: var(--gold);}
-        @keyframes beatDrum { 0% { transform: rotate(-15deg) scale(1); } 100% { transform: rotate(15deg) scale(1.1); } }
-        .buka-title { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--gold); margin: 0 0 10px 0; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(212,175,55,0.2);}
-        .buka-desc { color: var(--text-muted); font-size: 13px; line-height: 1.5; margin-bottom: 25px; font-weight: 600; }
-        .btn-tutup-buka { background: var(--electric-blue); color: white; border: none; padding: 16px 30px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; width: 100%; box-shadow: var(--glow-blue); }
 
         /* --- QUEUE STATUS GLASS --- */
         .status-overlap { padding: 0 20px; margin-top: -35px; position: relative; z-index: 11; }
@@ -188,15 +207,9 @@
             <div class="admin-badge admin-only" id="adminIndicator"><i class="fas fa-shield-alt"></i> PENGURUS</div>
         </div>
 
-        <div class="ramadan-widget">
-            <div class="rw-left">
-                <i class="fas fa-moon rw-icon" id="iconTimer"></i>
-                <div>
-                    <div class="rw-lbl" id="lblTimer">SINKRONISASI JADWAL...</div>
-                    <div class="rw-time" id="countdown">--:--:--</div>
-                </div>
-            </div>
-            <div class="rw-target" id="timeTarget">MEMUAT</div>
+        <div class="alert-banner">
+            <div class="alert-title"><i class="fa-solid fa-triangle-exclamation fa-fade"></i> PENGUMUMAN </div>
+            <div class="alert-text">TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. <br> BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000</br></div>
         </div>
         
         <div class="gps-badge" id="gpsIndicator"><i class="fas fa-spinner fa-spin"></i> MEMERIKSA LOKASI...</div>
@@ -224,15 +237,6 @@
     </div>
 
     <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
-
-    <div class="buka-overlay" id="bukaPuasaPopup">
-        <div class="buka-box">
-            <div class="bedug-icon">🥁</div>
-            <h2 class="buka-title" id="bedugTitle">ALHAMDULILLAH</h2>
-            <p class="buka-desc" id="bedugDesc">Selamat berbuka puasa bagi wilayah Jakarta dan sekitarnya. Jangan lupa berdoa sebelum makan!</p>
-            <button class="btn-tutup-buka" onclick="document.getElementById('bukaPuasaPopup').style.display='none'">TERIMA KASIH</button>
-        </div>
-    </div>
 
     <div class="sheet-overlay" id="sheetInputBatre" onclick="closeSheet(event, this.id)">
         <div class="bottom-sheet" onclick="event.stopPropagation()">
@@ -353,68 +357,6 @@
                 isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = "<i class='fas fa-eye'></i> MODE PANTAU (NO GPS)"; updateUI();
             }, {enableHighAccuracy: true, maximumAge: 10000});
         }
-
-        // --- API JADWAL SHOLAT KEMENAG ---
-        let jadwalSholat = null;
-        async function fetchJadwalAPI() {
-            try {
-                const now = new Date();
-                const yr = now.getFullYear(); const mo = String(now.getMonth()+1).padStart(2,'0'); const dt = String(now.getDate()).padStart(2,'0');
-                const res = await fetch(`https://api.myquran.com/v2/sholat/jadwal/1301/${yr}/${mo}/${dt}`);
-                const data = await res.json();
-                if(data.status) jadwalSholat = data.data.jadwal;
-            } catch (e) { console.error("API Jadwal Gagal"); }
-        }
-        fetchJadwalAPI();
-
-        function showBedugPopup(namaWaktu) {
-            const title = document.getElementById('bedugTitle'); const desc = document.getElementById('bedugDesc');
-            if(namaWaktu === 'MAGHRIB') { title.innerText = "ALHAMDULILLAH"; title.style.color = "var(--gold)"; desc.innerText = "Telah masuk waktu Maghrib untuk wilayah Jakarta dan sekitarnya. Selamat berbuka puasa!"; } 
-            else { title.innerText = "WAKTU " + namaWaktu; title.style.color = "var(--electric-blue)"; desc.innerText = `Mari sejenak hentikan aktivitas. Telah masuk waktu sholat ${namaWaktu} untuk wilayah Jakarta dan sekitarnya.`; }
-            document.getElementById('bukaPuasaPopup').style.display = 'flex';
-        }
-
-        function updateTimer() {
-            const now = new Date(); 
-            const currSec = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-            const currMins = now.getHours() * 60 + now.getMinutes();
-            
-            let imsakSec = 4 * 3600 + 30 * 60; let maghribSec = 18 * 3600 + 10 * 60;
-            let imsakStr = "04:30"; let maghribStr = "18:10";
-
-            if (jadwalSholat) {
-                const i = jadwalSholat.imsak.split(':'); imsakSec = i[0]*3600 + i[1]*60; imsakStr = jadwalSholat.imsak;
-                const m = jadwalSholat.maghrib.split(':'); maghribSec = m[0]*3600 + m[1]*60; maghribStr = jadwalSholat.maghrib;
-                
-                const wktSholat = [ {n:'SUBUH', v:jadwalSholat.subuh}, {n:'DZUHUR', v:jadwalSholat.dzuhur}, {n:'ASHAR', v:jadwalSholat.ashar}, {n:'MAGHRIB', v:jadwalSholat.maghrib}, {n:'ISYA', v:jadwalSholat.isya} ];
-                
-                // CEK JADWAL SHOLAT DENGAN TOLERANSI 10 MENIT
-                wktSholat.forEach(t => {
-                    let parts = t.v.split(':');
-                    let sholatMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-                    
-                    if (currMins >= sholatMins && currMins <= sholatMins + 10) {
-                        const recKey = now.toDateString() + '_' + t.n;
-                        if(localStorage.getItem('maka_bedug_notif') !== recKey) { 
-                            showBedugPopup(t.n); 
-                            localStorage.setItem('maka_bedug_notif', recKey); 
-                        }
-                    }
-                });
-            }
-
-            let targetTime = 0;
-            if (currSec >= imsakSec && currSec < maghribSec) {
-                targetTime = maghribSec; document.getElementById('lblTimer').innerText = "MENUJU BUKA PUASA"; document.getElementById('timeTarget').innerText = "MAGHRIB " + maghribStr; document.getElementById('iconTimer').className = "fas fa-moon rw-icon";
-            } else {
-                targetTime = imsakSec; if (currSec >= maghribSec) targetTime += 24 * 3600;
-                document.getElementById('lblTimer').innerText = "MENUJU BATAS SAHUR"; document.getElementById('timeTarget').innerText = "IMSAK " + imsakStr; document.getElementById('iconTimer').className = "fas fa-mosque rw-icon";
-            }
-
-            let diff = targetTime - currSec; let j = Math.floor(diff / 3600); let n = Math.floor((diff % 3600) / 60); let d = diff % 60;
-            document.getElementById('countdown').innerText = `${j.toString().padStart(2, '0')}:${n.toString().padStart(2, '0')}:${d.toString().padStart(2, '0')}`;
-        }
-        setInterval(updateTimer, 1000);
 
         // --- SISTEM FIREBASE DATA ---
         let localSlots = [null, null, null]; 

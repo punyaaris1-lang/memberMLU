@@ -67,6 +67,45 @@
 
         .dash-container { padding: 0 20px; margin-bottom: 20px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
         
+        /* === BANNER DARURAT DENDA === */
+        .alert-banner {
+            background: linear-gradient(135deg, #EF4444 0%, #991B1B 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #FCA5A5;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+            animation: pulseAlert 2s infinite;
+            text-align: center;
+        }
+        .alert-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #FEF2F2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .alert-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1.6;
+            color: #FFFFFF;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        @keyframes pulseAlert {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
         .fc-banner { border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; cursor: pointer; gap: 10px; transition: 0.5s; }
         .banner-left { flex: 1; min-width: 0; } 
         .banner-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
@@ -195,6 +234,12 @@
 
     <div class="dash-container">
         
+        <div class="alert-banner">
+            <div class="alert-title"><i class="fa-solid fa-triangle-exclamation fa-fade"></i> PENGUMUMAN</div>
+            <div class="alert-text">TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. 
+            <br>BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000<br/> </div>
+        </div>
+
         <div id="mainFcBanner" class="fc-banner glass-panel" onclick="handleFCBannerClick()">
             <div class="banner-left">
                 <div class="banner-title" id="mainFcTitle"><i class="fas fa-charging-station" style="color:var(--electric-blue);"></i> FC KELAPA GADING</div>
