@@ -1,8 +1,10 @@
 {
+  "id": "/kartikachandra-app/",
   "name": "Kartika Chandra FC",
   "short_name": "KC APP",
   "description": "Sistem Manajemen & URC Kartika Chandra",
-  "start_url": "index_kc.html",
+  "start_url": "index_kc.html?app=kc",
+  "scope": ".",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#D4FF00",
