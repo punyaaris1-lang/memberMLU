@@ -23,12 +23,23 @@
         body { margin: 0; background: var(--bg-black); font-family: 'Inter', sans-serif; color: var(--text-main); overflow: hidden; -webkit-tap-highlight-color: transparent;}
         * { box-sizing: border-box; outline: none; text-decoration: none; }
 
-        /* LOADING SCREEN (LOGO SORE) */
-        #loader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
-        .loader-img { width: 120px; height: auto; animation: pulseGlow 1.5s infinite alternate; filter: drop-shadow(0 0 20px rgba(212,255,0,0.3));}
-        .loader-text { margin-top: 20px; font-family: 'Space Grotesk'; font-weight: 800; color: var(--kc-yellow); letter-spacing: 3px; font-size: 12px; animation: blink 1s infinite;}
-        @keyframes pulseGlow { 0% { transform: scale(0.95); filter: drop-shadow(0 0 10px rgba(212,255,0,0.2)); } 100% { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(212,255,0,0.6)); } }
-        @keyframes blink { 0%, 100% {opacity: 1;} 50% {opacity: 0.3;} }
+        /* PWA INSTALL BANNER */
+        .pwa-banner { position: fixed; top: 0; left: 0; right: 0; background: var(--kc-yellow); color: black; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100000; box-shadow: 0 10px 30px rgba(212,255,0,0.3); font-family: 'Space Grotesk'; font-weight: 800; transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: none;}
+        .pwa-banner.show { transform: translateY(0); }
+        .pwa-info { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+        .pwa-info i { font-size: 20px; }
+        #btnInstallPwa { background: black; color: var(--kc-yellow); border: none; padding: 8px 16px; border-radius: 10px; font-weight: 900; font-family: 'Space Grotesk'; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: 0.2s;}
+        #btnInstallPwa:active { transform: scale(0.9); }
+
+        /* LOADING SCREEN SETELAH LOGIN (LOGO SORE) */
+        #loader { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
+        .loader-img { width: 160px; height: auto; animation: floatSore 2s ease-in-out infinite alternate; filter: drop-shadow(0 0 25px rgba(212,255,0,0.4)); margin-bottom: 10px;}
+        .loader-text { margin-top: 15px; font-family: 'Space Grotesk'; font-weight: 800; color: var(--kc-yellow); letter-spacing: 4px; font-size: 14px; text-transform: uppercase;}
+        .loading-bar { width: 180px; height: 4px; background: #222; border-radius: 4px; overflow: hidden; margin-top: 15px; box-shadow: 0 0 10px rgba(212,255,0,0.2);}
+        .loading-progress { width: 0%; height: 100%; background: var(--kc-yellow); animation: fillBar 2.5s ease forwards; }
+        
+        @keyframes floatSore { 0% { transform: translateY(0) scale(0.95); } 100% { transform: translateY(-15px) scale(1.05); } }
+        @keyframes fillBar { to { width: 100%; } }
 
         /* BACKGROUND AMBIENT */
         .ambient-light { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.15; animation: floatLight 10s infinite alternate; }
@@ -39,10 +50,12 @@
         /* MAIN LOGIN WRAPPER */
         .login-wrapper { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         
-        .logo-main { width: 140px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));}
+        /* LOGO KC AWAL DIGEDEIN */
+        .logo-main { width: 180px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.9)); animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);}
+        @keyframes zoomIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
         
-        .app-title { font-family: 'Outfit'; font-size: 28px; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px;}
-        .app-subtitle { font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; color: var(--kc-yellow); letter-spacing: 3px; margin-bottom: 40px; text-transform: uppercase;}
+        .app-title { font-family: 'Outfit'; font-size: 32px; font-weight: 900; color: white; margin: 0; text-transform: uppercase; letter-spacing: 1px;}
+        .app-subtitle { font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; color: var(--kc-yellow); letter-spacing: 4px; margin-bottom: 40px; text-transform: uppercase;}
 
         .login-box { width: 100%; max-width: 350px; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 30px 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 
@@ -70,9 +83,18 @@
 </head>
 <body>
 
+    <div id="pwaInstallBanner" class="pwa-banner">
+        <div class="pwa-info">
+            <i class="fas fa-download"></i>
+            <span>Install Aplikasi KC ke Layar Utama</span>
+        </div>
+        <button id="btnInstallPwa">INSTALL</button>
+    </div>
+
     <div id="loader">
         <img src="sore.png" class="loader-img" alt="Sore" onerror="this.src='https://cdn-icons-png.flaticon.com/512/847/847969.png'">
-        <div class="loader-text">MEMUAT SISTEM KC...</div>
+        <div class="loader-text">MEMUAT SISTEM...</div>
+        <div class="loading-bar"><div class="loading-progress"></div></div>
     </div>
 
     <div class="ambient-light light-1"></div>
@@ -110,6 +132,34 @@
         </div>
     </div>
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw_kc.js')
+                .then(registration => { console.log('PWA KC Berhasil jalan!'); })
+                .catch(err => { console.log('PWA KC Gagal:', err); });
+            });
+        }
+
+        // LOGIKA MEMUNCULKAN BANNER INSTALL APP
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const banner = document.getElementById('pwaInstallBanner');
+            banner.style.display = 'flex';
+            setTimeout(() => banner.classList.add('show'), 100);
+
+            document.getElementById('btnInstallPwa').addEventListener('click', async () => {
+                banner.classList.remove('show');
+                setTimeout(() => banner.style.display = 'none', 500);
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+            });
+        });
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -122,15 +172,6 @@
         };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
-
-        // HILANGKAN LOADER SORE.PNG SETELAH 2 DETIK
-        window.onload = () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 500);
-            }, 2000);
-        };
 
         // FUNGSI LIHAT PIN
         window.togglePin = () => {
@@ -152,7 +193,6 @@
             const platRaw = document.getElementById('platInput').value;
             const pinRaw = document.getElementById('pinInput').value;
             
-            // Bersihkan spasi dan jadikan huruf besar biar validasinya gampang
             const platBersih = platRaw.replace(/\s+/g, '').toUpperCase();
 
             if(!platBersih || !pinRaw) return alert("Plat Nomor dan PIN wajib diisi!");
@@ -162,7 +202,6 @@
             btn.style.opacity = "0.7";
 
             try {
-                // Tarik data dari koleksi 'anggota' di DB antriankcnew
                 const snap = await getDocs(collection(db, "anggota"));
                 let userDoc = null;
                 let userId = null;
@@ -176,16 +215,11 @@
                 });
 
                 if(userDoc) {
-                    // CEK PIN LOGIN (Disimpan terpisah di field 'pin_login')
-                    // Jika pin_login belum ada, kita kasih toleransi baca field 'pin' lama, 
-                    // TAPI kalau dua-duanya kosong, berarti dia member baru yang belum set PIN Login.
-                    
                     const dbPinLogin = userDoc.pin_login || userDoc.pin;
 
                     if(!dbPinLogin) {
                         // KONDISI 1: MEMBER BELUM BIKIN PIN LOGIN
                         if(confirm(`Anda belum memiliki PIN Login Aplikasi.\n\nApakah Anda ingin menyimpan [ ${pinRaw} ] sebagai PIN Login Anda sekarang?`)) {
-                            // Simpan PIN ke database sebagai pin_login
                             await updateDoc(doc(db, "anggota", userId), { pin_login: pinRaw });
                             berhasilLogin(userId, userDoc);
                         } else {
@@ -215,17 +249,21 @@
             }
         };
 
-        // FUNGSI JIKA LOGIN SUKSES
+        // FUNGSI JIKA LOGIN SUKSES - MEMUNCULKAN LAYAR LOADING SORE
         function berhasilLogin(id, data) {
-            // Gabungin ID ke data biar gampang dipanggil di halaman lain
             data.id = id;
-            
-            // Simpan sesi login di HP user
             localStorage.setItem('maka_user', JSON.stringify(data));
             localStorage.setItem('myPlat', data.plat);
             
-            // Arahin langsung ke Dashboard Utama KC
-            window.location.href = 'dashboard_kc.html';
+            // 1. Munculkan Layar Animasi SORE
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+            setTimeout(() => { loader.style.opacity = '1'; }, 10);
+            
+            // 2. Arahin ke Dashboard setelah animasi loading bar selesai (2.5 detik)
+            setTimeout(() => {
+                window.location.href = 'dashboard_kc.html';
+            }, 2500);
         }
     </script>
 </body>
