@@ -2,28 +2,459 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabungan KC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KC - Tabungan Anggota</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { margin: 0; background: #000; font-family: 'Inter', sans-serif; color: #fff; padding-bottom: 50px; }
-        .header { background: rgba(15,15,15,0.9); padding: 20px; display: flex; align-items: center; gap: 15px; position: sticky; top: 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .btn-back { color: white; font-size: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;}
-        .header-title h1 { margin: 0; font-family: 'Space Grotesk'; font-size: 20px; color: #10B981; }
-        .balance-card { margin: 20px; background: #111; border: 1px solid rgba(16,185,129,0.3); border-radius: 24px; padding: 30px 20px; text-align: center; }
-        .balance-amount { font-family: 'Space Grotesk'; font-size: 38px; font-weight: 900; color: #10B981; margin: 10px 0;}
+        /* === TEMA KARTIKA CHANDRA (DARK NEON) === */
+        :root { 
+            --royal-blue: #D4FF00; /* Neon Lime KC */
+            --electric-blue: #10B981; 
+            --bg-surface: #050505; 
+            --text-main: #FFFFFF; 
+            --text-muted: #94A3B8; 
+            --danger: #EF4444;
+            --success: #10B981;
+        }
+        
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; overflow-x: hidden; position: relative; -webkit-tap-highlight-color: transparent;}
+        * { box-sizing: border-box; outline: none; text-decoration: none; }
+
+        /* AMBIENT LIGHT & BACKGROUND */
+        .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.15; animation: floatLight 10s infinite alternate; }
+        .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #D4FF00; }
+        .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: #10B981; animation-delay: 2s; }
+        .bg-watermark { position: fixed; top: 15%; right: -15%; width: 100%; height: 80%; background-image: url('bg_maka.jpg'); background-repeat: no-repeat; background-size: contain; background-position: center; opacity: 0.05; transform: rotate(-15deg); z-index: -2; pointer-events: none; }
+        @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(20px, 40px);} }
+
+        /* HEADER */
+        .header-main { padding: 40px 20px 20px; position: relative; z-index: 10; text-align: center; }
+        .sub-tag { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; letter-spacing: 2px; color: var(--success); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .main-title { font-family: 'Outfit'; font-size: 32px; font-weight: 900; color: var(--royal-blue); margin: 0; letter-spacing: -1px; }
+
+        /* SUMMARY CARD */
+        .container { padding: 0 20px 30px; position: relative; z-index: 10;}
+        .kas-card {
+            background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+            border: 1px solid #333;
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .kas-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--royal-blue); }
+        .kas-label { font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;}
+        .kas-total { font-family: 'Space Grotesk'; font-size: 36px; font-weight: 900; color: white; line-height: 1;}
+
+        /* SEARCH BOX */
+        .search-box { background: #111; border-radius: 16px; padding: 5px 20px; display: flex; align-items: center; border: 1px solid #222; transition: 0.3s; margin-bottom: 20px;}
+        .search-box:focus-within { border-color: var(--royal-blue); }
+        .search-box i { color: var(--royal-blue); font-size: 18px; margin-right: 12px; }
+        .search-box input { flex: 1; border: none; padding: 16px 0; font-family: 'Inter'; font-size: 14px; font-weight: 600; background: transparent; color: var(--text-main); outline: none; }
+
+        /* LIST & CARD ANGGOTA */
+        .list-container { display: flex; flex-direction: column; gap: 15px; }
+        .member-card { 
+            background: #0f0f0f;
+            border: 1px solid #222;
+            border-radius: 20px; padding: 18px; display: flex; align-items: center; gap: 15px; 
+            animation: slideUp 0.5s ease-out backwards;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* BINGKAI FOTO BG MAKA */
+        .m-photo-wrap { 
+            position: relative; width: 60px; height: 60px; border-radius: 16px; 
+            border: 2px solid #222; flex-shrink: 0; overflow: hidden; background: #111; 
+        }
+        .m-photo-bg { position: absolute; inset: 0; background-image: url('bg_maka.jpg'); background-size: cover; background-position: center; z-index: 1; opacity: 0.6; }
+        .m-photo-img { position: relative; width: 100%; height: 100%; object-fit: cover; z-index: 3; background: transparent;}
+        .m-photo-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: rgba(255,255,255,0.4); z-index: 2; pointer-events: none;}
+
+        .m-info { flex: 1; min-width: 0; }
+        .m-name { font-family: 'Outfit'; font-size: 16px; font-weight: 800; color: white; text-transform: uppercase; margin-bottom: 6px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        
+        .m-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+        .badge { font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; }
+        .bg-plat { background: rgba(212,255,0,0.1); color: var(--royal-blue); border-color: rgba(212,255,0,0.2); }
+
+        .m-saldo { 
+            font-size: 13px; font-weight: 900; color: var(--success); 
+            display: inline-flex; align-items: center; gap: 6px; font-family: 'Space Grotesk';
+        }
+
+        /* ACTION BUTTONS (SETOR, TARIK, RIWAYAT) */
+        .m-actions { display: flex; flex-direction: column; gap: 8px; }
+        .btn-act { padding: 8px 12px; border-radius: 10px; border: none; font-size: 10px; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; letter-spacing: 0.5px;}
+        .btn-act:active { transform: scale(0.95); }
+        .btn-setor { background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+        .btn-tarik { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+        .btn-riwayat { background: #1a1a1a; color: var(--royal-blue); border: 1px solid #333; }
+
+        /* BACK NAV */
+        .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100; text-align: center;}
+        .btn-premium-back { background: #111; border: 1px solid #333; padding: 14px 25px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; color: var(--royal-blue); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);}
+
+        /* MODAL FORM (TRANSAKSI) */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.show { opacity: 1; }
+        .modal-box { background: #111; width: 90%; max-width: 400px; border-radius: 20px; padding: 25px; transform: scale(0.9); transition: 0.3s; border: 1px solid #222; }
+        .modal-overlay.show .modal-box { transform: scale(1); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-family: 'Outfit'; font-size: 18px; font-weight: 900; }
+        .title-in { color: var(--success); }
+        .title-out { color: var(--danger); }
+        .btn-close { background: #222; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; color: white;}
+        
+        .target-user { background: #0a0a0a; border: 1px dashed #333; padding: 12px; border-radius: 12px; margin-bottom: 15px; text-align: center;}
+        .target-name { font-family: 'Outfit'; font-size: 16px; font-weight: 900; color: white; margin-bottom: 4px; text-transform: uppercase;}
+        .target-saldo { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px;}
+        .form-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #000; font-family: 'Inter'; font-weight: 600; font-size: 14px; color: white; outline: none; transition: 0.2s;}
+        .form-input:focus { border-color: var(--royal-blue); }
+
+        .btn-save-modal { width: 100%; padding: 16px; border: none; border-radius: 14px; color: black; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; margin-top: 10px; cursor: pointer; letter-spacing: 1px; transition: 0.2s;}
+        .btn-save-modal:active { transform: scale(0.98); }
+        .save-in { background: var(--success); color: white;}
+        .save-out { background: var(--danger); color: white;}
+
+        /* HISTORY MODAL */
+        .hist-list { margin-top: 15px; max-height: 400px; overflow-y: auto; }
+        .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #222; }
+        .hist-item:last-child { border-bottom: none; }
+        .hist-desc { font-size: 12px; font-weight: 700; color: white; }
+        .hist-date { font-size: 10px; color: var(--text-muted); }
+        .hist-val { font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; }
+        .val-in { color: var(--success); } .val-out { color: var(--danger); }
+        .btn-del-hist { background: none; border: none; color: #555; padding: 5px; cursor: pointer; transition: 0.2s;}
+        .btn-del-hist:active { color: var(--danger); }
     </style>
 </head>
 <body>
-    <div class="header">
-        <a href="dashboard_kc.html" class="btn-back"><i class="fas fa-chevron-left"></i></a>
-        <div class="header-title"><h1>TABUNGAN KC</h1></div>
+
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+
+    <header class="header-main">
+        <span class="sub-tag">MANAJEMEN KEUANGAN</span>
+        <h1 class="main-title">TABUNGAN KC</h1>
+    </header>
+
+    <div class="container">
+        
+        <div class="kas-card">
+            <div class="kas-label">TOTAL TABUNGAN SELURUH ANGGOTA</div>
+            <div class="kas-total" id="txtTotalTabungan">Rp 0</div>
+        </div>
+
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Cari nama atau plat nomor..." onkeyup="filterList()">
+        </div>
+
+        <div class="list-container" id="memberList">
+            <div style="text-align:center; padding:50px; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
+        </div>
+
     </div>
-    <div class="balance-card">
-        <div style="font-size: 11px; color: #94a3b8; font-weight: 700;">TOTAL TABUNGAN ANDA</div>
-        <div class="balance-amount">Rp 0</div>
-        <div style="font-size: 10px; color: #64748b;">(Fitur setor & riwayat akan segera disempurnakan)</div>
+    
+    <div class="back-nav">
+        <a href="dashboard_kc.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a>
     </div>
+
+    <div class="modal-overlay" id="txModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitleText">Transaksi</div>
+                <button class="btn-close" onclick="closeTxModal()"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <input type="hidden" id="formMemberId">
+            <input type="hidden" id="formMemberName">
+            <input type="hidden" id="formTxType">
+            <input type="hidden" id="formCurrentBalance">
+            
+            <div class="target-user">
+                <div class="target-name" id="targetNameDisplay">NAMA</div>
+                <div class="target-saldo" id="targetSaldoDisplay">Saldo: Rp 0</div>
+            </div>
+
+            <div class="form-group">
+                <label>Jumlah Nominal (Rp)</label>
+                <input type="number" id="formAmount" class="form-input" placeholder="50000" style="font-family:'Space Grotesk'; font-size:18px;">
+            </div>
+
+            <div class="form-group">
+                <label>Keterangan / Catatan</label>
+                <input type="text" id="formDesc" class="form-input" placeholder="Contoh: Setoran Kopdar / Tarik Darurat">
+            </div>
+            
+            <button class="btn-save-modal" id="btnSaveTx" onclick="saveTransaction()">SIMPAN</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <div class="modal-title" style="color:var(--royal-blue);">Riwayat Tabungan</div>
+                <button class="btn-close" onclick="document.getElementById('historyModal').classList.remove('show'); setTimeout(()=>document.getElementById('historyModal').style.display='none',300);"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="historyTargetName" style="font-size:12px; font-weight:800; color:#94a3b8; margin-top:-15px; margin-bottom:15px; text-transform:uppercase; border-bottom:1px solid #222; padding-bottom:10px;"></div>
+            <div id="historyContent" class="hist-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy, where, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // KONEKSI TUNGGAL KE DATABASE KC (antriankcnew) - TIDAK ADA HUBUNGAN DENGAN MLU
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM",
+            authDomain: "antriankcnew.firebaseapp.com",
+            projectId: "antriankcnew",
+            storageBucket: "antriankcnew.firebasestorage.app",
+            messagingSenderId: "348986439499",
+            appId: "1:348986439499:web:99578753dc9547d727dace"
+        };
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
+
+        const u = JSON.parse(localStorage.getItem('maka_user')) || {};
+        const isAdmin = true; // Hak akses hapus riwayat admin
+
+        let membersData = [];
+
+        // LOAD DATA ANGGOTA DARI DB KC (Koleksi 'anggota')
+        onSnapshot(query(collection(db, "anggota"), orderBy("nama", "asc")), (snap) => {
+            membersData = [];
+            let totalTabunganGlobal = 0;
+
+            snap.forEach(docSnap => { 
+                const d = docSnap.data();
+                membersData.push({ id: docSnap.id, ...d }); 
+                totalTabunganGlobal += (parseInt(d.tabungan) || 0); // Di KC pakai field 'tabungan'
+            });
+            
+            document.getElementById('txtTotalTabungan').innerText = "Rp " + totalTabunganGlobal.toLocaleString('id-ID');
+            renderList(membersData);
+        });
+
+        function renderList(data) {
+            const list = document.getElementById('memberList'); list.innerHTML = '';
+            
+            data.sort((a, b) => (a.nama || "").localeCompare(b.nama || ""));
+
+            data.forEach((m) => {
+                const nama = m.nama || m.namaKtp || "-";
+                
+                // MENGGUNAKAN PIXEL KOSONG BILA TIDAK ADA FOTO AGAR BG MAKA TERLIHAT JELAS
+                const transparentPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+                const photoSrc = m.foto && m.foto.length > 50 ? m.foto : transparentPixel;
+                const fallbackIcon = (!m.foto || m.foto.length < 50) ? `<div class="m-photo-fallback"><i class="fas fa-user"></i></div>` : '';
+
+                const currentSaldo = parseInt(m.tabungan) || 0; // Di KC pakai field 'tabungan'
+                const saldoStr = currentSaldo.toLocaleString('id-ID');
+
+                list.innerHTML += `
+                    <div class="member-card">
+                        
+                        <div class="m-photo-wrap">
+                            <div class="m-photo-bg"></div>
+                            ${fallbackIcon}
+                            <img src="${photoSrc}" class="m-photo-img" onerror="this.src='${transparentPixel}'">
+                        </div>
+
+                        <div class="m-info">
+                            <div class="m-name">${nama}</div>
+                            <div class="m-badges">
+                                <span class="badge bg-plat">${m.plat}</span>
+                            </div>
+                            <div class="m-saldo">
+                                <i class="fas fa-wallet"></i> Rp ${saldoStr}
+                            </div>
+                        </div>
+
+                        <div class="m-actions">
+                            <button class="btn-act btn-setor" onclick="openTxModal('${m.id}', '${nama}', ${currentSaldo}, 'IN')"><i class="fas fa-plus"></i> SETOR</button>
+                            <button class="btn-act btn-tarik" onclick="openTxModal('${m.id}', '${nama}', ${currentSaldo}, 'OUT')"><i class="fas fa-minus"></i> TARIK</button>
+                            <button class="btn-act btn-riwayat" onclick="showHistory('${m.id}', '${nama}')"><i class="fas fa-history"></i> RIWAYAT</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        window.filterList = () => {
+            const txt = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = membersData.filter(m => (m.nama && m.nama.toLowerCase().includes(txt)) || (m.plat && m.plat.toLowerCase().includes(txt)));
+            renderList(filtered);
+        };
+
+        // --- MODAL TRANSAKSI ---
+        const modalTx = document.getElementById('txModal');
+        const titleText = document.getElementById('modalTitleText');
+        const btnSave = document.getElementById('btnSaveTx');
+
+        window.openTxModal = (id, name, balance, type) => { 
+            document.getElementById('formMemberId').value = id;
+            document.getElementById('formMemberName').value = name;
+            document.getElementById('formCurrentBalance').value = balance;
+            document.getElementById('formTxType').value = type;
+            document.getElementById('formAmount').value = ''; 
+            
+            // Set Default Desc
+            document.getElementById('formDesc').value = type === 'IN' ? 'Setoran Tabungan' : 'Penarikan Tabungan'; 
+            
+            document.getElementById('targetNameDisplay').innerText = name;
+            document.getElementById('targetSaldoDisplay').innerText = "Saldo Saat Ini: Rp " + balance.toLocaleString('id-ID');
+
+            if(type === 'IN') {
+                titleText.innerText = "SETOR TABUNGAN";
+                titleText.className = "modal-title title-in";
+                btnSave.className = "btn-save-modal save-in";
+                btnSave.innerText = "SIMPAN SETORAN";
+            } else {
+                titleText.innerText = "TARIK TABUNGAN";
+                titleText.className = "modal-title title-out";
+                btnSave.className = "btn-save-modal save-out";
+                btnSave.innerText = "SIMPAN PENARIKAN";
+            }
+
+            modalTx.style.display = 'flex'; 
+            setTimeout(()=>modalTx.classList.add('show'),10);
+        };
+
+        window.closeTxModal = () => { 
+            modalTx.classList.remove('show'); 
+            setTimeout(()=>modalTx.style.display = 'none',300); 
+        };
+
+        window.saveTransaction = async () => {
+            const id = document.getElementById('formMemberId').value;
+            const name = document.getElementById('formMemberName').value;
+            const type = document.getElementById('formTxType').value;
+            const currentBalance = parseInt(document.getElementById('formCurrentBalance').value);
+            const desc = document.getElementById('formDesc').value.trim();
+            const amountRaw = document.getElementById('formAmount').value.trim();
+            const amount = amountRaw ? parseInt(amountRaw) : 0;
+
+            if(!desc || !amount || amount <= 0) return alert("Keterangan dan Jumlah Nominal wajib diisi dengan benar!");
+            
+            // Validasi Tarik Tunai
+            if (type === 'OUT' && amount > currentBalance) {
+                return alert("SALDO TIDAK MENCUKUPI! Sisa saldo saat ini hanya Rp " + currentBalance.toLocaleString('id-ID'));
+            }
+
+            btnSave.innerText = "MENYIMPAN..."; 
+            btnSave.style.opacity = '0.7';
+
+            try {
+                // 1. Catat ke Riwayat di Database KC
+                let logPayload = { 
+                    memberId: id,
+                    memberName: name,
+                    type: type, 
+                    desc: desc, 
+                    amount: amount, 
+                    timestamp: Date.now(),
+                    adminName: u.namaKtp || u.namaWa || "Admin KC"
+                };
+                await addDoc(collection(db, "tabungan_trx"), logPayload);
+
+                // 2. Update Total Saldo di Database KC ('anggota' collection, field 'tabungan')
+                const changeValue = type === 'IN' ? amount : -amount;
+                await updateDoc(doc(db, "anggota", id), {
+                    tabungan: increment(changeValue)
+                });
+
+                closeTxModal();
+            } catch (e) { 
+                alert("Gagal menyimpan: " + e.message); 
+            } finally { 
+                btnSave.innerText = "SIMPAN"; 
+                btnSave.style.opacity = '1'; 
+            }
+        };
+
+        // --- TAMPILKAN RIWAYAT ---
+        window.showHistory = async (id, name) => {
+            document.getElementById('historyTargetName').innerText = name;
+            document.getElementById('historyContent').innerHTML = `<div style="text-align:center; padding:20px; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>`;
+            
+            const modalHist = document.getElementById('historyModal');
+            modalHist.style.display='flex'; 
+            setTimeout(()=>modalHist.classList.add('show'),10);
+
+            // Ambil dari DB KC (tabungan_trx)
+            const q = query(collection(db, "tabungan_trx"), where("memberId", "==", id));
+            const snap = await getDocs(q);
+            
+            let dataArr = [];
+            snap.forEach(d => dataArr.push({ id: d.id, ...d.data() }));
+            dataArr.sort((a,b) => b.timestamp - a.timestamp);
+
+            const cont = document.getElementById('historyContent'); cont.innerHTML = "";
+            
+            if(dataArr.length === 0) {
+                cont.innerHTML = `<div style="text-align:center; padding:20px; color:#64748B; font-size:12px;">Belum ada riwayat transaksi.</div>`;
+                return;
+            }
+
+            dataArr.forEach(data => {
+                const isIn = data.type === 'IN';
+                const cls = isIn ? 'val-in' : 'val-out';
+                const sign = isIn ? '+' : '-';
+                const date = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+                
+                // Tombol Hapus Transaksi (Jika admin mau koreksi)
+                const delBtn = isAdmin ? `<button class="btn-del-hist" onclick="delTabunganTx('${data.id}', '${data.memberId}', ${data.amount}, '${data.type}')"><i class="fas fa-times"></i></button>` : '';
+
+                cont.innerHTML += `
+                <div class="hist-item">
+                    <div style="flex:1;">
+                        <div class="hist-desc">${data.desc}</div>
+                        <div class="hist-date">${date} • oleh ${data.adminName||'Admin KC'}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="hist-val ${cls}">${sign} Rp ${data.amount.toLocaleString('id-ID')}</div>
+                        ${delBtn}
+                    </div>
+                </div>`;
+            });
+        }
+
+        // --- HAPUS RIWAYAT (Dan Kembalikan Saldo) ---
+        window.delTabunganTx = async (trxId, memberId, amount, type) => {
+            if(confirm("Yakin ingin menghapus transaksi ini? Saldo anggota akan dikembalikan seperti semula secara otomatis.")) {
+                try {
+                    // 1. Hapus dari riwayat
+                    await deleteDoc(doc(db, "tabungan_trx", trxId));
+                    
+                    // 2. Revert Saldo KC
+                    const revertValue = type === 'IN' ? -amount : amount;
+                    await updateDoc(doc(db, "anggota", memberId), {
+                        tabungan: increment(revertValue)
+                    });
+                    
+                    // Tutup modal
+                    document.getElementById('historyModal').classList.remove('show'); 
+                    setTimeout(()=>document.getElementById('historyModal').style.display='none',300);
+                } catch(e) {
+                    alert("Gagal menghapus: " + e.message);
+                }
+            }
+        };
+
+    </script>
 </body>
 </html>
