@@ -3,219 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mockup Animasi Login MLU - V3 (Real Lightning)</title>
+    <title>Pengumuman MLU Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* RESET & BASIC */
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #050505; font-family: sans-serif; overflow: hidden; }
-
-        /* SIMULASI DASHBOARD (DI BELAKANG) */
-        .dashboard-mockup {
-            position: absolute; inset: 0;
-            background: linear-gradient(135deg, #0A2259 0%, #15398F 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; z-index: 1;
-            opacity: 0; transform: scale(0.95); transition: all 2s ease-out;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .dashboard-mockup.show { opacity: 1; transform: scale(1); }
-        .dashboard-mockup h1 { font-size: 30px; letter-spacing: 2px; margin-bottom: 10px; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .dashboard-mockup p { color: #93C5FD; }
 
-        /* OVERLAY PINTU GERBANG */
-        .gate-overlay {
-            position: absolute; inset: 0;
-            background: #000; z-index: 10;
-            display: flex; align-items: center; justify-content: center;
-            transition: background 1.5s;
+        body {
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff;
         }
-        .gate-overlay.fade-out { background: transparent; pointer-events: none; }
 
-        /* WADAH LOGO */
-        .logo-container {
+        /* Latar Belakang Carbon Fiber Statis */
+        .poster-container {
+            width: 100%;
+            min-height: 100vh;
+            background: 
+                linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
+                linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
+                linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
+                linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
+                linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+                linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424 100%);
+            background-color: #131313;
+            background-size: 20px 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 25px 20px;
             position: relative;
-            width: 380px; height: 380px; 
-            max-width: 85vw; max-height: 85vw; 
-            animation: floatLogo 3s ease-in-out infinite; 
-            z-index: 15;
         }
 
-        /* LOGO KESETRUM (GETAR) */
-        .logo-container.shock { animation: electroShock 0.1s infinite; }
-
-        /* BAGIAN LOGO ATAS & BAWAH */
-        .logo-half {
-            position: absolute; left: 0; width: 100%; height: 100%;
-            background-image: url('logomlumaster.png'); /* PANGGIL LOGO MLU */
-            background-size: contain; background-repeat: no-repeat; background-position: center;
-            transition: transform 2.5s cubic-bezier(0.68, -0.05, 0.265, 1.15), opacity 2s ease-in;
+        /* Overlay gelap agar teks tetap mudah dibaca */
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.9) 100%);
+            z-index: 1;
         }
 
-        /* CSS CLIP-PATH MEMOTONG TENGAH */
-        .logo-top { clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%); top: 0; }
-        .logo-bottom { clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%); top: 0; }
-
-        /* ANIMASI TERBELAH LAMBAT */
-        .logo-top.split { transform: translateY(-120vh) rotate(-4deg); opacity: 0; }
-        .logo-bottom.split { transform: translateY(120vh) rotate(4deg); opacity: 0; }
-
-        /* --- REAL LIGHTNING SVG EFEK --- */
-        .lightning-svg {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 200vw; /* Panjang menyambar seisi layar */
-            height: 200px;
-            z-index: 25;
-            pointer-events: none;
-            opacity: 0;
-        }
-        
-        .lightning-svg.strike { opacity: 1; animation: flashOut 1s ease-out forwards; }
-
-        /* Style Garis Petir */
-        .bolt {
-            fill: none;
-            stroke-width: 4px;
-            stroke-linecap: square;
-            stroke-linejoin: miter;
-            stroke-dasharray: 2000;
-            stroke-dashoffset: 2000; /* Disembunyikan dulu */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            background: rgba(15, 15, 15, 0.95);
+            border: 1px solid #333;
+            border-top: 5px solid #d4af37; /* Aksen Emas Solid */
+            padding: 30px 20px;
+            border-radius: 12px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
         }
 
-        /* Animasi Menjalar dan Berkedip */
-        .lightning-svg.strike .bolt {
-            animation: drawBolt 0.15s forwards, strobeBolt 0.1s 0.15s infinite;
+        .logo-section {
+            text-align: center;
+            margin-bottom: 25px;
         }
 
-        /* Warna Petir & Glow */
-        .bolt-cyan { stroke: #00f2fe; filter: drop-shadow(0 0 8px #00f2fe) drop-shadow(0 0 20px #fff); }
-        .bolt-magenta { stroke: #fe0979; filter: drop-shadow(0 0 8px #fe0979) drop-shadow(0 0 20px #fff); animation-delay: 0.05s; }
-        .bolt-yellow { stroke: #fcd34d; filter: drop-shadow(0 0 8px #fcd34d) drop-shadow(0 0 20px #fff); stroke-width: 2px; }
-
-        /* FLASH BLIND PUTIH */
-        .screen-flash {
-            position: absolute; inset: 0; background: white; z-index: 100;
-            opacity: 0; pointer-events: none;
-        }
-        .screen-flash.flash { animation: flashAnim 1.5s ease-out forwards; }
-
-
-        /* === KEYFRAMES (ANIMASI) === */
-        @keyframes floatLogo {
-            0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 15px rgba(212,175,55,0.4)); }
-            50% { transform: translateY(-15px); filter: drop-shadow(0 0 30px rgba(212,175,55,0.8)); }
+        .logo-section img {
+            width: 110px;
+            height: auto;
+            border-radius: 50%;
+            border: 2px solid #555;
+            padding: 3px;
+            background: #000;
         }
 
-        @keyframes electroShock {
-            0% { transform: translate(0, 0) scale(1); filter: brightness(1) saturate(1); }
-            25% { transform: translate(-5px, 5px) scale(1.02); filter: brightness(1.8) hue-rotate(90deg); }
-            50% { transform: translate(5px, -5px) scale(0.98); filter: brightness(2) invert(0.8); }
-            75% { transform: translate(-5px, -5px) scale(1.03); filter: brightness(1.2) sepia(1); }
-            100% { transform: translate(5px, 5px) scale(1); filter: brightness(1); }
+        h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            text-align: center;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
         }
 
-        /* Efek Petir Menjalar */
-        @keyframes drawBolt {
-            to { stroke-dashoffset: 0; }
+        .text-body {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #d1d5db;
+            text-align: justify;
+            margin-bottom: 20px;
         }
 
-        /* Efek Konslet / Flicker Petir */
-        @keyframes strobeBolt {
-            0%, 100% { opacity: 1; transform: translateY(0px); stroke-width: 6px;}
-            50% { opacity: 0.1; transform: translateY(2px); stroke-width: 2px;}
+        /* Kotak Aturan Utama - Desain Solid & Kontras Tinggi */
+        .rule-box {
+            background-color: #1a1a1a;
+            border-left: 6px solid #d4af37;
+            border-right: 1px solid #333;
+            border-top: 1px solid #333;
+            border-bottom: 1px solid #333;
+            padding: 20px 15px;
+            margin: 25px 0;
+            text-align: center;
+            border-radius: 4px;
         }
 
-        /* Petir Hilang */
-        @keyframes flashOut {
-            0%, 30% { opacity: 1; }
-            100% { opacity: 0; }
+        .rule-box .date {
+            font-family: 'Oswald', sans-serif;
+            font-size: 18px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
         }
 
-        @keyframes flashAnim {
-            0% { opacity: 0; }
-            10% { opacity: 0.7; }
-            100% { opacity: 0; }
+        .rule-box .highlight {
+            font-family: 'Oswald', sans-serif;
+            font-size: 24px;
+            color: #d4af37;
+            text-transform: uppercase;
+            line-height: 1.3;
         }
 
-        /* TOMBOL TRIGGER */
-        .btn-trigger {
-            position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-            padding: 15px 30px; background: linear-gradient(135deg, #D4AF37, #B45309); color: white; border: none;
-            font-weight: 900; border-radius: 30px; cursor: pointer; z-index: 1000;
-            font-size: 14px; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(212,175,55,0.4);
-            border: 2px solid white;
+        /* Area Tanda Tangan & Stempel */
+        .footer-section {
+            margin-top: auto;
+            padding-top: 25px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
         }
-        .btn-trigger:active { transform: translateX(-50%) scale(0.95); }
 
+        /* Desain Logo dibikin gaya Stempel/Cap */
+        .stamp-logo {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            border: 3px dashed #d4af37; /* Garis putus-putus biar kayak cap */
+            padding: 5px;
+            transform: rotate(-15deg); /* Dimiringin dikit */
+            opacity: 0.85; /* Efek tinta cap */
+            background: rgba(0, 0, 0, 0.5);
+            object-fit: contain;
+        }
+
+        .signature-text {
+            text-align: right;
+        }
+
+        .signature-text .role {
+            font-size: 12px;
+            color: #d4af37;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .signature-text .club-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            color: #ffffff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
-    <div class="screen-flash" id="screenFlash"></div>
+    <div class="poster-container">
+        <div class="content-wrapper">
+            
+            <div class="logo-section">
+                <img src="logomlumaster.png" alt="Logo MLU">
+            </div>
 
-    <div class="dashboard-mockup" id="dashboardMockup">
-        <h1>DASHBOARD MLU</h1>
-        <p>Login Berhasil. Memuat Data...</p>
-    </div>
+            <h1>Pengumuman</h1>
 
-    <div class="gate-overlay" id="gateOverlay">
-        
-        <svg class="lightning-svg" id="lightningSvg" viewBox="0 0 1000 200" preserveAspectRatio="none">
-            <path class="bolt bolt-cyan" d="M0,100 L80,60 L150,130 L220,50 L300,120 L380,60 L450,110 L500,70 L550,120 L620,60 L700,130 L780,50 L850,120 L920,80 L1000,100" />
-            <path class="bolt bolt-magenta" d="M0,100 L60,140 L130,70 L200,150 L280,60 L350,140 L430,70 L500,130 L580,60 L660,140 L730,70 L800,150 L880,70 L950,130 L1000,100" />
-            <path class="bolt bolt-yellow" d="M220,50 L250,10 L280,30 L320,0" />
-            <path class="bolt bolt-yellow" d="M450,110 L480,160 L520,140 L550,190" />
-            <path class="bolt bolt-yellow" d="M700,130 L730,180 L760,150 L800,200" />
-            <path class="bolt bolt-yellow" d="M380,60 L400,20 L420,40 L450,10" />
-        </svg>
+            <div class="text-body">
+                Selamat Siang,
+            </div>
 
-        <div class="logo-container" id="logoContainer">
-            <div class="logo-half logo-top" id="logoTop"></div>
-            <div class="logo-half logo-bottom" id="logoBottom"></div>
+            <div class="text-body">
+                Sehubungan dengan tutupnya showroom Maka Kelapa Gading karena libur Idul Fitri.
+            </div>
+
+            <div class="rule-box">
+                <div class="date">Mulai tgl 18 - 24 Maret 2026</div>
+                <div class="highlight">Maksimal charging dibatasi hanya sampai 95%</div>
+                <div class="date" style="margin-top: 5px; font-size: 14px;">guna mencegah FC error.</div>
+            </div>
+
+            <div class="text-body">
+                Demi kenyamanan bersama mohon agar semua teman-teman mengikuti aturan yg berlaku untuk sementara ini hingga showroom dibuka kembali.
+            </div>
+
+            <div class="footer-section">
+                <img src="logomlumaster.png" alt="Stamp MLU" class="stamp-logo">
+                
+                <div class="signature-text">
+                    <div class="role">Divisi Komunikasi Digital</div>
+                    <div class="club-name">Maka Lintas Utara</div>
+                </div>
+            </div>
+
         </div>
     </div>
-
-    <button class="btn-trigger" id="btnTrigger" onclick="playCinematic()">SIMULASI LOGIN</button>
-
-    <script>
-        function playCinematic() {
-            // Sembunyikan tombol
-            document.getElementById('btnTrigger').style.display = 'none';
-
-            const topHalf = document.getElementById('logoTop');
-            const botHalf = document.getElementById('logoBottom');
-            const lightning = document.getElementById('lightningSvg');
-            const flash = document.getElementById('screenFlash');
-            const gate = document.getElementById('gateOverlay');
-            const dash = document.getElementById('dashboardMockup');
-            const container = document.getElementById('logoContainer');
-
-            // 1. Hentikan efek melayang, ganti dengan KESETRUM
-            container.style.animation = 'none';
-            container.classList.add('shock');
-
-            // 2. Munculkan kilat layar
-            flash.classList.add('flash');
-
-            // 3. Tembakkan Petir Zig-Zag
-            lightning.classList.add('strike');
-
-            // 4. Beri jeda sangat sebentar biar terasa "Dihantam Petir" dulu
-            setTimeout(() => {
-                
-                // Hentikan getaran
-                container.classList.remove('shock');
-
-                // Logo terbelah ke atas & bawah
-                topHalf.classList.add('split');
-                botHalf.classList.add('split');
-                
-                // Transisikan background gerbang menghilang
-                gate.classList.add('fade-out');
-
-                // Munculkan Dashboard
-                dash.classList.add('show');
-
-            }, 450); // Waktu logo ditahan setrum (0.45 detik)
-        }
-    </script>
 
 </body>
 </html>
