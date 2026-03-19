@@ -26,7 +26,17 @@
             align-items: center;
             justify-content: center;
             color: white;
+            cursor: pointer; /* Memberi tahu user bisa diklik */
         }
+
+        /* LAYER PETUNJUK FULLSCREEN DI AWAL */
+        #startOverlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .start-text { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite alternate;}
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7;} 100% { transform: scale(1.05); opacity: 1;} }
 
         /* CANVAS UNTUK EFEK BINTANG / PARTIKEL */
         #particleCanvas {
@@ -52,6 +62,7 @@
         .scene-part {
             position: absolute;
             width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -112,10 +123,41 @@
         .line-5 { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: white; letter-spacing: 5px; margin-bottom: 35px; }
         .line-6 { font-size: 16px; font-weight: 600; color: #94A3B8; background: rgba(255,255,255,0.03); padding: 12px 35px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);}
 
-        /* STYLING SCENE 2 (OUTRO) */
-        .outro-logo { width: 380px; max-width: 85%; margin-bottom: 30px; filter: drop-shadow(0 15px 40px rgba(0, 229, 255, 0.4)); animation: floatLogo 4s ease-in-out infinite alternate;}
-        .outro-line-1 { font-size: 18px; font-weight: 600; color: #cbd5e1; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 5px;}
-        .outro-line-2 { font-family: 'Space Grotesk'; font-size: 42px; font-weight: 900; color: var(--cyan); letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);}
+        /* ==========================================
+           STYLING SCENE 2 (OUTRO) DIPERBAIKI
+           ========================================== */
+        #sceneOutro {
+            /* Memastikan konten outro ada di tengah-tengah secara vertikal */
+            justify-content: center; 
+        }
+
+        .outro-logo { 
+            width: 450px; /* Logo jauh lebih besar */
+            max-width: 90%; 
+            margin-bottom: 50px; /* Jarak pas ke teks pertama */
+            filter: drop-shadow(0 15px 40px rgba(0, 229, 255, 0.4)); 
+            animation: floatLogo 4s ease-in-out infinite alternate;
+        }
+        
+        .outro-line-1 { 
+            font-size: 20px; 
+            font-weight: 600; 
+            color: #cbd5e1; 
+            letter-spacing: 6px; 
+            text-transform: uppercase; 
+            margin-bottom: 5px;
+        }
+        
+        .outro-line-2 { 
+            font-family: 'Space Grotesk'; 
+            font-size: 48px; 
+            font-weight: 900; 
+            color: var(--cyan); 
+            letter-spacing: 8px; 
+            text-transform: uppercase; 
+            text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);
+            margin-bottom: 0;
+        }
 
         @keyframes floatLogo { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
 
@@ -144,13 +186,19 @@
             .line-5 { font-size: 22px; letter-spacing: 3px;}
             .line-6 { font-size: 11px; padding: 10px 20px;}
             
-            .outro-logo { width: 280px; margin-bottom: 20px;}
-            .outro-line-1 { font-size: 12px; letter-spacing: 4px; }
-            .outro-line-2 { font-size: 26px; letter-spacing: 5px; }
+            /* Penyesuaian Outro untuk Layar Sempit */
+            .outro-logo { width: 320px; margin-bottom: 30px;}
+            .outro-line-1 { font-size: 13px; letter-spacing: 4px; }
+            .outro-line-2 { font-size: 32px; letter-spacing: 5px; }
         }
     </style>
 </head>
 <body>
+
+    <div id="startOverlay" onclick="startExperience()">
+        <div class="start-text">TAP LAYAR UNTUK MULAI</div>
+        <div style="font-size: 12px; color: #94A3B8; margin-top: 10px;">Siapkan Screen Recorder Anda</div>
+    </div>
 
     <div class="optic-flash" id="flashEffect"></div>
     <canvas id="particleCanvas"></canvas>
@@ -161,7 +209,7 @@
     </div>
 
     <div class="scene-wrapper">
-        <div class="scene-part" id="sceneMain">
+        <div class="scene-part" id="sceneMain" style="display: none;">
             <div class="anim-item line-1" id="t1">Kami Segenap Pengurus dan Keluarga Besar</div>
             
             <div class="maka-title-container">
@@ -174,7 +222,7 @@
             <div class="anim-item line-6" id="t6">Taqabbalallahu Minna Wa Minkum. Mohon Maaf Lahir & Batin.</div>
         </div>
 
-        <div class="scene-part" id="sceneOutro">
+        <div class="scene-part" id="sceneOutro" style="display: none;">
             <img src="logomlumaster.png" class="anim-item outro-logo" id="oLogo" alt="MLU Master Logo">
             <div class="anim-item outro-line-1" id="o1">Beda Rangka Beda Warna</div>
             <div class="anim-item outro-line-2" id="o2">Satu Keluarga</div>
@@ -230,10 +278,34 @@
         animateParticles();
 
         // ==========================================
-        // 2. TIMELINE ANIMASI SUTRADARA (CINEMATIC)
+        // 2. FUNGSI FULLSCREEN & TIMELINE ANIMASI
         // ==========================================
         
-        document.addEventListener('DOMContentLoaded', () => {
+        let hasStarted = false;
+
+        window.startExperience = () => {
+            if(hasStarted) return;
+            hasStarted = true;
+
+            // Memaksa masuk ke mode Fullscreen saat layar diklik
+            const docElm = document.documentElement;
+            if (docElm.requestFullscreen) { docElm.requestFullscreen(); }
+            else if (docElm.webkitRequestFullscreen) { docElm.webkitRequestFullscreen(); }
+
+            // Hilangkan Overlay "TAP UNTUK MULAI"
+            const overlay = document.getElementById('startOverlay');
+            overlay.style.opacity = 0;
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+
+            // Tampilkan Scene 1 dan Scene 2 tapi set opacity awal 0
+            document.getElementById('sceneMain').style.display = 'flex';
+            document.getElementById('sceneOutro').style.display = 'flex';
+
+            // MULAI JALANKAN TIMELINE SUTRADARA
+            mulaiAnimasi();
+        };
+
+        function mulaiAnimasi() {
             const flash = document.getElementById('flashEffect');
             const makaText = document.getElementById('makaBoom');
             const sceneMain = document.getElementById('sceneMain');
@@ -268,7 +340,7 @@
             }, 12500); 
 
             // ---- SCENE 2 : OUTRO ----
-            // Detik 13.5: Logo Gede Muncul
+            // Detik 13.5: Logo MLU Master Gede Muncul
             showElement('oLogo', 13500);
 
             // Detik 14.8: Beda rangka beda warna
@@ -276,7 +348,7 @@
 
             // Detik 16.0: Satu keluarga! (Puncak Outro)
             showElement('o2', 16000);
-        });
+        }
     </script>
 </body>
 </html>
