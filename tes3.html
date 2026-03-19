@@ -3,213 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pengumuman MLU Estetik</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Cinematic Video Greeting KC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --cyan: #00E5FF;
+            --cyan-dark: #0077B6;
+            --gold: #D4AF37;
+            --gold-light: #FDE68A;
+            --bg-black: #010409;
         }
 
-        body {
-            background-color: #050505;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: 'Montserrat', sans-serif;
-            color: #ffffff;
-        }
-
-        .poster-container {
-            width: 100%;
-            max-width: 450px;
-            min-height: 100vh;
-            background-color: #111;
-            display: flex;
-            flex-direction: column;
-            padding: 35px 25px;
-            position: relative;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--bg-black);
+            background-image: radial-gradient(circle at center, #0B1E29 0%, var(--bg-black) 70%);
+            font-family: 'Outfit', sans-serif;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
         }
 
-        /* Logo Background (Watermark) */
-        .poster-container::before {
-            content: '';
+        /* CANVAS UNTUK EFEK BINTANG / PARTIKEL */
+        #particleCanvas {
             position: absolute;
-            top: 50%; 
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 130%; 
-            height: 130%;
-            background-image: url('logomlumaster.png'); 
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.2; /* Dibuat sedikit lebih tipis biar teks makin stand out */
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1;
             pointer-events: none;
         }
 
-        .content-wrapper {
+        /* CONTAINER UTAMA (WRAPPER SCENE) */
+        .scene-wrapper {
             position: relative;
-            z-index: 2;
-            border-top: 5px solid #d4af37;
-            padding: 20px 0;
-            flex-grow: 1;
+            z-index: 10;
+            width: 95%;
+            max-width: 900px;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* SCENE PARTS (BAGIAN 1 & BAGIAN 2) */
+        .scene-part {
+            position: absolute;
+            width: 100%;
             display: flex;
             flex-direction: column;
-        }
-
-        h1 {
-            font-family: 'Oswald', sans-serif;
-            font-size: 36px;
-            text-align: center;
-            color: #d4af37;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 15px;
-            padding-top: 10px;
-        }
-
-        .divider {
-            width: 100%;
-            height: 1px;
-            background-color: #333;
-            margin-bottom: 25px;
-        }
-
-        .text-body {
-            font-size: 14.5px;
-            line-height: 1.5; /* Dirapatkan dari 1.8 */
-            color: #d1d5db;
-            margin-bottom: 15px; /* Dirapatkan dari 20px */
-            text-align: left; /* Rata kiri agar spasi antar kata natural dan estetik */
-            font-weight: 400;
-        }
-
-        /* Kotak Aturan Utama - Lebih Padat & Proporsional */
-        .rule-box {
-            background-color: rgba(26, 26, 26, 0.9);
-            border-left: 5px solid #d4af37;
-            border-right: 1px solid #333;
-            border-top: 1px solid #333;
-            border-bottom: 1px solid #333;
-            padding: 20px 15px;
-            margin: 25px 0;
-            text-align: center;
-            border-radius: 4px;
-        }
-
-        .rule-box .date {
-            font-family: 'Oswald', sans-serif;
-            font-size: 17px;
-            color: #9ca3af;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 10px;
-        }
-
-        .rule-box .highlight {
-            font-family: 'Oswald', sans-serif;
-            font-size: 24px;
-            color: #d4af37;
-            text-transform: uppercase;
-            line-height: 1.3;
-            margin-bottom: 10px;
-        }
-
-        .rule-box .reason {
-            font-family: 'Oswald', sans-serif;
-            font-size: 15px;
-            color: #9ca3af;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Area Tanda Tangan & Stempel */
-        .footer-section {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            display: flex;
-            justify-content: flex-end;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .stamp-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px dashed #d4af37; 
-            padding: 3px;
-            transform: rotate(-15deg);
-            opacity: 0.8; 
-            background: rgba(0, 0, 0, 0.5);
-            object-fit: contain;
+        /* EFEK FADE OUT SAAT GANTI SCENE */
+        .fade-out-scene {
+            opacity: 0 !important;
+            transform: scale(1.1) !important;
+            filter: blur(20px) !important;
+            pointer-events: none;
         }
 
-        .signature-text {
-            text-align: right;
+        /* ORNAMEN GANTUNG */
+        .ornaments {
+            position: absolute;
+            top: -150px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 2s ease, top 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .ornaments.show { top: 0 !important; opacity: 1 !important; }
+        
+        .lantern { position: relative; animation: swing 4s infinite ease-in-out alternate; transform-origin: top center;}
+        .wire { width: 2px; height: 100px; background: linear-gradient(to bottom, transparent, var(--gold)); margin: 0 auto; }
+        .ketupat { width: 40px; height: 40px; background: rgba(0, 229, 255, 0.05); border: 2px solid var(--gold); transform: rotate(45deg); margin: -10px auto 0; position: relative; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); backdrop-filter: blur(5px);}
+        .ketupat::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: var(--gold); transform: translateY(-50%); }
+        .ketupat::after { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background: var(--gold); transform: translateX(-50%); }
+
+        @keyframes swing { 0% { transform: rotate(-6deg); } 100% { transform: rotate(6deg); } }
+
+        /* KELAS ANIMASI STANDAR (SMOOTH FADE IN UP) */
+        .anim-item {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            filter: blur(10px);
+            transition: opacity 1.5s ease-out, transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1), filter 1.5s ease-out;
+            will-change: transform, opacity, filter;
+            margin-bottom: 15px; 
+            text-align: center;
+        }
+        
+        .anim-item.show {
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
+            filter: blur(0) !important;
         }
 
-        .signature-text .role {
-            font-size: 12px;
-            color: #d4af37;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 3px;
+        /* STYLING TEKS SCENE 1 */
+        .line-1 { font-size: 16px; font-weight: 500; color: #cbd5e1; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px;}
+        .line-3 { font-size: 16px; color: var(--gold-light); font-style: italic; letter-spacing: 1px; margin-bottom: 15px; margin-top: 15px;}
+        .line-4 { font-family: 'Playfair Display', serif; font-size: 60px; font-weight: 700; color: var(--gold); margin-bottom: 5px; line-height: 1.1; text-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); }
+        .line-5 { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: white; letter-spacing: 5px; margin-bottom: 35px; }
+        .line-6 { font-size: 16px; font-weight: 600; color: #94A3B8; background: rgba(255,255,255,0.03); padding: 12px 35px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);}
+
+        /* STYLING SCENE 2 (OUTRO) */
+        .outro-logo { width: 380px; max-width: 85%; margin-bottom: 30px; filter: drop-shadow(0 15px 40px rgba(0, 229, 255, 0.4)); animation: floatLogo 4s ease-in-out infinite alternate;}
+        .outro-line-1 { font-size: 18px; font-weight: 600; color: #cbd5e1; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 5px;}
+        .outro-line-2 { font-family: 'Space Grotesk'; font-size: 42px; font-weight: 900; color: var(--cyan); letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);}
+
+        @keyframes floatLogo { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
+
+        /* EFFECT BOOM JADI GEDE NABRAK (MAIN EVENT SCENE 1) */
+        .maka-title-container { position: relative; margin: 10px 0 20px 0; width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; }
+        .maka-text { font-family: 'Space Grotesk', sans-serif; font-size: 55px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap; color: var(--cyan); background: linear-gradient(180deg, #ffffff 0%, var(--cyan) 50%, var(--cyan-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0; transform: scale(0); filter: blur(20px); will-change: transform, opacity, filter; }
+        .maka-text.boom { animation: hyperZoomTabrak 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+
+        @keyframes hyperZoomTabrak {
+            0% { opacity: 0; transform: scale(0); filter: blur(20px); }
+            30% { opacity: 1; transform: scale(3.5); filter: blur(0px) drop-shadow(0 0 40px rgba(0, 229, 255, 1)); }
+            100% { opacity: 1; transform: scale(1); filter: blur(0px) drop-shadow(0 0 15px rgba(0, 229, 255, 0.6)); }
         }
 
-        .signature-text .club-name {
-            font-family: 'Oswald', sans-serif;
-            font-size: 17px;
-            color: #ffffff;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        /* FLASH OPTIK (EFEK KEJUT PAS NABRAK) */
+        .optic-flash { position: fixed; inset: 0; background: white; z-index: 9999; opacity: 0; pointer-events: none; will-change: opacity; }
+        .optic-flash.flash { animation: flashImpact 0.8s ease-out; }
+        @keyframes flashImpact { 0% { opacity: 0; } 10% { opacity: 0.8; } 100% { opacity: 0; } }
+
+        /* RESPONSIVE UNTUK HP */
+        @media (max-width: 768px) {
+            .line-1 { font-size: 12px; letter-spacing: 1px;}
+            .maka-text { font-size: 28px; letter-spacing: 2px;}
+            .maka-title-container { height: 45px; }
+            .line-4 { font-size: 38px; }
+            .line-5 { font-size: 22px; letter-spacing: 3px;}
+            .line-6 { font-size: 11px; padding: 10px 20px;}
+            
+            .outro-logo { width: 280px; margin-bottom: 20px;}
+            .outro-line-1 { font-size: 12px; letter-spacing: 4px; }
+            .outro-line-2 { font-size: 26px; letter-spacing: 5px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="poster-container">
-        <div class="content-wrapper">
+    <div class="optic-flash" id="flashEffect"></div>
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="ornaments" id="ornaments">
+        <div class="lantern"><div class="wire"></div><div class="ketupat"></div></div>
+        <div class="lantern"><div class="wire"></div><div class="ketupat"></div></div>
+    </div>
+
+    <div class="scene-wrapper">
+        <div class="scene-part" id="sceneMain">
+            <div class="anim-item line-1" id="t1">Kami Segenap Pengurus dan Keluarga Besar</div>
             
-            <h1>Pengumuman</h1>
-            
-            <div class="divider"></div>
-
-            <div class="text-body">
-                Selamat Siang Maka Riders,
+            <div class="maka-title-container">
+                <div class="maka-text" id="makaBoom">MAKA LINTAS UTARA</div>
             </div>
 
-            <div class="text-body">
-                Sehubungan dengan tutupnya showroom Maka Kelapa Gading karena libur Idul Fitri.
-            </div>
+            <div class="anim-item line-3" id="t3">Mengucapkan</div>
+            <div class="anim-item line-4" id="t4">Selamat Hari Raya Idul Fitri</div>
+            <div class="anim-item line-5" id="t5">1447 H</div>
+            <div class="anim-item line-6" id="t6">Taqabbalallahu Minna Wa Minkum. Mohon Maaf Lahir & Batin.</div>
+        </div>
 
-            <div class="rule-box">
-                <div class="date">Mulai Tgl 18 - 24 Maret 2026</div>
-                <div class="highlight">Maksimal charging dibatasi hanya sampai 95%</div>
-                <div class="reason">Guna mencegah FC error.</div>
-            </div>
-
-            <div class="text-body">
-                Demi kenyamanan bersama mohon agar semua teman-teman mengikuti aturan yg berlaku untuk sementara ini hingga showroom dibuka kembali.
-            </div>
-
-            <div class="footer-section">
-                <img src="logomlumaster.png" alt="Stamp MLU" class="stamp-logo">
-                <div class="signature-text">
-                    <div class="role">Divisi Komunikasi Digital</div>
-                    <div class="club-name">Maka Lintas Utara</div>
-                </div>
-            </div>
-
+        <div class="scene-part" id="sceneOutro">
+            <img src="logomlumaster.png" class="anim-item outro-logo" id="oLogo" alt="MLU Master Logo">
+            <div class="anim-item outro-line-1" id="o1">Beda Rangka Beda Warna</div>
+            <div class="anim-item outro-line-2" id="o2">Satu Keluarga</div>
         </div>
     </div>
 
+    <script>
+        // ==========================================
+        // 1. ENGINE PARTIKEL BINTANG (BACKGROUND)
+        // ==========================================
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 0.8 + 0.2;
+                this.color = Math.random() > 0.4 ? 'rgba(212, 175, 55, ' : 'rgba(0, 229, 255, ';
+                this.opacity = Math.random() * 0.6 + 0.2;
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = this.color + this.opacity + ')';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 120; i++) { particles.push(new Particle()); }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // ==========================================
+        // 2. TIMELINE ANIMASI SUTRADARA (CINEMATIC)
+        // ==========================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const flash = document.getElementById('flashEffect');
+            const makaText = document.getElementById('makaBoom');
+            const sceneMain = document.getElementById('sceneMain');
+            const ornaments = document.getElementById('ornaments');
+            
+            const showElement = (id, time) => {
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if(el) el.classList.add('show');
+                }, time);
+            };
+
+            // ---- SCENE 1 : START ----
+            showElement('ornaments', 500);
+            showElement('t1', 1500);
+
+            setTimeout(() => {
+                makaText.classList.add('boom');
+                setTimeout(() => { if(flash) flash.classList.add('flash'); }, 500); 
+            }, 2800);
+
+            showElement('t3', 5000);
+            showElement('t4', 6000);
+            showElement('t5', 7000);
+            showElement('t6', 8500);
+
+            // ---- TRANSISI (HILANGKAN SCENE 1) ----
+            // Di detik 12.5 (Sekitar 4 detik setelah teks terakhir dibaca)
+            setTimeout(() => {
+                sceneMain.classList.add('fade-out-scene'); // Teks ucapan ilang
+                ornaments.classList.remove('show');        // Ketupat naik lagi
+            }, 12500); 
+
+            // ---- SCENE 2 : OUTRO ----
+            // Detik 13.5: Logo Gede Muncul
+            showElement('oLogo', 13500);
+
+            // Detik 14.8: Beda rangka beda warna
+            showElement('o1', 14800);
+
+            // Detik 16.0: Satu keluarga! (Puncak Outro)
+            showElement('o2', 16000);
+        });
+    </script>
 </body>
 </html>
