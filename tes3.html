@@ -26,16 +26,17 @@
             align-items: center;
             justify-content: center;
             color: white;
-            cursor: pointer; /* Memberi tahu user bisa diklik */
+            cursor: pointer;
         }
 
-        /* LAYER PETUNJUK FULLSCREEN DI AWAL */
+        /* LAYER PETUNJUK FULLSCREEN & COUNTDOWN */
         #startOverlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100000;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.5s ease;
         }
-        .start-text { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite alternate;}
+        .start-text { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite alternate; text-align: center;}
+        .countdown-text { font-size: 14px; color: #94A3B8; margin-top: 15px; font-weight: 600; text-align: center; }
         @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7;} 100% { transform: scale(1.05); opacity: 1;} }
 
         /* CANVAS UNTUK EFEK BINTANG / PARTIKEL */
@@ -46,7 +47,7 @@
             pointer-events: none;
         }
 
-        /* CONTAINER UTAMA (WRAPPER SCENE) */
+        /* CONTAINER UTAMA */
         .scene-wrapper {
             position: relative;
             z-index: 10;
@@ -58,7 +59,7 @@
             justify-content: center;
         }
 
-        /* SCENE PARTS (BAGIAN 1 & BAGIAN 2) */
+        /* SCENE PARTS */
         .scene-part {
             position: absolute;
             width: 100%;
@@ -99,7 +100,7 @@
 
         @keyframes swing { 0% { transform: rotate(-6deg); } 100% { transform: rotate(6deg); } }
 
-        /* KELAS ANIMASI STANDAR (SMOOTH FADE IN UP) */
+        /* KELAS ANIMASI STANDAR */
         .anim-item {
             opacity: 0;
             transform: translateY(30px) scale(0.95);
@@ -124,17 +125,16 @@
         .line-6 { font-size: 16px; font-weight: 600; color: #94A3B8; background: rgba(255,255,255,0.03); padding: 12px 35px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);}
 
         /* ==========================================
-           STYLING SCENE 2 (OUTRO) DIPERBAIKI
+           STYLING SCENE 2 (OUTRO) - SUDAH DIRAPATKAN!
            ========================================== */
         #sceneOutro {
-            /* Memastikan konten outro ada di tengah-tengah secara vertikal */
             justify-content: center; 
         }
 
         .outro-logo { 
-            width: 450px; /* Logo jauh lebih besar */
+            width: 450px; 
             max-width: 90%; 
-            margin-bottom: 50px; /* Jarak pas ke teks pertama */
+            margin-bottom: 15px !important; /* Jarak dikecilin banget */
             filter: drop-shadow(0 15px 40px rgba(0, 229, 255, 0.4)); 
             animation: floatLogo 4s ease-in-out infinite alternate;
         }
@@ -145,7 +145,7 @@
             color: #cbd5e1; 
             letter-spacing: 6px; 
             text-transform: uppercase; 
-            margin-bottom: 5px;
+            margin-bottom: 5px !important; /* Didekatkan ke teks utama */
         }
         
         .outro-line-2 { 
@@ -156,7 +156,7 @@
             letter-spacing: 8px; 
             text-transform: uppercase; 
             text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);
-            margin-bottom: 0;
+            margin-bottom: 0 !important;
         }
 
         @keyframes floatLogo { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
@@ -187,8 +187,8 @@
             .line-6 { font-size: 11px; padding: 10px 20px;}
             
             /* Penyesuaian Outro untuk Layar Sempit */
-            .outro-logo { width: 320px; margin-bottom: 30px;}
-            .outro-line-1 { font-size: 13px; letter-spacing: 4px; }
+            .outro-logo { width: 320px; margin-bottom: 10px !important;}
+            .outro-line-1 { font-size: 13px; letter-spacing: 4px; margin-bottom: 2px !important;}
             .outro-line-2 { font-size: 32px; letter-spacing: 5px; }
         }
     </style>
@@ -196,8 +196,8 @@
 <body>
 
     <div id="startOverlay" onclick="startExperience()">
-        <div class="start-text">TAP LAYAR UNTUK MULAI</div>
-        <div style="font-size: 12px; color: #94A3B8; margin-top: 10px;">Siapkan Screen Recorder Anda</div>
+        <div class="start-text" id="btnStartText">TAP LAYAR UNTUK MULAI</div>
+        <div class="countdown-text" id="descStartText">Siapkan Screen Recorder Anda.<br>Notifikasi putih browser akan hilang otomatis.</div>
     </div>
 
     <div class="optic-flash" id="flashEffect"></div>
@@ -278,7 +278,7 @@
         animateParticles();
 
         // ==========================================
-        // 2. FUNGSI FULLSCREEN & TIMELINE ANIMASI
+        // 2. FUNGSI FULLSCREEN DENGAN JEDA 4 DETIK
         // ==========================================
         
         let hasStarted = false;
@@ -287,23 +287,48 @@
             if(hasStarted) return;
             hasStarted = true;
 
-            // Memaksa masuk ke mode Fullscreen saat layar diklik
+            // Masuk Fullscreen
             const docElm = document.documentElement;
             if (docElm.requestFullscreen) { docElm.requestFullscreen(); }
             else if (docElm.webkitRequestFullscreen) { docElm.webkitRequestFullscreen(); }
 
-            // Hilangkan Overlay "TAP UNTUK MULAI"
+            // Ganti Teks Jadi Hitung Mundur (Biar notif browser ilang dulu)
+            const textEl = document.getElementById('btnStartText');
+            const descEl = document.getElementById('descStartText');
+            
+            textEl.style.animation = 'none'; // Matikan efek denyut
+            descEl.innerHTML = "Notifikasi putih akan menghilang...<br>Video akan otomatis mulai.";
+            
+            let timeLeft = 4;
+            textEl.innerHTML = `MENYIAPKAN LAYAR... ${timeLeft}`;
+
+            const countdownInterval = setInterval(() => {
+                timeLeft--;
+                if(timeLeft > 0) {
+                    textEl.innerHTML = `MENYIAPKAN LAYAR... ${timeLeft}`;
+                } else {
+                    clearInterval(countdownInterval);
+                    // Hitung mundur selesai, tutup overlay dan mulai!
+                    mulaiScreening();
+                }
+            }, 1000);
+        };
+
+        function mulaiScreening() {
             const overlay = document.getElementById('startOverlay');
             overlay.style.opacity = 0;
-            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+                
+                // Tampilkan container-nya
+                document.getElementById('sceneMain').style.display = 'flex';
+                document.getElementById('sceneOutro').style.display = 'flex';
 
-            // Tampilkan Scene 1 dan Scene 2 tapi set opacity awal 0
-            document.getElementById('sceneMain').style.display = 'flex';
-            document.getElementById('sceneOutro').style.display = 'flex';
-
-            // MULAI JALANKAN TIMELINE SUTRADARA
-            mulaiAnimasi();
-        };
+                // MULAI JALANKAN TIMELINE SUTRADARA
+                mulaiAnimasi();
+            }, 500);
+        }
 
         function mulaiAnimasi() {
             const flash = document.getElementById('flashEffect');
@@ -333,10 +358,9 @@
             showElement('t6', 8500);
 
             // ---- TRANSISI (HILANGKAN SCENE 1) ----
-            // Di detik 12.5 (Sekitar 4 detik setelah teks terakhir dibaca)
             setTimeout(() => {
-                sceneMain.classList.add('fade-out-scene'); // Teks ucapan ilang
-                ornaments.classList.remove('show');        // Ketupat naik lagi
+                sceneMain.classList.add('fade-out-scene'); 
+                ornaments.classList.remove('show');        
             }, 12500); 
 
             // ---- SCENE 2 : OUTRO ----
@@ -346,7 +370,7 @@
             // Detik 14.8: Beda rangka beda warna
             showElement('o1', 14800);
 
-            // Detik 16.0: Satu keluarga! (Puncak Outro)
+            // Detik 16.0: Satu keluarga!
             showElement('o2', 16000);
         }
     </script>
