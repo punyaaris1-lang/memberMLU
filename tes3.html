@@ -125,12 +125,15 @@
         .line-5 { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: white; letter-spacing: 5px; margin-bottom: 35px; }
         .line-6 { font-size: 16px; font-weight: 600; color: #94A3B8; background: rgba(255,255,255,0.03); padding: 12px 35px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);}
 
-        /* STYLING SCENE 2 (OUTRO) */
+        /* ==========================================
+           STYLING SCENE 2 (OUTRO) - TARIK NEGATIF MARGIN!
+           ========================================== */
         #sceneOutro { justify-content: center; }
 
         .outro-logo { 
             width: 450px; max-width: 90%; 
-            margin-bottom: 0px !important; 
+            /* JURUS NEGATIVE MARGIN buat ngelawan ruang kosong transparan di file foto */
+            margin-bottom: -50px !important; 
             filter: drop-shadow(0 15px 40px rgba(0, 229, 255, 0.4)); 
             animation: floatLogo 4s ease-in-out infinite alternate;
             position: relative; z-index: 2;
@@ -138,44 +141,28 @@
         
         .outro-line-1 { 
             font-size: 20px; font-weight: 600; color: #cbd5e1; letter-spacing: 6px; 
-            text-transform: uppercase; margin-top: 10px !important; margin-bottom: 0px !important; line-height: 1;
+            text-transform: uppercase; 
+            /* Ditarik naik ke atas ngelewatin area kosong transparan logo */
+            margin-top: -20px !important; 
+            margin-bottom: 0px !important; 
+            line-height: 1;
+            position: relative; z-index: 3; /* Biar teks gak ketutupan layer logo */
         }
         
         .outro-line-2 { 
             font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; color: var(--cyan); 
             letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);
-            margin-top: 5px !important; margin-bottom: 0px !important; line-height: 1;
+            margin-top: 8px !important; margin-bottom: 0px !important; line-height: 1;
+            position: relative; z-index: 3;
         }
 
         @keyframes floatLogo { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
 
         /* SCENE 3 : FINAL COPYRIGHT (TOTAL GELAP & PUTIH TERANG) */
-        #sceneCopyright {
-            background: black; /* Hitam Pekat */
-            z-index: 20; 
-        }
-        .copyright-wrap {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            text-transform: uppercase;
-        }
-        .cr-1 {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            color: #ffffff;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Glow Putih */
-        }
-        .cr-2 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: 5px;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Glow Putih Terang */
-        }
+        #sceneCopyright { background: black; z-index: 20; }
+        .copyright-wrap { display: flex; flex-direction: column; gap: 8px; text-transform: uppercase; }
+        .cr-1 { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #ffffff; letter-spacing: 3px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        .cr-2 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 900; color: #ffffff; letter-spacing: 5px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
 
         /* EFFECT BOOM JADI GEDE NABRAK */
         .maka-title-container { position: relative; margin: 10px 0 20px 0; width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; }
@@ -202,9 +189,10 @@
             .line-5 { font-size: 22px; letter-spacing: 3px;}
             .line-6 { font-size: 11px; padding: 10px 20px;}
             
-            .outro-logo { width: 320px; margin-bottom: 0px !important;}
-            .outro-line-1 { font-size: 13px; letter-spacing: 4px; margin-top: 8px !important; margin-bottom: 0px !important;}
-            .outro-line-2 { font-size: 32px; letter-spacing: 5px; margin-top: 4px !important; margin-bottom: 0px !important;}
+            /* Penyesuaian Jarak Tarik Negatif untuk Layar Sempit */
+            .outro-logo { width: 320px; margin-bottom: -50px !important;}
+            .outro-line-1 { font-size: 13px; letter-spacing: 4px; margin-top: -20px !important; margin-bottom: 0px !important;}
+            .outro-line-2 { font-size: 32px; letter-spacing: 5px; margin-top: 5px !important; margin-bottom: 0px !important;}
             
             .cr-1 { font-size: 11px; letter-spacing: 2px;}
             .cr-2 { font-size: 14px; letter-spacing: 3px;}
