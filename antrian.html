@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU - Smart Charging Hub</title>
     
+    <script>
+        // ==========================================
+        // SCRIPT MEMORI TEMA (BIAR GAK KEDIP PAS DIBUKA)
+        // ==========================================
+        const globalTheme = localStorage.getItem('mlu_global_theme');
+        if (globalTheme === 'lebaran') {
+            document.documentElement.classList.add('theme-lebaran');
+        }
+    </script>
+
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0A2259">
     
@@ -29,12 +39,50 @@
             --glow-green: 0 10px 25px rgba(16, 185, 129, 0.25);
             --glow-gold: 0 10px 25px rgba(212, 175, 55, 0.25);
         }
+
+        /* === TEMA OVERRIDE SPESIAL LEBARAN === */
+        html.theme-lebaran {
+            --royal-blue: #064E3B; /* Emerald Dark */
+            --electric-blue: #10B981; /* Emerald Light */
+            --bg-surface: #F8FAFC; 
+            --text-main: #064E3B; 
+            --text-muted: #64748B; 
+            --gold: #D4AF37;
+            --glow-blue: 0 10px 30px rgba(16, 185, 129, 0.25);
+        }
+        html.theme-lebaran .light-1 { background: #D1FAE5; }
+        html.theme-lebaran .light-2 { background: #FEF3C7; opacity: 0.8; }
+        html.theme-lebaran .header-premium {
+            background: linear-gradient(160deg, var(--royal-blue) 0%, #047857 100%);
+            border-bottom: 2px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.3);
+        }
+        html.theme-lebaran .sub-tag { color: var(--gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        html.theme-lebaran .slot-bay.is-active { border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.03); }
+        html.theme-lebaran .sc-tot { text-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+        html.theme-lebaran .btn-premium-back { border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: var(--glow-blue); color: var(--electric-blue); }
+        
+        /* ORNAMEN LEBARAN */
+        .only-lebaran { display: none !important; }
+        html.theme-lebaran .only-lebaran { display: block !important; }
+        
+        .hanging-ornament { position: absolute; top: -20px; z-index: 20; animation: swing 4s ease-in-out infinite alternate; transform-origin: top center; opacity: 0.9;}
+        .orn-left { left: 8%; }
+        .orn-right { right: 10%; animation-delay: -2s; }
+        .wire { width: 2px; background: linear-gradient(to bottom, transparent, var(--gold)); margin: 0 auto; height: 30px;}
+        .orn-right .wire { height: 60px; } 
+        .ketupat { width: 30px; height: 30px; background: var(--royal-blue); border: 2px solid #FDE68A; transform: rotate(45deg); margin: -6px auto 0; position: relative; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.5); border-radius: 4px;}
+        .ketupat::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: var(--gold); transform: translateY(-50%); }
+        .ketupat::after { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background: var(--gold); transform: translateX(-50%); }
+        .tassel { width: 4px; height: 16px; background: var(--gold); margin: 6px auto 0; border-radius: 3px; position: relative; }
+        .tassel::after { content: ''; position: absolute; bottom: -4px; left: -2px; width: 8px; height: 8px; border-radius: 50%; background: #FDE68A; }
+        @keyframes swing { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
         /* AMBIENT LIGHT & BACKGROUND */
-        .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: floatLight 10s infinite alternate; }
+        .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: floatLight 10s infinite alternate; transition: 0.5s background; }
         .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #bfdbfe; }
         .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: rgba(212, 175, 55, 0.15); animation-delay: 2s; }
         .bg-watermark { position: fixed; top: 15%; right: -15%; width: 100%; height: 80%; background-image: url('logomlu.png'); background-repeat: no-repeat; background-size: contain; background-position: center; opacity: 0.04; transform: rotate(-15deg); z-index: -2; pointer-events: none; }
@@ -47,52 +95,22 @@
             border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
             color: white; position: relative; z-index: 10; 
             box-shadow: var(--glow-blue); border-bottom: 2px solid rgba(45,99,237,0.3);
+            transition: 0.5s;
         }
         .head-flex { display: flex; justify-content: space-between; align-items: flex-start; }
-        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); transition: 0.5s;}
         .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; line-height: 1.1; }
         
-        /* === BANNER DARURAT DENDA (PENGGANTI WIDGET SAHUR) === */
+        /* === BANNER DARURAT DENDA === */
         .alert-banner {
             background: linear-gradient(135deg, #EF4444 0%, #991B1B 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 20px;
-            margin-top: 25px; /* Spasi dari judul stasiun */
-            border: 2px solid #FCA5A5;
-            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
-            animation: pulseAlert 2s infinite;
-            text-align: center;
-            position: relative;
-            z-index: 5;
+            color: white; padding: 20px; border-radius: 20px; margin-top: 25px; 
+            border: 2px solid #FCA5A5; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+            animation: pulseAlert 2s infinite; text-align: center; position: relative; z-index: 5;
         }
-        .alert-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #FEF2F2;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .alert-text {
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
-            line-height: 1.6;
-            color: #FFFFFF;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-        }
-        @keyframes pulseAlert {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
+        .alert-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; color: #FEF2F2; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .alert-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 800; line-height: 1.6; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        @keyframes pulseAlert { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
         .admin-badge { display: none; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 4px; box-shadow: var(--glow-red); }
         .gps-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: var(--warning); color: white; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; box-shadow: 0 5px 15px rgba(245,158,11,0.3); z-index: 15; white-space: nowrap; }
@@ -189,7 +207,7 @@
         .qi-btn:active { transform: scale(0.9); }
 
         .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100;}
-        .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--glow-blue); }
+        .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: var(--glow-blue); transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -197,6 +215,13 @@
     <div class="ambient-light light-1"></div>
     <div class="ambient-light light-2"></div>
     <div class="bg-watermark"></div>
+
+    <div class="hanging-ornament orn-left only-lebaran">
+        <div class="wire"></div><div class="ketupat"></div><div class="tassel"></div>
+    </div>
+    <div class="hanging-ornament orn-right only-lebaran">
+        <div class="wire"></div><div class="ketupat"></div><div class="tassel"></div>
+    </div>
 
     <header class="header-premium">
         <div class="head-flex">
@@ -207,7 +232,7 @@
             <div class="admin-badge admin-only" id="adminIndicator"><i class="fas fa-shield-alt"></i> PENGURUS</div>
         </div>
 
-        <div class="alert-banner">
+        <div class="alert-banner hide-lebaran">
             <div class="alert-title"><i class="fa-solid fa-triangle-exclamation fa-fade"></i> PENGUMUMAN </div>
             <div class="alert-text">TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. <br> BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000</br></div>
         </div>
@@ -316,6 +341,23 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const mainRef = doc(db, "antrian", "utama");
+        
+        // SINKRONISASI TEMA LEBARAN DARI DASHBOARD (DATABASE MLU UTAMA)
+        const appMLU = initializeApp({ apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" }, "AppMLU"); 
+        const dbMLU = getFirestore(appMLU);
+        const themeRef = doc(dbMLU, "settings", "app_config");
+        onSnapshot(themeRef, (snap) => {
+            if(snap.exists()) {
+                const data = snap.data();
+                if(data.theme === 'lebaran') {
+                    document.documentElement.classList.add('theme-lebaran');
+                    localStorage.setItem('mlu_global_theme', 'lebaran');
+                } else {
+                    document.documentElement.classList.remove('theme-lebaran');
+                    localStorage.setItem('mlu_global_theme', 'default');
+                }
+            }
+        });
 
         // --- SISTEM LOGIN & HAK AKSES ---
         const uData = JSON.parse(localStorage.getItem('maka_user'));
