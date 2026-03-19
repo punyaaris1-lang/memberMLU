@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cinematic Video Greeting KC</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -69,6 +69,7 @@
             align-items: center;
             justify-content: center;
             transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform, opacity, filter;
         }
 
         /* EFEK FADE OUT SAAT GANTI SCENE */
@@ -124,44 +125,59 @@
         .line-5 { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: white; letter-spacing: 5px; margin-bottom: 35px; }
         .line-6 { font-size: 16px; font-weight: 600; color: #94A3B8; background: rgba(255,255,255,0.03); padding: 12px 35px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);}
 
-        /* ==========================================
-           STYLING SCENE 2 (OUTRO) - SUDAH DIRAPATKAN!
-           ========================================== */
-        #sceneOutro {
-            justify-content: center; 
-        }
+        /* STYLING SCENE 2 (OUTRO) */
+        #sceneOutro { justify-content: center; }
 
         .outro-logo { 
-            width: 450px; 
-            max-width: 90%; 
-            margin-bottom: 15px !important; /* Jarak dikecilin banget */
+            width: 450px; max-width: 90%; 
+            margin-bottom: 0px !important; 
             filter: drop-shadow(0 15px 40px rgba(0, 229, 255, 0.4)); 
             animation: floatLogo 4s ease-in-out infinite alternate;
+            position: relative; z-index: 2;
         }
         
         .outro-line-1 { 
-            font-size: 20px; 
-            font-weight: 600; 
-            color: #cbd5e1; 
-            letter-spacing: 6px; 
-            text-transform: uppercase; 
-            margin-bottom: 5px !important; /* Didekatkan ke teks utama */
+            font-size: 20px; font-weight: 600; color: #cbd5e1; letter-spacing: 6px; 
+            text-transform: uppercase; margin-top: 10px !important; margin-bottom: 0px !important; line-height: 1;
         }
         
         .outro-line-2 { 
-            font-family: 'Space Grotesk'; 
-            font-size: 48px; 
-            font-weight: 900; 
-            color: var(--cyan); 
-            letter-spacing: 8px; 
-            text-transform: uppercase; 
-            text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);
-            margin-bottom: 0 !important;
+            font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; color: var(--cyan); 
+            letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);
+            margin-top: 5px !important; margin-bottom: 0px !important; line-height: 1;
         }
 
-        @keyframes floatLogo { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
+        @keyframes floatLogo { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
 
-        /* EFFECT BOOM JADI GEDE NABRAK (MAIN EVENT SCENE 1) */
+        /* SCENE 3 : FINAL COPYRIGHT (TOTAL GELAP & PUTIH TERANG) */
+        #sceneCopyright {
+            background: black; /* Hitam Pekat */
+            z-index: 20; 
+        }
+        .copyright-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+        .cr-1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: #ffffff;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Glow Putih */
+        }
+        .cr-2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 5px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Glow Putih Terang */
+        }
+
+        /* EFFECT BOOM JADI GEDE NABRAK */
         .maka-title-container { position: relative; margin: 10px 0 20px 0; width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; }
         .maka-text { font-family: 'Space Grotesk', sans-serif; font-size: 55px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap; color: var(--cyan); background: linear-gradient(180deg, #ffffff 0%, var(--cyan) 50%, var(--cyan-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0; transform: scale(0); filter: blur(20px); will-change: transform, opacity, filter; }
         .maka-text.boom { animation: hyperZoomTabrak 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
@@ -172,7 +188,7 @@
             100% { opacity: 1; transform: scale(1); filter: blur(0px) drop-shadow(0 0 15px rgba(0, 229, 255, 0.6)); }
         }
 
-        /* FLASH OPTIK (EFEK KEJUT PAS NABRAK) */
+        /* FLASH OPTIK */
         .optic-flash { position: fixed; inset: 0; background: white; z-index: 9999; opacity: 0; pointer-events: none; will-change: opacity; }
         .optic-flash.flash { animation: flashImpact 0.8s ease-out; }
         @keyframes flashImpact { 0% { opacity: 0; } 10% { opacity: 0.8; } 100% { opacity: 0; } }
@@ -186,10 +202,12 @@
             .line-5 { font-size: 22px; letter-spacing: 3px;}
             .line-6 { font-size: 11px; padding: 10px 20px;}
             
-            /* Penyesuaian Outro untuk Layar Sempit */
-            .outro-logo { width: 320px; margin-bottom: 10px !important;}
-            .outro-line-1 { font-size: 13px; letter-spacing: 4px; margin-bottom: 2px !important;}
-            .outro-line-2 { font-size: 32px; letter-spacing: 5px; }
+            .outro-logo { width: 320px; margin-bottom: 0px !important;}
+            .outro-line-1 { font-size: 13px; letter-spacing: 4px; margin-top: 8px !important; margin-bottom: 0px !important;}
+            .outro-line-2 { font-size: 32px; letter-spacing: 5px; margin-top: 4px !important; margin-bottom: 0px !important;}
+            
+            .cr-1 { font-size: 11px; letter-spacing: 2px;}
+            .cr-2 { font-size: 14px; letter-spacing: 3px;}
         }
     </style>
 </head>
@@ -227,6 +245,13 @@
             <div class="anim-item outro-line-1" id="o1">Beda Rangka Beda Warna</div>
             <div class="anim-item outro-line-2" id="o2">Satu Keluarga</div>
         </div>
+
+        <div class="scene-part" id="sceneCopyright" style="display: none;">
+            <div class="anim-item copyright-wrap" id="c1">
+                <div class="cr-1">© Divisi Komunikasi Digital</div>
+                <div class="cr-2">MAKA LINTAS UTARA</div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -236,6 +261,7 @@
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
+        let pRequest;
 
         function resize() {
             canvas.width = window.innerWidth;
@@ -273,12 +299,12 @@
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
+            pRequest = requestAnimationFrame(animateParticles);
         }
         animateParticles();
 
         // ==========================================
-        // 2. FUNGSI FULLSCREEN DENGAN JEDA 4 DETIK
+        // 2. FUNGSI FULLSCREEN & TIMELINE ANIMASI
         // ==========================================
         
         let hasStarted = false;
@@ -287,16 +313,14 @@
             if(hasStarted) return;
             hasStarted = true;
 
-            // Masuk Fullscreen
             const docElm = document.documentElement;
             if (docElm.requestFullscreen) { docElm.requestFullscreen(); }
             else if (docElm.webkitRequestFullscreen) { docElm.webkitRequestFullscreen(); }
 
-            // Ganti Teks Jadi Hitung Mundur (Biar notif browser ilang dulu)
             const textEl = document.getElementById('btnStartText');
             const descEl = document.getElementById('descStartText');
             
-            textEl.style.animation = 'none'; // Matikan efek denyut
+            textEl.style.animation = 'none'; 
             descEl.innerHTML = "Notifikasi putih akan menghilang...<br>Video akan otomatis mulai.";
             
             let timeLeft = 4;
@@ -308,7 +332,6 @@
                     textEl.innerHTML = `MENYIAPKAN LAYAR... ${timeLeft}`;
                 } else {
                     clearInterval(countdownInterval);
-                    // Hitung mundur selesai, tutup overlay dan mulai!
                     mulaiScreening();
                 }
             }, 1000);
@@ -321,11 +344,9 @@
             setTimeout(() => { 
                 overlay.style.display = 'none'; 
                 
-                // Tampilkan container-nya
                 document.getElementById('sceneMain').style.display = 'flex';
                 document.getElementById('sceneOutro').style.display = 'flex';
 
-                // MULAI JALANKAN TIMELINE SUTRADARA
                 mulaiAnimasi();
             }, 500);
         }
@@ -357,21 +378,32 @@
             showElement('t5', 7000);
             showElement('t6', 8500);
 
-            // ---- TRANSISI (HILANGKAN SCENE 1) ----
+            // ---- TRANSISI 1 (MENU KE OUTRO) ----
             setTimeout(() => {
                 sceneMain.classList.add('fade-out-scene'); 
                 ornaments.classList.remove('show');        
             }, 12500); 
 
             // ---- SCENE 2 : OUTRO ----
-            // Detik 13.5: Logo MLU Master Gede Muncul
             showElement('oLogo', 13500);
-
-            // Detik 14.8: Beda rangka beda warna
             showElement('o1', 14800);
-
-            // Detik 16.0: Satu keluarga!
             showElement('o2', 16000);
+
+            // ---- TRANSISI 2 (OUTRO KE COPYRIGHT) ----
+            setTimeout(() => {
+                const outro = document.getElementById('sceneOutro');
+                outro.classList.add('fade-out-scene'); 
+
+                // Matikan partikel biar hitam pekat
+                cancelAnimationFrame(pRequest);
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                
+                // Munculkan wadah copyright
+                document.getElementById('sceneCopyright').style.display = 'flex';
+            }, 20000);
+
+            // ---- SCENE 3 : FINAL COPYRIGHT ----
+            showElement('c1', 21000);
         }
     </script>
 </body>
