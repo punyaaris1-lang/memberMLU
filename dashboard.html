@@ -14,7 +14,7 @@
             document.documentElement.classList.add('theme-lebaran');
         }
 
-        const DASH_VERSION = "4.9"; // Fix Marquee Macet di HP
+        const DASH_VERSION = "5.0"; // Fix Marquee Modern CSS
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) {
                 caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
@@ -95,14 +95,15 @@
         .islamic-pattern { position: absolute; inset: 0; opacity: 0.03; pointer-events: none; z-index: 1; background-image: radial-gradient(var(--royal-blue) 2px, transparent 2px), radial-gradient(var(--royal-blue) 2px, transparent 2px); background-size: 40px 40px; background-position: 0 0, 20px 20px; }
 
         /* ==========================================
-           CANGKANG PELINDUNG MARQUEE (ANTI-MACET DI HP)
+           CANGKANG PELINDUNG MARQUEE (MODERN CSS ANIMATION)
            ========================================== */
-        .marquee-wrapper { flex: 1; min-width: 0; overflow: hidden; width: 100%; }
-        .marquee-text { width: 100%; display: block; }
+        .marquee-wrapper { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; position: relative; }
+        .marquee-text { display: inline-block; padding-left: 100%; animation: scrollMarquee 18s linear infinite; }
+        @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
         .eid-marquee { background: #F0FDF4; border-radius: 12px; padding: 10px 15px; margin-top: 20px; width: 100%; border: 1px solid #A7F3D0; align-items: center; gap: 10px; z-index: 2; overflow: hidden;}
         .eid-marquee i { color: var(--royal-blue); font-size: 22px; animation: swing 2s infinite; flex-shrink: 0;}
-        .eid-marquee marquee { font-family: 'Inter'; font-size: 11px; font-weight: 700; color: var(--royal-blue); letter-spacing: 0.5px;}
+        .eid-marquee .marquee-text { font-family: 'Inter'; font-size: 11px; font-weight: 700; color: var(--royal-blue); letter-spacing: 0.5px;}
         @keyframes swing { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
 
         .glass-panel { background: var(--glass-bg); backdrop-filter: blur(30px); border: 1.5px solid var(--glass-border); box-shadow: var(--shadow-soft); position: relative; overflow: hidden; transition: 0.5s; }
@@ -183,11 +184,11 @@
             font-size: 12px; flex-shrink: 0;
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
         }
-        .premium-ticker marquee {
+        .premium-ticker .marquee-text {
             font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
             color: #991B1B; letter-spacing: 0.5px;
         }
-        .premium-ticker marquee b { color: var(--danger); font-weight: 800; }
+        .premium-ticker .marquee-text b { color: var(--danger); font-weight: 800; }
 
         /* BANNER UTAMA DINAMIS */
         .fc-banner { border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; cursor: pointer; gap: 10px; transition: 0.5s; background: linear-gradient(135deg, var(--royal-blue) 0%, #15398F 100%); border: 1px solid rgba(45, 99, 237, 0.3); box-shadow: 0 15px 40px rgba(10, 34, 89, 0.1);}
@@ -346,7 +347,7 @@
             <div class="eid-marquee only-lebaran-flex">
                 <i class="fas fa-mosque"></i>
                 <div class="marquee-wrapper">
-                    <marquee scrollamount="4" class="marquee-text">✨ Segenap Pengurus Pusat Maka Lintas Utara (MLU) Mengucapkan Selamat Hari Raya Idul Fitri 1447 H. Taqabbalallahu Minna Wa Minkum. Mohon Maaf Lahir dan Batin. Tetap utamakan keselamatan keluarga di jalan! 🌙</marquee>
+                    <div class="marquee-text">✨ Segenap Pengurus Pusat Maka Lintas Utara (MLU) Mengucapkan Selamat Hari Raya Idul Fitri 1447 H. Taqabbalallahu Minna Wa Minkum. Mohon Maaf Lahir dan Batin. Tetap utamakan keselamatan keluarga di jalan! 🌙</div>
                 </div>
             </div>
 
@@ -367,7 +368,7 @@
         <div class="premium-ticker only-lebaran-flex">
             <div class="ticker-icon"><i class="fa-solid fa-triangle-exclamation fa-fade"></i></div>
             <div class="marquee-wrapper">
-                <marquee scrollamount="4" class="marquee-text">⚠️ <b>PENGUMUMAN PENTING:</b> TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000 ⚠️</marquee>
+                <div class="marquee-text">⚠️ <b>PENGUMUMAN PENTING:</b> TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000 ⚠️</div>
             </div>
         </div>
 
