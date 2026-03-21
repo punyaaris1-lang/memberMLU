@@ -65,7 +65,7 @@
         .global-vault-card { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: 20px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); color: white; display: none; }
         .gvc-icon { width: 45px; height: 45px; border-radius: 14px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--warning); backdrop-filter: blur(5px); }
 
-        .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
+        .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; flex-direction: column; align-items: stretch; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
         
         .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02); transition: 0.3s background;}
         .member-row.updated { background: #ECFDF5; } 
@@ -73,17 +73,22 @@
         .btn-plus { width:40px; height:40px; background:linear-gradient(135deg, #10B981, #059669); color:white; border-radius:12px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:16px; box-shadow:0 5px 15px rgba(16,185,129,0.3);}
         .btn-reset { width:40px; height:40px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--warning); cursor:pointer; font-size:16px; margin-right: 8px;}
         
-        .app-card { background:white; padding:15px; border-radius:16px; margin-bottom:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); display:flex; justify-content:space-between; align-items:center; }
+        .app-card { background:white; padding:15px; border-radius:16px; margin-bottom:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:stretch; border: 1px solid #E2E8F0; }
         
+        /* MODALS */
         .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
         .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 85vh; overflow-y: auto; animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes zoomIn { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
 
         .form-group { margin-bottom:20px; text-align: left;}
         .form-label { display:block; font-size:11px; font-weight:800; color:#64748B; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;}
-        .form-input { width:100%; padding:15px; border:1px solid #E2E8F0; border-radius:14px; font-family:'Space Grotesk'; font-weight:700; font-size:16px; background:#F8FAFC; outline:none; }
+        .form-input { width:100%; padding:15px; border:1px solid #E2E8F0; border-radius:14px; font-family:'Space Grotesk'; font-weight:700; font-size:14px; background:#F8FAFC; outline:none; }
         .form-input:focus { border-color: var(--electric-blue); background: white; }
+        
         .btn-submit { width:100%; padding:16px; border:none; border-radius:16px; font-weight:800; color:white; cursor:pointer; margin-top:10px; font-family:'Space Grotesk'; font-size:13px; }
+        .btn-outline { background: white; color: var(--electric-blue); border: 2px solid var(--electric-blue); box-shadow: none; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer; transition: 0.2s;}
+        .btn-outline:active { background: #F1F5F9; }
+        
         .bg-sukses { background:var(--success); box-shadow: 0 10px 25px rgba(16,185,129,0.3); } 
         .bg-cancel { background:#E2E8F0; color:#475569; box-shadow:none; }
         
@@ -244,19 +249,74 @@
 
     <div class="modal-overlay" id="modalTarik">
         <div class="modal-box" style="text-align:left;">
-            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--danger); text-align:center;">FORM PENARIKAN DANA</h3>
+            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--danger); text-align:center; margin-bottom: 20px;">PENARIKAN DANA</h3>
+            
             <div class="form-group">
                 <label class="form-label">Nominal Penarikan (Rp)</label>
                 <input type="number" id="inputTarikAmount" class="form-input" placeholder="Contoh: 100000">
             </div>
+            
+            <div class="form-group">
+                <label class="form-label">Metode Pencairan</label>
+                <select id="inputTarikMetode" class="form-input">
+                    <option value="TUNAI">TUNAI / CASH</option>
+                    <option value="BCA">BANK BCA</option>
+                    <option value="MANDIRI">BANK MANDIRI</option>
+                    <option value="BRI">BANK BRI</option>
+                    <option value="BNI">BANK BNI</option>
+                    <option value="DANA">E-WALLET DANA</option>
+                    <option value="GOPAY">E-WALLET GOPAY</option>
+                    <option value="OVO">E-WALLET OVO</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">No Rekening / No HP E-Wallet</label>
+                <input type="text" id="inputTarikRek" class="form-input" placeholder="Kosongkan jika Tunai">
+            </div>
+
             <div class="form-group">
                 <label class="form-label">Tujuan / Keperluan</label>
                 <input type="text" id="inputTarikDesc" class="form-input" placeholder="Isi keperluan penarikan...">
             </div>
+
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" onclick="document.getElementById('modalTarik').style.display='none'">BATAL</button>
                 <button class="btn-submit" style="background:var(--danger); color:white; box-shadow: 0 10px 25px rgba(239,68,68,0.3);" onclick="submitTarikDana()">AJUKAN PENARIKAN</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalUploadBukti">
+        <div class="modal-box">
+            <h3 style="margin-top:0; color:var(--electric-blue); font-family:'Outfit'; font-size:18px; margin-bottom:15px;">UPLOAD BUKTI TRANSFER</h3>
+            <p style="font-size:11px; color:#64748B; margin-bottom:20px;">Pastikan Anda sudah men-transfer dana ke rekening member sebelum mengunggah bukti.</p>
+            
+            <input type="hidden" id="uploadBuktiTrxId">
+            <input type="hidden" id="uploadBuktiMemberId">
+            
+            <div style="border:2px dashed #93C5FD; border-radius:18px; padding:20px; text-align:center; background:#F0F9FF; cursor:pointer; position:relative; margin-bottom:20px;">
+                <i class="fas fa-camera" style="font-size:24px; color:var(--electric-blue); margin-bottom:5px; display:block;"></i>
+                <div style="font-size:11px; font-weight:700; color:#64748B;">Tap untuk Upload Bukti / Resi</div>
+                <input type="file" id="inputBuktiFile" accept="image/*" style="position:absolute; inset:0; opacity:0; cursor:pointer;" onchange="processBuktiFoto(this)">
+                <img id="previewBuktiFoto" style="width:100%; max-height:200px; border-radius:12px; object-fit:contain; display:none; margin-top:10px; border:2px solid var(--electric-blue);">
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button class="btn-submit bg-cancel" onclick="document.getElementById('modalUploadBukti').style.display='none'">BATAL</button>
+                <button class="btn-submit bg-sukses" id="btnSimpanBukti" onclick="simpanBuktiTransfer()">KIRIM BUKTI</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalViewBukti" style="z-index: 105000;">
+        <div class="modal-box" style="padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); font-size: 16px;"><i class="fas fa-receipt"></i> BUKTI TRANSFER</div>
+                <button onclick="document.getElementById('modalViewBukti').style.display='none'" style="background:#F1F5F9; border:none; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; color:#64748B;"><i class="fas fa-times"></i></button>
+            </div>
+            <img id="imgBukti" src="" style="width:100%; border-radius:12px; border:1px solid #E2E8F0; margin-bottom:15px; max-height: 50vh; object-fit: contain;">
+            <button class="btn-submit bg-cancel" style="margin-top:0;" onclick="document.getElementById('modalViewBukti').style.display='none'">TUTUP</button>
         </div>
     </div>
 
@@ -464,15 +524,20 @@
             if(saldo <= 0) return showAlert("DITOLAK", "Saldo Anda masih kosong!");
             
             document.getElementById('inputTarikAmount').value = '';
+            document.getElementById('inputTarikMetode').value = 'TUNAI';
+            document.getElementById('inputTarikRek').value = '';
             document.getElementById('inputTarikDesc').value = '';
             document.getElementById('modalTarik').style.display = 'flex';
         }
 
         window.submitTarikDana = async () => {
             let amount = parseInt(document.getElementById('inputTarikAmount').value);
+            let metode = document.getElementById('inputTarikMetode').value;
+            let rek = document.getElementById('inputTarikRek').value;
             let desc = document.getElementById('inputTarikDesc').value;
             
             if(!amount || amount < 10000) return showAlert("PERHATIAN", "Penarikan minimal Rp 10.000");
+            if(metode !== 'TUNAI' && !rek) return showAlert("PERHATIAN", "Harap isi Nomor Rekening atau Nomor HP E-Wallet.");
             if(!desc) return showAlert("PERHATIAN", "Harap isi Tujuan / Keperluan penarikan.");
 
             const mRef = doc(db, "mlu_members", uData.id);
@@ -481,15 +546,33 @@
             
             if(amount > currentSaldo) return showAlert("DITOLAK", "Saldo tabungan Anda tidak mencukupi!");
 
-            const konfirm = await showConfirm("KONFIRMASI", `Ajukan penarikan dana sebesar <b>Rp ${amount.toLocaleString('id-ID')}</b>?<br><br><span style='color:red; font-size:11px;'>*Pencairan membutuhkan validasi KETUM dan WAKETUM.</span>`);
+            const konfirm = await showConfirm("KONFIRMASI", `Ajukan penarikan dana sebesar <b>Rp ${amount.toLocaleString('id-ID')}</b>?<br><br><span style='color:red; font-size:11px;'>*Pencairan membutuhkan validasi KETUM dan WAKETUM. Saldo akan otomatis ditahan.</span>`);
             if(konfirm) {
                 await addDoc(collection(db, "mlu_tabungan_trx"), {
                     memberId: uData.id, memberName: myName,
-                    type: 'OUT', amount: amount, desc: 'Tarik: ' + desc, timestamp: Date.now(), 
+                    type: 'OUT', amount: amount, 
+                    metodeTransfer: metode, noRekening: rek,
+                    desc: 'Tarik: ' + desc, timestamp: Date.now(), 
                     status: 'PENDING_APPROVAL', apprKetum: false, apprWaketum: false
                 });
                 await showAlert("SUKSES", "Pengajuan berhasil dikirim! Menunggu ACC Ketum & Waketum.");
                 document.getElementById('modalTarik').style.display = 'none';
+            }
+        }
+
+        // =====================================
+        // FUNGSI KONFIRMASI TERIMA DANA (USER)
+        // =====================================
+        window.lihatBukti = (url) => {
+            document.getElementById('imgBukti').src = url;
+            document.getElementById('modalViewBukti').style.display = 'flex';
+        }
+
+        window.konfirmasiTerimaDana = async (trxId) => {
+            const konfirm = await showConfirm("TERIMA DANA", "Apakah Anda sudah mengecek dan memastikan bahwa dana benar-benar sudah masuk ke rekening/tangan Anda?");
+            if(konfirm) {
+                await updateDoc(doc(db, "mlu_tabungan_trx", trxId), { status: 'SUCCESS' });
+                showAlert("SELESAI", "Transaksi selesai. Terima kasih!");
             }
         }
 
@@ -592,8 +675,8 @@
                 if(searchKey) window.filterMembers(); else window.renderMembers(allMembers);
             });
 
-            // LISTENER ANTRIAN PERSETUJUAN (IN & OUT)
-            const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "in", ["PENDING", "PENDING_APPROVAL"]));
+            // LISTENER ANTRIAN PERSETUJUAN
+            const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "in", ["PENDING", "PENDING_APPROVAL", "WAITING_TRANSFER", "WAITING_CONFIRMATION"]));
             onSnapshot(qApp, (snap) => {
                 const cont = document.getElementById('approvalList'); cont.innerHTML = "";
                 if(snap.empty) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8;">Tidak ada antrean validasi pengajuan.</div>`; return;}
@@ -605,39 +688,60 @@
                     const titleText = isNabung ? "Setoran Tabungan" : "Penarikan Dana";
                     const color = isNabung ? "var(--success)" : "var(--danger)";
                     
+                    let infoTransferHtml = '';
+                    if(!isNabung) {
+                        infoTransferHtml = `<div style="font-size:11px; color:#475569; margin-top:4px; background:#F1F5F9; padding:5px; border-radius:6px; display:inline-block;"><b>Metode:</b> ${data.metodeTransfer || '-'} | <b>Rek:</b> ${data.noRekening || '-'}</div>`;
+                    }
+
                     let actionHtml = '';
 
                     if(isNabung) {
                         actionHtml = `
-                        <div style="display:flex; flex-direction:column; gap:5px;">
+                        <div style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
                             <button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="window.approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">VALIDASI SETORAN</button>
-                            <button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="window.rejectKlaim('${data.id}')">TOLAK</button>
+                            <button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="window.rejectKlaim('${data.id}', true)">TOLAK</button>
                         </div>`;
                     } else {
-                        // LOGIKA ACC DUAL SIGNATURE (TARIK DANA)
-                        let statusKetum = data.apprKetum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Ketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Ketum</span>`;
-                        let statusWaketum = data.apprWaketum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Waketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Waketum</span>`;
-                        
-                        let btnKetum = (!data.apprKetum && (isKetum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--royal-blue); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'KETUM', ${data.amount}, '${data.memberId}')">ACC KETUM</button>` : '';
-                        let btnWaketum = (!data.apprWaketum && (isWaketum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--warning); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'WAKETUM', ${data.amount}, '${data.memberId}')">ACC WAKETUM</button>` : '';
-                        let btnTolak = `<button class="btn-submit bg-cancel" style="padding:8px; margin:0; font-size:11px; flex:0.5;" onclick="window.rejectKlaim('${data.id}')">TOLAK</button>`;
+                        if (data.status === 'PENDING_APPROVAL') {
+                            let statusKetum = data.apprKetum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Ketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Ketum</span>`;
+                            let statusWaketum = data.apprWaketum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Waketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Waketum</span>`;
+                            
+                            let btnKetum = (!data.apprKetum && (isKetum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--royal-blue); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'KETUM', ${data.amount}, '${data.memberId}')">ACC KETUM</button>` : '';
+                            let btnWaketum = (!data.apprWaketum && (isWaketum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--warning); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'WAKETUM', ${data.amount}, '${data.memberId}')">ACC WAKETUM</button>` : '';
+                            let btnTolak = `<button class="btn-submit bg-cancel" style="padding:8px; margin:0; font-size:11px; flex:0.5;" onclick="window.rejectKlaim('${data.id}', false, ${data.amount}, '${data.memberId}')">TOLAK</button>`;
 
-                        actionHtml = `
-                        <div style="font-size:11px; background:#F8FAFC; padding:8px; border-radius:8px; margin-bottom:8px; border:1px solid #E2E8F0; text-align:center;">
-                            <b>Status Persetujuan:</b><br> ${statusKetum} &nbsp;|&nbsp; ${statusWaketum}
-                        </div>
-                        <div style="display:flex; gap:5px; width:100%;">
-                            ${btnKetum} ${btnWaketum} ${btnTolak}
-                        </div>`;
+                            actionHtml = `
+                            <div style="font-size:11px; background:#F8FAFC; padding:8px; border-radius:8px; margin-top:10px; margin-bottom:8px; border:1px solid #E2E8F0; text-align:center;">
+                                <b>Status Persetujuan:</b><br> ${statusKetum} &nbsp;|&nbsp; ${statusWaketum}
+                            </div>
+                            <div style="display:flex; gap:5px; width:100%;">
+                                ${btnKetum} ${btnWaketum} ${btnTolak}
+                            </div>`;
+                        } 
+                        else if (data.status === 'WAITING_TRANSFER') {
+                            actionHtml = `
+                            <div style="margin-top:10px;">
+                                <button class="btn-submit" style="background:var(--electric-blue); padding:10px; font-size:12px; box-shadow: 0 5px 15px rgba(45,99,237,0.3);" onclick="window.bukaUploadBukti('${data.id}', '${data.memberId}')">
+                                    <i class="fas fa-upload"></i> UPLOAD BUKTI TRANSFER
+                                </button>
+                            </div>`;
+                        }
+                        else if (data.status === 'WAITING_CONFIRMATION') {
+                            actionHtml = `
+                            <div style="margin-top:10px; font-size:11px; text-align:center; padding:8px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:8px; border:1px dashed var(--warning); font-weight:800;">
+                                <i class="fas fa-spinner fa-spin"></i> MENUNGGU USER KONFIRMASI TERIMA DANA
+                            </div>`;
+                        }
                     }
 
                     cont.innerHTML += `
                     <div class="app-card" style="border-left:5px solid ${color}; display:flex; flex-direction:column; align-items:stretch;">
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; width:100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
                             <div>
                                 <div style="font-size:10px; color:#64748B;">${new Date(data.timestamp).toLocaleString('id-ID')}</div>
                                 <h4 style="margin:5px 0; color:var(--royal-blue); font-family:'Outfit'; font-size:16px;">${data.memberName}</h4>
                                 <div style="font-size:11px; color:#64748B;">${titleText}</div>
+                                ${infoTransferHtml}
                             </div>
                             <div style="text-align:right;">
                                 <div style="font-family:'Space Grotesk'; font-weight:900; font-size:18px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div>
@@ -648,6 +752,60 @@
                 });
             });
         }
+
+        // =====================================
+        // LOGIKA ADMIN TRANSFER BUKTI DANA
+        // =====================================
+        let currentBuktiBase64 = "";
+        window.bukaUploadBukti = (trxId, memberId) => {
+            document.getElementById('uploadBuktiTrxId').value = trxId;
+            document.getElementById('uploadBuktiMemberId').value = memberId;
+            document.getElementById('previewBuktiFoto').style.display = 'none';
+            currentBuktiBase64 = "";
+            document.getElementById('modalUploadBukti').style.display = 'flex';
+        }
+
+        window.processBuktiFoto = (input) => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const cvs = document.createElement('canvas'); const ctx = cvs.getContext('2d');
+                        let w = img.width; let h = img.height;
+                        if (w > h) { if (w > 600) { h *= 600/w; w = 600; } } else { if (h > 600) { w *= 600/h; h = 600; } }
+                        cvs.width = w; cvs.height = h; ctx.drawImage(img, 0, 0, w, h);
+                        currentBuktiBase64 = cvs.toDataURL('image/jpeg', 0.8);
+                        document.getElementById('previewBuktiFoto').src = currentBuktiBase64;
+                        document.getElementById('previewBuktiFoto').style.display = 'block';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        window.simpanBuktiTransfer = async () => {
+            if(!currentBuktiBase64) return showAlert("PERHATIAN", "Harap upload foto bukti transfer terlebih dahulu!");
+            const trxId = document.getElementById('uploadBuktiTrxId').value;
+            
+            const btn = document.getElementById('btnSimpanBukti');
+            btn.innerText = "MENGIRIM..."; btn.style.opacity = '0.7';
+
+            try {
+                await updateDoc(doc(db, "mlu_tabungan_trx", trxId), {
+                    buktiTransfer: currentBuktiBase64,
+                    status: 'WAITING_CONFIRMATION'
+                });
+                document.getElementById('modalUploadBukti').style.display = 'none';
+                showAlert("BERHASIL", "Bukti transfer telah dikirim ke User.");
+            } catch(e) {
+                showAlert("GAGAL", e.message);
+            } finally {
+                btn.innerText = "KIRIM BUKTI"; btn.style.opacity = '1';
+            }
+        }
+
 
         window.approveKlaim = async (trxId, type, amount, memberId) => {
             const konf = await showConfirm("VALIDASI TRANSAKSI", "Anda yakin dana setor sudah berhasil diverifikasi?");
@@ -683,10 +841,11 @@
                 if(roleAcc === 'KETUM') isKetumNow = true;
                 if(roleAcc === 'WAKETUM') isWaketumNow = true;
 
+                // JIKA KEDUANYA SUDAH ACC -> POTONG SALDO & UBAH KE WAITING_TRANSFER
                 if(isKetumNow && isWaketumNow) {
                     if (currentSaldo < amount) throw "Saldo tabungan member tidak mencukupi untuk dicairkan!";
                     t.update(mRef, { saldoTabungan: currentSaldo - amount });
-                    t.update(rRef, { apprKetum: true, apprWaketum: true, status: 'SUCCESS' });
+                    t.update(rRef, { apprKetum: true, apprWaketum: true, status: 'WAITING_TRANSFER' });
                 } else {
                     t.update(rRef, { apprKetum: isKetumNow, apprWaketum: isWaketumNow });
                 }
@@ -697,9 +856,12 @@
             });
         };
 
-        window.rejectKlaim = async (trxId) => {
+        window.rejectKlaim = async (trxId, isIn, amount = 0, memberId = null) => {
             const konf = await showConfirm("TOLAK PENGAJUAN", "Tolak pengajuan ini? Data pengajuan akan dihapus permanen.");
             if(!konf) return;
+            
+            // Jika ini penarikan (OUT), pastikan tidak ada dana yang tertahan yang hilang. 
+            // Karena kita memotong saldo di WAITING_TRANSFER, saat PENDING_APPROVAL saldo BELUM terpotong. Aman dihapus langsung.
             await deleteDoc(doc(db, "mlu_tabungan_trx", trxId));
             showAlert("INFO", "Pengajuan telah ditolak dan dihapus.");
         }
@@ -825,18 +987,37 @@
             const list = document.getElementById('historyList');
             const qHist = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", uData.id));
             onSnapshot(qHist, (snap) => {
-                list.innerHTML = ""; let arr = []; snap.forEach(d => arr.push(d.data())); arr.sort((a,b) => b.timestamp - a.timestamp);
+                list.innerHTML = ""; let arr = []; snap.forEach(d => arr.push({id: d.id, ...d.data()})); arr.sort((a,b) => b.timestamp - a.timestamp);
                 if(arr.length===0) { list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada Riwayat Mutasi Rekening.</div>`; return; }
+                
                 arr.forEach(d => {
                     const color = d.type === 'IN' ? 'var(--success)' : 'var(--danger)'; 
                     const sign = d.type === 'IN' ? '+' : '-';
                     const dateStr = new Date(d.timestamp).toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-                    const pendingTag = (d.status === 'PENDING' || d.status === 'PENDING_APPROVAL') ? `<span style="background:var(--warning); color:white; padding:2px 5px; border-radius:5px; font-size:8px; margin-left:5px; font-weight:900;">${d.type === 'OUT' ? 'MENUNGGU ACC' : 'TUNGGU VALIDASI'}</span>` : '';
+                    
+                    let pendingTag = '';
+                    let actionBtn = '';
+
+                    if (d.status === 'PENDING' || d.status === 'PENDING_APPROVAL') pendingTag = 'MENUNGGU ACC';
+                    else if (d.status === 'WAITING_TRANSFER') pendingTag = 'PROSES TRANSFER';
+                    else if (d.status === 'WAITING_CONFIRMATION') {
+                        pendingTag = 'DANA DIKIRIM';
+                        actionBtn = `
+                        <div style="display:flex; gap:5px; margin-top:10px; border-top:1px dashed #E2E8F0; padding-top:10px;">
+                            <button class="btn-outline" style="padding:6px; font-size:10px; border-radius:8px; flex:1;" onclick="window.lihatBukti('${d.buktiTransfer}')"><i class="fas fa-image"></i> LIHAT BUKTI</button>
+                            <button class="btn-submit bg-sukses" style="padding:6px; margin:0; font-size:10px; border-radius:8px; flex:1;" onclick="window.konfirmasiTerimaDana('${d.id}')"><i class="fas fa-check-circle"></i> TERIMA DANA</button>
+                        </div>`;
+                    }
+
+                    const tagHtml = pendingTag ? `<span style="background:var(--warning); color:white; padding:2px 5px; border-radius:5px; font-size:8px; margin-left:5px; font-weight:900;">${pendingTag}</span>` : '';
 
                     list.innerHTML += `
-                    <div class="trx-item">
-                        <div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${pendingTag}</div><div style="font-size:10px; color:#aaa; margin-top:3px;">${dateStr}</div></div>
-                        <div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${d.status.includes('PENDING')?'#ccc':color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
+                    <div class="trx-item" style="flex-direction:column; align-items:stretch;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${tagHtml}</div><div style="font-size:10px; color:#aaa; margin-top:3px;">${dateStr}</div></div>
+                            <div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${d.status.includes('PENDING')?'#ccc':color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
+                        </div>
+                        ${actionBtn}
                     </div>`;
                 });
             });
