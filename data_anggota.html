@@ -17,6 +17,7 @@
             --bg-surface: #F0F4F8; 
             --text-main: #0F172A; 
             --text-muted: #64748B; 
+            --danger: #EF4444;
             
             /* Glass Variables */
             --glass-bg: rgba(255, 255, 255, 0.75);
@@ -80,9 +81,22 @@
         .bg-role { background: #f8fafc; color: var(--text-muted); border-color: #e2e8f0; }
         .is-pengurus .bg-role { background: #fffbeb; color: #b45309; border-color: #fcd34d; }
 
+        /* KONTAK DARURAT BADGE */
+        .m-darurat {
+            margin-top: 8px; display: inline-block;
+        }
+        .btn-darurat-call {
+            display: inline-flex; align-items: center; gap: 5px; 
+            background: rgba(239, 68, 68, 0.1); color: var(--danger); 
+            padding: 4px 10px; border-radius: 8px; font-size: 9px; font-weight: 800; 
+            text-decoration: none; border: 1px solid rgba(239, 68, 68, 0.2);
+            transition: 0.2s;
+        }
+        .btn-darurat-call:active { transform: scale(0.95); background: var(--danger); color: white; }
+
         /* SALDO (PRIVACY PROTECTED) */
         .m-saldo { 
-            font-size: 11px; font-weight: 800; color: var(--success); 
+            font-size: 11px; font-weight: 800; color: #10B981; 
             display: inline-flex; align-items: center; gap: 6px; 
             cursor: pointer; padding: 5px 10px; background: rgba(16, 185, 129, 0.1); 
             border-radius: 10px; transition: 0.2s; border: 1px solid rgba(16, 185, 129, 0.2);
@@ -91,8 +105,8 @@
 
         .m-actions { display: flex; flex-direction: column; gap: 8px; }
         .btn-act { width: 40px; height: 40px; border-radius: 14px; border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .btn-call { background: white; color: var(--success); border: 1px solid #e2e8f0; }
-        .btn-call:active { background: var(--success); color: white; border-color: var(--success); }
+        .btn-call { background: white; color: #10B981; border: 1px solid #e2e8f0; }
+        .btn-call:active { background: #10B981; color: white; border-color: #10B981; }
         .btn-edit { background: white; color: var(--electric-blue); border: 1px solid #e2e8f0; display: none; } /* Admin Only */
         .btn-del { background: white; color: var(--danger); border: 1px solid #e2e8f0; display: none; } /* Admin Only */
 
@@ -146,7 +160,7 @@
         .hist-desc { font-size: 12px; font-weight: 700; color: var(--text-main); }
         .hist-date { font-size: 10px; color: var(--text-muted); }
         .hist-val { font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; }
-        .val-in { color: var(--success); } .val-out { color: var(--danger); }
+        .val-in { color: #10B981; } .val-out { color: var(--danger); }
     </style>
 </head>
 <body>
@@ -203,8 +217,28 @@
             <div class="form-group"><label>Nama Asli (Sesuai KTP)</label><input type="text" id="formNamaKtp" class="form-input" style="text-transform:uppercase;"></div>
             <div class="form-group"><label>Nama Panggilan (Grup WA)</label><input type="text" id="formNamaWa" class="form-input" style="text-transform:uppercase;"></div>
             <div class="form-group"><label>Plat Nomor</label><input type="text" id="formPlat" class="form-input" style="text-transform:uppercase;"></div>
-            <div class="form-group"><label>Nomor HP (WhatsApp)</label><input type="tel" id="formHp" class="form-input"></div>
+            <div class="form-group"><label>Nomor HP Pribadi</label><input type="tel" id="formHp" class="form-input" placeholder="081234..."></div>
             
+            <div style="background: rgba(239, 68, 68, 0.05); border: 1px dashed var(--danger); padding: 15px; border-radius: 14px; margin-bottom: 15px;">
+                <div style="font-size: 10px; font-weight: 800; color: var(--danger); margin-bottom: 10px; display: flex; align-items: center; gap: 5px;"><i class="fas fa-heartbeat"></i> KONTAK DARURAT (WAJIB)</div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label style="color:#64748B;">No. HP Darurat</label>
+                    <input type="tel" id="formDarurat" class="form-input" style="background: white;" placeholder="085678...">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label style="color:#64748B;">Hubungan Kontak Darurat</label>
+                    <select id="formHubungan" class="form-input" style="background: white;">
+                        <option value="">-- Pilih Hubungan --</option>
+                        <option value="ISTRI">Istri</option>
+                        <option value="SUAMI">Suami</option>
+                        <option value="ORANG TUA">Orang Tua</option>
+                        <option value="ANAK">Anak</option>
+                        <option value="SAUDARA">Saudara / Kakak / Adik</option>
+                        <option value="LAINNYA">Lainnya</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Jabatan</label>
                 <select id="formRole" class="form-input">
@@ -324,10 +358,9 @@
                 const saldo = m.saldoTabungan ? parseInt(m.saldoTabungan).toLocaleString('id-ID') : "0";
 
                 // LOGIKA PRIVASI TABUNGAN
-                const isMe = (m.id === u.id); // Kartu saya sendiri
-                const isDewaActive = (isUserDewa && dewaMode === 'ON'); // Mode Dewa
+                const isMe = (m.id === u.id); 
+                const isDewaActive = (isUserDewa && dewaMode === 'ON'); 
                 
-                // HANYA MUNCUL JIKA: Punya Sendiri ATAU Dewa Aktif
                 let saldoHtml = '';
                 if (isMe || isDewaActive) {
                     saldoHtml = `
@@ -336,7 +369,12 @@
                     </div>`;
                 }
 
-                // ANIMASI DELAY
+                // RENDER KONTAK DARURAT
+                let daruratLink = m.darurat && m.darurat !== "-" ? `tel:${m.darurat}` : '#';
+                let daruratHtml = (m.darurat && m.darurat !== "") 
+                    ? `<div class="m-darurat"><a href="${daruratLink}" class="btn-darurat-call"><i class="fas fa-heartbeat fa-beat"></i> DARURAT (${m.hubungan || 'KELUARGA'}): ${m.darurat}</a></div>`
+                    : '';
+
                 const delay = index * 0.05; 
 
                 list.innerHTML += `
@@ -350,8 +388,8 @@
                                 <span class="badge bg-role">${m.type||'RTO'}</span>
                                 ${isPengurus ? `<span class="badge bg-role" style="color:#B45309">${m.role}</span>` : ''}
                             </div>
-                            
                             ${saldoHtml}
+                            ${daruratHtml}
                         </div>
                         <div class="m-actions">
                             <a href="${waLink}" class="btn-act btn-call" target="_blank"><i class="fab fa-whatsapp"></i></a>
@@ -369,19 +407,17 @@
             renderList(filtered);
         };
 
-        // --- HISTORY SAVINGS (TANPA PRIVASI - SESUAI REQUEST) ---
         window.checkSavings = async (id, name) => {
             document.getElementById('historyTargetName').innerText = name;
             document.getElementById('historyContent').innerHTML = `<div style="text-align:center; padding:20px; color:#94A3B8;">Memuat data...</div>`;
             const m = document.getElementById('historyModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10);
 
-            // Query Tanpa Index (Client Side Sorting)
             const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", id));
             const snap = await getDocs(q);
             
             let dataArr = [];
             snap.forEach(d => dataArr.push(d.data()));
-            dataArr.sort((a,b) => b.timestamp - a.timestamp); // Urutkan di HP
+            dataArr.sort((a,b) => b.timestamp - a.timestamp); 
 
             const cont = document.getElementById('historyContent'); cont.innerHTML = "";
             
@@ -416,6 +452,7 @@
             document.getElementById('formId').value = ''; document.getElementById('formNamaKtp').value = ''; document.getElementById('formNamaWa').value = ''; 
             document.getElementById('formPlat').value = ''; document.getElementById('formHp').value = ''; document.getElementById('formRole').value = 'KELUARGA MLU';
             document.getElementById('formType').value = 'RTO'; document.getElementById('formPin').value = ''; 
+            document.getElementById('formDarurat').value = ''; document.getElementById('formHubungan').value = '';
             currentPhotoBase64 = ""; document.getElementById('previewFoto').style.display = 'none'; document.getElementById('formFoto').value = '';
             document.getElementById('modalTitleText').innerText = "Tambah Anggota"; 
             modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'),10);
@@ -427,6 +464,7 @@
             document.getElementById('formNamaWa').value = m.namaWa || m.nama || ''; document.getElementById('formPlat').value = m.plat || ''; 
             document.getElementById('formHp').value = m.hp || ''; document.getElementById('formRole').value = m.role || 'KELUARGA MLU';
             document.getElementById('formType').value = m.type || m.divisi || 'RTO'; document.getElementById('formPin').value = m.pin || ''; 
+            document.getElementById('formDarurat').value = m.darurat || ''; document.getElementById('formHubungan').value = m.hubungan || '';
             document.getElementById('modalTitleText').innerText = "Edit Anggota";
             if(m.foto && m.foto.length > 50) { currentPhotoBase64 = m.foto; document.getElementById('previewFoto').src = m.foto; document.getElementById('previewFoto').style.display = 'block'; } 
             else { currentPhotoBase64 = ""; document.getElementById('previewFoto').style.display = 'none'; }
@@ -444,13 +482,15 @@
             const role = document.getElementById('formRole').value;
             const type = document.getElementById('formType').value;
             const pin = document.getElementById('formPin').value.trim(); 
+            const darurat = document.getElementById('formDarurat').value.trim();
+            const hubungan = document.getElementById('formHubungan').value;
 
             if(!namaKtp || !namaWa || !plat) return alert("Nama KTP, Nama WA, dan Plat wajib diisi!");
 
             const btn = document.getElementById('btnSave'); btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
 
             try {
-                let payload = { namaKtp: namaKtp, namaWa: namaWa, nama: namaWa, plat: plat, hp: hp, role: role, type: type };
+                let payload = { namaKtp: namaKtp, namaWa: namaWa, nama: namaWa, plat: plat, hp: hp, role: role, type: type, darurat: darurat, hubungan: hubungan };
                 if (pin !== undefined && pin !== "") payload.pin = pin;
                 if(currentPhotoBase64 !== "") payload.foto = currentPhotoBase64;
 
