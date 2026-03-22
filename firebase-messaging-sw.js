@@ -1,8 +1,21 @@
-// === FILE PENANGKAP NOTIFIKASI BACKGROUND (SERVICE WORKER) ===
+// =======================================================
+// 1. TUGAS PWA (Biar Web Bisa Di-Install ke Home Screen)
+// =======================================================
+self.addEventListener('install', (e) => {
+  console.log('[Service Worker] Install PWA Berhasil');
+  self.skipWaiting(); // Paksa langsung aktif
+});
+
+self.addEventListener('fetch', (e) => {
+  // Biarkan kosong, syarat wajib PWA terpenuhi
+});
+
+// =======================================================
+// 2. TUGAS NOTIFIKASI FCM (Penangkap Pesan Background)
+// =======================================================
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
-// KONEKSI KE DATABASE MLU
 const firebaseConfig = { 
     apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", 
     authDomain: "rtomaka-e67b5.firebaseapp.com", 
@@ -15,13 +28,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// JIKA APLIKASI DITUTUP, MUNCULKAN POP-UP NOTIFIKASI DI LAYAR HP
 messaging.onBackgroundMessage(function(payload) {
   console.log('Notif Masuk di Belakang Layar: ', payload);
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: 'logo.png', // Logo MLU yang akan muncul di notif
+    icon: 'logo.png', // Pastikan gambar logo.png ada di folder utama
     vibrate: [200, 100, 200, 100, 200, 100, 200]
   };
   return self.registration.showNotification(notificationTitle, notificationOptions);
