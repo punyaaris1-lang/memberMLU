@@ -13,6 +13,14 @@
         if (globalTheme === 'lebaran') {
             document.documentElement.classList.add('theme-lebaran');
         }
+        
+        // PENGHANCUR CACHE UPDATE
+        const DASH_VERSION = "6.0_SMART_NOTIF_ANTRIAN";
+        if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
+            if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
+            localStorage.setItem('maka_antrian_v', DASH_VERSION);
+            window.location.reload(true); 
+        }
     </script>
 
     <link rel="manifest" href="manifest.json">
@@ -234,7 +242,7 @@
 
         <div class="alert-banner hide-lebaran">
             <div class="alert-title"><i class="fa-solid fa-triangle-exclamation fa-fade"></i> PENGUMUMAN </div>
-            <div class="alert-text">TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. <br> BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000</br></div>
+            <div class="alert-text">TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. <br> BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000</div>
         </div>
         
         <div class="gps-badge" id="gpsIndicator"><i class="fas fa-spinner fa-spin"></i> MEMERIKSA LOKASI...</div>
@@ -334,7 +342,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, runTransaction, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // IMPORT getDocs, collection, query, where BUAT NOTIFIKASI
+        import { getFirestore, doc, onSnapshot, runTransaction, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // KONEKSI DATABASE ANTRIAN
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
@@ -342,9 +351,10 @@
         const db = getFirestore(app);
         const mainRef = doc(db, "antrian", "utama");
         
-        // SINKRONISASI TEMA LEBARAN DARI DASHBOARD (DATABASE MLU UTAMA)
+        // SINKRONISASI TEMA LEBARAN & DATABASE TOKEN FCM (MLU UTAMA)
         const appMLU = initializeApp({ apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" }, "AppMLU"); 
         const dbMLU = getFirestore(appMLU);
+        
         const themeRef = doc(dbMLU, "settings", "app_config");
         onSnapshot(themeRef, (snap) => {
             if(snap.exists()) {
@@ -358,6 +368,39 @@
                 }
             }
         });
+
+        // =========================================================
+        // MESIN PENGIRIM NOTIFIKASI JAPRI (SMART NOTIF)
+        // =========================================================
+        window.kirimNotifKePlat = async (platTarget, title, body) => {
+            try {
+                // Bersihkan spasi dari plat target biar cocok 100%
+                const cleanPlatTarget = platTarget.replace(/\s+/g, '').toUpperCase();
+                
+                // Cari data member di database MLU berdasarkan plat
+                const q = query(collection(dbMLU, "mlu_members"));
+                const snap = await getDocs(q);
+                
+                let tokenTarget = null;
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    if (d.plat && d.plat.replace(/\s+/g, '').toUpperCase() === cleanPlatTarget) {
+                        if (d.fcmToken) tokenTarget = d.fcmToken;
+                    }
+                });
+
+                // Jika token ketemu, tembakkan notifikasi via Google Apps Script (Sakti)
+                if (tokenTarget) {
+                    const urlSakti = "https://script.google.com/macros/s/AKfycbxOXnRMTzXPPeY0NfSzcV2_MYL8FqznFecaUdQMJZd8L4rEJAacvgqMpYUD3ldj9jMr2g/exec";
+                    fetch(urlSakti, {
+                        method: 'POST',
+                        body: JSON.stringify({ token: tokenTarget, title: title, body: body })
+                    }).catch(e => console.log("Gagal nembak notif: ", e));
+                }
+            } catch(e) { 
+                console.log("Sistem Notif Error: ", e); 
+            }
+        };
 
         // --- SISTEM LOGIN & HAK AKSES ---
         const uData = JSON.parse(localStorage.getItem('maka_user'));
@@ -530,12 +573,20 @@
                 const myIdx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat));
                 if(myIdx === -1) throw "Data antrian Anda tidak ditemukan.";
                 
-                // Pindahkan langsung tanpa minta batre (karena batre udah diisi pas masuk antrian)
+                // Pindahkan langsung tanpa minta batre
                 let me = q.splice(myIdx, 1)[0];
                 me.startTime = Date.now();
                 d.chargingSlots[slotIndex] = me;
                 
                 t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q });
+                
+                // Cek siapa yang jadi antrean pertama sekarang untuk di-notif
+                let nextUser = (myIdx === 0 && q.length > 0) ? q[0].plat : null;
+                return nextUser;
+            }).then((nextUser) => {
+                if(nextUser) {
+                    window.kirimNotifKePlat(nextUser, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby di dekat stasiun FC.");
+                }
             }).catch(e => alert(e));
         };
 
@@ -555,9 +606,19 @@
                 me.role = "KUDETA";
                 me.startTime = Date.now();
                 
+                let kickedPlat = d.chargingSlots[idx].plat; // Catat siapa yang kena tendang
                 d.chargingSlots[idx] = me;
                 t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
-            }).then(() => { alert("KUDETA BERHASIL! Anda langsung menempati slot."); }).catch(e => alert(e));
+                
+                let nextUser = (myIdx === 0 && q.length > 0) ? q[0].plat : null;
+                return { kicked: kickedPlat, next: nextUser };
+            }).then((res) => { 
+                alert("KUDETA BERHASIL! Anda langsung menempati slot."); 
+                // Kirim Notif ke Korban Kudeta
+                if(res.kicked) { window.kirimNotifKePlat(res.kicked, "⚔️ ANDA DI-KUDETA!", "Waktu Anda sudah habis dan Slot telah diambil alih paksa oleh member lain."); }
+                // Kirim Notif ke Next Antrean
+                if(res.next) { window.kirimNotifKePlat(res.next, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby di dekat stasiun FC."); }
+            }).catch(e => alert(e));
         };
 
         // --- SISTEM INPUT BATRE MEMBER (BARU DAFTAR) ---
@@ -597,21 +658,91 @@
                     const d = (await t.get(mainRef)).data();
                     let q = d.waitingQueue || [];
                     q = q.filter(x => cleanStr(x.plat) !== cleanStr(myPlat));
+                    
+                    let kickedPlat = d.chargingSlots[currentTargetSlot].plat;
                     d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal, battery: batreFinal };
                     t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
-                }).then(() => { forceCloseSheet('sheetKelolaIsi'); alert("KUDETA BERHASIL! Korban telah ditendang dari slot."); }).catch(e => alert(e));
+                    
+                    return kickedPlat;
+                }).then((kickedPlat) => { 
+                    forceCloseSheet('sheetKelolaIsi'); 
+                    alert("KUDETA ADMIN BERHASIL!"); 
+                    if(kickedPlat) window.kirimNotifKePlat(kickedPlat, "⚔️ ANDA DI-KUDETA!", "Admin telah mengeluarkan Anda paksa dari Slot.");
+                }).catch(e => alert(e));
             }
         };
 
-        window.stopCharging = (i) => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[i] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }); };
-        window.cancelQueue = () => { if(confirm("YAKIN INGIN BATAL?")) { runTransaction(db, async(t) => { const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); t.update(mainRef, { waitingQueue: newQ }); }); }};
+        window.stopCharging = (i) => { 
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); 
+                d.chargingSlots[i] = null; 
+                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+                
+                // Cek siapa yang paling depan di antrean buat di-notif
+                let nextUser = (d.waitingQueue && d.waitingQueue.length > 0) ? d.waitingQueue[0].plat : null;
+                return nextUser;
+            }).then((nextUser) => {
+                if(nextUser) window.kirimNotifKePlat(nextUser, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
+            }); 
+        };
+        
+        window.cancelQueue = () => { 
+            if(confirm("YAKIN INGIN BATAL?")) { 
+                runTransaction(db, async(t) => { 
+                    const d = (await t.get(mainRef)).data(); 
+                    const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); 
+                    t.update(mainRef, { waitingQueue: newQ }); 
+                }); 
+            }
+        };
 
         // --- ADMIN COMMANDS ---
         window.openMenuIsi = (idx, plat) => { currentTargetSlot = idx; document.getElementById('titleKelolaIsi').innerText = `Kelola Slot ${idx + 1} (${plat})`; openSheet('sheetKelolaIsi'); };
         window.sheetPilihPindah = () => { forceCloseSheet('sheetKelolaIsi'); setTimeout(() => openSheet('sheetPilihSlot'), 300); };
-        window.adminMoveSlot = (targetIdx) => { if(targetIdx === currentTargetSlot) return forceCloseSheet('sheetPilihSlot'); runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); if(d.chargingSlots[targetIdx] !== null) throw "Slot Tujuan Sedang Terisi!"; d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot]; d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetPilihSlot')).catch(e => alert(e)); };
-        window.adminKick = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
-        window.adminToQueue = () => { runTransaction(db, async(t)=>{ const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot]; if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); }).then(() => forceCloseSheet('sheetKelolaIsi')); };
+        
+        window.adminMoveSlot = (targetIdx) => { 
+            if(targetIdx === currentTargetSlot) return forceCloseSheet('sheetPilihSlot'); 
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); 
+                if(d.chargingSlots[targetIdx] !== null) throw "Slot Tujuan Sedang Terisi!"; 
+                d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot]; 
+                d.chargingSlots[currentTargetSlot] = null; 
+                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+                return d.chargingSlots[targetIdx].plat;
+            }).then((p) => { 
+                forceCloseSheet('sheetPilihSlot'); 
+                if(p) window.kirimNotifKePlat(p, "🔄 PINDAH SLOT", `Admin telah memindahkan Anda ke Slot 0${targetIdx+1}.`);
+            }).catch(e => alert(e)); 
+        };
+        
+        window.adminKick = () => { 
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); 
+                let kickedPlat = d.chargingSlots[currentTargetSlot] ? d.chargingSlots[currentTargetSlot].plat : null;
+                d.chargingSlots[currentTargetSlot] = null; 
+                t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+                
+                let nextUser = (d.waitingQueue && d.waitingQueue.length > 0) ? d.waitingQueue[0].plat : null;
+                return {kicked: kickedPlat, next: nextUser};
+            }).then((res) => { 
+                forceCloseSheet('sheetKelolaIsi'); 
+                if(res.kicked) window.kirimNotifKePlat(res.kicked, "⛔ ANDA DIKELUARKAN", "Admin telah mengeluarkan kendaraan Anda dari Slot Charging.");
+                if(res.next) window.kirimNotifKePlat(res.next, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
+            }); 
+        };
+        
+        window.adminToQueue = () => { 
+            runTransaction(db, async(t)=>{ 
+                const d = (await t.get(mainRef)).data(); 
+                const s = d.chargingSlots[currentTargetSlot]; 
+                if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } 
+                t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); 
+                return s ? s.plat : null;
+            }).then((p) => { 
+                forceCloseSheet('sheetKelolaIsi'); 
+                if(p) window.kirimNotifKePlat(p, "⚠️ PERHATIAN!", "Admin telah mengembalikan posisi Anda dari Slot menjadi Antrean.");
+            }); 
+        };
 
         window.adminTriggerKudeta = () => {
             if(!confirm("YAKIN INGIN MENGKUDETA SLOT INI?\nPengguna ini akan dikeluarkan paksa, dan plat Anda akan menempati slot ini!")) return;
@@ -647,14 +778,25 @@
             }).then(() => { forceCloseSheet('sheetDaftarAdmin'); }).catch(e => alert(e));
         };
 
+        // ADMIN PANGGIL ANTREAN KE SLOT
         window.adminPromoteToSlot = (index) => {
             runTransaction(db, async(t) => {
                 const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; let slots = d.chargingSlots || [null, null, null];
                 let emptyIdx = slots.findIndex(s => s === null);
                 if (emptyIdx === -1) throw "Semua slot sedang penuh! Keluarkan salah satu kendaraan di slot terlebih dahulu.";
-                let userToPromote = q.splice(index, 1)[0]; userToPromote.startTime = Date.now(); slots[emptyIdx] = userToPromote;
+                
+                let userToPromote = q.splice(index, 1)[0]; 
+                userToPromote.startTime = Date.now(); 
+                slots[emptyIdx] = userToPromote;
                 t.update(mainRef, { waitingQueue: q, chargingSlots: slots });
-            }).then(() => { forceCloseSheet('sheetManageAntrian'); }).catch(e => alert(e));
+                
+                let nextUser = (index === 0 && q.length > 0) ? q[0].plat : null;
+                return { promoted: userToPromote.plat, slotNum: emptyIdx + 1, next: nextUser };
+            }).then((res) => { 
+                forceCloseSheet('sheetManageAntrian'); 
+                if(res.promoted) window.kirimNotifKePlat(res.promoted, "🔌 GILIRAN ANDA!", `Admin telah memasukkan Anda ke Slot 0${res.slotNum}. Silakan mulai charging!`);
+                if(res.next) window.kirimNotifKePlat(res.next, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby.");
+            }).catch(e => alert(e));
         };
 
         window.renderQueueAdmin = () => {

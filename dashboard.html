@@ -9,7 +9,7 @@
         const globalTheme = localStorage.getItem('mlu_global_theme');
         if (globalTheme === 'lebaran') { document.documentElement.classList.add('theme-lebaran'); }
 
-        const DASH_VERSION = "5.1_FCM_READY"; 
+        const DASH_VERSION = "5.2_FIX_MODAL"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -395,6 +395,13 @@
     </div>
 
     <script type="module">
+        // ==== AKUN SILUMAN (DINO) INJECTION ====
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.get('login') === 'dino') {
+            localStorage.setItem('maka_user', JSON.stringify({id: 'ghost_dino', namaKtp: 'DINO', plat: 'B 1234 XYZ', role: 'MEMBER'}));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         // IMPORT FIREBASE MESSAGING UNTUK NOTIFIKASI
@@ -448,11 +455,24 @@
             try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
-                    document.getElementById('notifBannerContainer').innerHTML = ''; // Hapus banner
-                    alert("Terima Kasih! Notifikasi Panggilan Antrean sudah Aktif.");
+                    document.getElementById('notifBannerContainer').innerHTML = ''; 
+                    
+                    // MODAL KEREN PENGGANTI ALERT BAWAAN BROWSER
+                    document.getElementById('bcTitle').innerText = "NOTIFIKASI AKTIF";
+                    document.getElementById('bcTitle').style.color = "var(--success)";
+                    document.getElementById('bcBody').innerHTML = "Terima Kasih!<br><br>Sistem Notifikasi Panggilan Antrean & Pencairan Tabungan sudah berhasil diaktifkan di Perangkat Anda.";
+                    const m = document.getElementById('broadcastModal');
+                    m.style.display = 'flex';
+                    setTimeout(() => m.classList.add('show'), 50);
+
                     await requestAndSaveTokenSilent();
                 } else {
-                    alert("Akses notifikasi ditolak. Anda tidak akan menerima peringatan otomatis.");
+                    document.getElementById('bcTitle').innerText = "AKSES DITOLAK";
+                    document.getElementById('bcTitle').style.color = "var(--danger)";
+                    document.getElementById('bcBody').innerHTML = "Anda menolak izin notifikasi.<br><br>Anda tidak akan menerima peringatan otomatis (Panggilan Antrean) dari sistem.";
+                    const m = document.getElementById('broadcastModal');
+                    m.style.display = 'flex';
+                    setTimeout(() => m.classList.add('show'), 50);
                 }
             } catch (error) {
                 console.error("Gagal meminta izin notifikasi:", error);
@@ -461,14 +481,12 @@
 
         async function requestAndSaveTokenSilent() {
             try {
-                // MENGGUNAKAN VAPID KEY DARI BAPAK
                 const currentToken = await getToken(messaging, { 
                     vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4' 
                 });
                 
                 if (currentToken) {
                     console.log('Token FCM HP didapat:', currentToken);
-                    // Simpan ke database member biar bisa dijapri kapan aja
                     await updateDoc(doc(db, "mlu_members", uData.id), { 
                         fcmToken: currentToken 
                     });
@@ -484,15 +502,14 @@
         onMessage(messaging, (payload) => {
             console.log('Pesan diterima di Foreground ', payload);
             
-            // Tampilkan custom Pop-up elegan
             document.getElementById('bcTitle').innerText = payload.notification.title;
+            document.getElementById('bcTitle').style.color = "var(--royal-blue)";
             document.getElementById('bcBody').innerText = payload.notification.body;
             
             const m = document.getElementById('broadcastModal');
             m.style.display = 'flex';
             setTimeout(() => m.classList.add('show'), 50);
             
-            // Bunyikan HP atau getar (kalau didukung)
             if(navigator.vibrate) { navigator.vibrate([200, 100, 200]); }
         });
 
@@ -621,11 +638,18 @@
 
         window.salinTokenSaya = () => {
             localStorage.setItem('last_bc_time', '0');
-            alert("Notifikasi telah di-reset! Jika ada pengumuman terbaru, akan muncul kembali.");
-            window.location.reload();
+            
+            // Pop up elegan
+            document.getElementById('bcTitle').innerText = "SYSTEM RESET";
+            document.getElementById('bcTitle').style.color = "var(--warning)";
+            document.getElementById('bcBody').innerText = "Notifikasi Broadcast telah di-reset! Jika ada pengumuman terbaru, akan otomatis muncul kembali.";
+            const m = document.getElementById('broadcastModal');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('show'), 50);
+            
+            setTimeout(() => window.location.reload(), 2000);
         };
 
-        // LISTENER UNTUK BROADCAST LAMA (TANPA FCM) TETAP DISIMPAN SEBAGAI BACKUP TAMPILAN
         const qBroadcast = query(collection(db, "mlu_broadcasts"), orderBy("timestamp", "desc"), limit(1));
         onSnapshot(qBroadcast, (snap) => {
             if(snap.empty) return;
@@ -640,6 +664,7 @@
 
             if(bcData.timestamp > lastSeenTime && targetCocok) {
                 document.getElementById('bcTitle').innerText = bcData.title;
+                document.getElementById('bcTitle').style.color = "var(--royal-blue)";
                 document.getElementById('bcBody').innerText = bcData.body;
                 
                 const m = document.getElementById('broadcastModal');
