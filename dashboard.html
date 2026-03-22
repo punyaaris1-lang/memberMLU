@@ -9,7 +9,7 @@
         const globalTheme = localStorage.getItem('mlu_global_theme');
         if (globalTheme === 'lebaran') { document.documentElement.classList.add('theme-lebaran'); }
 
-        const DASH_VERSION = "5.2_FIX_MODAL"; 
+        const DASH_VERSION = "5.3_FIX_FCM_404"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -446,7 +446,6 @@
                     </div>`;
                 document.getElementById('notifBannerContainer').innerHTML = bannerHtml;
             } else if (Notification.permission === "granted") {
-                // Udah diizinkan, kita pastikan tokennya valid dan ter-update di DB
                 requestAndSaveTokenSilent();
             }
         }
@@ -457,7 +456,6 @@
                 if (permission === 'granted') {
                     document.getElementById('notifBannerContainer').innerHTML = ''; 
                     
-                    // MODAL KEREN PENGGANTI ALERT BAWAAN BROWSER
                     document.getElementById('bcTitle').innerText = "NOTIFIKASI AKTIF";
                     document.getElementById('bcTitle').style.color = "var(--success)";
                     document.getElementById('bcBody').innerHTML = "Terima Kasih!<br><br>Sistem Notifikasi Panggilan Antrean & Pencairan Tabungan sudah berhasil diaktifkan di Perangkat Anda.";
@@ -479,10 +477,15 @@
             }
         };
 
+        // KODINGAN BARU: TUNTUN PAKSA FIREBASE BIAR GAK NYASAR (ANTI 404)
         async function requestAndSaveTokenSilent() {
             try {
+                const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+                console.log('Service Worker Siap:', registration);
+
                 const currentToken = await getToken(messaging, { 
-                    vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4' 
+                    vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4',
+                    serviceWorkerRegistration: registration 
                 });
                 
                 if (currentToken) {

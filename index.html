@@ -201,10 +201,13 @@
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        // Service Worker untuk PWA
+        // Service Worker untuk PWA & FCM (GABUNGAN)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Reg Failed', err));
+                // UPDATE: PANGGIL FILE GABUNGAN (BUKAN SW.JS LAGI)
+                navigator.serviceWorker.register('./firebase-messaging-sw.js')
+                .then((reg) => console.log('Service Worker Registrasi Berhasil', reg))
+                .catch((err) => console.log('SW Reg Failed', err));
             });
         }
 
