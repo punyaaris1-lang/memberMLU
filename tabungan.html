@@ -7,7 +7,7 @@
     
     <script>
         // PENGHANCUR CACHE BIAR UPDATE LANGSUNG JALAN
-        const TABUNGAN_VERSION = "4.1_KAS_AUTO_CUT"; 
+        const TABUNGAN_VERSION = "4.2_KAS_AUTO_SYNC"; 
         if (localStorage.getItem('maka_tabungan_v') !== TABUNGAN_VERSION) {
             if ('caches' in window) {
                 caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
@@ -967,6 +967,9 @@
             showAlert("BERHASIL", "Setoran divalidasi. Saldo tabungan member telah bertambah otomatis.");
         }
 
+        // ========================================================
+        // FITUR BARU: AUTO-MASUK KAS SAAT PENARIKAN DI-ACC
+        // ========================================================
         window.approveTarik = async (trxId, roleAcc, amount, memberId) => {
             const konf = await showConfirm("VALIDASI PENARIKAN", `Anda menyetujui penarikan ini sebagai <b>${roleAcc}</b>?`);
             if(!konf) return;
@@ -993,6 +996,21 @@
                     // Kurangi saldo member dengan jumlah Full (Karena potong kas dibebankan ke member)
                     t.update(mRef, { saldoTabungan: currentSaldo - amount });
                     t.update(rRef, { apprKetum: true, apprWaketum: true, status: 'WAITING_TRANSFER' });
+
+                    // === FITUR AUTO MASUK UANG KAS ===
+                    if (dataTrx.feeKas > 0) {
+                        const kasRef = doc(collection(db, "mlu_kas_trx"));
+                        const tglSekarang = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+                        t.set(kasRef, {
+                            type: 'IN',
+                            amount: dataTrx.feeKas,
+                            desc: `Potongan penarikan tabungan atas nama ${dataTrx.memberName} tgl ${tglSekarang}`,
+                            kategori: 'POTONGAN TABUNGAN',
+                            timestamp: Date.now(),
+                            status: 'SUCCESS'
+                        });
+                    }
+
                 } else {
                     t.update(rRef, { apprKetum: isKetumNow, apprWaketum: isWaketumNow });
                 }
