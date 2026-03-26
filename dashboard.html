@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - Dashboard Premium</title>
+    <title>MLU - VIP Dashboard</title>
     
     <script>
-        const globalTheme = localStorage.getItem('mlu_global_theme');
-        if (globalTheme === 'lebaran') { document.documentElement.classList.add('theme-lebaran'); }
-
-        const DASH_VERSION = "5.3_FIX_FCM_404"; 
+        const DASH_VERSION = "7.0_SMART_INBOX"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -26,203 +23,199 @@
     <style>
         :root { 
             --royal-blue: #0A2259; --electric-blue: #2D63ED; --gold-lux: #D4AF37;
-            --bg-surface: #F0F4F8; --text-main: #0F172A; --text-muted: #64748B; 
-            --glass-bg: rgba(255, 255, 255, 0.85); --glass-border: rgba(255, 255, 255, 0.9);
-            --shadow-soft: 0 10px 40px rgba(10, 34, 89, 0.08);
-            --success: #10B981; --warning: #F59E0B; --danger: #EF4444; --kc-green: #D4FF00;
+            --text-main: #0F172A; --text-muted: #64748B; 
+            --shadow-soft: 0 15px 35px rgba(10, 34, 89, 0.08);
+            --shadow-hover: 0 20px 40px rgba(45, 99, 237, 0.15);
+            --success: #10B981; --danger: #EF4444; --warning: #F59E0B; --wa-color: #25D366;
         }
 
-        html.theme-lebaran {
-            --royal-blue: #064E3B; --electric-blue: #10B981; --gold-lux: #D4AF37;
-            --bg-surface: #F8FAFC; --text-main: #064E3B; --text-muted: #64748B; 
-            --glass-bg: rgba(255, 255, 255, 0.95); --glass-border: rgba(6, 78, 59, 0.15); 
-            --shadow-soft: 0 15px 35px rgba(6, 78, 59, 0.08); --kc-green: #D4AF37; 
+        /* BACKGROUND MESH GRADIENT VIP */
+        body { 
+            margin: 0; font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
+            background-color: #E8F0F8;
+            background-image: 
+                radial-gradient(at 0% 0%, #FFFFFF 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, #FFFFFF 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(45, 99, 237, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
         }
-
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; overflow-x: hidden; position: relative; -webkit-tap-highlight-color: transparent;}
         * { box-sizing: border-box; outline: none; text-decoration: none; }
 
-        .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: floatLight 10s infinite alternate; transition: 0.5s background;}
-        .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #bfdbfe; }
-        .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: rgba(212, 175, 55, 0.2); animation-delay: 2s; }
-        
-        html.theme-lebaran .light-1 { background: #D1FAE5; } html.theme-lebaran .light-2 { background: #FEF3C7; opacity: 0.8;}
-        .bg-watermark { position: fixed; top: 15%; right: -15%; width: 100%; height: 80%; background-image: url('logomlu.png'); background-repeat: no-repeat; background-size: contain; background-position: center; opacity: 0.04; transform: rotate(-15deg); z-index: -2; pointer-events: none; transition: 0.5s; }
-        @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(20px, 40px);} }
+        .ambient-light { position: fixed; border-radius: 50%; filter: blur(90px); z-index: -1; opacity: 0.5; animation: floatLight 12s infinite alternate; }
+        .light-1 { top: -10%; left: -20%; width: 500px; height: 500px; background: rgba(45, 99, 237, 0.15); }
+        .light-2 { bottom: -10%; right: -20%; width: 450px; height: 450px; background: rgba(212, 175, 55, 0.15); animation-delay: -4s; }
+        @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(30px, 50px);} }
 
-        .only-lebaran, .only-lebaran-flex { display: none !important; }
-        html.theme-lebaran .only-lebaran { display: block !important; }
-        html.theme-lebaran .only-lebaran-flex { display: flex !important; }
-        html.theme-lebaran .hide-lebaran { display: none !important; }
+        .fade-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
+        .d-1 { animation-delay: 0.1s; } .d-2 { animation-delay: 0.2s; } .d-3 { animation-delay: 0.3s; } .d-4 { animation-delay: 0.4s; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
-        .hanging-ornament { position: absolute; top: -20px; z-index: 1; animation: swing 4s ease-in-out infinite alternate; transform-origin: top center; opacity: 0.9;}
-        .orn-left { left: 6%; } .orn-right { right: 8%; animation-delay: -2s; }
-        .wire { width: 2px; background: linear-gradient(to bottom, transparent, var(--gold-lux)); margin: 0 auto; }
-        .orn-left .wire { height: 25px; } .orn-right .wire { height: 60px; } 
-        .ketupat { width: 36px; height: 36px; background: var(--royal-blue); border: 2px solid #FDE68A; transform: rotate(45deg); margin: -8px auto 0; position: relative; box-shadow: 0 10px 20px rgba(212, 175, 55, 0.5); border-radius: 4px;}
-        .ketupat::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: var(--gold-lux); transform: translateY(-50%); }
-        .ketupat::after { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background: var(--gold-lux); transform: translateX(-50%); }
-        .tassel { width: 4px; height: 20px; background: var(--gold-lux); margin: 6px auto 0; border-radius: 3px; position: relative; }
-        .tassel::after { content: ''; position: absolute; bottom: -4px; left: -2px; width: 8px; height: 8px; border-radius: 50%; background: #FDE68A; }
-
-        .watermark-eid { position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); font-family: 'Outfit'; font-size: 55px; font-weight: 900; color: rgba(212, 175, 55, 0.08); white-space: nowrap; z-index: 0; pointer-events: none; letter-spacing: 5px; }
-        .islamic-pattern { position: absolute; inset: 0; opacity: 0.03; pointer-events: none; z-index: 1; background-image: radial-gradient(var(--royal-blue) 2px, transparent 2px), radial-gradient(var(--royal-blue) 2px, transparent 2px); background-size: 40px 40px; background-position: 0 0, 20px 20px; }
-
-        .marquee-wrapper { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; position: relative; }
-        .marquee-text { display: inline-block; padding-left: 100%; animation: scrollMarquee 18s linear infinite; }
-        @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-        .eid-marquee { background: #F0FDF4; border-radius: 12px; padding: 10px 15px; margin-top: 20px; width: 100%; border: 1px solid #A7F3D0; display:flex; align-items: center; gap: 10px; z-index: 2; overflow: hidden;}
-        .eid-marquee i { color: var(--royal-blue); font-size: 22px; animation: swing 2s infinite; flex-shrink: 0;}
-        .eid-marquee .marquee-text { font-family: 'Inter'; font-size: 11px; font-weight: 700; color: var(--royal-blue); letter-spacing: 0.5px;}
-        @keyframes swing { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
-
-        .glass-panel { background: var(--glass-bg); backdrop-filter: blur(30px); border: 1.5px solid var(--glass-border); box-shadow: var(--shadow-soft); position: relative; overflow: hidden; transition: 0.5s; }
-
-        .dashboard-header { padding: 40px 20px 15px; position: relative; z-index: 10; }
-        .top-bar { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; z-index: 10; position: relative;}
-        .greeting { font-family: 'Outfit'; font-size: 32px; font-weight: 900; color: var(--royal-blue); line-height: 1; letter-spacing: -1px; margin-bottom: 8px; transition: 0.3s;}
-        .date-text { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; color: var(--electric-blue); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;}
-        html.theme-lebaran .date-text { color: var(--gold-dark); font-size: 11px;}
+        /* --- HEADER & INBOX NOTIF --- */
+        .top-header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10;}
+        .greet-box { display: flex; flex-direction: column; }
+        .date-badge { background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); padding: 4px 10px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; color: var(--electric-blue); letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid rgba(255,255,255,0.9); margin-bottom: 5px;}
+        .greet-txt { font-family: 'Outfit'; font-size: 26px; font-weight: 900; color: var(--royal-blue); line-height: 1; letter-spacing: -0.5px;}
 
         .header-actions { display: flex; gap: 8px; }
-        .btn-settings { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--royal-blue); box-shadow: 0 5px 20px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.05);}
-        .btn-settings:active { transform: scale(0.9); }
-        .btn-theme-toggle { background: #0F172A; color: white; display: none; }
-        html.theme-lebaran .btn-theme-toggle { background: var(--gold-lux); color: white; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);}
+        .btn-inbox { width: 45px; height: 45px; border-radius: 14px; background: white; border: 1px solid rgba(255,255,255,0.8); color: var(--royal-blue); font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; position: relative;}
+        .btn-inbox:active { transform: scale(0.9); background: var(--electric-blue); color: white; }
+        .inbox-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-family: 'Space Grotesk'; font-size: 10px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 3px 10px rgba(239,68,68,0.4); animation: pulseBadge 2s infinite;}
+        @keyframes pulseBadge { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        .profile-card { border-radius: 28px; padding: 20px; display: flex; flex-direction: column; background: rgba(255,255,255,0.65); position: relative;}
-        .pc-top { display: flex; align-items: center; justify-content: space-between; width: 100%; z-index: 2; position: relative;}
-        .p-left { display: flex; align-items: center; gap: 15px; flex: 1; overflow: hidden; z-index: 2; }
-        .photo-wrap { position: relative; width: 60px; height: 60px; border-radius: 20px; background: white; box-shadow: 0 10px 25px rgba(45,99,237,0.2); display: flex; align-items: center; justify-content: center; border: 2px solid white; flex-shrink: 0; z-index: 2;}
-        html.theme-lebaran .photo-wrap { border-color: var(--royal-blue); box-shadow: 0 15px 35px rgba(6, 78, 59, 0.2);}
-        .p-photo { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
-        .p-info { display: flex; flex-direction: column; justify-content: center; z-index: 2;}
-        .p-role { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 900; background: linear-gradient(90deg, #FCD34D 0%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; border: 1px solid rgba(212, 175, 55, 0.3); padding: 2px 8px; border-radius: 50px; display: inline-block; margin-bottom: 2px; white-space: nowrap; width: fit-content; }
-        .p-name { font-family: 'Outfit'; font-size: 18px; font-weight: 800; color: var(--royal-blue); margin-bottom: 2px; line-height: 1.2; transition: 0.3s;}
-        .p-plat { font-family: 'Inter'; font-size: 11px; font-weight: 600; color: var(--text-muted); }
-        html.theme-lebaran .p-role { background: linear-gradient(90deg, var(--gold-lux), #FCD34D); -webkit-text-fill-color: #000; color: #000; box-shadow: 0 5px 15px rgba(212,175,55,0.3);}
-        html.theme-lebaran .p-plat { color: var(--royal-blue); background: #D1FAE5; padding: 2px 8px; border-radius: 6px; border: 1px dashed var(--royal-blue);}
+        .notif-permission-banner { background: var(--electric-blue); color: white; padding: 12px 20px; font-size: 11px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-radius: 12px; margin: 0 20px 15px; box-shadow: 0 5px 15px rgba(45,99,237,0.3); animation: pulsePermission 2s infinite; }
+        .notif-permission-banner button { background: white; color: var(--electric-blue); border: none; padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; font-family: 'Space Grotesk'; cursor: pointer; }
+        @keyframes pulsePermission { 0%,100% { transform: scale(1); } 50% { transform: scale(0.98); } }
 
-        .loc-toggle { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-left: 10px; }
-        .loc-label { font-size: 8px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+        /* --- PROFIL VIP CARD --- */
+        .vip-card { margin: 15px 20px 25px; border-radius: 28px; background: linear-gradient(135deg, #0A1128 0%, var(--royal-blue) 100%); position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(10,34,89,0.3); border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column;}
+        .vip-card::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 15px 15px; opacity: 0.3; pointer-events: none;}
+        .vip-card::before { content: ''; position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%); border-radius: 50%;}
+
+        .vc-top { padding: 25px 25px 10px; display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2;}
+        .vc-chip { width: 35px; height: 25px; background: linear-gradient(135deg, #FDE047, #CA8A04); border-radius: 6px; position: relative; overflow: hidden; opacity: 0.9;}
+        .vc-chip::after { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.2); }
+        .vc-chip::before { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 1px; background: rgba(0,0,0,0.2); }
+        
+        .loc-toggle { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .loc-label { font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px;}
         .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(203, 213, 225, 0.6); transition: .4s; border-radius: 20px; border: 1px solid white;}
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255, 255, 255, 0.2); transition: .4s; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);}
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        input:checked + .slider { background-color: var(--electric-blue); }
+        input:checked + .slider { background-color: var(--success); border-color: var(--success);}
         input:checked + .slider:before { transform: translateX(16px); }
-
-        .mini-gading-monitor { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(0,0,0,0.1); align-items: center; justify-content: space-between; animation: fadeIn 0.5s; z-index: 2; position: relative;}
-        .mini-title { font-family: 'Outfit'; font-size: 11px; font-weight: 800; color: var(--royal-blue); }
-        .mini-val { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: var(--danger); background: rgba(239, 68, 68, 0.1); padding: 4px 10px; border-radius: 8px; }
-        .mini-val.hijau { color: var(--success); background: rgba(16, 185, 129, 0.1); }
-
-        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-
-        .dash-container { padding: 0 20px; margin-bottom: 20px; position: relative; z-index: 10; display: flex; flex-direction: column; gap: 15px; }
         
-        .alert-banner { background: linear-gradient(135deg, #EF4444 0%, #991B1B 100%); color: white; padding: 20px; border-radius: 20px; border: 2px solid #FCA5A5; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4); animation: pulseAlert 2s infinite; text-align: center; }
-        .alert-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; color: #FEF2F2; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .alert-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 800; line-height: 1.6; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-        @keyframes pulseAlert { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .vc-middle { padding: 0 25px; position: relative; z-index: 2; display: flex; align-items: center; gap: 15px;}
+        .vc-avatar { width: 70px; height: 70px; border-radius: 22px; background: white; padding: 3px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); flex-shrink: 0;}
+        .vc-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px;}
+        .vc-info { flex: 1; }
+        .vc-name { font-family: 'Outfit'; font-size: 22px; font-weight: 900; color: white; line-height: 1.1; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
+        .vc-plat { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 700; color: #93C5FD; letter-spacing: 1.5px;}
 
-        .premium-ticker { background: #FEF2F2; border: 1px solid #FCA5A5; border-left: 4px solid var(--danger); border-radius: 12px; padding: 10px 15px; display:flex; align-items: center; gap: 12px; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.05); overflow: hidden; }
-        .ticker-icon { width: 24px; height: 24px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
-        .premium-ticker .marquee-text { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #991B1B; letter-spacing: 0.5px; }
-        .premium-ticker .marquee-text b { color: var(--danger); font-weight: 800; }
+        .vc-bottom { margin-top: 20px; background: rgba(0,0,0,0.3); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; backdrop-filter: blur(10px);}
+        .vc-role { font-size: 11px; font-weight: 800; color: white; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px;}
+        .vc-role i { color: var(--gold-lux); }
+        .vc-qr { font-size: 26px; color: white; cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3);}
+        .vc-qr:active { transform: scale(0.9); background: var(--gold-lux); color: black;}
 
-        .fc-banner { border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; cursor: pointer; gap: 10px; transition: 0.5s; background: linear-gradient(135deg, var(--royal-blue) 0%, #15398F 100%); border: 1px solid rgba(45, 99, 237, 0.3); box-shadow: 0 15px 40px rgba(10, 34, 89, 0.1);}
-        .banner-left { flex: 1; min-width: 0; z-index: 2;} 
-        .banner-right { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; z-index: 2;}
-        .banner-title { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 6px; letter-spacing: 1px;}
-        .banner-desc { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 4px;}
-        .banner-val { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.6); line-height: 1;}
-        .banner-lbl { font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.8); letter-spacing: 1px; margin-top: 4px; text-transform: uppercase; }
+        .dash-container { padding: 0 20px; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 10;}
 
-        html.theme-lebaran .fc-banner { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); border: 1px solid var(--gold-lux); box-shadow: 0 15px 30px rgba(6, 78, 59, 0.4); }
-        html.theme-lebaran .fc-banner::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(253, 230, 138, 0.2), transparent); transform: skewX(-20deg); animation: shimmer 4s infinite; z-index: 1;}
-        @keyframes shimmer { 100% { left: 200%; } }
-        html.theme-lebaran .fc-banner .banner-title { color: #FDE68A; }
-        html.theme-lebaran .fc-banner .banner-val { color: var(--gold-lux); text-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
-        html.theme-lebaran .fc-banner .banner-lbl { color: var(--royal-blue); background: #FDE68A; padding: 2px 6px; border-radius: 4px;}
-        
-        .tiktok-premium-card { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: 24px; padding: 22px 20px; position: relative; overflow: hidden; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2); transition: 0.3s; }
-        .tiktok-premium-card:active { transform: scale(0.96); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.1); }
-        .tk-glow { position: absolute; width: 100px; height: 100px; filter: blur(40px); border-radius: 50%; opacity: 0.6; z-index: 1; }
-        .tk-cyan { top: -20px; left: -20px; background: #00f2fe; } .tk-magenta { bottom: -20px; right: 20%; background: #fe0979; }
-        .tk-content { display: flex; align-items: center; gap: 15px; z-index: 2; flex: 1; }
-        .tk-icon-wrap { width: 50px; height: 50px; border-radius: 16px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); flex-shrink: 0; }
-        .tk-icon-wrap i { font-size: 28px; color: white; filter: drop-shadow(2px 2px 0px #00f2fe) drop-shadow(-2px -2px 0px #fe0979); }
-        .tk-text h4 { margin: 0 0 5px 0; color: white; font-family: 'Outfit'; font-size: 16px; font-weight: 800; letter-spacing: 0.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-        .tk-text p { margin: 0; color: #CBD5E1; font-size: 11px; font-family: 'Inter'; font-weight: 500; line-height: 1.4; padding-right: 5px; }
-        .tk-btn { background: white; color: black; font-family: 'Space Grotesk'; font-weight: 900; font-size: 11px; padding: 10px 18px; border-radius: 50px; z-index: 2; display: flex; align-items: center; gap: 6px; box-shadow: 0 5px 15px rgba(255,255,255,0.2); flex-shrink: 0; }
-        
-        #radarContainer { display: none; width: 100%; border-radius: 24px; overflow: hidden; border: 4px solid white; position: relative; height: 220px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); margin-top: 15px; }
+        /* RADAR MAP CONTAINER */
+        #radarContainer { display: none; width: 100%; border-radius: 24px; overflow: hidden; border: 4px solid white; position: relative; height: 220px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); margin-bottom: 5px; }
         #radarMap { width: 100%; height: 100%; }
+        .marker-pin { width: 30px; height: 30px; border-radius: 50%; background: #2D63ED; border: 2px solid white; box-shadow: 0 3px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .marker-pin img { width: 100%; height: 100%; object-fit: cover; }
+        .marker-label { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: white; padding: 2px 5px; border-radius: 4px; font-size: 8px; font-weight: 800; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .custom-div-icon { background: transparent; border: none; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .menu-btn { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.9); border-radius: 24px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(10, 34, 89, 0.04); cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;}
-        .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.9); }
-        
-        .icon-box { width: 50px; height: 50px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.15); transition: 0.5s; z-index: 2; position: relative;}
-        
-        .ic-anggota { background: linear-gradient(135deg, #60A5FA 0%, #2563EB 100%); } .ic-pengurus { background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); } 
-        .ic-keuangan { background: linear-gradient(135deg, #94a3b8 0%, #475569 100%); } .ic-tabungan { background: linear-gradient(135deg, #34D399 0%, #059669 100%); } 
-        .ic-game { background: linear-gradient(135deg, #c084fc 0%, #7c3aed 100%); } .ic-reminder { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); } 
-        .ic-info { background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%); } .ic-pasar { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); } 
-        
-        .menu-title { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: var(--royal-blue); z-index: 2; position: relative; transition: 0.5s;}
+        /* --- BANNER ANTREAN FC --- */
+        .fc-banner { border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.9); box-shadow: var(--shadow-soft); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;}
+        .fc-banner:active { transform: scale(0.98); box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .fc-banner::before { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--electric-blue); }
+        .fc-kc::before { background: #10B981; } 
 
-        html.theme-lebaran .menu-btn { background: #FFFFFF; border-color: rgba(6, 78, 59, 0.1); box-shadow: 0 10px 20px rgba(6, 78, 59, 0.05);}
-        html.theme-lebaran .menu-btn:active { background: #F0FDF4; border-color: var(--royal-blue);}
-        html.theme-lebaran .icon-box { background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); color: #FFFFFF; border: 1px solid rgba(6, 78, 59, 0.2); box-shadow: 0 10px 20px rgba(6, 78, 59, 0.2); }
+        .banner-title { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;}
+        .banner-status { font-size: 11px; font-weight: 800; font-family: 'Inter'; background: rgba(0,0,0,0.05); padding: 4px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px;}
+        .banner-val { font-size: 26px; color: var(--electric-blue); text-align: right; background: rgba(45,99,237,0.1); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 14px;}
+        .fc-kc .banner-val { color: #10B981; background: rgba(16,185,129,0.1); }
 
-        .float-container { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 2000; }
+        /* --- SULTAN TABUNGAN --- */
+        .sultan-panel { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 24px; padding: 20px; box-shadow: var(--shadow-soft); border: 1px solid rgba(255,255,255,0.9); position: relative; overflow: hidden;}
+        .sultan-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #FDE047, var(--gold-lux), #FDE047); }
+        .sp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sp-title { font-family: 'Outfit'; font-size: 15px; font-weight: 900; color: var(--royal-blue); display: flex; align-items: center; gap: 8px;}
+        .sp-title i { color: var(--gold-lux); font-size: 18px; animation: pulseCrown 2s infinite alternate;}
+        @keyframes pulseCrown { 0% {transform: scale(1);} 100% {transform: scale(1.15);} }
+
+        .sp-list { display: flex; flex-direction: column; gap: 8px; }
+        .sp-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: white; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 2px 10px rgba(0,0,0,0.02);}
+        .sp-left { display: flex; align-items: center; gap: 12px; }
+        .sp-rank { width: 28px; height: 28px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk'; font-weight: 900; font-size: 11px; color: white;}
+        .rank-1 { background: linear-gradient(135deg, #FDE047, #CA8A04); box-shadow: 0 5px 10px rgba(202, 138, 4, 0.3); }
+        .rank-2 { background: linear-gradient(135deg, #E2E8F0, #94A3B8); box-shadow: 0 5px 10px rgba(148, 163, 184, 0.3); }
+        .rank-3 { background: linear-gradient(135deg, #FDBA74, #B45309); box-shadow: 0 5px 10px rgba(180, 83, 9, 0.3); }
+        .sp-name { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;}
+        .sp-plat { font-size: 10px; font-weight: 700; color: var(--text-muted); }
+        .sp-badge { font-size: 16px; opacity: 0.9;}
+
+        /* --- MENU GRID --- */
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;}
+        .menu-btn { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.9); border-radius: 24px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-soft); cursor: pointer; transition: 0.3s;}
+        .menu-btn:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px);}
+        .menu-btn:active { transform: scale(0.95); box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        .icon-box { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; color: white; transition: 0.3s;}
+        .ic-anggota { background: linear-gradient(135deg, #60A5FA, #2563EB); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);} 
+        .ic-pengurus { background: linear-gradient(135deg, #fbbf24, #d97706); box-shadow: 0 10px 20px rgba(217, 119, 6, 0.2);} 
+        .ic-keuangan { background: linear-gradient(135deg, #94a3b8, #475569); box-shadow: 0 10px 20px rgba(71, 85, 105, 0.2);} 
+        .ic-tabungan { background: linear-gradient(135deg, #34D399, #059669); box-shadow: 0 10px 20px rgba(5, 150, 105, 0.2);} 
+        .ic-game { background: linear-gradient(135deg, #c084fc, #7c3aed); box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);} 
+        .ic-reminder { background: linear-gradient(135deg, #fb923c, #ea580c); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.2);} 
+        .ic-info { background: linear-gradient(135deg, #818cf8, #4f46e5); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);} 
+        .ic-lokasi { background: linear-gradient(135deg, #f472b6, #db2777); box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2);} 
+        .menu-title { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: var(--royal-blue); letter-spacing: 0.5px;}
+
+        /* --- FLOATING ACTIONS & DOCK --- */
+        .float-container { position: fixed; bottom: 110px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 2000; }
         .btn-sos { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 2px solid white; transition: 0.2s; background: linear-gradient(135deg, #ef4444, #b91c1c); animation: pulseSOS 2s infinite; }
         .btn-sos:active { transform: scale(0.9); }
         @keyframes pulseSOS { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } }
         .btn-wa-cs { background: linear-gradient(135deg, #25D366, #128C7E); color: white; border-radius: 50px; padding: 12px 20px; display: flex; align-items: center; gap: 8px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; text-decoration: none; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3); border: 2px solid white; transition: 0.2s; }
 
-        .modal-glass-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-        .modal-glass-overlay.show { opacity: 1; }
-        .modal-glass-box { background: rgba(255,255,255,0.95); border-radius: 25px; padding: 25px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.2); transform: scale(0.9); transition: 0.3s; border: 1px solid white;}
-        .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
-        .btn-modal { padding: 14px 25px; border-radius: 14px; font-weight: 800; font-size: 14px; border: none; cursor: pointer; flex: 1; margin: 0 5px;}
-
         .dock-container { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 88%; max-width: 380px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); border: 1px solid white; padding: 15px 35px; border-radius: 50px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 20px 50px rgba(10,34,89,0.15); transition: 0.5s;}
-        html.theme-lebaran .dock-container { border-color: rgba(6, 78, 59, 0.15); box-shadow: 0 15px 35px rgba(6, 78, 59, 0.1); }
-        
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #94A3B8; transition: 0.3s; gap: 4px; }
         .nav-item.active { color: var(--electric-blue); transform: translateY(-4px);}
         .nav-text { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
-        .custom-div-icon { background: transparent; border: none; }
-        .marker-pin { width: 30px; height: 30px; border-radius: 50%; background: #2D63ED; border: 2px solid white; box-shadow: 0 3px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .marker-pin img { width: 100%; height: 100%; object-fit: cover; }
-        .marker-label { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: white; padding: 2px 5px; border-radius: 4px; font-size: 8px; font-weight: 800; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        /* PERMINTAAN IZIN NOTIFIKASI */
-        .notif-permission-banner { background: var(--electric-blue); color: white; padding: 12px 20px; font-size: 11px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(45,99,237,0.3); animation: pulsePermission 2s infinite; }
-        .notif-permission-banner button { background: white; color: var(--electric-blue); border: none; padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; font-family: 'Space Grotesk'; cursor: pointer; }
-        @keyframes pulsePermission { 0%,100% { transform: scale(1); } 50% { transform: scale(0.98); } }
+        /* MODALS & OVERLAYS */
+        .modal-glass-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-glass-overlay.show { opacity: 1; }
+        .modal-glass-box { background: rgba(255,255,255,0.95); border-radius: 25px; padding: 25px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.2); transform: scale(0.9); transition: 0.3s; border: 1px solid white; position: relative;}
+        .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
+        .btn-modal { padding: 14px 25px; border-radius: 14px; font-weight: 800; font-size: 14px; border: none; cursor: pointer; flex: 1; margin: 0 5px;}
+        .btn-close-modal { position: absolute; top: 15px; right: 15px; background: #F1F5F9; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; color: #64748B; transition: 0.2s;}
+        .btn-close-modal:active { transform: scale(0.9); background: #E2E8F0;}
+
+        /* QR CODE */
+        .qr-wrapper { background: white; border: 2px dashed #E2E8F0; padding: 15px; border-radius: 20px; display: inline-block; margin-bottom: 15px;}
+        .qr-wrapper img { width: 200px; height: 200px; border-radius: 10px; mix-blend-mode: multiply;}
+        .qr-name { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 2px;}
+        .qr-desc { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 20px;}
+
+        /* --- INBOX MODAL (BOTTOM SHEET) --- */
+        .modal-box-bottom { background: white; border-radius: 35px 35px 0 0; width: 100%; padding: 25px 20px 40px; box-shadow: 0 -20px 50px rgba(0,0,0,0.3); position: relative; max-height: 80vh; overflow-y: auto; transform: translateY(100%); transition: 0.3s;}
+        .modal-glass-overlay.show .modal-box-bottom { transform: translateY(0); }
+        .modal-handle { width: 50px; height: 5px; background: #CBD5E1; border-radius: 10px; margin: 0 auto 20px; }
+        .inbox-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #E2E8F0; padding-bottom: 15px;}
+        .inbox-title { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin: 0; display: flex; align-items: center; gap: 8px;}
+        .inbox-list { display: flex; flex-direction: column; gap: 12px; }
+        .inbox-item { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; display: flex; gap: 15px; position: relative;}
+        .inbox-item.unread { background: white; border-color: rgba(45,99,237,0.3); box-shadow: 0 5px 15px rgba(45,99,237,0.05);}
+        .inbox-item.unread::before { content: ''; position: absolute; left: 12px; top: 20px; width: 8px; height: 8px; background: var(--electric-blue); border-radius: 50%; box-shadow: 0 0 10px rgba(45,99,237,0.5);}
+        .ib-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(45,99,237,0.1); color: var(--electric-blue); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; margin-left: 10px;}
+        .ib-content { flex: 1; }
+        .ib-title { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;}
+        .inbox-item.unread .ib-title { color: var(--royal-blue); }
+        .ib-desc { font-size: 11px; font-weight: 600; color: var(--text-muted); line-height: 1.4; margin-bottom: 6px;}
+        .ib-time { font-size: 9px; font-weight: 800; color: #94A3B8;}
+
+        /* FORM SETTINGS */
+        .form-group { text-align: left; margin-bottom: 15px;}
+        .form-label { font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 5px; display: block; text-transform: uppercase;}
+        .form-input { width: 100%; padding: 15px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 700; color: var(--text-main); outline: none; transition: 0.2s;}
+        .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1);}
+        .btn-submit { width: 100%; padding: 16px; background: var(--electric-blue); color: white; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; box-shadow: 0 10px 20px rgba(45,99,237,0.3); transition: 0.2s;}
+        .btn-logout-modal { width: 100%; padding: 16px; background: white; color: var(--danger); border: 2px solid rgba(239,68,68,0.2); border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s;}
     </style>
 </head>
 <body>
 
     <div class="ambient-light light-1"></div>
     <div class="ambient-light light-2"></div>
-    <div class="bg-watermark hide-lebaran"></div>
-
-    <div class="hanging-ornament orn-left only-lebaran">
-        <div class="wire"></div><div class="ketupat"></div><div class="tassel"></div>
-    </div>
-    <div class="hanging-ornament orn-right only-lebaran">
-        <div class="wire"></div><div class="ketupat"></div><div class="tassel"></div>
-    </div>
 
     <div id="confirmModal" class="modal-glass-overlay">
         <div class="modal-glass-box">
-            <h3 class="modal-title" style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin-bottom:10px;">KONFIRMASI</h3>
+            <h3 style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin-bottom:10px;">KONFIRMASI</h3>
             <p id="confirmMsg" style="font-size:14px; color:#64748B; margin-bottom:25px;">...</p>
             <div style="display:flex;">
                 <button class="btn-modal" style="background:#E2E8F0; color:#64748B;" onclick="closeConfirm(false)">BATAL</button>
@@ -232,450 +225,525 @@
     </div>
 
     <div class="modal-glass-overlay" id="broadcastModal">
-        <div class="modal-glass-box" style="text-align:center; border-color:var(--gold-lux);">
-            <div style="width:60px; height:60px; background:rgba(212,175,55,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:var(--gold-lux); font-size:24px; box-shadow:0 0 20px rgba(212,175,55,0.4);">
+        <div class="modal-glass-box" style="text-align:center;">
+            <div style="width:60px; height:60px; background:rgba(212,175,55,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:var(--gold-lux); font-size:24px;">
                 <i class="fa-solid fa-bullhorn fa-shake"></i>
             </div>
-            <h3 id="bcTitle" style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin:0 0 10px; font-size:18px; text-transform:uppercase;">INFO PENTING</h3>
-            <p id="bcBody" style="font-size:13px; color:var(--text-main); margin-bottom:25px; line-height:1.6; font-weight:500;">Isi pengumuman...</p>
-            <button class="btn-modal" style="background:var(--electric-blue); color:white; width:100%; box-shadow:0 10px 20px rgba(45,99,237,0.3);" onclick="tutupBroadcast()">SAYA MENGERTI</button>
+            <h3 id="bcTitle" style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin:0 0 10px;">INFO PENTING</h3>
+            <p id="bcBody" style="font-size:13px; color:var(--text-main); margin-bottom:25px;">Isi pengumuman...</p>
+            <button class="btn-modal" style="background:var(--electric-blue); color:white; width:100%;" onclick="tutupBroadcast()">SAYA MENGERTI</button>
         </div>
-    </div>
-
-    <div class="dashboard-header">
-        <div class="top-bar">
-            <div>
-                <div class="date-text hide-lebaran" id="displayDate">HARI INI</div>
-                <div class="date-text only-lebaran-flex"><i class="fas fa-moon"></i> 1 SYAWAL 1447 H</div>
-                
-                <div class="greeting" id="greetingText">Halo!</div>
-            </div>
-            
-            <div class="header-actions" style="display:flex; gap:8px;">
-                <button class="btn-settings btn-theme-toggle" id="btnAdminTheme" onclick="toggleGlobalTheme()" title="Ubah Tema Seluruh Member" style="display:none;">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <a href="settings.html" class="btn-settings" title="Pengaturan"><i class="fas fa-cog"></i></a>
-            </div>
-        </div>
-
-        <div class="profile-card glass-panel">
-            <div class="islamic-pattern only-lebaran"></div>
-            <div class="watermark-eid only-lebaran">IDUL FITRI</div>
-
-            <div class="pc-top">
-                <div class="p-left">
-                    <div class="photo-wrap"><img src="" id="userPhoto" class="p-photo" onerror="this.src='https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&name=MLU';"></div>
-                    <div class="p-info">
-                        <div class="p-role" id="userRole">MEMBER</div>
-                        <div class="p-name" id="userName">Memuat...</div>
-                        <div class="p-plat" id="userPlat">...</div>
-                    </div>
-                </div>
-                <div class="p-right" style="z-index: 2;">
-                    <div class="loc-toggle">
-                        <span class="loc-label">RADAR</span>
-                        <label class="switch">
-                            <input type="checkbox" id="toggleLocation" onchange="toggleLoc(this)">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="eid-marquee only-lebaran-flex">
-                <i class="fas fa-mosque"></i>
-                <div class="marquee-wrapper">
-                    <div class="marquee-text">✨ Segenap Pengurus Pusat Maka Lintas Utara (MLU) Mengucapkan Selamat Hari Raya Idul Fitri 1447 H. Taqabbalallahu Minna Wa Minkum. Mohon Maaf Lahir dan Batin. Tetap utamakan keselamatan keluarga di jalan! 🌙</div>
-                </div>
-            </div>
-
-            <div class="mini-gading-monitor" id="miniGadingMonitor" onclick="window.location.href='antrian.html'">
-                <div class="mini-title"><i class="fas fa-charging-station" style="color:var(--electric-blue);"></i> FC Kelapa Gading</div>
-                <div class="mini-val" id="miniGadingVal">...</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="dash-container">
-        
-        <div id="notifBannerContainer"></div>
-        
-        <div class="alert-banner hide-lebaran">
-            <div class="alert-title"><i class="fa-solid fa-triangle-exclamation fa-fade"></i> PENGUMUMAN</div>
-            <div class="alert-text">TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. <br>BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000</div>
-        </div>
-
-        <div class="premium-ticker only-lebaran-flex">
-            <div class="ticker-icon"><i class="fa-solid fa-triangle-exclamation fa-fade"></i></div>
-            <div class="marquee-wrapper">
-                <div class="marquee-text">⚠️ <b>PENGUMUMAN PENTING:</b> TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000 ⚠️</div>
-            </div>
-        </div>
-
-        <div id="mainFcBanner" class="fc-banner glass-panel" onclick="window.location.href='antrian.html'">
-            <div class="islamic-pattern only-lebaran" style="opacity: 0.1;"></div>
-            <div class="banner-left" style="z-index: 2;">
-                <div class="banner-title" id="mainFcTitle">
-                    <span class="only-lebaran" style="margin-right: 5px; color: var(--gold-lux);"><i class="fas fa-mosque"></i></span>
-                    <span class="hide-lebaran default-icon"><i class="fas fa-charging-station" style="color:var(--electric-blue);"></i></span> 
-                    FC KELAPA GADING
-                </div>
-                <div class="banner-desc" id="mainFcDesc"><i class="fas fa-map-marker-alt"></i> Area Kumpul Utama</div>
-            </div>
-            <div class="banner-right" style="z-index: 2;">
-                <div class="banner-val" id="mainFcVal" style="color:#aaa; font-size:16px;">...</div>
-                <div class="banner-lbl" id="mainFcLbl">ANTRIAN LIVE</div>
-            </div>
-        </div>
-        
-        <a href="https://www.tiktok.com/@.maka.lintas.utara" target="_blank" class="tiktok-premium-card hide-lebaran">
-            <div class="tk-glow tk-cyan"></div>
-            <div class="tk-glow tk-magenta"></div>
-            <div class="tk-content">
-                <div class="tk-icon-wrap"><i class="fab fa-tiktok"></i></div>
-                <div class="tk-text">
-                    <h4>@.maka.lintas.utara</h4>
-                    <p>Ikuti keseruan & update info terbaru di TikTok Resmi MLU!</p>
-                </div>
-            </div>
-            <div class="tk-btn">FOLLOW <i class="fas fa-chevron-right"></i></div>
-        </a>
-
-        <div id="radarContainer" class="glass-panel" style="display:none; width: 100%; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; height: 220px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); margin-top: 15px;">
-            <div style="position:absolute; top:12px; left:12px; background:rgba(255,255,255,0.9); backdrop-filter:blur(8px); padding:8px 16px; border-radius:20px; font-family:'Space Grotesk'; font-weight:900; font-size:10px; color:var(--royal-blue); z-index:999; box-shadow:0 5px 20px rgba(0,0,0,0.1); display:flex; align-items:center; gap:6px;">
-                <div style="width:8px; height:8px; background:#10B981; border-radius:50%; animation:blink 1.5s infinite;"></div> RADAR MEMBER
-            </div>
-            <div id="radarMap"></div>
-        </div>
-    </div>
-
-    <div class="dash-container" style="margin-top: 0;">
-        <div class="menu-grid">
-            <a href="data_anggota.html" class="menu-btn"><div class="icon-box ic-anggota"><i class="fas fa-users"></i></div><div class="menu-title">Data Anggota</div></a>
-            <a href="pengurus.html" class="menu-btn"><div class="icon-box ic-pengurus"><i class="fas fa-sitemap"></i></div><div class="menu-title">Pengurus</div></a>
-            <a href="keuangan.html" class="menu-btn"><div class="icon-box ic-keuangan"><i class="fas fa-wallet"></i></div><div class="menu-title">Uang Kas</div></a>
-            <a href="tabungan.html" class="menu-btn"><div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div><div class="menu-title">Tabungan</div></a>
-            <a href="game.html" class="menu-btn"><div class="icon-box ic-game"><i class="fas fa-gamepad"></i></div><div class="menu-title">Game Center</div></a>
-            <a href="reminder.html" class="menu-btn"><div class="icon-box ic-reminder"><i class="fas fa-bell"></i></div><div class="menu-title">Garasi Pintar</div></a>
-            <a href="info_mlu.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info MLU</div></a>
-            <a href="store.html" class="menu-btn"><div class="icon-box ic-pasar"><i class="fas fa-store"></i></div><div class="menu-title">Pasar MLU</div></a>
-        </div>
-    </div>
-
-    <div class="float-container">
-        <div class="btn-sos" onclick="openSosModal()"><i class="fas fa-ambulance"></i></div>
-        <a href="https://wa.me/6287722285445?text=Halo%20MAKA%20CS,%20saya%20member%20MLU%20ingin%20bertanya..." target="_blank" class="btn-wa-cs">
-            <i class="fab fa-whatsapp"></i><span>MAKA CS</span>
-        </a>
     </div>
 
     <div class="modal-glass-overlay" id="sosModal">
         <div class="modal-glass-box" style="text-align:left;">
-            <h3 class="modal-title" style="font-family:'Outfit'; color:#EF4444; margin-bottom:15px;"><i class="fas fa-broadcast-tower"></i> DARURAT S.O.S</h3>
-            <select id="sosType" style="width:100%; padding:12px; margin-bottom:15px; border-radius:12px; border:1px solid #ddd; background:#F8FAFC; font-family:'Inter'; font-weight:600; outline:none;">
+            <h3 style="font-family:'Outfit'; color:#EF4444; margin-top:0; margin-bottom:15px;"><i class="fas fa-broadcast-tower"></i> DARURAT S.O.S</h3>
+            <select id="sosType" class="form-input" style="margin-bottom:15px;">
                 <option>Unit Mogok / Trouble</option>
                 <option>Ban Bocor</option>
                 <option>Kecelakaan</option>
                 <option>Habis Baterai</option>
                 <option>Begal/Kriminal</option>
             </select>
-            <textarea id="sosDesc" style="width:100%; padding:12px; border-radius:12px; border:1px solid #ddd; background:#F8FAFC; font-family:'Inter'; outline:none;" rows="3" placeholder="Lokasi/Keterangan..."></textarea>
+            <textarea id="sosDesc" class="form-input" rows="3" placeholder="Lokasi/Keterangan Darurat..." style="resize:none;"></textarea>
             <div style="margin-top:20px; display:flex; gap:10px;">
-                <button class="btn-modal" style="background:#E2E8F0; color:#64748B;" onclick="document.getElementById('sosModal').classList.remove('show'); setTimeout(()=>document.getElementById('sosModal').style.display='none',300);">BATAL</button>
-                <button class="btn-modal" style="background: linear-gradient(135deg, #EF4444, #991B1B) !important; color: white !important; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);" onclick="sendSos()">KIRIM SOS</button>
+                <button class="btn-modal" style="background:#E2E8F0; color:#64748B; padding:12px;" onclick="tutupSos()">BATAL</button>
+                <button class="btn-modal" style="background: linear-gradient(135deg, #EF4444, #991B1B); color: white; padding:12px; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);" id="btnKirimSos" onclick="sendSos()">KIRIM SOS</button>
             </div>
         </div>
+    </div>
+
+    <div class="top-header fade-up d-1">
+        <div class="greet-box">
+            <div class="date-badge" id="displayDate">MEMUAT...</div>
+            <div class="greet-txt" id="greetingText">Halo!</div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-inbox" onclick="bukaInbox()">
+                <i class="far fa-bell"></i>
+                <div class="inbox-badge" id="inboxBadge" style="display:none;">0</div>
+            </button>
+        </div>
+    </div>
+
+    <div id="notifBannerContainer" class="fade-up d-1"></div>
+
+    <div class="vip-card fade-up d-2">
+        <div class="vc-top">
+            <div class="vc-chip"></div>
+            <div class="loc-toggle">
+                <span class="loc-label">RADAR MAP</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggleLocation" onchange="toggleLoc(this)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="vc-middle">
+            <div class="vc-avatar"><img src="" id="userPhoto" onerror="this.src='https://ui-avatars.com/api/?background=D4AF37&color=000&bold=true&name=MLU';"></div>
+            <div class="vc-info">
+                <div class="vc-name" id="userName">Memuat...</div>
+                <div class="vc-plat"><i class="fas fa-car" style="font-size: 10px; margin-right: 5px;"></i><span id="userPlat">...</span></div>
+            </div>
+        </div>
+
+        <div class="vc-bottom">
+            <div class="vc-role" id="userRole"><i class="fas fa-crown"></i> MEMBER</div>
+            <div class="vc-qr" onclick="tampilkanQR()" title="Tampilkan QR Pass"><i class="fas fa-qrcode"></i></div>
+        </div>
+    </div>
+
+    <div class="dash-container">
+        
+        <div id="radarContainer" class="fade-up d-3">
+            <div style="position:absolute; top:12px; left:12px; background:rgba(255,255,255,0.9); backdrop-filter:blur(8px); padding:8px 16px; border-radius:20px; font-family:'Space Grotesk'; font-weight:900; font-size:10px; color:var(--royal-blue); z-index:999; box-shadow:0 5px 20px rgba(0,0,0,0.1); display:flex; align-items:center; gap:6px;">
+                <div style="width:8px; height:8px; background:#10B981; border-radius:50%; animation:blink 1.5s infinite;"></div> RADAR MEMBER
+            </div>
+            <div id="radarMap"></div>
+        </div>
+        
+        <div class="fc-banner fade-up d-3" onclick="window.location.href='antrian.html'">
+            <div class="banner-left">
+                <div class="banner-title"><i class="fas fa-charging-station" style="color: var(--electric-blue);"></i> FC KELAPA GADING</div>
+                <div class="banner-status" id="statusGading"><i class="fas fa-spinner fa-spin"></i> Memuat status...</div>
+            </div>
+            <div class="banner-right">
+                <div class="banner-val" style="color: var(--electric-blue); background: rgba(45,99,237,0.1);"><i class="fas fa-arrow-circle-right"></i></div>
+            </div>
+        </div>
+
+        <div class="fc-banner fade-up d-3" id="altFcBanner" onclick="alert('Nyalakan GPS Anda!')">
+            <div class="banner-left">
+                <div class="banner-title" id="altFcNama"><i class="fas fa-satellite-dish" style="color: var(--warning);"></i> MEMINDAI LOKASI...</div>
+                <div class="banner-status" id="statusAltFC" style="background:rgba(245,158,11,0.1); color:var(--warning);"><i class="fas fa-spinner fa-spin"></i> Menghitung GPS...</div>
+            </div>
+            <div class="banner-right">
+                <div class="banner-val" id="altFcIcon" style="color: var(--warning); background: rgba(245,158,11,0.1);"><i class="fas fa-arrow-circle-right"></i></div>
+            </div>
+        </div>
+
+        <div class="sultan-panel fade-up d-4">
+            <div class="sp-header">
+                <div class="sp-title"><i class="fas fa-crown"></i> SULTAN TABUNGAN</div>
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">TOP 3 SAVERS</div>
+            </div>
+            <div class="sp-list" id="topSaversList">
+                <div style="text-align: center; font-size: 11px; color: var(--text-muted); padding: 10px;">Memuat data... <i class="fas fa-spinner fa-spin"></i></div>
+            </div>
+        </div>
+
+        <div class="menu-grid fade-up d-4">
+            <a href="data_anggota.html" class="menu-btn"><div class="icon-box ic-anggota"><i class="fas fa-users"></i></div><div class="menu-title">Data Anggota</div></a>
+            <a href="pengurus.html" class="menu-btn"><div class="icon-box ic-pengurus"><i class="fas fa-sitemap"></i></div><div class="menu-title">Pengurus</div></a>
+            <a href="keuangan.html" class="menu-btn"><div class="icon-box ic-keuangan"><i class="fas fa-vault"></i></div><div class="menu-title">Uang Kas</div></a>
+            <a href="tabungan.html" class="menu-btn"><div class="icon-box ic-tabungan"><i class="fas fa-piggy-bank"></i></div><div class="menu-title">Tabungan</div></a>
+            <a href="game.html" class="menu-btn"><div class="icon-box ic-game"><i class="fas fa-gamepad"></i></div><div class="menu-title">Game Center</div></a>
+            <a href="reminder.html" class="menu-btn"><div class="icon-box ic-reminder"><i class="fas fa-tools"></i></div><div class="menu-title">Garasi Pintar</div></a>
+            <a href="info_mlu.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-bullhorn"></i></div><div class="menu-title">Info MLU</div></a>
+            <a href="lokasi_fc.html" class="menu-btn"><div class="icon-box ic-lokasi"><i class="fas fa-map-marked-alt"></i></div><div class="menu-title">Lokasi FC</div></a>
+        </div>
+    </div>
+
+    <div class="float-container">
+        <div class="btn-sos" onclick="bukaSos()"><i class="fas fa-ambulance"></i></div>
+        <a href="https://wa.me/6287722285445?text=Halo%20MAKA%20CS,%20saya%20member%20MLU%20ingin%20bertanya..." target="_blank" class="btn-wa-cs">
+            <i class="fab fa-whatsapp"></i><span>MAKA CS</span>
+        </a>
     </div>
 
     <div class="dock-container">
         <a href="lokasi_fc.html" class="nav-item"><i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI</span></a>
         <a href="dashboard.html" class="nav-item active"><i class="fas fa-home"></i><span class="nav-text">HOME</span></a>
-        <a href="plan_route.html" class="nav-item"><i class="fas fa-route"></i><span class="nav-text">RUTE</span></a>
+        <a href="#" class="nav-item" onclick="bukaSetting()"><i class="fas fa-user-cog"></i><span class="nav-text">PROFIL</span></a>
+    </div>
+
+    <div class="modal-glass-overlay" id="modalQR">
+        <div class="modal-glass-box" style="max-width: 300px;">
+            <button class="btn-close-modal" onclick="tutupQR()" style="position:absolute; top:15px; right:15px;"><i class="fas fa-times"></i></button>
+            <h2 style="font-family:'Outfit'; font-size:18px; color:var(--royal-blue); margin-top:0; margin-bottom: 20px;"><i class="fas fa-expand"></i> DIGITAL PASS</h2>
+            <div class="qr-wrapper">
+                <img id="imgQrCode" src="" alt="Loading QR...">
+            </div>
+            <div class="qr-name" id="qrNamaFull">Nama</div>
+            <div class="qr-desc"><i class="fas fa-car" style="color:var(--text-muted);"></i> <span id="qrPlat">B 0000</span></div>
+            <div style="font-size: 10px; color: #94A3B8;">Tunjukkan QR Code ini untuk absensi acara / Kopdar MLU.</div>
+        </div>
+    </div>
+
+    <div class="modal-glass-overlay" id="modalSetting">
+        <div class="modal-glass-box" style="text-align: left;">
+            <button class="btn-close-modal" onclick="tutupSetting()" style="position:absolute; top:15px; right:15px;"><i class="fas fa-times"></i></button>
+            <h2 style="font-family:'Outfit'; font-size:22px; color:var(--royal-blue); margin-top:0; margin-bottom: 20px; text-align:center;"><i class="fas fa-user-edit"></i> PENGATURAN</h2>
+            
+            <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="setNama" class="form-input"></div>
+            <div class="form-group"><label class="form-label">Nomor WhatsApp</label><input type="number" id="setWa" class="form-input"></div>
+            <div class="form-group"><label class="form-label">Plat Kendaraan</label><input type="text" id="setPlat" class="form-input" readonly style="background: #E2E8F0; color: #64748B; cursor: not-allowed;" title="Plat tidak bisa diubah sendiri"></div>
+
+            <button class="btn-modal" style="width:100%; background:var(--electric-blue); color:white; margin:10px 0 0;" onclick="simpanProfil()">UPDATE DATA</button>
+            <button class="btn-modal" style="width:100%; background:white; color:var(--danger); border:2px solid rgba(239,68,68,0.2); margin-top:10px;" onclick="logoutApp()"><i class="fas fa-sign-out-alt"></i> KELUAR APLIKASI</button>
+
+            <div id="adminInboxSender" style="display:none; margin-top:20px; padding-top:20px; border-top:1px dashed #E2E8F0;">
+                <h3 style="font-size:12px; margin-top:0; color:var(--royal-blue); text-align:center;">ADMIN: KIRIM INBOX TEST</h3>
+                <button class="btn-modal" style="width:100%; background:var(--warning); color:white; margin:0;" onclick="adminKirimTestInbox()"><i class="fas fa-paper-plane"></i> BROADCAST INBOX</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-glass-overlay" id="modalInbox" style="align-items: flex-end;" onclick="tutupInbox(event)">
+        <div class="modal-box-bottom" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <div class="inbox-header">
+                <h2 class="inbox-title"><i class="fas fa-inbox"></i> Kotak Masuk</h2>
+                <button class="btn-close-modal" onclick="document.getElementById('modalInbox').classList.remove('show'); setTimeout(()=>document.getElementById('modalInbox').style.display='none',300);"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="inbox-list" id="inboxListBody">
+                <div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;">Memuat pesan... <i class="fas fa-spinner fa-spin"></i></div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
-        // ==== AKUN SILUMAN (DINO) INJECTION ====
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('login') === 'dino') {
-            localStorage.setItem('maka_user', JSON.stringify({id: 'ghost_dino', namaKtp: 'DINO', plat: 'B 1234 XYZ', role: 'MEMBER'}));
-            window.history.replaceState({}, document.title, window.location.pathname);
-        }
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        // IMPORT FIREBASE MESSAGING UNTUK NOTIFIKASI
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
+        // KONEKSI UTAMA
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
-        
-        // INIT MESSAGING FCM
         const messaging = getMessaging(app);
 
+        // KONEKSI GADING & KC
         const appGading = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppGading");
         const dbGading = getFirestore(appGading);
         const refGading = doc(dbGading, "antrian", "utama");
+        
+        const appKC = initializeApp({ apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM", authDomain: "antriankcnew.firebaseapp.com", projectId: "antriankcnew" }, "AppKC");
+        const dbKC = getFirestore(appKC);
 
+        // SESSION CHECK
         let uData = null;
         try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
         if (!uData || !uData.plat) window.location.href = 'index.html'; 
 
         const myName = uData.namaKtp || uData.namaWa || "User";
         const myPlat = uData.plat || "B XXXX XX";
-        const myRole = (uData.role || "MEMBER").toUpperCase();
         const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
-        
+        let userId = uData.id || myPlatClean;
+
         let map = null, markers = {}, watchId = null;
 
-        // ==========================================
-        // MESIN PEREKAM TOKEN (FCM NOTIFICATION)
-        // ==========================================
-        function checkNotificationPermission() {
-            if (!("Notification" in window)) {
-                console.log("Browser ini tidak mendukung desktop notification");
-                return;
+        // UI INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', options).toUpperCase();
+            
+            const hr = new Date().getHours();
+            document.getElementById('greetingText').innerText = hr<10?"Selamat Pagi,":hr<15?"Selamat Siang,":hr<18?"Selamat Sore,":"Selamat Malam,";
+            
+            document.getElementById('userName').innerText = myName;
+            document.getElementById('userPlat').innerText = myPlat;
+            document.getElementById('qrNamaFull').innerText = myName;
+            document.getElementById('qrPlat').innerText = myPlat;
+            
+            let photoSrc = (uData.foto && uData.foto.length > 50) ? uData.foto : `https://ui-avatars.com/api/?background=D4AF37&color=000&bold=true&name=${myName.split(" ")[0]}`;
+            document.getElementById('userPhoto').src = photoSrc;
+
+            if (myPlatClean === "B4248SWF") document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
+            else document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> ` + (uData.role || "MEMBER").toUpperCase();
+
+            document.getElementById('setNama').value = myName;
+            document.getElementById('setWa').value = uData.noWa || "";
+            document.getElementById('setPlat').value = myPlat;
+
+            // Tombol rahasia kirim inbox untuk admin
+            if (myPlatClean === "B4248SWF" || uData.id === "ghost_admin") {
+                document.getElementById('adminInboxSender').style.display = 'block';
             }
 
+            const savedLoc = localStorage.getItem('maka_loc_share'); 
+            if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
+
+            initDataListeners();
+            startNearestFCRadar();
+            checkNotificationPermission();
+        });
+
+        // ==========================================
+        // FITUR SAKTI ORIGINAL (FCM, GPS, DLL)
+        // ==========================================
+        function checkNotificationPermission() {
+            if (!("Notification" in window)) return;
             if (Notification.permission === "default") {
-                const bannerHtml = `
-                    <div class="notif-permission-banner" id="notifAskBanner">
-                        <div><i class="fas fa-bell fa-shake"></i> Aktifkan Notifikasi untuk Panggilan Antrean</div>
-                        <button onclick="window.requestFCMToken()">IZINKAN</button>
-                    </div>`;
-                document.getElementById('notifBannerContainer').innerHTML = bannerHtml;
-            } else if (Notification.permission === "granted") {
-                requestAndSaveTokenSilent();
-            }
+                document.getElementById('notifBannerContainer').innerHTML = `<div class="notif-permission-banner" id="notifAskBanner"><div><i class="fas fa-bell fa-shake"></i> Aktifkan Notif Panggilan</div><button onclick="window.requestFCMToken()">IZINKAN</button></div>`;
+            } else if (Notification.permission === "granted") requestAndSaveTokenSilent();
         }
 
         window.requestFCMToken = async () => {
-            try {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    document.getElementById('notifBannerContainer').innerHTML = ''; 
-                    
-                    document.getElementById('bcTitle').innerText = "NOTIFIKASI AKTIF";
-                    document.getElementById('bcTitle').style.color = "var(--success)";
-                    document.getElementById('bcBody').innerHTML = "Terima Kasih!<br><br>Sistem Notifikasi Panggilan Antrean & Pencairan Tabungan sudah berhasil diaktifkan di Perangkat Anda.";
-                    const m = document.getElementById('broadcastModal');
-                    m.style.display = 'flex';
-                    setTimeout(() => m.classList.add('show'), 50);
-
-                    await requestAndSaveTokenSilent();
-                } else {
-                    document.getElementById('bcTitle').innerText = "AKSES DITOLAK";
-                    document.getElementById('bcTitle').style.color = "var(--danger)";
-                    document.getElementById('bcBody').innerHTML = "Anda menolak izin notifikasi.<br><br>Anda tidak akan menerima peringatan otomatis (Panggilan Antrean) dari sistem.";
-                    const m = document.getElementById('broadcastModal');
-                    m.style.display = 'flex';
-                    setTimeout(() => m.classList.add('show'), 50);
-                }
-            } catch (error) {
-                console.error("Gagal meminta izin notifikasi:", error);
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                document.getElementById('notifBannerContainer').innerHTML = ''; 
+                await requestAndSaveTokenSilent();
+                alert("Sistem Notifikasi Berhasil Diaktifkan!");
             }
         };
 
-        // KODINGAN BARU: TUNTUN PAKSA FIREBASE BIAR GAK NYASAR (ANTI 404)
         async function requestAndSaveTokenSilent() {
             try {
-                const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-                console.log('Service Worker Siap:', registration);
-
-                const currentToken = await getToken(messaging, { 
-                    vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4',
-                    serviceWorkerRegistration: registration 
-                });
-                
-                if (currentToken) {
-                    console.log('Token FCM HP didapat:', currentToken);
-                    await updateDoc(doc(db, "mlu_members", uData.id), { 
-                        fcmToken: currentToken 
-                    });
-                } else {
-                    console.log('Token FCM gagal didapat. Periksa VAPID key atau config.');
-                }
-            } catch (err) {
-                console.log('Error saat mengambil token FCM: ', err);
-            }
+                const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+                const t = await getToken(messaging, { vapidKey: 'BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4', serviceWorkerRegistration: reg });
+                if (t) await updateDoc(doc(db, "mlu_members", userId), { fcmToken: t });
+            } catch (err) { console.log('Error FCM:', err); }
         }
 
-        // PENANGKAP NOTIF SAAT APLIKASI SEDANG DIBUKA (FOREGROUND)
         onMessage(messaging, (payload) => {
-            console.log('Pesan diterima di Foreground ', payload);
-            
             document.getElementById('bcTitle').innerText = payload.notification.title;
-            document.getElementById('bcTitle').style.color = "var(--royal-blue)";
             document.getElementById('bcBody').innerText = payload.notification.body;
-            
             const m = document.getElementById('broadcastModal');
-            m.style.display = 'flex';
-            setTimeout(() => m.classList.add('show'), 50);
-            
-            if(navigator.vibrate) { navigator.vibrate([200, 100, 200]); }
+            m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 50);
+            if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
         });
 
-        // PANGGIL PENGECEKAN NOTIF
-        checkNotificationPermission();
-
-        // ==========================================
-        // SAKLAR TEMA GLOBAL (KHUSUS SANG PENCIPTA)
-        // ==========================================
-        if (myPlatClean === "B4248SWF" || uData.id === "ghost_admin" || uData.id === "ghost_dino") {
-            document.getElementById('btnAdminTheme').style.display = 'flex';
-        }
-
-        const themeRef = doc(db, "settings", "app_config");
-        onSnapshot(themeRef, (snap) => {
-            if(snap.exists()) {
-                const data = snap.data();
-                const isLebaranNow = data.theme === 'lebaran';
-                const htmlEl = document.documentElement;
-                
-                if(isLebaranNow) {
-                    htmlEl.classList.add('theme-lebaran');
-                    localStorage.setItem('mlu_global_theme', 'lebaran');
-                } else {
-                    htmlEl.classList.remove('theme-lebaran');
-                    localStorage.setItem('mlu_global_theme', 'default');
-                }
-
-                const btnIcon = document.querySelector('#btnAdminTheme i');
-                if(btnIcon) { btnIcon.className = isLebaranNow ? 'fas fa-sun' : 'fas fa-moon'; }
-            }
-        });
-
-        window.toggleGlobalTheme = async () => {
-            const html = document.documentElement;
-            const isCurrentlyLebaran = html.classList.contains('theme-lebaran');
-            const newTheme = isCurrentlyLebaran ? 'default' : 'lebaran';
-            const btn = document.getElementById('btnAdminTheme');
-            btn.style.opacity = '0.5';
-            try { await setDoc(doc(db, "settings", "app_config"), { theme: newTheme }, { merge: true }); } 
-            catch(e) { alert("Gagal merubah tema global: " + e.message); } 
-            finally { btn.style.opacity = '1'; }
-        };
-
-        window.openSosModal = () => { const m = document.getElementById('sosModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
-        window.showConfirm = (msg, callback) => { document.getElementById('confirmMsg').innerText = msg; const modal = document.getElementById('confirmModal'); modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10); window.confirmCallback = callback; }
-        window.closeConfirm = (res) => { const modal = document.getElementById('confirmModal'); modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            const hr = new Date().getHours();
-            document.getElementById('greetingText').innerText = hr<10?"Selamat Pagi,":hr<15?"Selamat Siang,":hr<18?"Selamat Sore,":"Selamat Malam,";
-            document.getElementById('userName').innerText = myName;
-            document.getElementById('userPlat').innerText = myPlat;
-            if (uData.foto && uData.foto.length > 50) document.getElementById('userPhoto').src = uData.foto;
-
-            if (myPlatClean === "B4248SWF") document.getElementById('userRole').innerText = "KELUARGA MLU"; 
-            else document.getElementById('userRole').innerText = uData.role || "MEMBER";
-
-            const savedLoc = localStorage.getItem('maka_loc_share'); if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
-            
-            initDataListeners(); 
-        });
-
-        function initDataListeners() { 
-            onSnapshot(refGading, (snap) => { 
-                if(!snap.exists()) return; 
-                let qLen = (snap.data().waitingQueue||[]).length; 
-                if(qLen > 0) {
-                    document.getElementById('mainFcVal').innerHTML = `<span style="font-size:24px; font-family:'Space Grotesk'; font-weight:900; color:var(--text-main);">${qLen}</span>`;
-                } else {
-                    document.getElementById('mainFcVal').innerHTML = `<span style="font-size:18px; font-weight:800; color:var(--success);">TERSEDIA</span>`;
-                }
-            }); 
-        }
-
+        // RADAR MAP GPS
         window.toggleLoc = (el) => { if(el.checked) { showConfirm("Aktifkan lokasi? Peta Radar akan muncul.", (res) => { if(res) { localStorage.setItem('maka_loc_share', 'ON'); showRadar(); startTracking(); } else { el.checked = false; } }); } else { localStorage.setItem('maka_loc_share', 'OFF'); hideRadar(); stopTracking(); } }
         function showRadar() { const c = document.getElementById('radarContainer'); c.style.display = 'block'; setTimeout(() => { if(!map) { map = L.map('radarMap').setView([-6.1754, 106.8272], 10); L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); loadMembers(); } map.invalidateSize(); }, 300); }
         function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
         function loadMembers() { onSnapshot(collection(db, "mlu_members"), (snap) => { snap.forEach(doc => { const m = doc.data(); if(m.isSharing && m.lat && m.lng) { const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] }); if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; } }); }); }
-        function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
-        function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); }
+        function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",userId),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
+        function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",userId),{isSharing:false}); }
 
+        // DARURAT SOS MODAL
+        window.bukaSos = () => { const m = document.getElementById('sosModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
+        window.tutupSos = () => { const m = document.getElementById('sosModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
         window.sendSos = async () => {
-            if(!navigator.geolocation) return alert("Sistem GPS tidak didukung di HP Anda.");
-            
-            const btn = document.querySelector('#sosModal .btn-modal:last-child');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = "MENCARI LOKASI...";
-            
+            if(!navigator.geolocation) return alert("Sistem GPS tidak didukung.");
+            const btn = document.getElementById('btnKirimSos'); const originalText = btn.innerHTML; btn.innerHTML = "MENCARI LOKASI...";
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 try {
-                    await addDoc(collection(db, "mlu_sos"), {
-                        memberId: uData.id,
-                        nama: myName,
-                        plat: myPlat,
-                        foto: uData.foto || '',
-                        hp: uData.hp || '',
-                        jenis: document.getElementById('sosType').value,
-                        keterangan: document.getElementById('sosDesc').value,
-                        lat: pos.coords.latitude,
-                        lng: pos.coords.longitude,
-                        timestamp: Date.now(),
-                        status: 'ACTIVE'
-                    });
-                    
-                    document.getElementById('sosModal').classList.remove('show');
-                    setTimeout(() => document.getElementById('sosModal').style.display = 'none', 300);
-                    alert("🚨 DARURAT S.O.S BERHASIL DIKIRIM!\n\nCommand Center sedang memproses lokasi Anda dan mencari bantuan terdekat.");
-                    btn.innerHTML = originalText;
-                } catch(e) { 
-                    alert("Gagal mengirim SOS: " + e.message); 
-                    btn.innerHTML = originalText;
-                }
-            }, () => { 
-                alert("⚠️ AKSES DITOLAK!\nBapak/Ibu harus MENGIZINKAN akses Lokasi (GPS) agar bantuan bisa dikirim ke titik yang tepat!"); 
-                btn.innerHTML = originalText;
-            }, { enableHighAccuracy: true });
+                    await addDoc(collection(db, "mlu_sos"), { memberId: userId, nama: myName, plat: myPlat, foto: uData.foto || '', hp: uData.noWa || '', jenis: document.getElementById('sosType').value, keterangan: document.getElementById('sosDesc').value, lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now(), status: 'ACTIVE' });
+                    tutupSos(); alert("🚨 S.O.S BERHASIL DIKIRIM!\nTim URC sedang memproses lokasi Anda."); btn.innerHTML = originalText;
+                } catch(e) { alert("Gagal: " + e.message); btn.innerHTML = originalText; }
+            }, () => { alert("⚠️ IZINKAN AKSES LOKASI (GPS)!"); btn.innerHTML = originalText; }, { enableHighAccuracy: true });
         };
 
-        window.tutupBroadcast = () => {
-            const m = document.getElementById('broadcastModal');
-            m.classList.remove('show');
-            setTimeout(() => m.style.display = 'none', 300);
-        };
+        window.tutupBroadcast = () => { const m = document.getElementById('broadcastModal'); m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 300); };
+        window.showConfirm = (msg, callback) => { document.getElementById('confirmMsg').innerHTML = msg; const m = document.getElementById('confirmModal'); m.style.display = 'flex'; setTimeout(()=>m.classList.add('show'), 10); window.confirmCallback = callback; }
+        window.closeConfirm = (res) => { const m = document.getElementById('confirmModal'); m.classList.remove('show'); setTimeout(()=>m.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
 
-        window.salinTokenSaya = () => {
-            localStorage.setItem('last_bc_time', '0');
-            
-            // Pop up elegan
-            document.getElementById('bcTitle').innerText = "SYSTEM RESET";
-            document.getElementById('bcTitle').style.color = "var(--warning)";
-            document.getElementById('bcBody').innerText = "Notifikasi Broadcast telah di-reset! Jika ada pengumuman terbaru, akan otomatis muncul kembali.";
-            const m = document.getElementById('broadcastModal');
-            m.style.display = 'flex';
-            setTimeout(() => m.classList.add('show'), 50);
-            
-            setTimeout(() => window.location.reload(), 2000);
-        };
+        // ==========================================
+        // FITUR INBOX REAL-TIME & NOTIFIKASI
+        // ==========================================
+        const qInbox = query(collection(db, "mlu_inbox"), orderBy("timestamp", "desc"), limit(20));
+        onSnapshot(qInbox, (snap) => {
+            const listBody = document.getElementById('inboxListBody');
+            let unreadCount = 0;
+            let lastReadTime = parseInt(localStorage.getItem('maka_last_read_inbox') || '0');
+            let htmlStr = '';
 
-        const qBroadcast = query(collection(db, "mlu_broadcasts"), orderBy("timestamp", "desc"), limit(1));
-        onSnapshot(qBroadcast, (snap) => {
-            if(snap.empty) return;
-            
-            const bcData = snap.docs[0].data();
-            const lastSeenTime = parseInt(localStorage.getItem('last_bc_time') || '0');
-
-            let targetCocok = false;
-            if(bcData.target === 'ALL') targetCocok = true;
-            else if(bcData.target === 'PENGURUS' && uData.role && uData.role !== 'MEMBER' && uData.role !== 'KELUARGA MLU') targetCocok = true;
-            else if(bcData.target === 'RTO' && uData.divisi === 'RTO') targetCocok = true;
-
-            if(bcData.timestamp > lastSeenTime && targetCocok) {
-                document.getElementById('bcTitle').innerText = bcData.title;
-                document.getElementById('bcTitle').style.color = "var(--royal-blue)";
-                document.getElementById('bcBody').innerText = bcData.body;
-                
-                const m = document.getElementById('broadcastModal');
-                m.style.display = 'flex';
-                setTimeout(() => m.classList.add('show'), 50);
-
-                localStorage.setItem('last_bc_time', bcData.timestamp.toString());
+            if (snap.empty) {
+                listBody.innerHTML = `<div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px; opacity:0.5; display:block;"></i>Belum ada pesan masuk.</div>`;
+                document.getElementById('inboxBadge').style.display = 'none';
+                return;
             }
+
+            snap.forEach(doc => {
+                const data = doc.data();
+                let isTargetMe = false;
+                
+                if (data.target === 'ALL' || !data.target) isTargetMe = true;
+                else if (data.target === 'PENGURUS' && uData.role && uData.role !== 'MEMBER' && uData.role !== 'KELUARGA MLU') isTargetMe = true;
+                else if (data.target === myPlatClean) isTargetMe = true;
+
+                if (isTargetMe) {
+                    const isUnread = data.timestamp > lastReadTime;
+                    if (isUnread) unreadCount++;
+
+                    const dateStr = new Date(data.timestamp).toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+                    const unreadClass = isUnread ? 'unread' : '';
+                    
+                    let iconHtml = '<i class="fas fa-bell"></i>';
+                    let iconStyle = 'background: rgba(45,99,237,0.1); color: var(--electric-blue);';
+                    if(data.type === 'WARNING') { iconHtml = '<i class="fas fa-exclamation-triangle"></i>'; iconStyle = 'background: rgba(245,158,11,0.1); color: var(--warning);'; }
+                    else if(data.type === 'DANGER') { iconHtml = '<i class="fas fa-bullhorn"></i>'; iconStyle = 'background: rgba(239,68,68,0.1); color: var(--danger);'; }
+                    else if(data.type === 'SUCCESS') { iconHtml = '<i class="fas fa-check-circle"></i>'; iconStyle = 'background: rgba(16,185,129,0.1); color: var(--success);'; }
+                    else if(data.type === 'STORE') { iconHtml = '<i class="fas fa-store"></i>'; iconStyle = 'background: rgba(212,175,55,0.1); color: var(--gold-lux);'; }
+
+                    htmlStr += `
+                    <div class="inbox-item ${unreadClass}">
+                        <div class="ib-icon" style="${iconStyle}">${iconHtml}</div>
+                        <div class="ib-content">
+                            <div class="ib-title">${data.title}</div>
+                            <div class="ib-desc">${data.desc}</div>
+                            <div class="ib-time">${dateStr}</div>
+                        </div>
+                    </div>`;
+                }
+            });
+
+            if (htmlStr === '') htmlStr = `<div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px; opacity:0.5; display:block;"></i>Belum ada pesan untuk Anda.</div>`;
+            listBody.innerHTML = htmlStr;
+
+            const badge = document.getElementById('inboxBadge');
+            if(unreadCount > 0) {
+                badge.style.display = 'flex';
+                badge.innerText = unreadCount > 9 ? '9+' : unreadCount;
+                
+                // Getaran otomatis kalau ada notif baru masuk pas aplikasi lagi dibuka
+                const savedUnread = parseInt(localStorage.getItem('maka_unread_count') || '0');
+                if(unreadCount > savedUnread) {
+                    if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                }
+            } else {
+                badge.style.display = 'none';
+            }
+            localStorage.setItem('maka_unread_count', unreadCount.toString());
+        });
+
+        window.bukaInbox = () => { 
+            const m = document.getElementById('modalInbox'); 
+            m.style.display='flex'; 
+            setTimeout(()=>m.classList.add('show'),10); 
+            
+            // Tandai semua dibaca
+            localStorage.setItem('maka_last_read_inbox', Date.now().toString());
+            localStorage.setItem('maka_unread_count', '0');
+            
+            // Sembunyikan badge & titik biru seketika
+            const badge = document.getElementById('inboxBadge');
+            if(badge) badge.style.display = 'none';
+            document.querySelectorAll('.inbox-item.unread').forEach(el => el.classList.remove('unread'));
+        };
+        window.tutupInbox = (e) => { if(e.target.id === 'modalInbox') { e.target.classList.remove('show'); setTimeout(()=>e.target.style.display='none',300); }};
+
+        // ADMIN TEST BROADCAST INBOX
+        window.adminKirimTestInbox = async () => {
+            const title = prompt("Judul Pesan Inbox:"); if(!title) return;
+            const desc = prompt("Isi Pesan Inbox:"); if(!desc) return;
+            try {
+                await addDoc(collection(db, "mlu_inbox"), { title: title, desc: desc, type: 'INFO', target: 'ALL', timestamp: Date.now() });
+                alert("Pesan Inbox terkirim ke semua member!");
+            } catch(e) { alert(e.message); }
+        };
+        
+        window.tampilkanQR = () => { document.getElementById('imgQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(userId)}&margin=10`; const m = document.getElementById('modalQR'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
+        window.tutupQR = () => { const m = document.getElementById('modalQR'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
+        
+        window.bukaSetting = () => { const m = document.getElementById('modalSetting'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
+        window.tutupSetting = () => { const m = document.getElementById('modalSetting'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
+        
+        window.simpanProfil = async () => {
+            const newNama = document.getElementById('setNama').value; const newWa = document.getElementById('setWa').value;
+            if(!newNama || !newWa) return alert("Data kosong!");
+            try {
+                await updateDoc(doc(db, "mlu_members", userId), { namaKtp: newNama, noWa: newWa });
+                uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData));
+                alert("Profil diperbarui!"); location.reload();
+            } catch(e) { alert("Error: " + e.message); }
+        };
+        window.logoutApp = () => { if(confirm("Yakin keluar?")) { localStorage.removeItem('maka_user'); window.location.href = 'index.html'; } };
+
+        // 1. LIVE ANTREAN GADING
+        function initDataListeners() {
+            onSnapshot(doc(dbGading, "antrian", "utama"), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.data(); 
+                    const slots = d.chargingSlots || [null, null, null];
+                    const emptySlots = slots.filter(s => s === null).length;
+                    const qLen = (d.waitingQueue || []).length;
+                    
+                    if (emptySlots > 0) {
+                        document.getElementById('statusGading').innerHTML = `<span style="color:var(--success);"><i class="fas fa-check-circle"></i> ${emptySlots} Slot Tersedia</span>`;
+                    } else {
+                        document.getElementById('statusGading').innerHTML = `<span style="color:var(--warning);"><i class="fas fa-battery-full"></i> ${slots.length} FULL <span style="margin:0 4px;">|</span> <i class="fas fa-users"></i> ${qLen} ANTRE</span>`;
+                    }
+                }
+            });
+        }
+
+        // 2. RADAR NEAREST FC (ALTERNATIF)
+        window.currentNearestFC = null;
+        let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
+
+        onSnapshot(doc(dbKC, "antrian", "utama"), (snap) => {
+            if(snap.exists()) {
+                const d = snap.data(); 
+                const slots = d.chargingSlots || [null, null, null, null, null];
+                const emptySlots = slots.filter(s => s === null).length;
+                const qLen = (d.waitingQueue || []).length;
+                
+                if (emptySlots > 0) {
+                    kcLiveStatus = `<span style="color:#10B981;"><i class="fas fa-check-circle"></i> ${emptySlots} Tersedia</span>`;
+                } else {
+                    kcLiveStatus = `<span style="color:var(--warning);"><i class="fas fa-battery-full"></i> ${slots.length} FULL <span style="margin:0 4px;">|</span> <i class="fas fa-users"></i> ${qLen} ANTRE</span>`;
+                }
+                
+                if (window.currentNearestFC === 'kc') document.getElementById('liveKcIndicator').innerHTML = kcLiveStatus;
+            }
+        });
+
+        function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
+        
+        function startNearestFCRadar() {
+            const lokasiFC = [ 
+                { id: "kc", nama: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, link: "antriankc.html", color: "#10B981" }, 
+                { id: "depok", nama: "FC DEPOK", lat: -6.392917, lng: 106.829497, link: "antriandepok.html", color: "var(--electric-blue)" }, 
+                { id: "tangerang", nama: "FC TANGERANG", lat: -6.175110, lng: 106.640167, link: "antriantangerang.html", color: "var(--electric-blue)" },
+                { id: "sukapura", nama: "FC SUKAPURA", lat: -6.1425, lng: 106.9213, link: "antriansukapura.html", color: "var(--electric-blue)" },
+                { id: "gadingserpong", nama: "FC GADING SERPONG", lat: -6.2424, lng: 106.6267, link: "antrianserpong.html", color: "var(--electric-blue)" }
+            ];
+
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    let nearestFC = null; let minDist = Infinity;
+                    lokasiFC.forEach(fc => { let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); if(d < minDist) { minDist = d; nearestFC = fc; } });
+
+                    if(nearestFC) {
+                        window.currentNearestFC = nearestFC.id;
+                        document.getElementById('altFcNama').innerHTML = `<i class="fas fa-map-marker-alt" style="color: ${nearestFC.color};"></i> ${nearestFC.nama}`;
+                        
+                        let statusHtml = `<span><i class="fas fa-location-arrow"></i> ${minDist.toFixed(1)} KM</span>`;
+                        
+                        if (nearestFC.id === 'kc') {
+                            document.getElementById('altFcBanner').classList.add('fc-kc');
+                            document.getElementById('altFcIcon').style.color = '#10B981';
+                            document.getElementById('altFcIcon').style.background = 'rgba(16,185,129,0.1)';
+                            document.getElementById('statusAltFC').style.background = 'rgba(16,185,129,0.1)';
+                            document.getElementById('statusAltFC').style.color = '#059669';
+                            statusHtml += ` <span style="margin: 0 5px;">|</span> <span id="liveKcIndicator">${kcLiveStatus}</span>`;
+                        } else {
+                            document.getElementById('altFcBanner').classList.remove('fc-kc');
+                            document.getElementById('altFcIcon').style.color = 'var(--electric-blue)';
+                            document.getElementById('altFcIcon').style.background = 'rgba(45,99,237,0.1)';
+                            document.getElementById('statusAltFC').style.background = 'rgba(45,99,237,0.1)';
+                            document.getElementById('statusAltFC').style.color = 'var(--electric-blue)';
+                        }
+                        
+                        document.getElementById('statusAltFC').innerHTML = statusHtml;
+                        document.getElementById('altFcBanner').onclick = () => window.location.href = nearestFC.link;
+                    }
+                }, () => { 
+                    document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> GPS MATI`; 
+                    document.getElementById('statusAltFC').innerHTML = "Nyalakan GPS untuk fitur Radar FC";
+                    document.getElementById('statusAltFC').style.background = "rgba(239,68,68,0.1)";
+                    document.getElementById('statusAltFC').style.color = "var(--danger)";
+                    document.getElementById('altFcBanner').onclick = () => alert("Nyalakan GPS untuk melihat lokasi FC terdekat.");
+                });
+            }
+        }
+
+        // 3. SULTAN TABUNGAN
+        onSnapshot(query(collection(db, "mlu_members"), orderBy("saldoTabungan", "desc"), limit(3)), (snap) => {
+            const list = document.getElementById('topSaversList'); list.innerHTML = ""; let rank = 1;
+            snap.forEach(doc => {
+                const data = doc.data();
+                if(data.saldoTabungan && data.saldoTabungan > 0) {
+                    let crownClass = `rank-${rank}`; let medalIcon = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : '🥉');
+                    list.innerHTML += `<div class="sp-item"><div class="sp-left"><div class="sp-rank ${crownClass}">${rank}</div><div><div class="sp-name">${data.namaKtp || data.namaWa || "Member"}</div><div class="sp-plat">${data.plat || '-'}</div></div></div><div class="sp-badge">${medalIcon}</div></div>`;
+                    rank++;
+                }
+            });
+            if(rank === 1) list.innerHTML = `<div style="text-align: center; font-size: 11px; color: var(--text-muted); padding: 10px;">Belum ada data Sultan.</div>`;
         });
     </script>
 </body>

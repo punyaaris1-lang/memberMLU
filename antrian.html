@@ -15,7 +15,7 @@
         }
         
         // PENGHANCUR CACHE UPDATE
-        const DASH_VERSION = "6.0_SMART_NOTIF_ANTRIAN";
+        const DASH_VERSION = "6.1_NO_WARNING_95";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -108,17 +108,6 @@
         .head-flex { display: flex; justify-content: space-between; align-items: flex-start; }
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #93C5FD; text-transform: uppercase; margin-bottom: 4px; display: block; text-shadow: 0 0 10px rgba(147,197,253,0.5); transition: 0.5s;}
         .main-title { font-family: 'Space Grotesk'; font-size: 26px; font-weight: 900; margin: 0; line-height: 1.1; }
-        
-        /* === BANNER DARURAT DENDA === */
-        .alert-banner {
-            background: linear-gradient(135deg, #EF4444 0%, #991B1B 100%);
-            color: white; padding: 20px; border-radius: 20px; margin-top: 25px; 
-            border: 2px solid #FCA5A5; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
-            animation: pulseAlert 2s infinite; text-align: center; position: relative; z-index: 5;
-        }
-        .alert-title { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; color: #FEF2F2; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .alert-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 800; line-height: 1.6; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-        @keyframes pulseAlert { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
         .admin-badge { display: none; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); padding: 5px 10px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 4px; box-shadow: var(--glow-red); }
         .gps-badge { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: var(--warning); color: white; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; box-shadow: 0 5px 15px rgba(245,158,11,0.3); z-index: 15; white-space: nowrap; }
@@ -222,7 +211,7 @@
 
     <div class="ambient-light light-1"></div>
     <div class="ambient-light light-2"></div>
-    <div class="bg-watermark"></div>
+    <div class="bg-watermark hide-lebaran"></div>
 
     <div class="hanging-ornament orn-left only-lebaran">
         <div class="wire"></div><div class="ketupat"></div><div class="tassel"></div>
@@ -235,16 +224,11 @@
         <div class="head-flex">
             <div>
                 <span class="sub-tag">Station Monitor</span>
-                <h1 class="main-title">FC GADING</h1>
+                <h1 class="main-title">FC KELAPA GADING</h1>
             </div>
             <div class="admin-badge admin-only" id="adminIndicator"><i class="fas fa-shield-alt"></i> PENGURUS</div>
         </div>
 
-        <div class="alert-banner hide-lebaran">
-            <div class="alert-title"><i class="fa-solid fa-triangle-exclamation fa-fade"></i> PENGUMUMAN </div>
-            <div class="alert-text">TGL 18 - 24 BATAS CHARGING MAKSIMAL HANYA 95%. DILARANG SAMPAI 100% ATAU BIRU. <br> BAGI YG MEMBUAT FC ERROR AKAN DIKENAKAN DENDA RP. 100.000</div>
-        </div>
-        
         <div class="gps-badge" id="gpsIndicator"><i class="fas fa-spinner fa-spin"></i> MEMERIKSA LOKASI...</div>
     </header>
 
@@ -316,7 +300,7 @@
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn-hub btn-fill" style="flex:1; font-size:12px; padding: 15px;" onclick="adminSubmitDaftar('antrian')"><i class="fas fa-list-ol"></i> MASUK ANTRIAN</button>
-                <button class="btn-hub" style="background:var(--success); color:white; flex:1; font-size:12px; padding: 15px; box-shadow:var(--glow-green);" onclick="adminSubmitDaftar('slot')"><i class="fas fa-bolt"></i> MASUK SLOT</button>
+                <button class="btn-hub" style="background:var(--gold); color:white; flex:1; font-size:12px; padding: 15px; box-shadow:var(--glow-gold);" onclick="adminSubmitDaftar('slot')"><i class="fas fa-bolt"></i> MASUK SLOT</button>
             </div>
         </div>
     </div>
@@ -534,8 +518,6 @@
                     let actionHtml = '';
 
                     // PERBAIKAN LOGIKA: "ONE-CLICK SLOT TRANSFER DARI ANTRIAN"
-                    // Jika user ada di antrian (urutan ke berapa pun), dia bisa langsung klik masuk slot kosong
-                    // Tanpa harus keluar antrian dulu
                     if (myQIndex > -1) {
                         actionHtml = `<button class="btn-action-main btn-fill" style="background:var(--success); box-shadow:var(--glow-green);" onclick="pindahDariAntrianKeSlot(${i})"><i class="fas fa-bolt"></i> MASUK SLOT</button>`; 
                     } 
