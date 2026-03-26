@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MLU - Scanner Absensi</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        :root { 
+            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
+            --gold-lux: #D4AF37; --bg-surface: #F0F4F8; 
+            --text-main: #0F172A; --white: #FFFFFF; 
+            --success: #10B981; --warning: #F59E0B; --danger: #EF4444;
+        }
+        body { margin:0; background:var(--bg-surface); font-family:'Inter',sans-serif; color:var(--text-main); overflow-x:hidden; padding-bottom: 100px;}
+        * { box-sizing: border-box; outline: none; }
+
+        .header-main { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 35px 20px 60px; border-bottom-left-radius:30px; border-bottom-right-radius:30px; color:white; text-align:center; box-shadow:0 10px 30px rgba(10,34,89,0.3); }
+        .main-title { font-family:'Outfit'; font-size:24px; font-weight:900; margin:0; }
+        .sub-tag { font-size:11px; opacity:0.8; font-weight:600; display:block; margin-top:5px; font-family:'Space Grotesk'; letter-spacing:2px;}
+
+        .content-area { padding: 0 20px; margin-top: -30px; position: relative; z-index: 10;}
+        
+        .scan-card { background: white; padding: 20px; border-radius: 24px; text-align: center; box-shadow: 0 15px 40px rgba(45,99,237,0.1); border: 1px solid white; margin-bottom: 20px;}
+        
+        .event-input { width: 100%; padding: 15px; border: 2px dashed #CBD5E1; border-radius: 14px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 16px; text-align: center; color: var(--royal-blue); margin-bottom: 15px; text-transform: uppercase; outline: none; transition: 0.3s;}
+        .event-input:focus { border-color: var(--electric-blue); background: #EFF6FF; }
+
+        #reader { width: 100%; border-radius: 16px; overflow: hidden; border: none !important; }
+        #reader__dashboard_section_csr span { font-family: 'Inter'; font-weight: bold; color: var(--text-main); }
+        #reader__dashboard_section_swaplink { display: none; } /* Sembunyikan link upload file */
+        #reader button { background: var(--electric-blue); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer; margin-top: 10px; }
+
+        .list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px;}
+        .list-title { font-family: 'Outfit'; font-size: 16px; font-weight: 900; color: var(--royal-blue); }
+        .badge-count { background: var(--success); color: white; padding: 4px 10px; border-radius: 50px; font-size: 12px; font-weight: 900; font-family: 'Space Grotesk'; box-shadow: 0 5px 15px rgba(16,185,129,0.3);}
+
+        .absen-item { background: white; padding: 15px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; border-left: 4px solid var(--success); animation: slideIn 0.3s ease-out;}
+        @keyframes slideIn { from {opacity:0; transform:translateX(-20px);} to {opacity:1; transform:translateX(0);} }
+        .ab-left { display: flex; flex-direction: column; }
+        .ab-name { font-family: 'Outfit'; font-size: 15px; font-weight: 900; color: var(--text-main); margin-bottom: 3px;}
+        .ab-plat { font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; color: var(--electric-blue); letter-spacing: 1px;}
+        .ab-time { font-size: 10px; color: #94A3B8; font-weight: 700;}
+        .ab-icon { width: 35px; height: 35px; border-radius: 50%; background: rgba(16,185,129,0.1); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+        .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
+        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); transition: 0.2s;}
+        .btn-premium-back:active { transform: scale(0.95); }
+
+        /* MODAL ALERT */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-box { background: white; width: 100%; max-width: 350px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
+        .modal-icon { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .m-sukses { background: rgba(16,185,129,0.1); color: var(--success); box-shadow: 0 0 20px rgba(16,185,129,0.4); }
+        .m-gagal { background: rgba(239,68,68,0.1); color: var(--danger); box-shadow: 0 0 20px rgba(239,68,68,0.4); }
+        .modal-title { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 10px;}
+        .modal-msg { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600;}
+        .btn-close-modal { width: 100%; padding: 15px; border: none; border-radius: 14px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="header-main">
+        <h1 class="main-title"><i class="fas fa-qrcode"></i> SCAN ABSENSI</h1>
+        <span class="sub-tag">Database Kehadiran Kopdar MLU</span>
+    </div>
+
+    <div class="content-area">
+        <div class="scan-card">
+            <input type="text" id="eventName" class="event-input" placeholder="NAMA ACARA (Cth: KOPDAR MARET)" value="KOPDAR RUTIN MLU">
+            <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 15px; text-transform: uppercase;">Arahkan Kamera ke QR Code Member</div>
+            
+            <div id="reader"></div>
+        </div>
+
+        <div class="list-header">
+            <div class="list-title">Riwayat Hadir</div>
+            <div class="badge-count" id="totalHadir">0 Orang</div>
+        </div>
+
+        <div id="absenListBody">
+            <div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px; background:white; border-radius:16px; border:1px dashed #CBD5E1;">Belum ada member yang di-scan.</div>
+        </div>
+    </div>
+
+    <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
+
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal-box">
+            <div class="modal-icon" id="alertIcon"><i class="fas fa-check"></i></div>
+            <div class="modal-title" id="alertTitle">Sukses</div>
+            <div class="modal-msg" id="alertMsg">Data absensi berhasil disimpan.</div>
+            <button class="btn-close-modal" id="alertBtn" onclick="tutupAlert()">LANJUT SCAN</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // KONEKSI FIREBASE MLU
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
+
+        // PROTEKSI HALAMAN: HANYA PENGURUS
+        let uData = null;
+        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        if (!uData || !uData.plat) window.location.href = 'index.html'; 
+        
+        const myRole = uData.role ? uData.role.toUpperCase() : "";
+        const isAdmin = myRole !== 'MEMBER' && myRole !== 'KELUARGA MLU' && myRole !== 'GUEST';
+        
+        if (!isAdmin && uData.plat.replace(/\s+/g, '').toUpperCase() !== "B4248SWF") {
+            alert("AKSES DITOLAK! Halaman ini khusus Pengurus untuk melakukan scan absensi.");
+            window.location.href = 'dashboard.html';
+        }
+
+        let isScanningPaused = false;
+        let html5QrcodeScanner;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // INIT KAMERA SCANNER
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            
+            // LOAD DATA ABSEN HARI INI
+            loadAbsensiHariIni();
+        });
+
+        async function onScanSuccess(decodedText, decodedResult) {
+            if (isScanningPaused) return;
+            isScanningPaused = true; // Pause scanner biar gak scan dobel
+
+            const eventName = document.getElementById('eventName').value.trim() || "KOPDAR RUTIN MLU";
+            const cleanId = decodedText.replace(/\s+/g, '').toUpperCase(); // Ini adalah memberId / plat
+
+            document.getElementById('alertIcon').className = "modal-icon m-sukses";
+            document.getElementById('alertIcon').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            document.getElementById('alertTitle').innerText = "Memproses...";
+            document.getElementById('alertMsg').innerText = "Sedang mencari data member...";
+            document.getElementById('alertBtn').style.background = "var(--text-muted)";
+            document.getElementById('alertBtn').innerText = "TUNGGU";
+            document.getElementById('alertModal').style.display = 'flex';
+
+            try {
+                // 1. CEK APAKAH SUDAH ABSEN DI ACARA INI HARI INI
+                const todayStr = new Date().toLocaleDateString('id-ID');
+                const qCek = query(collection(db, "mlu_absensi"), 
+                    where("memberId", "==", cleanId), 
+                    where("event", "==", eventName),
+                    where("dateString", "==", todayStr)
+                );
+                const cekSnap = await getDocs(qCek);
+                
+                if (!cekSnap.empty) {
+                    showModalResult("m-warning", "fa-exclamation-triangle", "SUDAH ABSEN", `Member dengan ID ${cleanId} sudah absen untuk acara ini hari ini.`, "var(--warning)");
+                    return;
+                }
+
+                // 2. CARI NAMA MEMBER DI DATABASE
+                let namaMember = "MEMBER MLU";
+                let platAsli = decodedText;
+                
+                const qMember = query(collection(db, "mlu_members"));
+                const memSnap = await getDocs(qMember);
+                memSnap.forEach(doc => {
+                    const data = doc.data();
+                    if ((data.plat && data.plat.replace(/\s+/g, '').toUpperCase() === cleanId) || doc.id === cleanId) {
+                        namaMember = data.namaKtp || data.namaWa || data.nama;
+                        platAsli = data.plat;
+                    }
+                });
+
+                // 3. SIMPAN KE DATABASE ABSENSI
+                await addDoc(collection(db, "mlu_absensi"), {
+                    memberId: cleanId,
+                    nama: namaMember,
+                    plat: platAsli,
+                    event: eventName,
+                    dateString: todayStr,
+                    timestamp: Date.now(),
+                    scanBy: uData.namaKtp || uData.namaWa
+                });
+
+                showModalResult("m-sukses", "fa-check", "ABSEN BERHASIL", `<b>${namaMember}</b><br>${platAsli}<br><br>Berhasil hadir di acara ${eventName}.`, "var(--success)");
+                if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Getar sukses
+
+            } catch (error) {
+                showModalResult("m-gagal", "fa-times", "ERROR", "Terjadi kesalahan sistem: " + error.message, "var(--danger)");
+            }
+        }
+
+        function onScanFailure(error) {
+            // Abaikan error saat sedang mencari QR (normal terjadi tiap frame)
+        }
+
+        function showModalResult(iconClass, iconFa, title, msg, btnColor) {
+            document.getElementById('alertIcon').className = `modal-icon ${iconClass}`;
+            document.getElementById('alertIcon').innerHTML = `<i class="fas ${iconFa}"></i>`;
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMsg').innerHTML = msg;
+            document.getElementById('alertBtn').style.background = btnColor;
+            document.getElementById('alertBtn').innerText = "LANJUT SCAN BERIKUTNYA";
+        }
+
+        window.tutupAlert = () => {
+            document.getElementById('alertModal').style.display = 'none';
+            // Resume scanner setelah delay 1 detik biar nggak langsung scan ulang ga sengaja
+            setTimeout(() => { isScanningPaused = false; }, 1000);
+        };
+
+        // RENDER LIVE DATA ABSENSI
+        function loadAbsensiHariIni() {
+            const todayStr = new Date().toLocaleDateString('id-ID');
+            
+            const qAbsen = query(collection(db, "mlu_absensi"), where("dateString", "==", todayStr));
+            onSnapshot(qAbsen, (snap) => {
+                const list = document.getElementById('absenListBody');
+                let count = 0;
+                let htmlStr = '';
+                
+                let dataArr = [];
+                snap.forEach(doc => dataArr.push(doc.data()));
+                dataArr.sort((a, b) => b.timestamp - a.timestamp); // Urutkan dari yg terbaru
+
+                dataArr.forEach(d => {
+                    const timeStr = new Date(d.timestamp).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+                    count++;
+                    htmlStr += `
+                    <div class="absen-item">
+                        <div class="ab-left">
+                            <div class="ab-name">${d.nama}</div>
+                            <div class="ab-plat"><i class="fas fa-car"></i> ${d.plat}</div>
+                            <div class="ab-time"><i class="fas fa-clock"></i> ${timeStr} WIB • ${d.event}</div>
+                        </div>
+                        <div class="ab-icon"><i class="fas fa-check-circle"></i></div>
+                    </div>`;
+                });
+
+                document.getElementById('totalHadir').innerText = `${count} Orang`;
+                
+                if (count > 0) {
+                    list.innerHTML = htmlStr;
+                } else {
+                    list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px; background:white; border-radius:16px; border:1px dashed #CBD5E1;">Belum ada member yang absen hari ini.</div>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
