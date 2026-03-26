@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "11.0_ULTIMATE_FIX"; 
+        const DASH_VERSION = "12.0_ULTIMATE_FINAL"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -39,7 +39,11 @@
         .light-2 { bottom: -10%; right: -20%; width: 450px; height: 450px; background: rgba(212, 175, 55, 0.15); animation-delay: -4s; }
         @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(30px, 50px);} }
 
-        /* HEADER */
+        .fade-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
+        .d-1 { animation-delay: 0.1s; } .d-2 { animation-delay: 0.2s; } .d-3 { animation-delay: 0.3s; } .d-4 { animation-delay: 0.4s; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- HEADER --- */
         .top-header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10;}
         .greet-box { display: flex; flex-direction: column; }
         .date-badge { background: rgba(255,255,255,0.6); backdrop-filter: blur(5px); padding: 4px 10px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; color: var(--electric-blue); letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid rgba(255,255,255,0.8); margin-bottom: 5px;}
@@ -49,16 +53,15 @@
         .inbox-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-family: 'Space Grotesk'; font-size: 10px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 3px 10px rgba(239,68,68,0.4); animation: pulseBadge 2s infinite;}
         @keyframes pulseBadge { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        /* VIP CARD - DARK STYLE */
+        /* --- VIP CARD --- */
         .vip-card { margin: 15px 20px 25px; border-radius: 24px; background: linear-gradient(135deg, #0A1128 0%, var(--royal-blue) 100%); position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(10,34,89,0.3); border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column;}
-        .vip-card::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 15px 15px; opacity: 0.3; pointer-events: none;}
-        .vip-card::before { content: ''; position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%); border-radius: 50%;}
+        .vip-card::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 15px 15px; opacity: 0.3; pointer-events: none; z-index: 1;}
+        .vip-card::before { content: ''; position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%); border-radius: 50%; z-index: 1;}
         
-        .vc-watermark { position: absolute; left: -30px; bottom: -30px; width: 180px; height: 180px; background-image: url('logomlumaster.png'); background-size: contain; background-repeat: no-repeat; opacity: 0.1; filter: grayscale(100%); pointer-events: none; z-index: 1;}
+        /* LOGO BESAR KANAN BAWAH RADAR */
+        .vc-big-logo { position: absolute; right: -15px; top: 40px; height: 110px; width: auto; object-fit: contain; z-index: 2; opacity: 0.25; pointer-events: none;}
 
-        .vc-top { padding: 20px 25px 10px; display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2;}
-        .vc-left-group { display: flex; align-items: center;}
-        .vc-logo-mlu { width: 35px; height: 35px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(212, 175, 55, 0.5)); margin-right: 15px; opacity: 0.9;}
+        .vc-top { padding: 20px 25px 10px; display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 3;}
         .vc-chip { width: 35px; height: 25px; background: linear-gradient(135deg, #FDE047, #CA8A04); border-radius: 6px; position: relative; overflow: hidden; opacity: 0.9;}
         .vc-chip::after { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.2); }
         .vc-chip::before { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 1px; background: rgba(0,0,0,0.2); }
@@ -72,14 +75,14 @@
         input:checked + .slider { background-color: var(--success); border-color: var(--success);}
         input:checked + .slider:before { transform: translateX(16px); }
         
-        .vc-middle { padding: 0 25px; position: relative; z-index: 2; display: flex; align-items: center; gap: 15px;}
+        .vc-middle { padding: 0 25px; position: relative; z-index: 4; display: flex; align-items: center; gap: 15px;}
         .vc-avatar { width: 70px; height: 70px; border-radius: 22px; background: white; padding: 3px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); flex-shrink: 0;}
         .vc-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px;}
         .vc-info { flex: 1; }
-        .vc-name { font-family: 'Outfit'; font-size: 22px; font-weight: 900; color: white; line-height: 1.1; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);}
-        .vc-plat { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 700; color: #93C5FD; letter-spacing: 1.5px;}
+        .vc-name { font-family: 'Outfit'; font-size: 22px; font-weight: 900; color: white; line-height: 1.1; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.8);}
+        .vc-plat { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 700; color: #93C5FD; letter-spacing: 1.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.8);}
         
-        .vc-bottom { margin-top: 20px; background: rgba(0,0,0,0.3); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 2; backdrop-filter: blur(10px);}
+        .vc-bottom { margin-top: 20px; background: rgba(0,0,0,0.3); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 4; backdrop-filter: blur(10px);}
         .vc-role { font-size: 11px; font-weight: 800; color: white; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px;}
         .vc-role i { color: var(--gold-lux); }
         .vc-qr { font-size: 26px; color: white; cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.1); width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3);}
@@ -87,7 +90,7 @@
 
         .dash-container { padding: 0 20px; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 10;}
 
-        /* RADAR MAP */
+        /* --- RADAR MAP --- */
         #radarContainer { display: none; width: 100%; border-radius: 24px; overflow: hidden; border: 4px solid white; position: relative; height: 220px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); margin-bottom: 5px; }
         #radarMap { width: 100%; height: 100%; }
         .marker-pin { width: 30px; height: 30px; border-radius: 50%; background: #2D63ED; border: 2px solid white; box-shadow: 0 3px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
@@ -95,7 +98,7 @@
         .marker-label { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); background: white; padding: 2px 5px; border-radius: 4px; font-size: 8px; font-weight: 800; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .custom-div-icon { background: transparent; border: none; }
 
-        /* BANNER FC */
+        /* --- FC BANNER --- */
         .fc-banner { border-radius: 20px; padding: 20px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 2px solid white; box-shadow: 0 10px 30px rgba(10,34,89,0.08); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;}
         .fc-banner:active { transform: scale(0.98); box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .fc-banner::before { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--electric-blue); }
@@ -105,7 +108,7 @@
         .banner-val { font-size: 26px; color: var(--electric-blue); text-align: right; background: rgba(45,99,237,0.1); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 14px;}
         .fc-kc .banner-val { color: #10B981; background: rgba(16,185,129,0.1); }
 
-        /* SULTAN TABUNGAN */
+        /* --- SULTAN TABUNGAN --- */
         .sultan-panel { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 22px; padding: 20px; box-shadow: 0 10px 30px rgba(10,34,89,0.08); border: 2px solid white; position: relative; overflow: hidden;}
         .sultan-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #FDE047, var(--gold-lux), #FDE047); }
         .sp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -123,11 +126,12 @@
         .sp-plat { font-size: 10px; font-weight: 700; color: var(--text-muted); }
         .sp-badge { font-size: 16px; opacity: 0.9;}
 
-        /* MENU GRID */
+        /* --- MENU GRID --- */
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;}
         .menu-btn { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 2px solid white; border-radius: 22px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(10,34,89,0.08); cursor: pointer; transition: 0.3s;}
         .menu-btn:active { transform: scale(0.95); box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
         .icon-box { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; color: white;}
+        
         .ic-anggota { background: linear-gradient(135deg, #60A5FA, #2563EB); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);} 
         .ic-pengurus { background: linear-gradient(135deg, #fbbf24, #d97706); box-shadow: 0 10px 20px rgba(217, 119, 6, 0.2);} 
         .ic-keuangan { background: linear-gradient(135deg, #94a3b8, #475569); box-shadow: 0 10px 20px rgba(71, 85, 105, 0.2);} 
@@ -136,9 +140,10 @@
         .ic-reminder { background: linear-gradient(135deg, #fb923c, #ea580c); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.2);} 
         .ic-info { background: linear-gradient(135deg, #818cf8, #4f46e5); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);} 
         .ic-pasar { background: linear-gradient(135deg, #f472b6, #db2777); box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2);} 
+        
         .menu-title { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: var(--royal-blue); letter-spacing: 0.5px;}
 
-        /* FLOATING & BOTTOM NAV */
+        /* --- FLOATING & BOTTOM NAV --- */
         .float-container { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 2000; }
         .btn-sos { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 2px solid white; transition: 0.2s; background: linear-gradient(135deg, #ef4444, #b91c1c); animation: pulseSOS 2s infinite; }
         .btn-sos:active { transform: scale(0.9); }
@@ -153,7 +158,7 @@
         /* MODALS */
         .modal-glass-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
         .modal-glass-overlay.show { opacity: 1; }
-        .modal-glass-box { background: rgba(255,255,255,0.95); border-radius: 25px; padding: 25px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.2); transform: scale(0.9); transition: 0.3s; border: 1px solid white; position: relative;}
+        .modal-glass-box { background: rgba(255,255,255,0.95); border-radius: 25px; padding: 25px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.2); transform: scale(0.9); transition: 0.3s; border: 1px solid white;}
         .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
         .btn-modal { padding: 14px 25px; border-radius: 14px; font-weight: 800; font-size: 14px; border: none; cursor: pointer; flex: 1; margin: 0 5px;}
         .btn-close-modal { position: absolute; top: 15px; right: 15px; background: #F1F5F9; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; color: #64748B; transition: 0.2s;}
@@ -249,11 +254,10 @@
 
     <div class="vip-card fade-up d-2">
         
-        <div class="vc-watermark"></div>
+        <img src="logomlumaster.png" class="vc-big-logo" onerror="this.style.display='none'">
 
         <div class="vc-top">
             <div class="vc-left-group">
-                <img src="logomlumaster.png" alt="Logo MLU" class="vc-logo-mlu" onerror="this.style.display='none'">
                 <div class="vc-chip"></div>
             </div>
             <div class="loc-toggle">
@@ -269,7 +273,7 @@
             <div class="vc-avatar"><img src="" id="userPhoto" onerror="this.src='https://ui-avatars.com/api/?background=D4AF37&color=000&bold=true&name=MLU';"></div>
             <div class="vc-info">
                 <div class="vc-name" id="userName">Memuat...</div>
-                <div class="vc-plat"><i class="fas fa-car" style="font-size: 10px; margin-right: 5px;"></i><span id="userPlat">...</span></div>
+                <div class="vc-plat" id="userPlat">...</div>
             </div>
         </div>
 
@@ -395,10 +399,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, collection, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // =========================================================================
-        // 1. DEKLARASI FUNGSI TOMBOL (WAJIB DI ATAS BIAR GA MACET)
+        // 1. DEKLARASI SEMUA FUNGSI GLOBAL & KLIK (SUPER AMAN)
         // =========================================================================
         window.bukaInbox = () => { 
             const m = document.getElementById('modalInbox'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); 
@@ -409,111 +413,79 @@
         window.tutupInbox = (e) => { if(e.target.id === 'modalInbox') { e.target.classList.remove('show'); setTimeout(()=>e.target.style.display='none',300); }};
         
         window.tampilkanQR = () => { 
-            let uid = "GUEST";
-            try { const uData = JSON.parse(localStorage.getItem('maka_user')); if(uData) uid = uData.id || uData.plat.replace(/\s+/g, '').toUpperCase(); }catch(e){}
+            let uid = "GUEST", uName = "Nama", uPlat = "B 0000";
+            try { 
+                const uData = JSON.parse(localStorage.getItem('maka_user')); 
+                if(uData) {
+                    uid = uData.id || uData.plat.replace(/\s+/g, '').toUpperCase(); 
+                    uName = uData.namaKtp || uData.namaWa || "Member";
+                    uPlat = uData.plat || "-";
+                }
+            }catch(e){}
             document.getElementById('imgQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(uid)}&margin=10`; 
+            document.getElementById('qrNamaFull').innerText = uName;
+            document.getElementById('qrPlat').innerHTML = `<i class="fas fa-car"></i> ${uPlat}`;
             const m = document.getElementById('modalQR'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); 
         };
         window.tutupQR = () => { const m = document.getElementById('modalQR'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
         
         window.bukaSetting = () => { const m = document.getElementById('modalSetting'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
         window.tutupSetting = () => { const m = document.getElementById('modalSetting'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
-        
         window.openSosModal = () => { const m = document.getElementById('sosModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
         window.tutupBroadcast = () => { const m = document.getElementById('broadcastModal'); m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 300); };
-        
         window.showConfirm = (msg, callback) => { document.getElementById('confirmMsg').innerText = msg; const modal = document.getElementById('confirmModal'); modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10); window.confirmCallback = callback; }
         window.closeConfirm = (res) => { const modal = document.getElementById('confirmModal'); modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
-        
         window.logoutApp = () => { if(confirm("Yakin keluar?")) { localStorage.removeItem('maka_user'); window.location.href = 'index.html'; } };
 
         // =========================================================================
-        // 2. INISIALISASI FIREBASE 
+        // 2. RENDER UI PERTAMA KALI (DOM READY)
         // =========================================================================
-        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
-        const app = initializeApp(firebaseConfig); 
-        const db = getFirestore(app);
+        document.addEventListener('DOMContentLoaded', () => {
+            let uData = null;
+            try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+            if (!uData || !uData.plat) { window.location.href = 'index.html'; return; }
 
-        const appGading = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppGading");
-        const dbGading = getFirestore(appGading);
-        const refGading = doc(dbGading, "antrian", "utama");
+            const myName = uData.namaKtp || uData.namaWa || "User";
+            const myPlat = uData.plat || "B XXXX XX";
+            const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
+            
+            // Injeksi teks ke UI Dashboard
+            document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+            const hr = new Date().getHours();
+            document.getElementById('greetingText').innerText = hr<10?"Selamat Pagi,":hr<15?"Selamat Siang,":hr<18?"Selamat Sore,":"Selamat Malam,";
+            
+            document.getElementById('userName').innerText = myName;
+            document.getElementById('userPlat').innerHTML = `<i class="fas fa-car" style="font-size: 10px; margin-right: 5px;"></i> ${myPlat}`;
+            if (uData.foto && typeof uData.foto === 'string' && uData.foto.length > 50) document.getElementById('userPhoto').src = uData.foto;
 
-        const appKC = initializeApp({ apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM", authDomain: "antriankcnew.firebaseapp.com", projectId: "antriankcnew" }, "AppKC");
-        const dbKC = getFirestore(appKC);
+            if (myPlatClean === "B4248SWF") document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
+            else document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> ` + (uData.role || "MEMBER").toUpperCase();
 
-        // =========================================================================
-        // 3. LOAD DATA USER & RENDER UI
-        // =========================================================================
-        let uData = null;
-        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
-        if (!uData || !uData.plat) window.location.href = 'index.html'; 
+            // Injeksi teks ke Modal Setting
+            document.getElementById('setNama').value = myName; 
+            document.getElementById('setWa').value = uData.noWa || ""; 
+            document.getElementById('setPlat').value = myPlat;
 
-        const myName = uData.namaKtp || uData.namaWa || "User";
-        const myPlat = uData.plat || "B XXXX XX";
-        const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
-        let userId = uData.id || myPlatClean;
-        let map = null, markers = {}, watchId = null;
+            // Tombol Absen Khusus Pengurus
+            const roleCek = (uData.role || "").toUpperCase();
+            if (roleCek !== 'MEMBER' && roleCek !== 'KELUARGA MLU' && roleCek !== 'GUEST' || myPlatClean === "B4248SWF") {
+                const btnAbsen = document.getElementById('btnAbsenKopdar');
+                if(btnAbsen) btnAbsen.style.display = 'flex';
+            }
 
-        document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
-        const hr = new Date().getHours();
-        document.getElementById('greetingText').innerText = hr<10?"Selamat Pagi,":hr<15?"Selamat Siang,":hr<18?"Selamat Sore,":"Selamat Malam,";
-        
-        document.getElementById('userName').innerText = myName;
-        document.getElementById('userPlat').innerText = myPlat;
-        if (uData.foto && typeof uData.foto === 'string' && uData.foto.length > 50) document.getElementById('userPhoto').src = uData.foto;
+            // =========================================================================
+            // 3. JALANKAN FIREBASE & RADAR SETELAH UI SIAP
+            // =========================================================================
+            const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
+            const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        if (myPlatClean === "B4248SWF") document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
-        else document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> ` + (uData.role || "MEMBER").toUpperCase();
+            const appGading = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppGading");
+            const dbGading = getFirestore(appGading); const refGading = doc(dbGading, "antrian", "utama");
 
-        document.getElementById('setNama').value = myName; 
-        document.getElementById('setWa').value = uData.noWa || ""; 
-        document.getElementById('setPlat').value = myPlat;
-        document.getElementById('qrNamaFull').innerText = myName;
-        document.getElementById('qrPlat').innerText = myPlat;
+            const appKC = initializeApp({ apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM", authDomain: "antriankcnew.firebaseapp.com", projectId: "antriankcnew" }, "AppKC");
+            const dbKC = getFirestore(appKC);
 
-        // TAMPILKAN TOMBOL ABSEN KOPDAR JIKA PENGURUS
-        const roleCek = (uData.role || "").toUpperCase();
-        if (roleCek !== 'MEMBER' && roleCek !== 'KELUARGA MLU' && roleCek !== 'GUEST' || myPlatClean === "B4248SWF") {
-            const btnAbsen = document.getElementById('btnAbsenKopdar');
-            if(btnAbsen) btnAbsen.style.display = 'flex';
-        }
-
-        const savedLoc = localStorage.getItem('maka_loc_share'); 
-        if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
-
-        initDataListeners(); 
-        startNearestFCRadar();
-
-        // =========================================================================
-        // 4. JALANKAN FUNGSI LAINNYA
-        // =========================================================================
-        window.toggleLoc = (el) => { if(el.checked) { showConfirm("Aktifkan lokasi? Peta Radar akan muncul.", (res) => { if(res) { localStorage.setItem('maka_loc_share', 'ON'); showRadar(); startTracking(); } else { el.checked = false; } }); } else { localStorage.setItem('maka_loc_share', 'OFF'); hideRadar(); stopTracking(); } }
-        function showRadar() { const c = document.getElementById('radarContainer'); c.style.display = 'block'; setTimeout(() => { if(!map) { map = L.map('radarMap').setView([-6.1754, 106.8272], 10); L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); loadMembers(); } map.invalidateSize(); }, 300); }
-        function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
-        function loadMembers() { onSnapshot(collection(db, "mlu_members"), (snap) => { snap.forEach(doc => { const m = doc.data(); if(m.isSharing && m.lat && m.lng) { const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] }); if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; } }); }); }
-        function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
-        function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); }
-
-        window.sendSos = async () => {
-            if(!navigator.geolocation) return alert("Sistem GPS tidak didukung di HP Anda.");
-            const btn = document.querySelector('#sosModal .btn-modal:last-child'); const originalText = btn.innerHTML; btn.innerHTML = "MENCARI LOKASI...";
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                try {
-                    await addDoc(collection(db, "mlu_sos"), { memberId: uData.id, nama: myName, plat: myPlat, foto: uData.foto || '', hp: uData.hp || '', jenis: document.getElementById('sosType').value, keterangan: document.getElementById('sosDesc').value, lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now(), status: 'ACTIVE' });
-                    document.getElementById('sosModal').classList.remove('show'); setTimeout(() => document.getElementById('sosModal').style.display = 'none', 300);
-                    alert("🚨 DARURAT S.O.S BERHASIL DIKIRIM! Command Center sedang memproses lokasi Anda."); btn.innerHTML = originalText;
-                } catch(e) { alert("Gagal mengirim SOS: " + e.message); btn.innerHTML = originalText; }
-            }, () => { alert("⚠️ AKSES DITOLAK! Izinkan akses Lokasi (GPS) agar bantuan bisa dikirim!"); btn.innerHTML = originalText; }, { enableHighAccuracy: true });
-        };
-
-        window.simpanProfil = async () => {
-            const newNama = document.getElementById('setNama').value; const newWa = document.getElementById('setWa').value;
-            if(!newNama || !newWa) return alert("Data kosong!");
-            try { await updateDoc(doc(db, "mlu_members", userId), { namaKtp: newNama, noWa: newWa }); uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData)); alert("Profil diperbarui!"); location.reload(); } catch(e) { alert("Error: " + e.message); }
-        };
-
-        // GADING & KC LIVE STATUS
-        function initDataListeners() { 
+            // GADING & KC LIVE
             onSnapshot(refGading, (snap) => { 
                 if(!snap.exists()) return; 
                 const d = snap.data(); let qLen = (d.waitingQueue||[]).length; 
@@ -521,115 +493,127 @@
                 if(emptySlots > 0) { document.getElementById('statusGading').innerHTML = `<span style="color:var(--success);"><i class="fas fa-check-circle"></i> ${emptySlots} KOSONG</span>`; } 
                 else { document.getElementById('statusGading').innerHTML = `<span style="color:var(--warning);"><i class="fas fa-battery-full"></i> ${slots.length} FULL <span style="margin:0 4px; color:#E2E8F0;">|</span> <i class="fas fa-users"></i> ${qLen} ANTRE</span>`; }
             }); 
-        }
 
-        window.currentNearestFC = null;
-        let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
-        onSnapshot(doc(dbKC, "antrian", "utama"), (snap) => {
-            if(snap.exists()) {
-                const d = snap.data(); const slots = d.chargingSlots || [null, null, null, null, null];
-                const emptySlots = slots.filter(s => s === null).length; const qLen = (d.waitingQueue || []).length;
-                if (emptySlots > 0) { kcLiveStatus = `<span style="color:#10B981;"><i class="fas fa-check-circle"></i> ${emptySlots} Tersedia</span>`; } 
-                else { kcLiveStatus = `<span style="color:var(--warning);"><i class="fas fa-battery-full"></i> ${slots.length} FULL <span style="margin:0 4px;">|</span> <i class="fas fa-users"></i> ${qLen} ANTRE</span>`; }
-                if (window.currentNearestFC === 'kc') { document.getElementById('liveKcIndicator').innerHTML = kcLiveStatus; }
+            window.currentNearestFC = null; let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
+            onSnapshot(doc(dbKC, "antrian", "utama"), (snap) => {
+                if(snap.exists()) {
+                    const d = snap.data(); const slots = d.chargingSlots || [null, null, null, null, null];
+                    const emptySlots = slots.filter(s => s === null).length; const qLen = (d.waitingQueue || []).length;
+                    if (emptySlots > 0) { kcLiveStatus = `<span style="color:#10B981;"><i class="fas fa-check-circle"></i> ${emptySlots} Tersedia</span>`; } 
+                    else { kcLiveStatus = `<span style="color:var(--warning);"><i class="fas fa-battery-full"></i> ${slots.length} FULL <span style="margin:0 4px;">|</span> <i class="fas fa-users"></i> ${qLen} ANTRE</span>`; }
+                    if (window.currentNearestFC === 'kc') { document.getElementById('liveKcIndicator').innerHTML = kcLiveStatus; }
+                }
+            });
+
+            // RADAR & LOKASI
+            let map = null, markers = {}, watchId = null;
+            const savedLoc = localStorage.getItem('maka_loc_share'); 
+            if(savedLoc === 'ON') { document.getElementById('toggleLocation').checked = true; showRadar(); startTracking(); } else hideRadar();
+
+            window.toggleLoc = (el) => { if(el.checked) { showConfirm("Aktifkan lokasi? Peta Radar akan muncul.", (res) => { if(res) { localStorage.setItem('maka_loc_share', 'ON'); showRadar(); startTracking(); } else { el.checked = false; } }); } else { localStorage.setItem('maka_loc_share', 'OFF'); hideRadar(); stopTracking(); } }
+            function showRadar() { const c = document.getElementById('radarContainer'); c.style.display = 'block'; setTimeout(() => { if(!map) { map = L.map('radarMap').setView([-6.1754, 106.8272], 10); L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); loadMembers(); } map.invalidateSize(); }, 300); }
+            function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
+            function loadMembers() { onSnapshot(collection(db, "mlu_members"), (snap) => { snap.forEach(doc => { const m = doc.data(); if(m.isSharing && m.lat && m.lng) { const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] }); if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; } }); }); }
+            function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
+            function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); }
+
+            function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
+            
+            if(navigator.geolocation) {
+                onSnapshot(collection(db, "fc_locations"), (snap) => {
+                    let lokasiAlternatif = [ { id: "kc", name: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, color: "#10B981" } ];
+                    snap.forEach(doc => { const data = doc.data(); if(data.isActive !== false && doc.id !== 'gading') { lokasiAlternatif.push({ id: doc.id, name: data.name || doc.id, lat: data.lat, lng: data.lng, color: "var(--electric-blue)", mapLink: data.mapLink }); } });
+
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                        let nearestFC = null; let minDist = Infinity;
+                        lokasiAlternatif.forEach(fc => { let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); if(d < minDist) { minDist = d; nearestFC = fc; } });
+
+                        if(nearestFC) {
+                            window.currentNearestFC = nearestFC.id;
+                            document.getElementById('altFcNama').innerHTML = `<i class="fas fa-map-marker-alt" style="color: ${nearestFC.color};"></i> ${nearestFC.name.toUpperCase()}`;
+                            let statusHtml = `<span><i class="fas fa-location-arrow"></i> ${minDist.toFixed(1)} KM</span>`;
+                            
+                            if (nearestFC.id === 'kc') {
+                                document.getElementById('altFcBanner').classList.add('fc-kc'); document.getElementById('altFcIcon').style.color = '#10B981'; document.getElementById('altFcIcon').style.background = 'rgba(16,185,129,0.1)'; document.getElementById('statusAltFC').style.background = 'rgba(16,185,129,0.1)'; document.getElementById('statusAltFC').style.color = '#059669';
+                                statusHtml += ` <span style="margin: 0 5px;">|</span> <span id="liveKcIndicator">${kcLiveStatus}</span>`;
+                                document.getElementById('altFcBanner').onclick = () => window.location.href = 'antriankc.html';
+                            } else {
+                                document.getElementById('altFcBanner').classList.remove('fc-kc'); document.getElementById('altFcIcon').style.color = 'var(--electric-blue)'; document.getElementById('altFcIcon').style.background = 'rgba(45,99,237,0.1)'; document.getElementById('statusAltFC').style.background = 'rgba(45,99,237,0.1)'; document.getElementById('statusAltFC').style.color = 'var(--electric-blue)';
+                                const gmapsUrl = nearestFC.mapLink || `http://googleusercontent.com/maps.google.com/?q=${nearestFC.lat},${nearestFC.lng}`;
+                                document.getElementById('altFcBanner').onclick = () => window.open(gmapsUrl, '_blank');
+                            }
+                            document.getElementById('statusAltFC').innerHTML = statusHtml;
+                        }
+                    }, () => { 
+                        document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> GPS MATI / DIBLOKIR`; document.getElementById('statusAltFC').innerHTML = "Mohon izinkan akses GPS di pengaturan browser."; document.getElementById('statusAltFC').style.background = "rgba(239,68,68,0.1)"; document.getElementById('statusAltFC').style.color = "var(--danger)"; document.getElementById('altFcBanner').onclick = () => alert("Mohon izinkan akses GPS di pengaturan browser Anda.");
+                    }, { timeout: 15000 });
+                });
+            } else {
+                document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> GPS TIDAK DIDUKUNG`; document.getElementById('statusAltFC').innerHTML = "Perangkat Anda tidak mendukung fitur lokasi GPS.";
             }
-        });
 
-        // RADAR GPS
-        function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
-        
-        function startNearestFCRadar() {
-            if(!navigator.geolocation) {
-                document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> GPS TIDAK DIDUKUNG`; 
-                document.getElementById('statusAltFC').innerHTML = "Perangkat Anda tidak mendukung fitur lokasi GPS."; return;
-            }
-
-            onSnapshot(collection(db, "fc_locations"), (snap) => {
-                let lokasiAlternatif = [ { id: "kc", name: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, color: "#10B981" } ];
+            // SULTAN TABUNGAN
+            onSnapshot(query(collection(db, "mlu_members"), orderBy("saldoTabungan", "desc"), limit(3)), (snap) => {
+                const list = document.getElementById('topSaversList'); list.innerHTML = ""; let rank = 1;
                 snap.forEach(doc => {
                     const data = doc.data();
-                    if(data.isActive !== false && doc.id !== 'gading') {
-                        lokasiAlternatif.push({ id: doc.id, name: data.name || doc.id, lat: data.lat, lng: data.lng, color: "var(--electric-blue)", mapLink: data.mapLink });
+                    if(data.saldoTabungan && data.saldoTabungan > 0) {
+                        let crownClass = `rank-${rank}`; let medalIcon = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : '🥉');
+                        list.innerHTML += `<div class="sp-item"><div class="sp-left"><div class="sp-rank ${crownClass}">${rank}</div><div><div class="sp-name">${data.namaKtp || data.namaWa || "Member"}</div><div class="sp-plat">${data.plat || '-'}</div></div></div><div class="sp-badge">${medalIcon}</div></div>`;
+                        rank++;
                     }
                 });
+                if(rank === 1) list.innerHTML = `<div style="text-align: center; font-size: 11px; color: var(--text-muted); padding: 10px;">Belum ada data Sultan.</div>`;
+            });
 
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    let nearestFC = null; let minDist = Infinity;
-                    lokasiAlternatif.forEach(fc => { let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); if(d < minDist) { minDist = d; nearestFC = fc; } });
+            // INBOX 
+            onSnapshot(query(collection(db, "mlu_inbox"), orderBy("timestamp", "desc"), limit(20)), (snap) => {
+                const listBody = document.getElementById('inboxListBody'); let unreadCount = 0; let lastReadTime = parseInt(localStorage.getItem('maka_last_read_inbox') || '0'); let htmlStr = '';
+                if (snap.empty) { listBody.innerHTML = `<div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px; opacity:0.5; display:block;"></i>Belum ada pesan masuk.</div>`; document.getElementById('inboxBadge').style.display = 'none'; return; }
 
-                    if(nearestFC) {
-                        window.currentNearestFC = nearestFC.id;
-                        document.getElementById('altFcNama').innerHTML = `<i class="fas fa-map-marker-alt" style="color: ${nearestFC.color};"></i> ${nearestFC.name.toUpperCase()}`;
-                        let statusHtml = `<span><i class="fas fa-location-arrow"></i> ${minDist.toFixed(1)} KM</span>`;
-                        
-                        if (nearestFC.id === 'kc') {
-                            document.getElementById('altFcBanner').classList.add('fc-kc'); document.getElementById('altFcIcon').style.color = '#10B981'; document.getElementById('altFcIcon').style.background = 'rgba(16,185,129,0.1)'; document.getElementById('statusAltFC').style.background = 'rgba(16,185,129,0.1)'; document.getElementById('statusAltFC').style.color = '#059669';
-                            statusHtml += ` <span style="margin: 0 5px;">|</span> <span id="liveKcIndicator">${kcLiveStatus}</span>`;
-                            document.getElementById('altFcBanner').onclick = () => window.location.href = 'antriankc.html';
-                        } else {
-                            document.getElementById('altFcBanner').classList.remove('fc-kc'); document.getElementById('altFcIcon').style.color = 'var(--electric-blue)'; document.getElementById('altFcIcon').style.background = 'rgba(45,99,237,0.1)'; document.getElementById('statusAltFC').style.background = 'rgba(45,99,237,0.1)'; document.getElementById('statusAltFC').style.color = 'var(--electric-blue)';
-                            const gmapsUrl = nearestFC.mapLink || `http://googleusercontent.com/maps.google.com/?q=${nearestFC.lat},${nearestFC.lng}`;
-                            document.getElementById('altFcBanner').onclick = () => window.open(gmapsUrl, '_blank');
-                        }
-                        document.getElementById('statusAltFC').innerHTML = statusHtml;
+                snap.forEach(doc => {
+                    const data = doc.data(); let isTargetMe = false;
+                    if (data.target === 'ALL' || !data.target) isTargetMe = true;
+                    else if (data.target === 'PENGURUS' && uData.role && uData.role !== 'MEMBER' && uData.role !== 'KELUARGA MLU') isTargetMe = true;
+                    else if (data.target === myPlatClean) isTargetMe = true;
+
+                    if (isTargetMe) {
+                        const isUnread = data.timestamp > lastReadTime; if (isUnread) unreadCount++;
+                        const dateStr = new Date(data.timestamp).toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+                        const unreadClass = isUnread ? 'unread' : '';
+                        let iconHtml = '<i class="fas fa-bell"></i>'; let iconStyle = 'background: rgba(45,99,237,0.1); color: var(--electric-blue);';
+                        if(data.type === 'WARNING') { iconHtml = '<i class="fas fa-exclamation-triangle"></i>'; iconStyle = 'background: rgba(245,158,11,0.1); color: var(--warning);'; }
+                        else if(data.type === 'DANGER') { iconHtml = '<i class="fas fa-bullhorn"></i>'; iconStyle = 'background: rgba(239,68,68,0.1); color: var(--danger);'; }
+                        else if(data.type === 'SUCCESS') { iconHtml = '<i class="fas fa-check-circle"></i>'; iconStyle = 'background: rgba(16,185,129,0.1); color: var(--success);'; }
+                        else if(data.type === 'STORE') { iconHtml = '<i class="fas fa-store"></i>'; iconStyle = 'background: rgba(212,175,55,0.1); color: var(--gold-lux);'; }
+                        htmlStr += `<div class="inbox-item ${unreadClass}"><div class="ib-icon" style="${iconStyle}">${iconHtml}</div><div class="ib-content"><div class="ib-title">${data.title}</div><div class="ib-desc">${data.desc}</div><div class="ib-time">${dateStr}</div></div></div>`;
                     }
-                }, () => { 
-                    document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> GPS MATI ATAU DIBLOKIR`; document.getElementById('statusAltFC').innerHTML = "Mohon izinkan akses GPS di pengaturan browser."; document.getElementById('statusAltFC').style.background = "rgba(239,68,68,0.1)"; document.getElementById('statusAltFC').style.color = "var(--danger)"; document.getElementById('altFcBanner').onclick = () => alert("Mohon izinkan akses GPS di pengaturan browser Anda.");
-                }, { timeout: 15000 });
-            });
-        }
+                });
+                if (htmlStr === '') htmlStr = `<div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px; opacity:0.5; display:block;"></i>Belum ada pesan untuk Anda.</div>`;
+                listBody.innerHTML = htmlStr;
 
-        // SULTAN TABUNGAN
-        onSnapshot(query(collection(db, "mlu_members"), orderBy("saldoTabungan", "desc"), limit(3)), (snap) => {
-            const list = document.getElementById('topSaversList'); list.innerHTML = ""; let rank = 1;
-            snap.forEach(doc => {
-                const data = doc.data();
-                if(data.saldoTabungan && data.saldoTabungan > 0) {
-                    let crownClass = `rank-${rank}`; let medalIcon = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : '🥉');
-                    list.innerHTML += `<div class="sp-item"><div class="sp-left"><div class="sp-rank ${crownClass}">${rank}</div><div><div class="sp-name">${data.namaKtp || data.namaWa || "Member"}</div><div class="sp-plat">${data.plat || '-'}</div></div></div><div class="sp-badge">${medalIcon}</div></div>`;
-                    rank++;
-                }
-            });
-            if(rank === 1) list.innerHTML = `<div style="text-align: center; font-size: 11px; color: var(--text-muted); padding: 10px;">Belum ada data Sultan.</div>`;
-        });
-
-        // INBOX 
-        const qInbox = query(collection(db, "mlu_inbox"), orderBy("timestamp", "desc"), limit(20));
-        onSnapshot(qInbox, (snap) => {
-            const listBody = document.getElementById('inboxListBody'); let unreadCount = 0; let lastReadTime = parseInt(localStorage.getItem('maka_last_read_inbox') || '0'); let htmlStr = '';
-            if (snap.empty) { listBody.innerHTML = `<div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px; opacity:0.5; display:block;"></i>Belum ada pesan masuk.</div>`; document.getElementById('inboxBadge').style.display = 'none'; return; }
-
-            snap.forEach(doc => {
-                const data = doc.data(); let isTargetMe = false;
-                if (data.target === 'ALL' || !data.target) isTargetMe = true;
-                else if (data.target === 'PENGURUS' && uData.role && uData.role !== 'MEMBER' && uData.role !== 'KELUARGA MLU') isTargetMe = true;
-                else if (data.target === myPlatClean) isTargetMe = true;
-
-                if (isTargetMe) {
-                    const isUnread = data.timestamp > lastReadTime; if (isUnread) unreadCount++;
-                    const dateStr = new Date(data.timestamp).toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-                    const unreadClass = isUnread ? 'unread' : '';
-                    
-                    let iconHtml = '<i class="fas fa-bell"></i>'; let iconStyle = 'background: rgba(45,99,237,0.1); color: var(--electric-blue);';
-                    if(data.type === 'WARNING') { iconHtml = '<i class="fas fa-exclamation-triangle"></i>'; iconStyle = 'background: rgba(245,158,11,0.1); color: var(--warning);'; }
-                    else if(data.type === 'DANGER') { iconHtml = '<i class="fas fa-bullhorn"></i>'; iconStyle = 'background: rgba(239,68,68,0.1); color: var(--danger);'; }
-                    else if(data.type === 'SUCCESS') { iconHtml = '<i class="fas fa-check-circle"></i>'; iconStyle = 'background: rgba(16,185,129,0.1); color: var(--success);'; }
-                    else if(data.type === 'STORE') { iconHtml = '<i class="fas fa-store"></i>'; iconStyle = 'background: rgba(212,175,55,0.1); color: var(--gold-lux);'; }
-
-                    htmlStr += `<div class="inbox-item ${unreadClass}"><div class="ib-icon" style="${iconStyle}">${iconHtml}</div><div class="ib-content"><div class="ib-title">${data.title}</div><div class="ib-desc">${data.desc}</div><div class="ib-time">${dateStr}</div></div></div>`;
-                }
+                const badge = document.getElementById('inboxBadge');
+                if(unreadCount > 0) { badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount; const savedUnread = parseInt(localStorage.getItem('maka_unread_count') || '0'); if(unreadCount > savedUnread && navigator.vibrate) navigator.vibrate([100, 50, 100]); } else { badge.style.display = 'none'; }
+                localStorage.setItem('maka_unread_count', unreadCount.toString());
             });
 
-            if (htmlStr === '') htmlStr = `<div style="text-align:center; padding:30px 20px; color:var(--text-muted); font-size:12px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px; opacity:0.5; display:block;"></i>Belum ada pesan untuk Anda.</div>`;
-            listBody.innerHTML = htmlStr;
+            window.simpanProfil = async () => {
+                const newNama = document.getElementById('setNama').value; const newWa = document.getElementById('setWa').value;
+                if(!newNama || !newWa) return alert("Data kosong!");
+                try { await updateDoc(doc(db, "mlu_members", uData.id), { namaKtp: newNama, noWa: newWa }); uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData)); alert("Profil diperbarui!"); location.reload(); } catch(e) { alert("Error: " + e.message); }
+            };
 
-            const badge = document.getElementById('inboxBadge');
-            if(unreadCount > 0) {
-                badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount;
-                const savedUnread = parseInt(localStorage.getItem('maka_unread_count') || '0');
-                if(unreadCount > savedUnread && navigator.vibrate) navigator.vibrate([100, 50, 100]);
-            } else { badge.style.display = 'none'; }
-            localStorage.setItem('maka_unread_count', unreadCount.toString());
+            window.sendSos = async () => {
+                if(!navigator.geolocation) return alert("Sistem GPS tidak didukung di HP Anda.");
+                const btn = document.querySelector('#sosModal .btn-modal:last-child'); const originalText = btn.innerHTML; btn.innerHTML = "MENCARI LOKASI...";
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    try {
+                        await addDoc(collection(db, "mlu_sos"), { memberId: uData.id, nama: myName, plat: myPlat, foto: uData.foto || '', hp: uData.hp || '', jenis: document.getElementById('sosType').value, keterangan: document.getElementById('sosDesc').value, lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now(), status: 'ACTIVE' });
+                        document.getElementById('sosModal').classList.remove('show'); setTimeout(() => document.getElementById('sosModal').style.display = 'none', 300);
+                        alert("🚨 DARURAT S.O.S BERHASIL DIKIRIM! Command Center sedang memproses lokasi Anda."); btn.innerHTML = originalText;
+                    } catch(e) { alert("Gagal mengirim SOS: " + e.message); btn.innerHTML = originalText; }
+                }, () => { alert("⚠️ AKSES DITOLAK! Izinkan akses Lokasi (GPS) agar bantuan bisa dikirim!"); btn.innerHTML = originalText; }, { enableHighAccuracy: true });
+            };
         });
     </script>
 </body>
