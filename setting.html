@@ -20,8 +20,8 @@
         .input-group { margin-bottom: 20px; position: relative; }
         .input-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; margin-left: 5px; }
         .input-box { position: relative; }
-        .input-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--electric-blue); font-size: 18px; }
-        .form-control { width: 100%; padding: 18px 18px 18px 50px; background: var(--white); border: 1px solid var(--border-soft); border-radius: 20px; font-family: 'Inter'; font-weight: 600; font-size: 15px; }
+        .input-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--electric-blue); font-size: 18px; z-index: 2;}
+        .form-control { width: 100%; padding: 18px 18px 18px 50px; background: var(--white); border: 1px solid var(--border-soft); border-radius: 20px; font-family: 'Inter'; font-weight: 600; font-size: 15px; position: relative; appearance: none; -webkit-appearance: none;}
         .form-control:disabled { background: #F1F5F9; color: var(--text-muted); }
         .btn-save { width: 100%; padding: 20px; margin-top: 10px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: var(--white); border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 15px; cursor: pointer; }
         .btn-logout { width: 100%; padding: 18px; margin-top: 15px; background: transparent; color: var(--danger); border: 2px dashed #FCA5A5; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;}
@@ -54,9 +54,30 @@
         <div class="input-group"><label class="input-label">Plat Nomor</label><div class="input-box"><i class="fas fa-motorcycle"></i><input type="text" id="inpPlat" class="form-control" disabled></div></div>
         <div class="input-group"><label class="input-label">Nama Legal (KTP)</label><div class="input-box"><i class="fas fa-id-card"></i><input type="text" id="inpKtp" class="form-control" style="text-transform:uppercase;"></div></div>
         <div class="input-group"><label class="input-label">Nama Panggilan (WA)</label><div class="input-box"><i class="fas fa-user"></i><input type="text" id="inpWa" class="form-control" style="text-transform:uppercase;"></div></div>
-        <div class="input-group"><label class="input-label">Nomor WhatsApp</label><div class="input-box"><i class="fab fa-whatsapp"></i><input type="tel" id="inpHp" class="form-control"></div></div>
+        <div class="input-group"><label class="input-label">Nomor WhatsApp Pribadi</label><div class="input-box"><i class="fab fa-whatsapp"></i><input type="tel" id="inpHp" class="form-control"></div></div>
         
-        <div class="input-group"><label class="input-label">Ubah PIN Keamanan (Opsional)</label><div class="input-box"><i class="fas fa-lock"></i><input type="password" id="inpPin" class="form-control" placeholder="Kosongkan jika tidak diganti"></div></div>
+        <div class="input-group" style="background:#FEF2F2; border:1px dashed #FCA5A5; padding:15px; border-radius:20px; margin-top:25px;">
+            <div style="font-size:10px; font-weight:800; color:var(--danger); margin-bottom:15px; text-align:center;"><i class="fas fa-heartbeat"></i> KONTAK DARURAT (WAJIB)</div>
+            
+            <label class="input-label">No. HP Darurat</label>
+            <div class="input-box" style="margin-bottom:15px;"><i class="fas fa-phone-alt" style="color:var(--danger);"></i><input type="tel" id="inpDarurat" class="form-control" placeholder="Cth: 0812345678..."></div>
+            
+            <label class="input-label">Hubungan</label>
+            <div class="input-box">
+                <i class="fas fa-users" style="color:var(--danger);"></i>
+                <select id="inpHubungan" class="form-control">
+                    <option value="">-- Pilih Hubungan --</option>
+                    <option value="ISTRI">Istri</option>
+                    <option value="SUAMI">Suami</option>
+                    <option value="ORANG TUA">Orang Tua</option>
+                    <option value="ANAK">Anak</option>
+                    <option value="SAUDARA">Saudara / Kakak / Adik</option>
+                    <option value="LAINNYA">Lainnya</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="input-group" style="margin-top:25px;"><label class="input-label">Ubah PIN Keamanan (Opsional)</label><div class="input-box"><i class="fas fa-lock"></i><input type="password" id="inpPin" class="form-control" placeholder="Kosongkan jika tidak diganti"></div></div>
 
         <button class="btn-save" onclick="saveProfile()"><i class="fas fa-save"></i> SIMPAN PERUBAHAN</button>
         <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> KELUAR DARI SISTEM</button>
@@ -66,7 +87,7 @@
         <nav class="nav-pill">
             <a href="dashboard.html" class="nav-tab"><i class="fas fa-home"></i></a>
             <a href="data_anggota.html" class="nav-tab"><i class="fas fa-address-book"></i></a>
-            <a href="settings.html" class="nav-tab active"><i class="fas fa-user-cog"></i></a>
+            <a href="setting.html" class="nav-tab active"><i class="fas fa-user-cog"></i></a>
         </nav>
     </div>
 
@@ -84,6 +105,10 @@
         document.getElementById('inpKtp').value = uData.namaKtp || uData.nama || "";
         document.getElementById('inpWa').value = uData.namaWa || uData.nama || "";
         document.getElementById('inpHp').value = uData.hp || "";
+        
+        // Injeksi data darurat ke input form
+        document.getElementById('inpDarurat').value = uData.darurat || "";
+        document.getElementById('inpHubungan').value = uData.hubungan || "";
         
         let currentPhotoBase64 = uData.foto || `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&size=200&name=${encodeURIComponent(uData.nama)}`;
         document.getElementById('profileImg').src = currentPhotoBase64;
@@ -113,6 +138,10 @@
             const newWa = document.getElementById('inpWa').value.trim().toUpperCase();
             const newHp = document.getElementById('inpHp').value.trim();
             const newPin = document.getElementById('inpPin').value.trim();
+            
+            // Tangkap data darurat baru
+            const newDarurat = document.getElementById('inpDarurat').value.trim();
+            const newHubungan = document.getElementById('inpHubungan').value;
 
             if (!newKtp || !newWa) {
                 document.getElementById('statusOverlay').style.display = 'none';
@@ -120,18 +149,18 @@
             }
 
             try {
-                // UPDATE LANGSUNG KE DOKUMEN (Karena ID sudah disimpan waktu login)
                 let updatePayload = {
-                    namaKtp: newKtp, namaWa: newWa, nama: newWa, hp: newHp, foto: currentPhotoBase64
+                    namaKtp: newKtp, namaWa: newWa, nama: newWa, hp: newHp, foto: currentPhotoBase64,
+                    darurat: newDarurat, hubungan: newHubungan
                 };
                 
-                // Tambahkan ganti PIN jika kolomnya diisi
                 if (newPin !== "") updatePayload.pin = newPin;
 
                 await updateDoc(doc(db, "mlu_members", uData.id), updatePayload);
 
                 // Update Local Memori
                 uData.namaKtp = newKtp; uData.namaWa = newWa; uData.nama = newWa; uData.hp = newHp; uData.foto = currentPhotoBase64;
+                uData.darurat = newDarurat; uData.hubungan = newHubungan;
                 localStorage.setItem('maka_user', JSON.stringify(uData));
 
                 document.getElementById('statusIcon').className = 'fas fa-check-circle';
