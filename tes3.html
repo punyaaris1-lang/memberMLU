@@ -8,164 +8,165 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
-            background-color: #0A2259; /* Background luar biru tua */
+            padding: 15px; /* Jarak luar diperkecil */
+            background-color: #0A2259;
             font-family: 'Space Grotesk', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         
-        /* Area putih khusus untuk screenshot */
         .capture-area {
             width: 100%;
             max-width: 480px; 
             background: #FFFFFF;
-            border-radius: 20px;
-            padding: 30px 20px;
+            border-radius: 16px;
+            padding: 20px 15px; /* Padding atas bawah dikurangi biar hemat space */
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             text-align: center;
             position: relative;
+            overflow: hidden; /* Biar watermark ga keluar batas putih */
         }
 
-        .logo {
-            width: 120px;
-            height: auto;
-            margin-bottom: 15px;
+        /* WATERMARK LOGO BESAR MIRING */
+        .watermark-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 130%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            opacity: 0.08; /* Transparan supaya teks tetap jelas */
+            z-index: 1;
+            pointer-events: none;
         }
 
-        /* Styling Tagline */
+        /* Wrapper konten biar di atas watermark */
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
         .tagline-container {
             font-family: 'Outfit', sans-serif;
-            font-size: 16px;
+            font-size: 15px; /* Sedikit dikecilin dari 16px */
             font-weight: 900;
-            color: #0A2259; /* Biru Tua Solid */
+            color: #0A2259;
             text-transform: uppercase;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            border-bottom: 4px solid #D4AF37; /* Garis bawah emas */
-            padding-bottom: 20px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #D4AF37;
+            padding-bottom: 12px;
         }
 
-        /* Efek tempelan/lakban untuk "Beda Vendor" */
         .patched-text {
             display: inline-block;
-            background-color: #D4AF37; /* Kuning Emas MLU */
+            background-color: #D4AF37;
             color: #000000;
-            padding: 2px 10px;
+            padding: 2px 8px;
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 900;
-            font-size: 15px;
-            transform: rotate(-4deg); /* Efek miring */
-            box-shadow: 2px 3px 0px rgba(0,0,0,0.2); /* Efek bayangan biar timbul */
+            font-size: 14px;
+            transform: rotate(-4deg);
+            box-shadow: 2px 3px 0px rgba(0,0,0,0.2);
             border-radius: 2px;
-            margin-left: 5px;
+            margin-left: 4px;
             position: relative;
             top: -2px;
         }
 
-        /* Keterangan Daftar Nama */
         .sub-title {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px;
+            font-size: 12px; /* Dikecilin biar rapet */
             font-weight: 900;
-            color: #2D63ED; /* Biru Elektrik */
+            color: #2D63ED;
             background: #EBF0FE;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 15px;
             border: 2px solid #2D63ED;
         }
 
-        /* Tabel Rapi */
         .member-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
         }
 
         .member-table th {
-            background-color: #0A2259; /* Header biru tua */
+            background-color: #0A2259;
             color: #FFFFFF;
-            padding: 12px 8px;
+            padding: 10px 5px; /* Hemat space atas bawah */
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 900;
             text-transform: uppercase;
             border: 2px solid #0A2259;
         }
 
         .member-table td {
-            border: 2px solid #0A2259; /* Garis tabel hitam/biru tua jelas */
-            padding: 12px 8px;
+            border: 2px solid #0A2259;
+            padding: 8px 5px; /* Hemat space atas bawah */
             font-family: 'Outfit', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 900;
             color: #000000;
             text-transform: uppercase;
             vertical-align: middle;
         }
 
-        .td-no {
-            text-align: center;
-            width: 10%;
-        }
-
-        .td-nama {
-            text-align: left;
-        }
-
-        .td-plat {
-            text-align: center;
-            color: #2D63ED; /* Plat warna biru elektrik biar kontras */
-            font-family: 'Space Grotesk', sans-serif;
-            width: 35%;
+        .td-no { text-align: center; width: 10%; }
+        .td-nama { text-align: left; }
+        .td-plat { 
+            text-align: center; 
+            color: #2D63ED; 
+            font-family: 'Space Grotesk', sans-serif; 
+            width: 35%; 
         }
 
         .loading-text {
             font-weight: 900;
             color: #2D63ED;
-            font-size: 16px;
+            font-size: 14px;
             text-transform: uppercase;
-            margin: 20px 0;
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
 
     <div class="capture-area" id="captureArea">
-        <img src="logomlumaster.png" alt="Logo MLU" class="logo" onerror="this.style.display='none'">
+        <img src="logomlumaster.png" class="watermark-logo" alt="">
         
-        <div class="tagline-container">
-            BEDA RANGKA BEDA WARNA <span class="patched-text">BEDA VENDOR</span><br>
-            SATU KELUARGA<br>
-            MAKA LINTAS UTARA
-        </div>
+        <div class="content-wrapper">
+            <div class="tagline-container">
+                BEDA RANGKA BEDA WARNA <span class="patched-text">BEDA VENDOR</span><br>
+                SATU KELUARGA<br>
+                MAKA LINTAS UTARA
+            </div>
 
-        <div class="sub-title">
-            DAFTAR NAMA KELUARGA MLU DARI TRANSGO
-        </div>
+            <div class="sub-title">
+                DAFTAR NAMA KELUARGA MLU DARI TRANSGO
+            </div>
 
-        <div id="loadingText" class="loading-text">Menarik Data Transgo...</div>
-        
-        <table class="member-table" id="memberTable" style="display: none;">
-            <thead>
-                <tr>
-                    <th>NO</th>
-                    <th>NAMA</th>
-                    <th>PLAT</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                </tbody>
-        </table>
+            <div id="loadingText" class="loading-text">Menarik Data Transgo...</div>
+            
+            <table class="member-table" id="memberTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>NO</th>
+                        <th>NAMA</th>
+                        <th>PLAT</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Konfigurasi Database
         const firebaseConfig = { 
             apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", 
             authDomain: "rtomaka-e67b5.firebaseapp.com", 
@@ -180,7 +181,6 @@
 
         async function loadTransgoMembers() {
             try {
-                // Tarik semua data member, lalu filter manual biar aman
                 const snap = await getDocs(collection(db, "mlu_members"));
                 let transgoData = [];
 
@@ -196,18 +196,16 @@
                 const table = document.getElementById("memberTable");
 
                 if (transgoData.length === 0) {
-                    document.getElementById("captureArea").innerHTML += "<div style='color: #E00000; font-weight: 900; font-size: 18px; margin-top:20px;'>DATA TRANSGO MASIH KOSONG</div>";
+                    document.getElementById("captureArea").querySelector('.content-wrapper').innerHTML += "<div style='color: #E00000; font-weight: 900; font-size: 16px; margin-top:20px;'>DATA TRANSGO MASIH KOSONG</div>";
                     return;
                 }
 
-                // Urutkan berdasarkan nama biar rapi
                 transgoData.sort((a, b) => {
                     let nameA = (a.namaKtp || a.namaWa || "").toUpperCase();
                     let nameB = (b.namaKtp || b.namaWa || "").toUpperCase();
                     return nameA.localeCompare(nameB);
                 });
 
-                // Masukkan ke tabel
                 transgoData.forEach((m, index) => {
                     const nama = m.namaKtp || m.namaWa || "-";
                     const plat = m.plat || "-";
@@ -221,7 +219,7 @@
                     `;
                 });
 
-                table.style.display = "table"; // Munculkan tabel
+                table.style.display = "table";
 
             } catch (error) {
                 document.getElementById("loadingText").innerText = "GAGAL MENARIK DATA";
