@@ -3,394 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cinematic Video Greeting KC</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
-    
+    <title>TRANSGO - Screenshot List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@800;900&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --cyan: #00E5FF;
-            --cyan-dark: #0077B6;
-            --gold: #D4AF37;
-            --gold-light: #FDE68A;
-            --bg-black: #010409;
-        }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-black);
-            background-image: radial-gradient(circle at center, #0B1E29 0%, var(--bg-black) 70%);
-            font-family: 'Outfit', sans-serif;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-        }
-
-        /* LAYER PETUNJUK FULLSCREEN & COUNTDOWN */
-        #startOverlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease;
-        }
-        .start-text { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; animation: pulse 1.5s infinite alternate; text-align: center;}
-        .countdown-text { font-size: 14px; color: #94A3B8; margin-top: 15px; font-weight: 600; text-align: center; }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7;} 100% { transform: scale(1.05); opacity: 1;} }
-
-        /* CANVAS UNTUK EFEK BINTANG / PARTIKEL */
-        #particleCanvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* CONTAINER UTAMA */
-        .scene-wrapper {
-            position: relative;
-            z-index: 10;
-            width: 95%;
-            max-width: 900px;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* SCENE PARTS */
-        .scene-part {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0A2259; /* Background luar biru tua */
+            font-family: 'Space Grotesk', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
-            will-change: transform, opacity, filter;
         }
-
-        /* EFEK FADE OUT SAAT GANTI SCENE */
-        .fade-out-scene {
-            opacity: 0 !important;
-            transform: scale(1.1) !important;
-            filter: blur(20px) !important;
-            pointer-events: none;
-        }
-
-        /* ORNAMEN GANTUNG */
-        .ornaments {
-            position: absolute;
-            top: -150px;
+        
+        /* Area putih khusus untuk screenshot */
+        .capture-area {
             width: 100%;
-            display: flex;
-            justify-content: space-between;
-            z-index: 5;
-            opacity: 0;
-            transition: opacity 2s ease, top 2s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .ornaments.show { top: 0 !important; opacity: 1 !important; }
-        
-        .lantern { position: relative; animation: swing 4s infinite ease-in-out alternate; transform-origin: top center;}
-        .wire { width: 2px; height: 100px; background: linear-gradient(to bottom, transparent, var(--gold)); margin: 0 auto; }
-        .ketupat { width: 40px; height: 40px; background: rgba(0, 229, 255, 0.05); border: 2px solid var(--gold); transform: rotate(45deg); margin: -10px auto 0; position: relative; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); backdrop-filter: blur(5px);}
-        .ketupat::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: var(--gold); transform: translateY(-50%); }
-        .ketupat::after { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background: var(--gold); transform: translateX(-50%); }
-
-        @keyframes swing { 0% { transform: rotate(-6deg); } 100% { transform: rotate(6deg); } }
-
-        /* KELAS ANIMASI STANDAR */
-        .anim-item {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            filter: blur(10px);
-            transition: opacity 1.5s ease-out, transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1), filter 1.5s ease-out;
-            will-change: transform, opacity, filter;
-            margin-bottom: 15px; 
+            max-width: 480px; 
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             text-align: center;
-        }
-        
-        .anim-item.show {
-            opacity: 1 !important;
-            transform: translateY(0) scale(1) !important;
-            filter: blur(0) !important;
+            position: relative;
         }
 
-        /* STYLING TEKS SCENE 1 */
-        .line-1 { font-size: 16px; font-weight: 500; color: #cbd5e1; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px;}
-        .line-3 { font-size: 16px; color: var(--gold-light); font-style: italic; letter-spacing: 1px; margin-bottom: 15px; margin-top: 15px;}
-        .line-4 { font-family: 'Playfair Display', serif; font-size: 60px; font-weight: 700; color: var(--gold); margin-bottom: 5px; line-height: 1.1; text-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); }
-        .line-5 { font-family: 'Space Grotesk'; font-size: 30px; font-weight: 900; color: white; letter-spacing: 5px; margin-bottom: 35px; }
-        .line-6 { font-size: 16px; font-weight: 600; color: #94A3B8; background: rgba(255,255,255,0.03); padding: 12px 35px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px);}
-
-        /* ==========================================
-           STYLING SCENE 2 (OUTRO) - CENTERING FIX
-           ========================================== */
-        #sceneOutro { 
-            justify-content: center; 
-            padding-bottom: 10vh; /* MENGANGKAT SELURUH GRUP KE ATAS */
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
         }
 
-        .outro-logo { 
-            width: 450px; max-width: 90%; 
-            margin-bottom: -50px !important; 
-            filter: drop-shadow(0 15px 40px rgba(0, 229, 255, 0.4)); 
-            animation: floatLogo 4s ease-in-out infinite alternate;
-            position: relative; z-index: 2;
-        }
-        
-        .outro-line-1 { 
-            font-size: 20px; font-weight: 600; color: #cbd5e1; letter-spacing: 6px; 
-            text-transform: uppercase; margin-top: -20px !important; margin-bottom: 0px !important; 
-            line-height: 1; position: relative; z-index: 3; 
-        }
-        
-        .outro-line-2 { 
-            font-family: 'Space Grotesk'; font-size: 48px; font-weight: 900; color: var(--cyan); 
-            letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 5px 25px rgba(0, 229, 255, 0.6);
-            margin-top: 8px !important; margin-bottom: 0px !important; line-height: 1; position: relative; z-index: 3;
+        /* Styling Tagline */
+        .tagline-container {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            color: #0A2259; /* Biru Tua Solid */
+            text-transform: uppercase;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            border-bottom: 4px solid #D4AF37; /* Garis bawah emas */
+            padding-bottom: 20px;
         }
 
-        @keyframes floatLogo { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
-
-        /* SCENE 3 : FINAL COPYRIGHT (TOTAL GELAP) */
-        #sceneCopyright { background: black; z-index: 20; }
-        .copyright-wrap { display: flex; flex-direction: column; gap: 8px; text-transform: uppercase; }
-        .cr-1 { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: #ffffff; letter-spacing: 3px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
-        .cr-2 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 900; color: #ffffff; letter-spacing: 5px; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); }
-
-        /* EFFECT BOOM JADI GEDE NABRAK */
-        .maka-title-container { position: relative; margin: 10px 0 20px 0; width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; }
-        .maka-text { font-family: 'Space Grotesk', sans-serif; font-size: 55px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; white-space: nowrap; color: var(--cyan); background: linear-gradient(180deg, #ffffff 0%, var(--cyan) 50%, var(--cyan-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0; transform: scale(0); filter: blur(20px); will-change: transform, opacity, filter; }
-        .maka-text.boom { animation: hyperZoomTabrak 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
-
-        @keyframes hyperZoomTabrak {
-            0% { opacity: 0; transform: scale(0); filter: blur(20px); }
-            30% { opacity: 1; transform: scale(3.5); filter: blur(0px) drop-shadow(0 0 40px rgba(0, 229, 255, 1)); }
-            100% { opacity: 1; transform: scale(1); filter: blur(0px) drop-shadow(0 0 15px rgba(0, 229, 255, 0.6)); }
+        /* Efek tempelan/lakban untuk "Beda Vendor" */
+        .patched-text {
+            display: inline-block;
+            background-color: #D4AF37; /* Kuning Emas MLU */
+            color: #000000;
+            padding: 2px 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 900;
+            font-size: 15px;
+            transform: rotate(-4deg); /* Efek miring */
+            box-shadow: 2px 3px 0px rgba(0,0,0,0.2); /* Efek bayangan biar timbul */
+            border-radius: 2px;
+            margin-left: 5px;
+            position: relative;
+            top: -2px;
         }
 
-        /* FLASH OPTIK */
-        .optic-flash { position: fixed; inset: 0; background: white; z-index: 9999; opacity: 0; pointer-events: none; will-change: opacity; }
-        .optic-flash.flash { animation: flashImpact 0.8s ease-out; }
-        @keyframes flashImpact { 0% { opacity: 0; } 10% { opacity: 0.8; } 100% { opacity: 0; } }
+        /* Keterangan Daftar Nama */
+        .sub-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            color: #2D63ED; /* Biru Elektrik */
+            background: #EBF0FE;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #2D63ED;
+        }
 
-        /* RESPONSIVE UNTUK HP */
-        @media (max-width: 768px) {
-            .line-1 { font-size: 12px; letter-spacing: 1px;}
-            .maka-text { font-size: 28px; letter-spacing: 2px;}
-            .maka-title-container { height: 45px; }
-            .line-4 { font-size: 38px; }
-            .line-5 { font-size: 22px; letter-spacing: 3px;}
-            .line-6 { font-size: 11px; padding: 10px 20px;}
-            
-            /* Penyesuaian Centering untuk HP */
-            #sceneOutro { padding-bottom: 15vh; }
-            .outro-logo { width: 320px; margin-bottom: -50px !important;}
-            .outro-line-1 { font-size: 13px; letter-spacing: 4px; margin-top: -20px !important; margin-bottom: 0px !important;}
-            .outro-line-2 { font-size: 32px; letter-spacing: 5px; margin-top: 5px !important; margin-bottom: 0px !important;}
-            
-            .cr-1 { font-size: 11px; letter-spacing: 2px;}
-            .cr-2 { font-size: 14px; letter-spacing: 3px;}
+        /* Tabel Rapi */
+        .member-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .member-table th {
+            background-color: #0A2259; /* Header biru tua */
+            color: #FFFFFF;
+            padding: 12px 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 2px solid #0A2259;
+        }
+
+        .member-table td {
+            border: 2px solid #0A2259; /* Garis tabel hitam/biru tua jelas */
+            padding: 12px 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 900;
+            color: #000000;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .td-no {
+            text-align: center;
+            width: 10%;
+        }
+
+        .td-nama {
+            text-align: left;
+        }
+
+        .td-plat {
+            text-align: center;
+            color: #2D63ED; /* Plat warna biru elektrik biar kontras */
+            font-family: 'Space Grotesk', sans-serif;
+            width: 35%;
+        }
+
+        .loading-text {
+            font-weight: 900;
+            color: #2D63ED;
+            font-size: 16px;
+            text-transform: uppercase;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
 
-    <div id="startOverlay" onclick="startExperience()">
-        <div class="start-text" id="btnStartText">TAP LAYAR UNTUK MULAI</div>
-        <div class="countdown-text" id="descStartText">Siapkan Screen Recorder Anda.<br>Notifikasi putih browser akan hilang otomatis.</div>
-    </div>
-
-    <div class="optic-flash" id="flashEffect"></div>
-    <canvas id="particleCanvas"></canvas>
-
-    <div class="ornaments" id="ornaments">
-        <div class="lantern"><div class="wire"></div><div class="ketupat"></div></div>
-        <div class="lantern"><div class="wire"></div><div class="ketupat"></div></div>
-    </div>
-
-    <div class="scene-wrapper">
-        <div class="scene-part" id="sceneMain" style="display: none;">
-            <div class="anim-item line-1" id="t1">Kami Segenap Pengurus dan Keluarga Besar</div>
-            
-            <div class="maka-title-container">
-                <div class="maka-text" id="makaBoom">MAKA LINTAS UTARA</div>
-            </div>
-
-            <div class="anim-item line-3" id="t3">Mengucapkan</div>
-            <div class="anim-item line-4" id="t4">Selamat Hari Raya Idul Fitri</div>
-            <div class="anim-item line-5" id="t5">1447 H</div>
-            <div class="anim-item line-6" id="t6">Taqabbalallahu Minna Wa Minkum. Mohon Maaf Lahir & Batin.</div>
-        </div>
-
-        <div class="scene-part" id="sceneOutro" style="display: none;">
-            <img src="logomlumaster.png" class="anim-item outro-logo" id="oLogo" alt="MLU Master Logo">
-            <div class="anim-item outro-line-1" id="o1">Beda Rangka Beda Warna</div>
-            <div class="anim-item outro-line-2" id="o2">Satu Keluarga</div>
-        </div>
-
-        <div class="scene-part" id="sceneCopyright" style="display: none;">
-            <div class="anim-item copyright-wrap" id="c1">
-                <div class="cr-1">© Divisi Komunikasi Digital</div>
-                <div class="cr-2">MAKA LINTAS UTARA</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // ==========================================
-        // 1. ENGINE PARTIKEL BINTANG (BACKGROUND)
-        // ==========================================
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let pRequest;
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedY = Math.random() * 0.8 + 0.2;
-                this.color = Math.random() > 0.4 ? 'rgba(212, 175, 55, ' : 'rgba(0, 229, 255, ';
-                this.opacity = Math.random() * 0.6 + 0.2;
-            }
-            update() {
-                this.y -= this.speedY;
-                if (this.y < 0) {
-                    this.y = canvas.height;
-                    this.x = Math.random() * canvas.width;
-                }
-            }
-            draw() {
-                ctx.fillStyle = this.color + this.opacity + ')';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < 120; i++) { particles.push(new Particle()); }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            pRequest = requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-
-        // ==========================================
-        // 2. FUNGSI FULLSCREEN & TIMELINE ANIMASI
-        // ==========================================
+    <div class="capture-area" id="captureArea">
+        <img src="logomlumaster.png" alt="Logo MLU" class="logo" onerror="this.style.display='none'">
         
-        let hasStarted = false;
+        <div class="tagline-container">
+            BEDA RANGKA BEDA WARNA <span class="patched-text">BEDA VENDOR</span><br>
+            SATU KELUARGA<br>
+            MAKA LINTAS UTARA
+        </div>
 
-        window.startExperience = () => {
-            if(hasStarted) return;
-            hasStarted = true;
+        <div class="sub-title">
+            DAFTAR NAMA KELUARGA MLU DARI TRANSGO
+        </div>
 
-            const docElm = document.documentElement;
-            if (docElm.requestFullscreen) { docElm.requestFullscreen(); }
-            else if (docElm.webkitRequestFullscreen) { docElm.webkitRequestFullscreen(); }
+        <div id="loadingText" class="loading-text">Menarik Data Transgo...</div>
+        
+        <table class="member-table" id="memberTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>NO</th>
+                    <th>NAMA</th>
+                    <th>PLAT</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
 
-            const textEl = document.getElementById('btnStartText');
-            const descEl = document.getElementById('descStartText');
-            
-            textEl.style.animation = 'none'; 
-            descEl.innerHTML = "Notifikasi putih akan menghilang...<br>Video akan otomatis mulai.";
-            
-            let timeLeft = 4;
-            textEl.innerHTML = `MENYIAPKAN LAYAR... ${timeLeft}`;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-            const countdownInterval = setInterval(() => {
-                timeLeft--;
-                if(timeLeft > 0) {
-                    textEl.innerHTML = `MENYIAPKAN LAYAR... ${timeLeft}`;
-                } else {
-                    clearInterval(countdownInterval);
-                    mulaiScreening();
-                }
-            }, 1000);
+        // Konfigurasi Database
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", 
+            authDomain: "rtomaka-e67b5.firebaseapp.com", 
+            projectId: "rtomaka-e67b5", 
+            storageBucket: "rtomaka-e67b5.firebasestorage.app", 
+            messagingSenderId: "472036722228", 
+            appId: "1:472036722228:web:11d520f9204db317d02c61" 
         };
+        
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
 
-        function mulaiScreening() {
-            const overlay = document.getElementById('startOverlay');
-            overlay.style.opacity = 0;
-            
-            setTimeout(() => { 
-                overlay.style.display = 'none'; 
-                
-                document.getElementById('sceneMain').style.display = 'flex';
-                document.getElementById('sceneOutro').style.display = 'flex';
+        async function loadTransgoMembers() {
+            try {
+                // Tarik semua data member, lalu filter manual biar aman
+                const snap = await getDocs(collection(db, "mlu_members"));
+                let transgoData = [];
 
-                mulaiAnimasi();
-            }, 500);
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    if (m.type === "TRANSGO" || m.divisi === "TRANSGO") {
+                        transgoData.push(m);
+                    }
+                });
+
+                document.getElementById("loadingText").style.display = "none";
+                const tbody = document.getElementById("tableBody");
+                const table = document.getElementById("memberTable");
+
+                if (transgoData.length === 0) {
+                    document.getElementById("captureArea").innerHTML += "<div style='color: #E00000; font-weight: 900; font-size: 18px; margin-top:20px;'>DATA TRANSGO MASIH KOSONG</div>";
+                    return;
+                }
+
+                // Urutkan berdasarkan nama biar rapi
+                transgoData.sort((a, b) => {
+                    let nameA = (a.namaKtp || a.namaWa || "").toUpperCase();
+                    let nameB = (b.namaKtp || b.namaWa || "").toUpperCase();
+                    return nameA.localeCompare(nameB);
+                });
+
+                // Masukkan ke tabel
+                transgoData.forEach((m, index) => {
+                    const nama = m.namaKtp || m.namaWa || "-";
+                    const plat = m.plat || "-";
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="td-no">${index + 1}</td>
+                            <td class="td-nama">${nama}</td>
+                            <td class="td-plat">${plat}</td>
+                        </tr>
+                    `;
+                });
+
+                table.style.display = "table"; // Munculkan tabel
+
+            } catch (error) {
+                document.getElementById("loadingText").innerText = "GAGAL MENARIK DATA";
+                document.getElementById("loadingText").style.color = "#E00000";
+            }
         }
 
-        function mulaiAnimasi() {
-            const flash = document.getElementById('flashEffect');
-            const makaText = document.getElementById('makaBoom');
-            const sceneMain = document.getElementById('sceneMain');
-            const ornaments = document.getElementById('ornaments');
-            
-            const showElement = (id, time) => {
-                setTimeout(() => {
-                    const el = document.getElementById(id);
-                    if(el) el.classList.add('show');
-                }, time);
-            };
-
-            // ---- SCENE 1 : START ----
-            showElement('ornaments', 500);
-            showElement('t1', 1500);
-
-            setTimeout(() => {
-                makaText.classList.add('boom');
-                setTimeout(() => { if(flash) flash.classList.add('flash'); }, 500); 
-            }, 2800);
-
-            showElement('t3', 5000);
-            showElement('t4', 6000);
-            showElement('t5', 7000);
-            showElement('t6', 8500);
-
-            // ---- TRANSISI 1 (MENU KE OUTRO) ----
-            setTimeout(() => {
-                sceneMain.classList.add('fade-out-scene'); 
-                ornaments.classList.remove('show');        
-            }, 12500); 
-
-            // ---- SCENE 2 : OUTRO ----
-            showElement('oLogo', 13500);
-            showElement('o1', 14800);
-            showElement('o2', 16000);
-
-            // ---- TRANSISI 2 (OUTRO KE COPYRIGHT) ----
-            setTimeout(() => {
-                const outro = document.getElementById('sceneOutro');
-                outro.classList.add('fade-out-scene'); 
-
-                // Matikan partikel biar hitam pekat
-                cancelAnimationFrame(pRequest);
-                ctx.clearRect(0, 0, canvas.width, canvas.height); 
-                
-                // Munculkan wadah copyright
-                document.getElementById('sceneCopyright').style.display = 'flex';
-            }, 20000);
-
-            // ---- SCENE 3 : FINAL COPYRIGHT ----
-            showElement('c1', 21000);
-        }
+        loadTransgoMembers();
     </script>
 </body>
 </html>
