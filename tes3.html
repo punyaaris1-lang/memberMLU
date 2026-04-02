@@ -2,232 +2,175 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRANSGO - Screenshot List</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@800;900&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Penting MLU - FC Kelapa Gading</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
         body {
             margin: 0;
-            padding: 15px; /* Jarak luar diperkecil */
-            background-color: #0A2259;
-            font-family: 'Space Grotesk', sans-serif;
+            padding: 0;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            height: 100vh;
+            /* Background gelap */
+            background: #0f0c29; 
+            background: linear-gradient(to bottom, #1a0b12, #0f0c29);
+            font-family: 'Montserrat', sans-serif;
         }
-        
-        .capture-area {
-            width: 100%;
-            max-width: 480px; 
-            background: #FFFFFF;
-            border-radius: 16px;
-            padding: 20px 15px; /* Padding atas bawah dikurangi biar hemat space */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+
+        .card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 65, 108, 0.3);
+            width: 380px;
+            max-width: 90vw; /* Agar tidak terpotong di layar HP */
+            box-sizing: border-box;
+            border-radius: 20px;
+            padding: 40px 30px;
             text-align: center;
-            position: relative;
-            overflow: hidden; /* Biar watermark ga keluar batas putih */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            overflow: hidden;
+            color: white;
         }
 
-        /* WATERMARK LOGO BESAR MIRING */
-        .watermark-logo {
+        /* Efek glow merah/oranye tanda bahaya */
+        .card::before {
+            content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 130%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            opacity: 0.08; /* Transparan supaya teks tetap jelas */
-            z-index: 1;
-            pointer-events: none;
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: #ff4b2b;
+            filter: blur(80px);
+            opacity: 0.5;
+            z-index: -1;
         }
 
-        /* Wrapper konten biar di atas watermark */
-        .content-wrapper {
-            position: relative;
-            z-index: 2;
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: #ff416c;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: -1;
         }
 
-        .tagline-container {
-            font-family: 'Outfit', sans-serif;
-            font-size: 15px; /* Sedikit dikecilin dari 16px */
-            font-weight: 900;
-            color: #0A2259;
+        /* --- Bagian Logo --- */
+        .logo-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mlu-logo {
+            width: 110px; 
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(255, 65, 108, 0.4));
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 16px;
+            letter-spacing: 3px;
+            color: #ff4b2b;
             text-transform: uppercase;
-            line-height: 1.4;
-            margin-bottom: 15px;
-            border-bottom: 3px solid #D4AF37;
-            padding-bottom: 12px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            animation: blink 2s infinite;
         }
 
-        .patched-text {
-            display: inline-block;
-            background-color: #D4AF37;
-            color: #000000;
-            padding: 2px 8px;
-            font-family: 'Space Grotesk', sans-serif;
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 26px;
             font-weight: 900;
+            line-height: 1.3;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            background: -webkit-linear-gradient(#fff, #ffcccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .info-text {
+            font-size: 15px;
+            color: #cfd8dc;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ff4b2b;
+            text-align: left;
+        }
+
+        .info-text strong {
+            color: #ffb3b3;
+        }
+
+        .warning-text {
             font-size: 14px;
-            transform: rotate(-4deg);
-            box-shadow: 2px 3px 0px rgba(0,0,0,0.2);
-            border-radius: 2px;
-            margin-left: 4px;
-            position: relative;
-            top: -2px;
-        }
-
-        .sub-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 12px; /* Dikecilin biar rapet */
-            font-weight: 900;
-            color: #2D63ED;
-            background: #EBF0FE;
-            padding: 8px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 2px solid #2D63ED;
-        }
-
-        .member-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .member-table th {
-            background-color: #0A2259;
-            color: #FFFFFF;
-            padding: 10px 5px; /* Hemat space atas bawah */
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 13px;
-            font-weight: 900;
+            color: #ff4b2b;
+            font-weight: bold;
+            margin-bottom: 20px;
             text-transform: uppercase;
-            border: 2px solid #0A2259;
+            letter-spacing: 1px;
         }
 
-        .member-table td {
-            border: 2px solid #0A2259;
-            padding: 8px 5px; /* Hemat space atas bawah */
-            font-family: 'Outfit', sans-serif;
-            font-size: 14px;
-            font-weight: 900;
-            color: #000000;
+        .footer {
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(255,255,255,0.2);
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            vertical-align: middle;
         }
 
-        .td-no { text-align: center; width: 10%; }
-        .td-nama { text-align: left; }
-        .td-plat { 
-            text-align: center; 
-            color: #2D63ED; 
-            font-family: 'Space Grotesk', sans-serif; 
-            width: 35%; 
+        .footer span {
+            color: #fff;
         }
 
-        .loading-text {
-            font-weight: 900;
-            color: #2D63ED;
-            font-size: 14px;
-            text-transform: uppercase;
-            margin: 15px 0;
-        }
     </style>
 </head>
 <body>
 
-    <div class="capture-area" id="captureArea">
-        <img src="logomlumaster.png" class="watermark-logo" alt="">
-        
-        <div class="content-wrapper">
-            <div class="tagline-container">
-                BEDA RANGKA BEDA WARNA <span class="patched-text">BEDA VENDOR</span><br>
-                SATU KELUARGA<br>
-                MAKA LINTAS UTARA
-            </div>
+    <div class="card">
+        <div class="logo-container">
+            <img src="logomlumaster.png" alt="Logo MLU" class="mlu-logo">
+        </div>
 
-            <div class="sub-title">
-                DAFTAR NAMA KELUARGA MLU DARI TRANSGO
-            </div>
+        <h2>⚠️ INFO PENTING ⚠️</h2>
+        <h1>FC KELAPA GADING<br>DITUTUP SEMENTARA</h1>
 
-            <div id="loadingText" class="loading-text">Menarik Data Transgo...</div>
-            
-            <table class="member-table" id="memberTable" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>NO</th>
-                        <th>NAMA</th>
-                        <th>PLAT</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    </tbody>
-            </table>
+        <div class="info-text">
+            Karena <strong>kabel Indomaret terbakar</strong>, FC Kelapa Gading sementara tidak dapat digunakan menunggu penanganan dari pihak <strong>PLN</strong>.
+        </div>
+
+        <div class="warning-text">
+            SILAHKAN MENGGUNAKAN <br>FC MOTORIZ SUKAPURA ATAU TIMAH
+        </div>
+
+        <div class="footer">
+            Ttd,<br>
+            <span>Divisi Komunikasi Digital <br> Maka Lintas Utara</span>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = { 
-            apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", 
-            authDomain: "rtomaka-e67b5.firebaseapp.com", 
-            projectId: "rtomaka-e67b5", 
-            storageBucket: "rtomaka-e67b5.firebasestorage.app", 
-            messagingSenderId: "472036722228", 
-            appId: "1:472036722228:web:11d520f9204db317d02c61" 
-        };
-        
-        const app = initializeApp(firebaseConfig); 
-        const db = getFirestore(app);
-
-        async function loadTransgoMembers() {
-            try {
-                const snap = await getDocs(collection(db, "mlu_members"));
-                let transgoData = [];
-
-                snap.forEach(doc => {
-                    const m = doc.data();
-                    if (m.type === "TRANSGO" || m.divisi === "TRANSGO") {
-                        transgoData.push(m);
-                    }
-                });
-
-                document.getElementById("loadingText").style.display = "none";
-                const tbody = document.getElementById("tableBody");
-                const table = document.getElementById("memberTable");
-
-                if (transgoData.length === 0) {
-                    document.getElementById("captureArea").querySelector('.content-wrapper').innerHTML += "<div style='color: #E00000; font-weight: 900; font-size: 16px; margin-top:20px;'>DATA TRANSGO MASIH KOSONG</div>";
-                    return;
-                }
-
-                transgoData.sort((a, b) => {
-                    let nameA = (a.namaKtp || a.namaWa || "").toUpperCase();
-                    let nameB = (b.namaKtp || b.namaWa || "").toUpperCase();
-                    return nameA.localeCompare(nameB);
-                });
-
-                transgoData.forEach((m, index) => {
-                    const nama = m.namaKtp || m.namaWa || "-";
-                    const plat = m.plat || "-";
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="td-no">${index + 1}</td>
-                            <td class="td-nama">${nama}</td>
-                            <td class="td-plat">${plat}</td>
-                        </tr>
-                    `;
-                });
-
-                table.style.display = "table";
-
-            } catch (error) {
-                document.getElementById("loadingText").innerText = "GAGAL MENARIK DATA";
-                document.getElementById("loadingText").style.color = "#E00000";
-            }
-        }
-
-        loadTransgoMembers();
-    </script>
 </body>
 </html>
