@@ -58,9 +58,10 @@
         @keyframes zoomIn { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
         .modal-icon { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
         .m-sukses { background: rgba(16,185,129,0.1); color: var(--success); box-shadow: 0 0 20px rgba(16,185,129,0.4); }
+        .m-warning { background: rgba(245,158,11,0.1); color: var(--warning); box-shadow: 0 0 20px rgba(245,158,11,0.4); }
         .m-gagal { background: rgba(239,68,68,0.1); color: var(--danger); box-shadow: 0 0 20px rgba(239,68,68,0.4); }
         .modal-title { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin-bottom: 10px;}
-        .modal-msg { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; font-weight: 600;}
+        .modal-msg { font-size: 13px; color: var(--text-main); margin-bottom: 20px; line-height: 1.5; font-weight: 600; opacity: 0.8;}
         .btn-close-modal { width: 100%; padding: 15px; border: none; border-radius: 14px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; cursor: pointer; color: white; }
     </style>
 </head>
@@ -74,7 +75,7 @@
     <div class="content-area">
         <div class="scan-card">
             <input type="text" id="eventName" class="event-input" placeholder="NAMA ACARA (Cth: KOPDAR MARET)" value="KOPDAR RUTIN MLU">
-            <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; margin-bottom: 15px; text-transform: uppercase;">Arahkan Kamera ke QR Code Member</div>
+            <div style="font-size: 10px; color: var(--text-main); font-weight: 700; margin-bottom: 15px; text-transform: uppercase; opacity: 0.6;">Arahkan Kamera ke QR Code Member</div>
             
             <div id="reader"></div>
         </div>
@@ -139,13 +140,14 @@
             isScanningPaused = true; // Pause scanner biar gak scan dobel
 
             const eventName = document.getElementById('eventName').value.trim() || "KOPDAR RUTIN MLU";
-            const cleanId = decodedText.replace(/\s+/g, '').toUpperCase(); // Ini adalah memberId / plat
+            const rawId = decodedText.trim(); // Simpan format asli untuk pengecekan Document ID
+            const cleanPlat = decodedText.replace(/\s+/g, '').toUpperCase(); // Khusus untuk pencarian plat mobil
 
             document.getElementById('alertIcon').className = "modal-icon m-sukses";
             document.getElementById('alertIcon').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             document.getElementById('alertTitle').innerText = "Memproses...";
             document.getElementById('alertMsg').innerText = "Sedang mencari data member...";
-            document.getElementById('alertBtn').style.background = "var(--text-muted)";
+            document.getElementById('alertBtn').style.background = "#94A3B8";
             document.getElementById('alertBtn').innerText = "TUNGGU";
             document.getElementById('alertModal').style.display = 'flex';
 
@@ -153,14 +155,14 @@
                 // 1. CEK APAKAH SUDAH ABSEN DI ACARA INI HARI INI
                 const todayStr = new Date().toLocaleDateString('id-ID');
                 const qCek = query(collection(db, "mlu_absensi"), 
-                    where("memberId", "==", cleanId), 
+                    where("memberId", "==", rawId), 
                     where("event", "==", eventName),
                     where("dateString", "==", todayStr)
                 );
                 const cekSnap = await getDocs(qCek);
                 
                 if (!cekSnap.empty) {
-                    showModalResult("m-warning", "fa-exclamation-triangle", "SUDAH ABSEN", `Member dengan ID ${cleanId} sudah absen untuk acara ini hari ini.`, "var(--warning)");
+                    showModalResult("m-warning", "fa-exclamation-triangle", "SUDAH ABSEN", `Member dengan ID / Plat ini sudah absen untuk acara ini hari ini.`, "var(--warning)");
                     return;
                 }
 
@@ -172,7 +174,7 @@
                 const memSnap = await getDocs(qMember);
                 memSnap.forEach(doc => {
                     const data = doc.data();
-                    if ((data.plat && data.plat.replace(/\s+/g, '').toUpperCase() === cleanId) || doc.id === cleanId) {
+                    if ((data.plat && data.plat.replace(/\s+/g, '').toUpperCase() === cleanPlat) || doc.id === rawId) {
                         namaMember = data.namaKtp || data.namaWa || data.nama;
                         platAsli = data.plat;
                     }
@@ -180,7 +182,7 @@
 
                 // 3. SIMPAN KE DATABASE ABSENSI
                 await addDoc(collection(db, "mlu_absensi"), {
-                    memberId: cleanId,
+                    memberId: rawId,
                     nama: namaMember,
                     plat: platAsli,
                     event: eventName,
