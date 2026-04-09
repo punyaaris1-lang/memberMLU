@@ -20,6 +20,8 @@
             --glass-border: rgba(255, 255, 255, 0.9);
             --shadow-soft: 0 15px 40px rgba(10, 34, 89, 0.08);
             --glow-gold: 0 5px 20px rgba(212, 175, 55, 0.3);
+            --glow-green: 0 5px 20px rgba(16, 185, 129, 0.3);
+            --glow-blue: 0 5px 20px rgba(45, 99, 237, 0.3);
         }
         
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; }
@@ -301,13 +303,14 @@
 
         // Logic Tombol Kembali
         window.handleBack = () => {
-            if (isGuest) window.location.href = 'index.html'; // Tamu balik ke Login
+            if (isGuest) window.location.href = 'index.html'; // Tamu balik ke Halaman Login
             else window.location.href = 'dashboard.html'; // Member balik ke Dashboard
         };
 
         let currentImageBase64 = ""; 
         window.productsData = {}; 
         let productsArray = [];
+        let urlIdToCheck = new URLSearchParams(window.location.search).get('id');
 
         // --- RENDER PRODUK ---
         onSnapshot(query(collection(db, 'mlu_store'), orderBy('timestamp', 'desc')), (snap) => {
@@ -326,7 +329,14 @@
                 window.productsData[docSnap.id] = item; 
                 productsArray.push(item);
             });
+            
             renderGrid(productsArray);
+
+            // LOGIC AUTO-OPEN JIKA ADA URL PARAMETER "?id=..."
+            if (urlIdToCheck && window.productsData[urlIdToCheck]) {
+                window.openDetailModal(urlIdToCheck);
+                urlIdToCheck = null; // Hapus dari antrean biar gak kebuka terus tiap refresh database
+            }
         });
 
         function renderGrid(dataArr) {
@@ -393,18 +403,37 @@
         // --- SHARE & CONTACT ---
         window.shareProduct = (id) => {
             const data = window.productsData[id];
-            const shareText = `🔥 *PASAR MLU*\n\n*${data.title}*\n💰 *Rp ${Number(data.price).toLocaleString('id-ID')}*\n\n${data.desc}\n\n_Cek di Aplikasi MLU!_`;
-            if (navigator.share) { navigator.share({ title: 'Pasar MLU', text: shareText }).catch(console.error); } 
-            else { window.location.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`; }
+            
+            // Generate link dinamis sesuai letak aplikasi berjalan
+            const baseUrl = window.location.href.split('?')[0]; 
+            const productUrl = `${baseUrl}?id=${id}`;
+
+            const shareText = `🔥 *PASAR MLU*\n\n*${data.title}*\n💰 *Rp ${Number(data.price).toLocaleString('id-ID')}*\n\n${data.desc}\n\n_Klik link ini untuk melihat foto & detail barang:_\n${productUrl}`;
+            
+            if (navigator.share) { 
+                navigator.share({ 
+                    title: `Pasar MLU - ${data.title}`, 
+                    text: shareText,
+                    url: productUrl
+                }).catch(console.error); 
+            } 
+            else { 
+                window.location.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`; 
+            }
         };
 
         window.hubungiPenjual = (id) => {
             const data = window.productsData[id];
+            
             if(!isGuest && cleanStr(data.sellerPlat) === cleanStr(myPlat)) return alert("Ini lapak Anda sendiri!");
             
             let noWa = data.sellerWa;
             if(noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
-            const msg = `Halo *${data.sellerName}*, saya lihat di *Pasar MLU*.\nBarang: *${data.title}*\nHarga: *Rp ${Number(data.price).toLocaleString('id-ID')}*\n\nMasih ready?`;
+            
+            const baseUrl = window.location.href.split('?')[0]; 
+            const productUrl = `${baseUrl}?id=${id}`;
+
+            const msg = `Halo *${data.sellerName}*, saya lihat iklan Anda di *Pasar MLU*.\n\nBarang: *${data.title}*\nHarga: *Rp ${Number(data.price).toLocaleString('id-ID')}*\nLink: ${productUrl}\n\nApakah barang ini masih tersedia?`;
             window.location.href = `https://wa.me/${noWa}?text=${encodeURIComponent(msg)}`;
         };
 
