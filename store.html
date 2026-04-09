@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU Market - Official Store</title>
     
+    <script>
+        const STORE_VERSION = "4.0_SHARE_WITH_IMAGE"; 
+        if (localStorage.getItem('maka_store_v') !== STORE_VERSION) {
+            if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
+            localStorage.setItem('maka_store_v', STORE_VERSION); window.location.reload(true); 
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -82,9 +90,11 @@
         .card-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 5px; z-index: 5; }
         .btn-mini { 
             width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            border: none; cursor: pointer; font-size: 12px; backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: none; cursor: pointer; font-size: 12px; backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;
         }
+        .btn-mini:active { transform: scale(0.9); }
         .bm-del { background: rgba(255,255,255,0.9); color: var(--danger); }
+        .bm-edit { background: rgba(255,255,255,0.9); color: var(--warning); }
         .bm-share { background: rgba(255,255,255,0.9); color: var(--electric-blue); }
 
         .p-content { padding: 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
@@ -197,7 +207,7 @@
     </div>
 
     <button class="fab-sell" id="btnSell" onclick="openModal()">
-        <i class="fas fa-camera"></i> JUAL BARANG
+        <i class="fas fa-camera"></i> BUKA LAPAK
     </button>
 
     <div class="back-nav">
@@ -210,9 +220,11 @@
         <div class="modal-box" style="height: auto; max-height: 90vh;">
             <div class="form-padding">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <div style="font-family:'Space Grotesk'; font-size:20px; font-weight:900; color:var(--royal-blue);">Buka Lapak</div>
+                    <div id="postModalTitle" style="font-family:'Space Grotesk'; font-size:20px; font-weight:900; color:var(--royal-blue);">Buka Lapak</div>
                     <button class="btn-close-modal" style="position:static; background:#F1F5F9; color:#64748B;" onclick="closeModal()"><i class="fas fa-times"></i></button>
                 </div>
+
+                <input type="hidden" id="formProductId">
 
                 <div class="inp-group">
                     <label class="inp-label">Foto Barang (Wajib)</label>
@@ -239,13 +251,13 @@
                     <textarea id="inpDesc" class="inp-text" style="height:100px; resize:none;" placeholder="Jelaskan minus (jika ada), lokasi COD, dll."></textarea>
                 </div>
 
-                <button class="btn-submit" id="btnSave" onclick="saveProduct()">TAYANGKAN IKLAN</button>
+                <button class="btn-submit" id="btnSave" onclick="saveProduct()">SIMPAN BARANG</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="detailModal">
-        <div class="detail-box">
+        <div class="detail-box" style="background: #F8FAFC; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; border-top: 1px solid rgba(255,255,255,0.5); padding: 0; box-shadow: 0 -10px 50px rgba(0,0,0,0.2); transform: translateY(100%); animation: slideUp 0.4s forwards cubic-bezier(0.19, 1, 0.22, 1); max-height: 95vh; display: flex; flex-direction: column;">
             <div class="detail-header">
                 <img id="detailImage" class="detail-img" src="">
                 <button class="btn-close-modal" onclick="closeDetailModal()"><i class="fas fa-arrow-down"></i></button>
@@ -276,7 +288,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
@@ -303,7 +315,7 @@
 
         // Logic Tombol Kembali
         window.handleBack = () => {
-            if (isGuest) window.location.href = 'index.html'; // Tamu balik ke Halaman Login
+            if (isGuest) window.location.href = 'index.html'; // Tamu balik ke Login
             else window.location.href = 'dashboard.html'; // Member balik ke Dashboard
         };
 
@@ -344,9 +356,11 @@
             list.innerHTML = "";
             
             dataArr.forEach(d => {
-                // Tombol Delete (Hanya Pemilik/Admin)
-                const canDelete = !isGuest && (isAdmin || (cleanStr(d.sellerPlat) === cleanStr(myPlat)));
-                const btnDelHtml = canDelete ? `<button class="btn-mini bm-del" onclick="event.stopPropagation(); window.delProduct('${d.id}')"><i class="fas fa-trash"></i></button>` : '';
+                // Hak Edit & Delete (Hanya Pemilik/Admin)
+                const canModify = !isGuest && (isAdmin || (cleanStr(d.sellerPlat) === cleanStr(myPlat)));
+                
+                const btnEditHtml = canModify ? `<button class="btn-mini bm-edit" onclick="event.stopPropagation(); window.editProduct('${d.id}')"><i class="fas fa-pen"></i></button>` : '';
+                const btnDelHtml = canModify ? `<button class="btn-mini bm-del" onclick="event.stopPropagation(); window.delProduct('${d.id}')"><i class="fas fa-trash"></i></button>` : '';
                 
                 const imageSrc = d.image ? d.image : 'https://placehold.co/400x400/E2E8F0/94A3B8?text=NO+IMAGE';
 
@@ -355,6 +369,7 @@
                         <div class="p-image-box">
                             <div class="card-actions">
                                 <button class="btn-mini bm-share" onclick="event.stopPropagation(); window.shareProduct('${d.id}')"><i class="fas fa-share-alt"></i></button>
+                                ${btnEditHtml}
                                 ${btnDelHtml}
                             </div>
                             <div class="p-price-tag">Rp ${formatK(d.price)}</div>
@@ -400,24 +415,46 @@
 
         window.closeDetailModal = () => document.getElementById('detailModal').style.display = 'none';
 
-        // --- SHARE & CONTACT ---
-        window.shareProduct = (id) => {
+        // --- SHARE DENGAN FOTO (NATIVE WEB SHARE API) ---
+        window.shareProduct = async (id) => {
             const data = window.productsData[id];
             
-            // Generate link dinamis sesuai letak aplikasi berjalan
-            const baseUrl = window.location.href.split('?')[0]; 
+            let baseUrl = window.location.href.split('?')[0]; 
+            if (!baseUrl.includes('.html')) { baseUrl += (baseUrl.endsWith('/') ? '' : '/') + 'store.html'; }
+            
             const productUrl = `${baseUrl}?id=${id}`;
-
-            const shareText = `🔥 *PASAR MLU*\n\n*${data.title}*\n💰 *Rp ${Number(data.price).toLocaleString('id-ID')}*\n\n${data.desc}\n\n_Klik link ini untuk melihat foto & detail barang:_\n${productUrl}`;
+            const shareText = `🔥 *PASAR MLU* 🔥\n\n*${data.title}*\n💰 *Rp ${Number(data.price).toLocaleString('id-ID')}*\n\n${data.desc}\n\n_Klik link di bawah untuk detail & beli:_\n${productUrl}`;
             
             if (navigator.share) { 
-                navigator.share({ 
-                    title: `Pasar MLU - ${data.title}`, 
-                    text: shareText,
-                    url: productUrl
-                }).catch(console.error); 
+                try {
+                    // Konversi Base64 ke File Image beneran
+                    if (data.image && data.image.startsWith('data:image')) {
+                        const res = await fetch(data.image);
+                        const blob = await res.blob();
+                        const file = new File([blob], 'barang_mlu.jpg', { type: blob.type });
+
+                        // Kalau HP-nya support ngirim gambar ke WA
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                title: `Pasar MLU - ${data.title}`,
+                                text: shareText,
+                                files: [file]
+                            });
+                            return; // Selesai
+                        }
+                    }
+                    
+                    // Kalau nggak support gambar, kirim teks + link
+                    await navigator.share({ 
+                        title: `Pasar MLU - ${data.title}`, 
+                        text: shareText
+                    });
+                } catch (error) {
+                    console.log('Share dibatalkan atau error:', error);
+                }
             } 
             else { 
+                // Fallback buat PC / Browser jadul
                 window.location.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`; 
             }
         };
@@ -430,7 +467,8 @@
             let noWa = data.sellerWa;
             if(noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
             
-            const baseUrl = window.location.href.split('?')[0]; 
+            let baseUrl = window.location.href.split('?')[0]; 
+            if (!baseUrl.includes('.html')) { baseUrl += (baseUrl.endsWith('/') ? '' : '/') + 'store.html'; }
             const productUrl = `${baseUrl}?id=${id}`;
 
             const msg = `Halo *${data.sellerName}*, saya lihat iklan Anda di *Pasar MLU*.\n\nBarang: *${data.title}*\nHarga: *Rp ${Number(data.price).toLocaleString('id-ID')}*\nLink: ${productUrl}\n\nApakah barang ini masih tersedia?`;
@@ -458,11 +496,37 @@
             reader.readAsDataURL(file);
         });
 
-        // --- POSTING ---
-        window.openModal = () => document.getElementById('postModal').style.display = 'flex';
+        // --- POSTING / EDITING ---
+        window.openModal = () => {
+            document.getElementById('formProductId').value = '';
+            document.getElementById('inpTitle').value = '';
+            document.getElementById('inpPrice').value = '';
+            document.getElementById('inpDesc').value = '';
+            currentImageBase64 = "";
+            document.getElementById('imgPreview').src = "";
+            document.getElementById('imgPreview').style.display = 'none';
+            document.getElementById('postModalTitle').innerText = "Buka Lapak";
+            document.getElementById('postModal').style.display = 'flex';
+        };
+
+        window.editProduct = (id) => {
+            const data = window.productsData[id];
+            if(!data) return;
+            document.getElementById('formProductId').value = id;
+            document.getElementById('inpTitle').value = data.title;
+            document.getElementById('inpPrice').value = data.price;
+            document.getElementById('inpDesc').value = data.desc || '';
+            currentImageBase64 = data.image;
+            document.getElementById('imgPreview').src = currentImageBase64;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('postModalTitle').innerText = "Edit Lapak";
+            document.getElementById('postModal').style.display = 'flex';
+        };
+
         window.closeModal = () => document.getElementById('postModal').style.display = 'none';
 
         window.saveProduct = async () => {
+            const id = document.getElementById('formProductId').value;
             const title = document.getElementById('inpTitle').value.trim();
             const price = parseInt(document.getElementById('inpPrice').value) || 0;
             const desc = document.getElementById('inpDesc').value.trim();
@@ -470,19 +534,27 @@
 
             if(!title || !price || !currentImageBase64) return alert("Lengkapi data & foto!");
 
-            btn.innerText = "MENGUNGGAH..."; btn.style.opacity = '0.7';
+            btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
 
             try {
-                await addDoc(collection(db, 'mlu_store'), {
-                    title: title, price: price, desc: desc, image: currentImageBase64, 
-                    sellerName: u.namaKtp || u.namaWa, sellerPlat: myPlat, sellerWa: u.hp || "", timestamp: Date.now()
-                });
+                if (id) {
+                    // Update Barang
+                    await updateDoc(doc(db, 'mlu_store', id), {
+                        title: title, price: price, desc: desc, image: currentImageBase64
+                    });
+                } else {
+                    // Tambah Barang Baru
+                    await addDoc(collection(db, 'mlu_store'), {
+                        title: title, price: price, desc: desc, image: currentImageBase64, 
+                        sellerName: u.namaKtp || u.namaWa, sellerPlat: myPlat, sellerWa: u.hp || "", timestamp: Date.now()
+                    });
+                }
                 closeModal();
             } catch(e) { alert("Gagal: " + e.message); } 
-            finally { btn.innerText = "TAYANGKAN IKLAN"; btn.style.opacity = '1'; }
+            finally { btn.innerText = "SIMPAN BARANG"; btn.style.opacity = '1'; }
         };
 
-        window.delProduct = async (id) => { if(confirm("Hapus?")) await deleteDoc(doc(db, 'mlu_store', id)); };
+        window.delProduct = async (id) => { if(confirm("Yakin ingin menghapus lapak ini?")) await deleteDoc(doc(db, 'mlu_store', id)); };
     </script>
 </body>
 </html>
