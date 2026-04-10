@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU Music Player</title>
     
+    <script>
+        const MUSIC_VERSION = "5.0_HYBRID_PLAYER"; 
+        if (localStorage.getItem('maka_music_v') !== MUSIC_VERSION) {
+            if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
+            localStorage.setItem('maka_music_v', MUSIC_VERSION); window.location.reload(true); 
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -17,7 +25,7 @@
             --danger: #EF4444; --success: #10B981;
         }
         
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 200px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; }
+        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 220px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
         /* AMBIENT LIGHT & BACKGROUND */
@@ -35,8 +43,13 @@
         .main-title { font-family: 'Outfit'; font-size: 32px; font-weight: 900; margin: 0; color: white; letter-spacing: -1px; text-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .sub-tag { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--gold-lux); text-transform: uppercase; margin-bottom: 5px; display: block; }
 
+        /* TAB NAVIGATION */
+        .tab-container { display: flex; justify-content: center; gap: 10px; margin-top: -20px; position: relative; z-index: 15; padding: 0 20px;}
+        .btn-tab { background: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.5); padding: 12px 20px; border-radius: 30px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; color: var(--text-muted); cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; flex: 1; max-width: 180px; }
+        .btn-tab.active { background: var(--electric-blue); color: white; border-color: var(--electric-blue); box-shadow: 0 10px 25px rgba(45,99,237,0.3); }
+
         /* PLAYLIST CONTAINER */
-        .playlist-container { padding: 20px; display: flex; flex-direction: column; gap: 12px; max-width: 800px; margin: 0 auto; position: relative; z-index: 5;}
+        .playlist-container { padding: 30px 20px 20px; display: flex; flex-direction: column; gap: 12px; max-width: 800px; margin: 0 auto; position: relative; z-index: 5;}
         
         .song-card { 
             background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px);
@@ -94,6 +107,14 @@
         }
         .fab-add:active { transform: scale(0.9); }
 
+        .fab-local {
+            position: fixed; bottom: 190px; right: 20px; width: 55px; height: 55px; 
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%); 
+            color: white; border-radius: 20px; display: none; align-items: center; justify-content: center; 
+            font-size: 22px; box-shadow: 0 10px 30px rgba(16,185,129,0.4); border: 2px solid white; cursor: pointer; z-index: 999; transition: 0.2s;
+        }
+        .fab-local:active { transform: scale(0.9); }
+
         /* MODAL */
         .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; z-index: 99999; }
         .modal-box { background: #F8FAFC; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; border-top: 1px solid rgba(255,255,255,0.5); padding: 30px 25px; box-shadow: 0 -10px 50px rgba(0,0,0,0.2); transform: translateY(100%); animation: slideUp 0.4s forwards cubic-bezier(0.19, 1, 0.22, 1); }
@@ -118,17 +139,31 @@
 
     <header class="header-music">
         <span class="sub-tag">COMMUNITY PLAYLIST</span>
-        <h1 class="main-title">MLU MUSIC PLAYER</h1>
+        <h1 class="main-title">MLU MUSIC</h1>
     </header>
 
-    <div class="playlist-container" id="playlistContainer">
+    <div class="tab-container">
+        <button class="btn-tab active" id="tabOnline" onclick="switchMode('online')"><i class="fas fa-globe"></i> RADIO ONLINE</button>
+        <button class="btn-tab" id="tabLocal" onclick="switchMode('local')"><i class="fas fa-folder-open"></i> MP3 LOKAL</button>
+    </div>
+
+    <div class="playlist-container" id="playlistOnline">
         <div style="text-align:center; padding: 50px; color: #94A3B8; font-weight: 600;">
             <i class="fas fa-circle-notch fa-spin" style="font-size:24px; color:var(--electric-blue); margin-bottom:10px;"></i><br>
             Memuat Lagu...
         </div>
     </div>
 
+    <div class="playlist-container" id="playlistLocal" style="display: none;">
+        <div style="text-align:center; padding: 30px; color: #94A3B8; border: 2px dashed #CBD5E1; border-radius: 20px;">
+            <i class="fas fa-folder-plus" style="font-size:40px; color:#CBD5E1; margin-bottom:15px;"></i><br>
+            <div style="font-family:'Space Grotesk'; font-weight:800; font-size:16px; color:var(--royal-blue); margin-bottom:5px;">Pilih Lagu dari HP</div>
+            <div style="font-size:12px; margin-bottom:15px;">Tap tombol <b style="color:var(--success)">Warna Hijau</b> di bawah untuk memindai file MP3 dari memori internal.</div>
+        </div>
+    </div>
+
     <audio id="mainAudio" preload="metadata"></audio>
+    <input type="file" id="localFileInput" accept="audio/*" multiple style="display:none;" onchange="handleLocalFiles(event)">
 
     <div class="player-dock" id="playerDock" style="display: none;">
         <div class="player-info-row">
@@ -151,7 +186,8 @@
         </div>
     </div>
 
-    <button class="fab-add" onclick="openAddModal()"><i class="fas fa-plus"></i></button>
+    <button class="fab-add" id="fabOnline" onclick="openAddModal()"><i class="fas fa-plus"></i></button>
+    <button class="fab-local" id="fabLocal" onclick="document.getElementById('localFileInput').click()"><i class="fas fa-folder-open"></i></button>
 
     <div class="back-nav">
         <a href="dashboard.html" class="btn-premium-back"><i class="fas fa-home"></i> KEMBALI KE DASHBOARD</a>
@@ -166,8 +202,8 @@
 
             <div style="background: rgba(45, 99, 237, 0.1); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px dashed var(--electric-blue);">
                 <div style="font-size: 11px; font-weight: 700; color: var(--electric-blue); line-height: 1.5;">
-                    <i class="fas fa-info-circle"></i> <b>Cara Penggunaan:</b><br>
-                    Upload file MP3 ke Google Drive Anda, ubah aksesnya jadi <b>"Siapa saja yang memiliki link" (Anyone with the link)</b>. Copy dan Paste link tersebut di bawah.
+                    <i class="fas fa-info-circle"></i> <b>Didukung: Catbox.moe, Dropbox, Google Drive.</b><br>
+                    Upload file MP3, lalu paste Link Share-nya di sini.
                 </div>
             </div>
 
@@ -182,8 +218,8 @@
             </div>
 
             <div class="inp-group">
-                <label class="inp-label">Link Share Google Drive</label>
-                <textarea id="inpLink" class="inp-text" style="height:80px; resize:none;" placeholder="https://drive.google.com/file/d/123456789.../view?usp=sharing"></textarea>
+                <label class="inp-label">Link Lagu (URL)</label>
+                <textarea id="inpLink" class="inp-text" style="height:80px; resize:none;" placeholder="https://..."></textarea>
             </div>
 
             <button class="btn-submit" id="btnSaveSong" onclick="saveSong()">SIMPAN LAGU KE PLAYLIST</button>
@@ -204,8 +240,13 @@
         const myPlat = uData.plat;
         const isAdmin = uData.isSuperAdmin || (uData.role && uData.role !== 'KELUARGA MLU' && uData.role !== 'GUEST');
 
-        let playlist = [];
-        let currentSongIndex = -1;
+        // STATE VARIABEL
+        let modePlay = 'online'; // 'online' atau 'local'
+        let playlistOnline = [];
+        let playlistLocal = [];
+        let currentIndexOnline = -1;
+        let currentIndexLocal = -1;
+        
         const audio = document.getElementById('mainAudio');
         const playPauseBtn = document.getElementById('btnPlayPause');
         const progressBar = document.getElementById('progressBar');
@@ -213,43 +254,55 @@
         const currentTimeEl = document.getElementById('currentTime');
         const durationTimeEl = document.getElementById('durationTime');
 
-        // FUNGSI UBAH LINK GOOGLE DRIVE JADI DIRECT LINK (MP3 STREAM)
-        function convertDriveLink(url) {
-            let id = "";
-            if (url.includes('/d/')) {
-                id = url.split('/d/')[1].split('/')[0];
-            } else if (url.includes('id=')) {
-                id = url.split('id=')[1].split('&')[0];
+        // SWITCH TAB (ONLINE / LOCAL)
+        window.switchMode = (mode) => {
+            modePlay = mode;
+            if(mode === 'online') {
+                document.getElementById('tabOnline').classList.add('active');
+                document.getElementById('tabLocal').classList.remove('active');
+                document.getElementById('playlistOnline').style.display = 'flex';
+                document.getElementById('playlistLocal').style.display = 'none';
+                document.getElementById('fabOnline').style.display = 'flex';
+                document.getElementById('fabLocal').style.display = 'none';
+            } else {
+                document.getElementById('tabLocal').classList.add('active');
+                document.getElementById('tabOnline').classList.remove('active');
+                document.getElementById('playlistLocal').style.display = 'flex';
+                document.getElementById('playlistOnline').style.display = 'none';
+                document.getElementById('fabLocal').style.display = 'flex';
+                document.getElementById('fabOnline').style.display = 'none';
             }
-            if (id) {
-                return `https://drive.google.com/uc?export=download&id=${id}`;
+        };
+
+        // MESIN PENERJEMAH LINK MULTI-PLATFORM (ONLINE)
+        function convertDirectLink(url) {
+            if (url.includes('drive.google.com')) {
+                let id = "";
+                if (url.includes('/d/')) { id = url.split('/d/')[1].split('/')[0]; } 
+                else if (url.includes('id=')) { id = url.split('id=')[1].split('&')[0]; }
+                if (id) return `https://drive.google.com/uc?export=download&id=${id}`;
             }
-            return url; // Return as-is jika bukan link drive (buat jaga-jaga)
+            if (url.includes('dropbox.com')) return url.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '');
+            return url;
         }
 
-        // LOAD DATA
+        // LOAD DATA ONLINE
         onSnapshot(query(collection(db, 'mlu_music'), orderBy('timestamp', 'desc')), (snap) => {
-            const list = document.getElementById('playlistContainer');
+            const list = document.getElementById('playlistOnline');
             if (snap.empty) {
-                list.innerHTML = '<div style="text-align:center; padding:30px; color:#94A3B8;">Belum ada lagu di playlist. Jadilah yang pertama menambahkan lagu!</div>';
-                playlist = [];
-                return;
+                list.innerHTML = '<div style="text-align:center; padding:30px; color:#94A3B8;">Belum ada lagu di playlist online. Jadilah yang pertama menambahkan lagu!</div>';
+                playlistOnline = []; return;
             }
-            
-            playlist = [];
-            list.innerHTML = "";
+            playlistOnline = []; list.innerHTML = "";
 
-            snap.forEach(docSnap => {
-                const d = docSnap.data();
-                playlist.push({ id: docSnap.id, ...d });
-            });
+            snap.forEach(docSnap => { playlistOnline.push({ id: docSnap.id, ...docSnap.data() }); });
 
-            playlist.forEach((song, index) => {
+            playlistOnline.forEach((song, index) => {
                 const canDel = isAdmin || (song.uploaderPlat === myPlat);
                 const delBtn = canDel ? `<button class="btn-del-song" style="display:block;" onclick="event.stopPropagation(); deleteSong('${song.id}')"><i class="fas fa-trash"></i></button>` : '';
                 
                 list.innerHTML += `
-                    <div class="song-card" id="card-${index}" onclick="playSong(${index})">
+                    <div class="song-card" id="card-online-${index}" onclick="playSong(${index}, 'online')">
                         <div class="song-icon"><i class="fas fa-music"></i></div>
                         <div class="song-info">
                             <div class="song-title">${song.title}</div>
@@ -262,21 +315,68 @@
             });
         });
 
-        // KONTROL AUDIO
-        window.playSong = (index) => {
-            if (playlist.length === 0) return;
+        // LOAD DATA LOCAL (Membaca file dari memori HP)
+        window.handleLocalFiles = (event) => {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            const list = document.getElementById('playlistLocal');
+            if (playlistLocal.length === 0) list.innerHTML = ""; // Bersihin placeholder
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                // Buat URL sementara untuk file lokal
+                const fileURL = URL.createObjectURL(file);
+                
+                // Ambil nama file tanpa ekstensi .mp3 buat jadi judul
+                const rawName = file.name.replace(/\.[^/.]+$/, ""); 
+                
+                playlistLocal.push({
+                    title: rawName,
+                    artist: "Local File",
+                    url: fileURL
+                });
+
+                const index = playlistLocal.length - 1;
+                list.innerHTML += `
+                    <div class="song-card" id="card-local-${index}" onclick="playSong(${index}, 'local')">
+                        <div class="song-icon" style="background:#ECFDF5; color:var(--success);"><i class="fas fa-folder"></i></div>
+                        <div class="song-info">
+                            <div class="song-title" style="color:var(--text-main);">${rawName}</div>
+                            <div class="song-artist">Local Device</div>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // KONTROL AUDIO UTAMA
+        window.playSong = (index, sourceMode) => {
+            const currentList = sourceMode === 'online' ? playlistOnline : playlistLocal;
+            const currentIndexVar = sourceMode === 'online' ? currentIndexOnline : currentIndexLocal;
+            const prefixCard = sourceMode === 'online' ? 'card-online-' : 'card-local-';
+
+            if (currentList.length === 0) return;
             
-            // Hapus class playing dari card lama
-            if (currentSongIndex !== -1) {
-                const oldCard = document.getElementById(`card-${currentSongIndex}`);
+            // Matikan indikator lagu sebelumnya (baik di online maupun local)
+            if (currentIndexOnline !== -1) {
+                const oldCard = document.getElementById(`card-online-${currentIndexOnline}`);
+                if(oldCard) oldCard.classList.remove('playing');
+            }
+            if (currentIndexLocal !== -1) {
+                const oldCard = document.getElementById(`card-local-${currentIndexLocal}`);
                 if(oldCard) oldCard.classList.remove('playing');
             }
 
-            currentSongIndex = index;
-            const song = playlist[index];
+            // Update State
+            modePlay = sourceMode;
+            if(sourceMode === 'online') { currentIndexOnline = index; currentIndexLocal = -1; }
+            else { currentIndexLocal = index; currentIndexOnline = -1; }
+
+            const song = currentList[index];
             
-            // Tambah class playing ke card baru
-            const newCard = document.getElementById(`card-${index}`);
+            // Nyalakan indikator lagu yang baru
+            const newCard = document.getElementById(`${prefixCard}${index}`);
             if(newCard) newCard.classList.add('playing');
 
             // Set UI Player
@@ -285,18 +385,21 @@
             document.getElementById('npArtist').innerText = song.artist;
 
             // Set Source & Play
-            audio.src = convertDriveLink(song.driveUrl);
+            audio.src = sourceMode === 'online' ? convertDirectLink(song.driveUrl) : song.url;
             audio.play().then(() => {
                 playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             }).catch(e => {
-                alert("Gagal memutar lagu. Pastikan link Google Drive sudah di-setting 'Anyone with the link' / 'Siapa saja memiliki link'.");
+                alert("Gagal memutar lagu. Pastikan format file didukung.");
                 console.error(e);
             });
         };
 
         window.togglePlay = () => {
-            if (currentSongIndex === -1) {
-                if(playlist.length > 0) playSong(0);
+            const currentList = modePlay === 'online' ? playlistOnline : playlistLocal;
+            const currentIndexVar = modePlay === 'online' ? currentIndexOnline : currentIndexLocal;
+
+            if (currentIndexVar === -1) {
+                if(currentList.length > 0) playSong(0, modePlay);
                 return;
             }
             if (audio.paused) {
@@ -309,17 +412,23 @@
         };
 
         window.nextSong = () => {
-            if(playlist.length === 0) return;
-            let nextIndex = currentSongIndex + 1;
-            if(nextIndex >= playlist.length) nextIndex = 0;
-            playSong(nextIndex);
+            const currentList = modePlay === 'online' ? playlistOnline : playlistLocal;
+            const currentIndexVar = modePlay === 'online' ? currentIndexOnline : currentIndexLocal;
+
+            if(currentList.length === 0) return;
+            let nextIndex = currentIndexVar + 1;
+            if(nextIndex >= currentList.length) nextIndex = 0;
+            playSong(nextIndex, modePlay);
         };
 
         window.prevSong = () => {
-            if(playlist.length === 0) return;
-            let prevIndex = currentSongIndex - 1;
-            if(prevIndex < 0) prevIndex = playlist.length - 1;
-            playSong(prevIndex);
+            const currentList = modePlay === 'online' ? playlistOnline : playlistLocal;
+            const currentIndexVar = modePlay === 'online' ? currentIndexOnline : currentIndexLocal;
+
+            if(currentList.length === 0) return;
+            let prevIndex = currentIndexVar - 1;
+            if(prevIndex < 0) prevIndex = currentList.length - 1;
+            playSong(prevIndex, modePlay);
         };
 
         // AUTO NEXT JIKA HABIS
@@ -355,7 +464,7 @@
             }
         };
 
-        // FUNGSI MODAL TAMBAH LAGU
+        // FUNGSI MODAL TAMBAH LAGU ONLINE
         window.openAddModal = () => {
             document.getElementById('inpJudul').value = '';
             document.getElementById('inpArtis').value = '';
@@ -375,8 +484,10 @@
             const link = document.getElementById('inpLink').value.trim();
             const btn = document.getElementById('btnSaveSong');
 
-            if (!title || !link) return alert("Judul lagu dan Link Google Drive wajib diisi!");
-            if (!link.includes('drive.google.com')) return alert("Hanya menerima link Google Drive!");
+            if (!title || !link) return alert("Judul lagu dan Link wajib diisi!");
+            if (!link.includes('drive.google.com') && !link.includes('dropbox.com') && !link.includes('catbox.moe') && !link.endsWith('.mp3')) {
+                return alert("Gunakan link dari Google Drive, Dropbox, atau Catbox.moe!");
+            }
 
             btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
 
@@ -391,7 +502,7 @@
         };
 
         window.deleteSong = async (id) => {
-            if(confirm("Yakin ingin menghapus lagu ini dari playlist?")) {
+            if(confirm("Yakin ingin menghapus lagu ini dari playlist online?")) {
                 await deleteDoc(doc(db, 'mlu_music', id));
             }
         };
