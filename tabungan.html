@@ -7,7 +7,7 @@
     
     <script>
         // PENGHANCUR CACHE BIAR UPDATE LANGSUNG JALAN
-        const TABUNGAN_VERSION = "4.3_FIX_KAS_FINANCE_SYNC"; 
+        const TABUNGAN_VERSION = "4.4_SORT_SALDO_TERBANYAK"; 
         if (localStorage.getItem('maka_tabungan_v') !== TABUNGAN_VERSION) {
             if ('caches' in window) {
                 caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
@@ -244,7 +244,7 @@
 
         <div id="viewAdmin" class="content-area">
             <div style="background:#EFF6FF; padding:15px; border-radius:16px; border:1px solid #BFDBFE; font-size:11px; color:#1D4ED8; margin-bottom:20px;">
-                <b>AREA PENGURUS:</b> Gunakan tombol IKON KUNCI untuk melakukan Reset PIN / Wajah member.
+                <b>AREA PENGURUS:</b> Diurutkan berdasarkan Saldo Terbanyak. Gunakan IKON KUNCI untuk Reset PIN member.
             </div>
             <input type="text" id="searchMem" class="form-input" placeholder="Cari Nama / Plat Anggota..." style="margin-bottom:15px;" onkeyup="filterMembers()">
             <div id="adminMemberList"></div>
@@ -385,19 +385,6 @@
                 <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">BATAL</button>
                 <button class="btn-submit bg-sukses" onclick="submitKlaimNabung()">KONFIRMASI TRANSFER</button>
             </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="videoModal" style="z-index: 25000;">
-        <div class="modal-box" style="padding: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <div style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); font-size: 16px;"><i class="fab fa-tiktok"></i> TUTORIAL SETORAN</div>
-                <button onclick="document.getElementById('videoModal').style.display='none'" style="background:rgba(239,68,68,0.1); color:var(--danger); border:none; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer;"><i class="fas fa-times"></i></button>
-            </div>
-            <div style="position: relative; width: 100%; max-width: 320px; margin: 0 auto; border-radius: 16px; overflow: hidden; border: 2px solid #E2E8F0; background: #000;">
-                <iframe style="width: 100%; height: 500px; display: block;" src="https://www.tiktok.com/embed/v2/7616071100727971092" title="Tutorial Menabung MLU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <button class="btn-submit bg-cancel" style="margin-top:15px; font-weight: 800;" onclick="document.getElementById('videoModal').style.display='none'">TUTUP VIDEO</button>
         </div>
     </div>
 
@@ -801,14 +788,35 @@
         }
         function unlockApp() { document.getElementById('securityScreen').style.opacity = 0; setTimeout(() => { document.getElementById('securityScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; }, 500); }
 
+
+        // ========================================================
+        // MODIFIKASI SORTING DI ADMIN VIEW (SALDO TERBANYAK)
+        // ========================================================
         function initAdminData() {
             onSnapshot(query(collection(db, "mlu_members")), (snap) => {
                 let allMembers = []; snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
-                allMembers.sort((a,b) => {
+                
+                // 1. Kalkulasi Kode Unik yang stabil (berdasarkan Hierarki seperti di menu QRIS)
+                let tempForKode = [...allMembers].filter(m => m.plat && m.plat.replace(/\s+/g, '').toUpperCase() !== "B4248SWF");
+                tempForKode.sort((a,b) => {
                     const rankA = getRank(a.role); const rankB = getRank(b.role);
                     if (rankA !== rankB) return rankA - rankB;
                     return (a.namaKtp||a.nama||'').localeCompare(b.namaKtp||b.nama||'');
                 });
+                
+                // Ikat Kode Unik yang stabil ke objek member
+                allMembers.forEach(m => {
+                    let idx = tempForKode.findIndex(x => x.id === m.id);
+                    m.kodeUnikFinal = idx !== -1 ? String(idx + 1).padStart(3, '0') : '999';
+                });
+
+                // 2. SORTING UTAMA: Berdasarkan Saldo Terbanyak (Descending)
+                allMembers.sort((a,b) => {
+                    const saldoA = a.saldoTabungan || 0;
+                    const saldoB = b.saldoTabungan || 0;
+                    return saldoB - saldoA; // Dari yang terbanyak ke terkecil
+                });
+
                 window.allMembersCache = allMembers;
                 const searchKey = document.getElementById('searchMem').value;
                 if(searchKey) window.filterMembers(); else window.renderMembers(allMembers);
@@ -1030,17 +1038,24 @@
 
         window.renderMembers = (arr) => {
             const cont = document.getElementById('adminMemberList'); cont.innerHTML = "";
+            
+            // Render Peringkat 1, 2, 3 dengan Mahkota
             arr.forEach((m, i) => {
                 const namaTampil = m.namaKtp || m.nama || 'TANPA NAMA';
                 const saldoMember = m.saldoTabungan ? m.saldoTabungan.toLocaleString('id-ID') : '0';
                 
-                // Urutan index (i) ini persis merepresentasikan Kode Unik!
-                const noUrut = String(i + 1).padStart(3, '0');
+                // Gunakan stableKodeUnik yang sudah diikat sebelumnya (bukan urutan array)
+                const noUrut = m.kodeUnikFinal || '999';
                 
+                let rankBadge = '';
+                if (i === 0 && m.saldoTabungan > 0) rankBadge = '<i class="fas fa-crown" style="color:#F59E0B; margin-left:5px;"></i>';
+                else if (i === 1 && m.saldoTabungan > 0) rankBadge = '<i class="fas fa-crown" style="color:#94A3B8; margin-left:5px;"></i>';
+                else if (i === 2 && m.saldoTabungan > 0) rankBadge = '<i class="fas fa-crown" style="color:#B45309; margin-left:5px;"></i>';
+
                 cont.innerHTML += `
                 <div class="member-row">
                     <div>
-                        <div class="m-name" style="font-family:'Outfit'; font-size:14px; font-weight:800; color:var(--text-main);">${namaTampil}</div>
+                        <div class="m-name" style="font-family:'Outfit'; font-size:14px; font-weight:800; color:var(--text-main);">${i+1}. ${namaTampil} ${rankBadge}</div>
                         <div style="font-size:10px; color:var(--electric-blue); margin-top:2px;">[ Kode Unik: ${noUrut} ]</div>
                         <div class="m-plat" style="font-size:11px; color:#94A3B8; margin-top:2px;">${m.plat||'-'}</div>
                         <div style="font-size:12px; color:var(--success); font-weight:900; font-family:'Space Grotesk'; margin-top:4px;">Rp ${saldoMember}</div>
