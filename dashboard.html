@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "12.0_ULTIMATE_FINAL"; 
+        const DASH_VERSION = "12.2_SAFE_MODE"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -53,7 +53,7 @@
         .inbox-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-family: 'Space Grotesk'; font-size: 10px; font-weight: 900; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 3px 10px rgba(239,68,68,0.4); animation: pulseBadge 2s infinite;}
         @keyframes pulseBadge { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        /* --- RADAR CONTROL (OUTSIDE CARD) --- */
+        /* --- RADAR CONTROL --- */
         .radar-control { display: flex; justify-content: flex-end; padding: 0 25px 5px; align-items: center; gap: 8px; position: relative; z-index: 10;}
         .loc-label { font-size: 10px; font-weight: 900; color: var(--royal-blue); text-transform: uppercase; letter-spacing: 1px;}
         .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
@@ -67,22 +67,17 @@
         .vip-card { margin: 5px 20px 25px; border-radius: 24px; background: linear-gradient(135deg, #0A1128 0%, var(--royal-blue) 100%); position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(10,34,89,0.3); border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column;}
         .vip-card::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 15px 15px; opacity: 0.3; pointer-events: none; z-index: 1;}
         .vip-card::before { content: ''; position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%); border-radius: 50%; z-index: 1;}
-        
-        /* LOGO BESAR KANAN (DITENGAHIN DARI POJOK & LEBIH JELAS) */
         .vc-big-logo { position: absolute; right: 15px; top: 15px; height: 140px; width: auto; object-fit: contain; z-index: 2; opacity: 0.65; pointer-events: none;}
-
         .vc-top { padding: 20px 25px 10px; display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 3;}
         .vc-chip { width: 35px; height: 25px; background: linear-gradient(135deg, #FDE047, #CA8A04); border-radius: 6px; position: relative; overflow: hidden; opacity: 0.9;}
         .vc-chip::after { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.2); }
         .vc-chip::before { content: ''; position: absolute; left: 50%; top: 0; height: 100%; width: 1px; background: rgba(0,0,0,0.2); }
-        
         .vc-middle { padding: 0 25px; position: relative; z-index: 4; display: flex; align-items: center; gap: 15px;}
         .vc-avatar { width: 70px; height: 70px; border-radius: 22px; background: white; padding: 3px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); flex-shrink: 0;}
         .vc-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px;}
         .vc-info { flex: 1; }
         .vc-name { font-family: 'Outfit'; font-size: 22px; font-weight: 900; color: white; line-height: 1.1; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.8);}
         .vc-plat { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 700; color: #93C5FD; letter-spacing: 1.5px; text-shadow: 0 2px 5px rgba(0,0,0,0.8);}
-        
         .vc-bottom { margin-top: 20px; background: rgba(0,0,0,0.3); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 4; backdrop-filter: blur(10px);}
         .vc-role { font-size: 11px; font-weight: 800; color: white; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px;}
         .vc-role i { color: var(--gold-lux); }
@@ -100,7 +95,7 @@
         .custom-div-icon { background: transparent; border: none; }
 
         /* --- FC BANNER --- */
-        .fc-banner { border-radius: 20px; padding: 20px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 2px solid white; box-shadow: var(--shadow-soft); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;}
+        .fc-banner { border-radius: 20px; padding: 20px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 2px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;}
         .fc-banner:active { transform: scale(0.98); box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .fc-banner::before { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--electric-blue); }
         .fc-kc::before { background: #10B981; } 
@@ -110,7 +105,7 @@
         .fc-kc .banner-val { color: #10B981; background: rgba(16,185,129,0.1); }
 
         /* --- SULTAN TABUNGAN --- */
-        .sultan-panel { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 22px; padding: 20px; box-shadow: var(--shadow-soft); border: 2px solid white; position: relative; overflow: hidden;}
+        .sultan-panel { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 22px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.03); border: 2px solid white; position: relative; overflow: hidden;}
         .sultan-panel::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #FDE047, var(--gold-lux), #FDE047); }
         .sp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .sp-title { font-family: 'Outfit'; font-size: 15px; font-weight: 900; color: var(--royal-blue); display: flex; align-items: center; gap: 8px;}
@@ -129,8 +124,8 @@
 
         /* --- MENU GRID --- */
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;}
-        .menu-btn { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 2px solid white; border-radius: 22px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-soft); cursor: pointer; transition: 0.3s;}
-        .menu-btn:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px);}
+        .menu-btn { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 2px solid white; border-radius: 22px; padding: 20px 15px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s;}
+        .menu-btn:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.08); transform: translateY(-3px);}
         .menu-btn:active { transform: scale(0.95); box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
         .icon-box { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; color: white; transition: 0.3s;}
         .ic-anggota { background: linear-gradient(135deg, #60A5FA, #2563EB); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);} 
@@ -345,12 +340,11 @@
             <a href="info_mlu.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info MLU</div></a>
             <a href="store.html" class="menu-btn"><div class="icon-box ic-pasar"><i class="fas fa-store"></i></div><div class="menu-title">Pasar MLU</div></a>
             <a href="music.html" class="menu-btn">
-    <div class="icon-box" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);">
-        <i class="fas fa-music"></i>
-    </div>
-    <div class="menu-title">Music Player</div>
-</a>
-
+                <div class="icon-box" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);">
+                    <i class="fas fa-music"></i>
+                </div>
+                <div class="menu-title">Music Player</div>
+            </a>
         </div>
     </div>
 
@@ -410,10 +404,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+        import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
         // =========================================================================
-        // 1. DEKLARASI FUNGSI TOMBOL (WAJIB DI ATAS BIAR GA MACET)
+        // 1. DEKLARASI FUNGSI TOMBOL
         // =========================================================================
         window.bukaInbox = () => { 
             const m = document.getElementById('modalInbox'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); 
@@ -452,11 +446,63 @@
         window.logoutApp = () => { if(confirm("Yakin keluar?")) { localStorage.removeItem('maka_user'); window.location.href = 'index.html'; } };
 
         // =========================================================================
-        // 2. INISIALISASI FIREBASE 
+        // 2. INISIALISASI FIREBASE & NOTIFIKASI
         // =========================================================================
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
+
+        // --- SISTEM NOTIFIKASI OTOMATIS (SAFE MODE ANTI CRASH) ---
+        let messaging = null;
+        isSupported().then((supported) => {
+            if (supported) {
+                messaging = getMessaging(app);
+                
+                // Coba jalankan Push Notif
+                let uDataCek = null;
+                try { uDataCek = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+                if(uDataCek && uDataCek.id) aktifkanNotifikasi(uDataCek.id);
+
+                // Popup saat aplikasi terbuka
+                onMessage(messaging, (payload) => {
+                    alert(`🔔 ${payload.notification.title}\n${payload.notification.body}`);
+                });
+            } else {
+                console.log("Browser ini tidak mendukung Push Notifikasi.");
+            }
+        }).catch(err => console.log("FCM Support check error:", err));
+
+        async function aktifkanNotifikasi(userId) {
+            try {
+                if (!messaging || typeof window.Notification === 'undefined') return;
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    const token = await getToken(messaging, { vapidKey: "BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4" });
+                    if (token && userId) {
+                        await updateDoc(doc(db, "mlu_members", userId), { fcmToken: token });
+                        console.log("Token FCM tersimpan!");
+                    }
+                }
+            } catch (e) { console.log("Notif Error: ", e); }
+        }
+
+        // --- FUNGSI PENGIRIM NOTIFIKASI JAPRI (BISA DIPANGGIL DARI TOMBOL) ---
+        window.kirimNotifKePlat = async (platTarget, title, body) => {
+            const cleanPlatTarget = platTarget.replace(/\s+/g, '').toUpperCase();
+            const q = query(collection(db, "mlu_members"));
+            const snap = await getDocs(q);
+            let tokenTarget = null;
+            snap.forEach(doc => {
+                const d = doc.data();
+                if (d.plat && d.plat.replace(/\s+/g, '').toUpperCase() === cleanPlatTarget) {
+                    if (d.fcmToken) tokenTarget = d.fcmToken;
+                }
+            });
+            if (tokenTarget) {
+                const urlSakti = "https://script.google.com/macros/s/AKfycbxOXnRMTzXPPeY0NfSzcV2_MYL8FqznFecaUdQMJZd8L4rEJAacvgqMpYUD3ldj9jMr2g/exec";
+                fetch(urlSakti, { method: 'POST', body: JSON.stringify({ token: tokenTarget, title: title, body: body }) });
+            }
+        };
 
         const appGading = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppGading");
         const dbGading = getFirestore(appGading);
@@ -495,7 +541,6 @@
         document.getElementById('qrNamaFull').innerText = myName;
         document.getElementById('qrPlat').innerText = myPlat;
 
-        // TAMPILKAN TOMBOL ABSEN KOPDAR JIKA PENGURUS
         const roleCek = (uData.role || "").toUpperCase();
         if (roleCek !== 'MEMBER' && roleCek !== 'KELUARGA MLU' && roleCek !== 'GUEST' || myPlatClean === "B4248SWF") {
             const btnAbsen = document.getElementById('btnAbsenKopdar');
@@ -515,19 +560,44 @@
         function showRadar() { const c = document.getElementById('radarContainer'); c.style.display = 'block'; setTimeout(() => { if(!map) { map = L.map('radarMap').setView([-6.1754, 106.8272], 10); L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution: 'CartoDB'}).addTo(map); loadMembers(); } map.invalidateSize(); }, 300); }
         function hideRadar() { document.getElementById('radarContainer').style.display = 'none'; }
         function loadMembers() { onSnapshot(collection(db, "mlu_members"), (snap) => { snap.forEach(doc => { const m = doc.data(); if(m.isSharing && m.lat && m.lng) { const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="marker-pin"><img src="${m.foto||'https://ui-avatars.com/api/?background=2D63ED&color=fff'}"><div class="marker-label">${m.nama}</div></div>`, iconSize:[30,42], iconAnchor:[15,42] }); if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]); else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map); } else if(markers[doc.id]) { map.removeLayer(markers[doc.id]); delete markers[doc.id]; } }); }); }
-        function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",uData.id),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
-        function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",uData.id),{isSharing:false}); }
+        function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",userId),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
+        function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",userId),{isSharing:false}); }
 
+        // --- FUNGSI DARURAT SOS (SUDAH TERSAMBUNG NOTIFIKASI) ---
         window.sendSos = async () => {
             if(!navigator.geolocation) return alert("Sistem GPS tidak didukung di HP Anda.");
-            const btn = document.querySelector('#sosModal .btn-modal:last-child'); const originalText = btn.innerHTML; btn.innerHTML = "MENCARI LOKASI...";
+            const btn = document.querySelector('#sosModal .btn-modal:last-child'); 
+            const originalText = btn.innerHTML; 
+            btn.innerHTML = "MENCARI LOKASI...";
+            
+            const jenisSos = document.getElementById('sosType').value;
+
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 try {
-                    await addDoc(collection(db, "mlu_sos"), { memberId: uData.id, nama: myName, plat: myPlat, foto: uData.foto || '', hp: uData.hp || '', jenis: document.getElementById('sosType').value, keterangan: document.getElementById('sosDesc').value, lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now(), status: 'ACTIVE' });
-                    document.getElementById('sosModal').classList.remove('show'); setTimeout(() => document.getElementById('sosModal').style.display = 'none', 300);
-                    alert("🚨 DARURAT S.O.S BERHASIL DIKIRIM! Command Center sedang memproses lokasi Anda."); btn.innerHTML = originalText;
-                } catch(e) { alert("Gagal mengirim SOS: " + e.message); btn.innerHTML = originalText; }
-            }, () => { alert("⚠️ AKSES DITOLAK! Izinkan akses Lokasi (GPS) agar bantuan bisa dikirim!"); btn.innerHTML = originalText; }, { enableHighAccuracy: true });
+                    // 1. Simpan Laporan ke Database
+                    await addDoc(collection(db, "mlu_sos"), { memberId: userId, nama: myName, plat: myPlat, foto: uData.foto || '', hp: uData.hp || '', jenis: jenisSos, keterangan: document.getElementById('sosDesc').value, lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now(), status: 'ACTIVE' });
+                    
+                    // 2. Tembak Notifikasi ke Semua Member via Google Script
+                    const urlSakti = "https://script.google.com/macros/s/AKfycbxOXnRMTzXPPeY0NfSzcV2_MYL8FqznFecaUdQMJZd8L4rEJAacvgqMpYUD3ldj9jMr2g/exec";
+                    fetch(urlSakti, {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            token: "semua_member", 
+                            title: `🚨 S.O.S: ${jenisSos}`, 
+                            body: `${myName} (${myPlat}) butuh bantuan darurat segera! Cek Radar Map sekarang.` 
+                        })
+                    }).catch(e => console.log("Gagal nembak notif SOS:", e));
+
+                    document.getElementById('sosModal').classList.remove('show'); 
+                    setTimeout(() => document.getElementById('sosModal').style.display = 'none', 300);
+                    alert("🚨 DARURAT S.O.S BERHASIL DIKIRIM! Bantuan sedang merapat."); 
+                    btn.innerHTML = originalText;
+                } catch(e) { 
+                    alert("Gagal mengirim SOS: " + e.message); btn.innerHTML = originalText; 
+                }
+            }, () => { 
+                alert("⚠️ AKSES DITOLAK! Izinkan akses Lokasi (GPS) agar bantuan bisa dikirim!"); btn.innerHTML = originalText; 
+            }, { enableHighAccuracy: true });
         };
 
         window.simpanProfil = async () => {
@@ -648,5 +718,20 @@
             localStorage.setItem('maka_unread_count', unreadCount.toString());
         });
     </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        // ... (Kodingan logika aplikasi) ...
+    </script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./firebase-messaging-sw.js')
+            .then(reg => console.log('SW Berhasil: ', reg.scope))
+            .catch(err => console.log('SW Gagal: ', err));
+        });
+      }
+    </script>
+
 </body>
 </html>

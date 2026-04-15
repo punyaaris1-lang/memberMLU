@@ -345,5 +345,15 @@
             if (e.key === 'Enter') { document.getElementById('inputPin').focus(); }
         });
     </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./firebase-messaging-sw.js')
+        .then(reg => console.log('SW Berhasil: ', reg.scope))
+        .catch(err => console.log('SW Gagal: ', err));
+    });
+  }
+</script>
+
 </body>
 </html>
