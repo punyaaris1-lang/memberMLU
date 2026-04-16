@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "12.2_SAFE_MODE"; 
+        const DASH_VERSION = "13.0_REMINDER_TABUNGAN"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -193,6 +193,22 @@
 
     <div class="ambient-light light-1"></div>
     <div class="ambient-light light-2"></div>
+
+    <div class="modal-glass-overlay" id="reminderTabunganModal" style="z-index: 100000;">
+        <div class="modal-glass-box" style="text-align:center; max-width: 320px;">
+            <div style="width:70px; height:70px; background:linear-gradient(135deg, var(--gold-lux), #F59E0B); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:white; font-size:30px; box-shadow: 0 10px 20px rgba(212,175,55,0.4);">
+                <i class="fas fa-piggy-bank"></i>
+            </div>
+            <h3 style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin:0 0 10px;">PESAN CINTA MLU 💙</h3>
+            <p id="reminderText" style="font-size:12px; color:var(--text-main); margin-bottom:20px; line-height: 1.5; text-align: left;">
+                Hai, <b>Nama</b><br><br>...
+            </p>
+            <div style="font-family:'Space Grotesk'; font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom: 20px;">
+                Dari Kami yang peduli Kamu,<br>MAKA LINTAS UTARA
+            </div>
+            <button class="btn-modal" style="background:var(--electric-blue); color:white; width:100%; box-shadow: 0 10px 20px rgba(45,99,237,0.3);" onclick="tutupReminderTabungan()">SAYA SIAP MENABUNG</button>
+        </div>
+    </div>
 
     <div id="confirmModal" class="modal-glass-overlay">
         <div class="modal-glass-box">
@@ -403,7 +419,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
         // =========================================================================
@@ -417,6 +433,10 @@
         };
         window.tutupInbox = (e) => { if(e.target.id === 'modalInbox') { e.target.classList.remove('show'); setTimeout(()=>e.target.style.display='none',300); }};
         
+        window.tutupReminderTabungan = () => { 
+            const m = document.getElementById('reminderTabunganModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); 
+        };
+
         window.tampilkanQR = () => { 
             let uid = "GUEST", uName = "Nama", uPlat = "B 0000";
             try { 
@@ -457,19 +477,11 @@
         isSupported().then((supported) => {
             if (supported) {
                 messaging = getMessaging(app);
-                
-                // Coba jalankan Push Notif
                 let uDataCek = null;
                 try { uDataCek = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
                 if(uDataCek && uDataCek.id) aktifkanNotifikasi(uDataCek.id);
-
-                // Popup saat aplikasi terbuka
-                onMessage(messaging, (payload) => {
-                    alert(`🔔 ${payload.notification.title}\n${payload.notification.body}`);
-                });
-            } else {
-                console.log("Browser ini tidak mendukung Push Notifikasi.");
-            }
+                onMessage(messaging, (payload) => { alert(`🔔 ${payload.notification.title}\n${payload.notification.body}`); });
+            } else { console.log("Browser ini tidak mendukung Push Notifikasi."); }
         }).catch(err => console.log("FCM Support check error:", err));
 
         async function aktifkanNotifikasi(userId) {
@@ -478,15 +490,11 @@
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
                     const token = await getToken(messaging, { vapidKey: "BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4" });
-                    if (token && userId) {
-                        await updateDoc(doc(db, "mlu_members", userId), { fcmToken: token });
-                        console.log("Token FCM tersimpan!");
-                    }
+                    if (token && userId) { await updateDoc(doc(db, "mlu_members", userId), { fcmToken: token }); console.log("Token FCM tersimpan!"); }
                 }
             } catch (e) { console.log("Notif Error: ", e); }
         }
 
-        // --- FUNGSI PENGIRIM NOTIFIKASI JAPRI (BISA DIPANGGIL DARI TOMBOL) ---
         window.kirimNotifKePlat = async (platTarget, title, body) => {
             const cleanPlatTarget = platTarget.replace(/\s+/g, '').toUpperCase();
             const q = query(collection(db, "mlu_members"));
@@ -494,9 +502,7 @@
             let tokenTarget = null;
             snap.forEach(doc => {
                 const d = doc.data();
-                if (d.plat && d.plat.replace(/\s+/g, '').toUpperCase() === cleanPlatTarget) {
-                    if (d.fcmToken) tokenTarget = d.fcmToken;
-                }
+                if (d.plat && d.plat.replace(/\s+/g, '').toUpperCase() === cleanPlatTarget) { if (d.fcmToken) tokenTarget = d.fcmToken; }
             });
             if (tokenTarget) {
                 const urlSakti = "https://script.google.com/macros/s/AKfycbxOXnRMTzXPPeY0NfSzcV2_MYL8FqznFecaUdQMJZd8L4rEJAacvgqMpYUD3ldj9jMr2g/exec";
@@ -553,6 +559,69 @@
         initDataListeners(); 
         startNearestFCRadar();
 
+        // -------------------------------------------------------------------------
+        // FITUR BARU: CEK & TAMPILKAN REMINDER TABUNGAN (ANTI-SPAM)
+        // -------------------------------------------------------------------------
+        async function checkTabunganReminder() {
+            const todayStr = new Date().toDateString();
+            const lastReminder = localStorage.getItem('maka_last_tabungan_reminder');
+            
+            // Anti-Spam: Cukup ingatkan 1x sehari saja per user
+            if (lastReminder === todayStr) return;
+
+            try {
+                const userRef = doc(db, "mlu_members", userId);
+                const userSnap = await getDoc(userRef);
+                if (!userSnap.exists()) return;
+
+                const userData = userSnap.data();
+                const saldo = userData.saldoTabungan || 0;
+
+                let isHarusDiingatkan = false;
+                let pesanKhusus = "";
+
+                if (saldo === 0) {
+                    isHarusDiingatkan = true;
+                    pesanKhusus = "Sistem mendeteksi bahwa kamu sama sekali belum melakukan kegiatan menabung.";
+                } else {
+                    // Cek jarak waktu mutasi 'IN' terakhir
+                    const qTrx = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", userId), where("type", "==", "IN"), orderBy("timestamp", "desc"), limit(1));
+                    const trxSnap = await getDocs(qTrx);
+                    
+                    if (trxSnap.empty) {
+                        isHarusDiingatkan = true;
+                        pesanKhusus = "Sistem mendeteksi bahwa kamu belum memiliki catatan setoran tabungan yang tervalidasi.";
+                    } else {
+                        const lastTrx = trxSnap.docs[0].data();
+                        const timeDiff = Date.now() - lastTrx.timestamp;
+                        const daysDiff = timeDiff / (1000 * 3600 * 24);
+                        
+                        if (daysDiff >= 3) {
+                            isHarusDiingatkan = true;
+                            pesanKhusus = "Sistem mendeteksi bahwa kamu sudah beberapa hari ini tidak menabung.";
+                        }
+                    }
+                }
+
+                if (isHarusDiingatkan) {
+                    const textEl = document.getElementById('reminderText');
+                    textEl.innerHTML = `Hai, <b>${myName}</b><br><br>${pesanKhusus} Tahukah kamu bahwa Maka Lintas Utara, wadah yang menaungi kamu memiliki program agar keluarga MLU bebas dari OD lewat program tabungan.<br><br>Yuk mulai menabung mulai hari ini, biar kita bisa terus sama-sama sebagai keluarga sampai motor kita lunas.`;
+                    
+                    const m = document.getElementById('reminderTabunganModal');
+                    m.style.display = 'flex';
+                    setTimeout(() => m.classList.add('show'), 100);
+
+                    // Tandai bahwa hari ini sudah diingatkan
+                    localStorage.setItem('maka_last_tabungan_reminder', todayStr);
+                }
+            } catch (e) {
+                console.log("Error cek reminder tabungan: ", e);
+            }
+        }
+        
+        // Panggil fungsi reminder setelah data basic ter-load
+        setTimeout(checkTabunganReminder, 1500);
+
         // =========================================================================
         // 4. JALANKAN FUNGSI LAINNYA
         // =========================================================================
@@ -563,7 +632,6 @@
         function startTracking() { if(navigator.geolocation) { watchId = navigator.geolocation.watchPosition(pos => updateDoc(doc(db,"mlu_members",userId),{lat:pos.coords.latitude,lng:pos.coords.longitude,isSharing:true}), null, {enableHighAccuracy:true}); } }
         function stopTracking() { if(watchId) navigator.geolocation.clearWatch(watchId); updateDoc(doc(db,"mlu_members",userId),{isSharing:false}); }
 
-        // --- FUNGSI DARURAT SOS (SUDAH TERSAMBUNG NOTIFIKASI) ---
         window.sendSos = async () => {
             if(!navigator.geolocation) return alert("Sistem GPS tidak didukung di HP Anda.");
             const btn = document.querySelector('#sosModal .btn-modal:last-child'); 
@@ -574,19 +642,10 @@
 
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 try {
-                    // 1. Simpan Laporan ke Database
                     await addDoc(collection(db, "mlu_sos"), { memberId: userId, nama: myName, plat: myPlat, foto: uData.foto || '', hp: uData.hp || '', jenis: jenisSos, keterangan: document.getElementById('sosDesc').value, lat: pos.coords.latitude, lng: pos.coords.longitude, timestamp: Date.now(), status: 'ACTIVE' });
                     
-                    // 2. Tembak Notifikasi ke Semua Member via Google Script
                     const urlSakti = "https://script.google.com/macros/s/AKfycbxOXnRMTzXPPeY0NfSzcV2_MYL8FqznFecaUdQMJZd8L4rEJAacvgqMpYUD3ldj9jMr2g/exec";
-                    fetch(urlSakti, {
-                        method: 'POST',
-                        body: JSON.stringify({ 
-                            token: "semua_member", 
-                            title: `🚨 S.O.S: ${jenisSos}`, 
-                            body: `${myName} (${myPlat}) butuh bantuan darurat segera! Cek Radar Map sekarang.` 
-                        })
-                    }).catch(e => console.log("Gagal nembak notif SOS:", e));
+                    fetch(urlSakti, { method: 'POST', body: JSON.stringify({ token: "semua_member", title: `🚨 S.O.S: ${jenisSos}`, body: `${myName} (${myPlat}) butuh bantuan darurat segera! Cek Radar Map sekarang.` }) }).catch(e => console.log("Gagal nembak notif SOS:", e));
 
                     document.getElementById('sosModal').classList.remove('show'); 
                     setTimeout(() => document.getElementById('sosModal').style.display = 'none', 300);
@@ -606,7 +665,6 @@
             try { await updateDoc(doc(db, "mlu_members", userId), { namaKtp: newNama, noWa: newWa }); uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData)); alert("Profil diperbarui!"); location.reload(); } catch(e) { alert("Error: " + e.message); }
         };
 
-        // GADING & KC LIVE STATUS
         function initDataListeners() { 
             onSnapshot(refGading, (snap) => { 
                 if(!snap.exists()) return; 
@@ -629,7 +687,6 @@
             }
         });
 
-        // RADAR GPS
         function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
         
         function startNearestFCRadar() {
@@ -717,10 +774,6 @@
             if(unreadCount > 0) { badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount; const savedUnread = parseInt(localStorage.getItem('maka_unread_count') || '0'); if(unreadCount > savedUnread && navigator.vibrate) navigator.vibrate([100, 50, 100]); } else { badge.style.display = 'none'; }
             localStorage.setItem('maka_unread_count', unreadCount.toString());
         });
-    </script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        // ... (Kodingan logika aplikasi) ...
     </script>
 
     <script>
