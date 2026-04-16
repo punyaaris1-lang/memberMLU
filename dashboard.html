@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "13.0_REMINDER_TABUNGAN"; 
+        const DASH_VERSION = "13.1_REMINDER_FIX"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -339,7 +339,7 @@
         </div>
 
         <div class="menu-grid fade-up d-4">
-                      <a href="kopgab.html" class="menu-btn" style="border-color: #EF4444; background: rgba(239,68,68,0.05);">
+            <a href="kopgab.html" class="menu-btn" style="border-color: #EF4444; background: rgba(239,68,68,0.05);">
                 <div class="icon-box" style="background: linear-gradient(135deg, #EF4444, #991B1B); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);">
                     <i class="fas fa-crosshairs fa-spin" style="--fa-animation-duration: 4s;"></i>
                 </div>
@@ -567,13 +567,12 @@
         startNearestFCRadar();
 
         // -------------------------------------------------------------------------
-        // FITUR BARU: CEK & TAMPILKAN REMINDER TABUNGAN (ANTI-SPAM)
+        // FITUR BARU: CEK & TAMPILKAN REMINDER TABUNGAN (ANTI-ERROR & ANTI-SPAM)
         // -------------------------------------------------------------------------
         async function checkTabunganReminder() {
             const todayStr = new Date().toDateString();
             const lastReminder = localStorage.getItem('maka_last_tabungan_reminder');
             
-            // Anti-Spam: Cukup ingatkan 1x sehari saja per user
             if (lastReminder === todayStr) return;
 
             try {
@@ -591,18 +590,24 @@
                     isHarusDiingatkan = true;
                     pesanKhusus = "Sistem mendeteksi bahwa kamu sama sekali belum melakukan kegiatan menabung.";
                 } else {
-                    // Cek jarak waktu mutasi 'IN' terakhir
-                    const qTrx = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", userId), where("type", "==", "IN"), orderBy("timestamp", "desc"), limit(1));
+                    // Penarikan data lebih aman tanpa butuh Index khusus
+                    const qTrx = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", userId));
                     const trxSnap = await getDocs(qTrx);
                     
-                    if (trxSnap.empty) {
+                    let lastInTime = 0;
+                    trxSnap.forEach(d => {
+                        const data = d.data();
+                        // Cari transaksi MASUK yang SUKSES divalidasi
+                        if(data.type === 'IN' && data.status === 'SUCCESS' && data.timestamp > lastInTime) {
+                            lastInTime = data.timestamp;
+                        }
+                    });
+                    
+                    if (lastInTime === 0) {
                         isHarusDiingatkan = true;
-                        pesanKhusus = "Sistem mendeteksi bahwa kamu belum memiliki catatan setoran tabungan yang tervalidasi.";
+                        pesanKhusus = "Sistem mendeteksi bahwa kamu belum memiliki catatan setoran tabungan yang divalidasi.";
                     } else {
-                        const lastTrx = trxSnap.docs[0].data();
-                        const timeDiff = Date.now() - lastTrx.timestamp;
-                        const daysDiff = timeDiff / (1000 * 3600 * 24);
-                        
+                        const daysDiff = (Date.now() - lastInTime) / (1000 * 3600 * 24);
                         if (daysDiff >= 3) {
                             isHarusDiingatkan = true;
                             pesanKhusus = "Sistem mendeteksi bahwa kamu sudah beberapa hari ini tidak menabung.";
@@ -622,7 +627,7 @@
                     localStorage.setItem('maka_last_tabungan_reminder', todayStr);
                 }
             } catch (e) {
-                console.log("Error cek reminder tabungan: ", e);
+                console.log("Error reminder: ", e);
             }
         }
         
