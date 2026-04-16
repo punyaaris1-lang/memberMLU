@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JOINT OPS - MLU x KC</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@700;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root { 
+            --bg-dark: #050B14; --panel-bg: #0A1128; --neon-blue: #00F0FF; 
+            --neon-red: #FF003C; --gold: #D4AF37; --text-main: #E2E8F0; 
+        }
+        body { margin: 0; background: var(--bg-dark); color: var(--text-main); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        /* HEADER TACTICAL */
+        .ops-header { background: linear-gradient(180deg, rgba(255,0,60,0.15) 0%, transparent 100%); padding: 30px 20px 20px; text-align: center; border-bottom: 1px solid rgba(255,0,60,0.3); position: relative;}
+        .ops-header::before { content: 'RESTRICTED AREA'; position: absolute; top: 10px; left: 10px; font-family: 'Space Grotesk'; font-size: 8px; color: var(--neon-red); letter-spacing: 2px;}
+        .ops-title { font-family: 'Outfit'; font-size: 24px; font-weight: 900; color: white; margin: 0; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,0,60,0.5);}
+        .ops-subtitle { font-family: 'Space Grotesk'; font-size: 11px; color: var(--gold); letter-spacing: 3px; margin-top: 5px; font-weight: 800;}
+
+        /* TAB NAVIGATION */
+        .tab-container { display: flex; background: var(--panel-bg); border-bottom: 2px solid #1E293B; position: sticky; top: 0; z-index: 100;}
+        .tab-btn { flex: 1; padding: 15px 0; background: transparent; border: none; color: #64748B; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: 0.3s; border-bottom: 2px solid transparent;}
+        .tab-btn.active { color: var(--neon-blue); border-bottom-color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,240,255,0.4); background: rgba(0,240,255,0.05);}
+
+        .content-area { padding: 20px; display: none; animation: fadeIn 0.3s;}
+        .content-area.active { display: block; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+
+        /* --- TAB 1: MISSION BOARD --- */
+        .mission-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 15px;}
+        .mc-title { font-family: 'Outfit'; font-size: 16px; color: var(--gold); font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px dashed rgba(212,175,55,0.3); padding-bottom: 10px;}
+        .timeline-item { display: flex; gap: 15px; margin-bottom: 15px;}
+        .tl-time { font-family: 'Space Grotesk'; font-weight: 900; color: var(--neon-blue); font-size: 13px; width: 45px; flex-shrink: 0;}
+        .tl-desc { font-size: 12px; color: #CBD5E1; line-height: 1.5;}
+        
+        .btn-rsvp { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--neon-red), #991B1B); color: white; border: none; border-radius: 12px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 14px; letter-spacing: 2px; cursor: pointer; box-shadow: 0 0 20px rgba(255,0,60,0.3); transition: 0.2s;}
+        .btn-rsvp:active { transform: scale(0.95); }
+        .rsvp-stats { display: flex; justify-content: space-around; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);}
+        .stat-box { text-align: center; }
+        .stat-num { font-family: 'Outfit'; font-size: 24px; font-weight: 900; color: white;}
+        .stat-lbl { font-size: 9px; color: #94A3B8; letter-spacing: 1px;}
+
+        /* --- TAB 2: RADAR MAP --- */
+        #radarMap { width: 100%; height: 60vh; border-radius: 16px; border: 2px solid var(--neon-blue); box-shadow: 0 0 20px rgba(0,240,255,0.2);}
+        .btn-radar { width: 100%; padding: 15px; background: rgba(0,240,255,0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue); border-radius: 12px; margin-top: 15px; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer;}
+        
+        /* Marker Custom */
+        .marker-mlu { width: 25px; height: 25px; background: #2D63ED; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px #2D63ED;}
+        .marker-kc { width: 25px; height: 25px; background: #10B981; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 10px #10B981;}
+        .marker-label-hud { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; font-size: 8px; font-family: 'Space Grotesk'; border-radius: 4px; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2);}
+
+        /* --- TAB 3: RADIO CHAT --- */
+        .chat-container { height: 60vh; display: flex; flex-direction: column; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; overflow: hidden;}
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;}
+        .chat-bubble { max-width: 85%; padding: 10px 15px; border-radius: 12px; position: relative;}
+        .chat-mlu { background: rgba(45,99,237,0.15); border: 1px solid rgba(45,99,237,0.3); align-self: flex-start; border-bottom-left-radius: 0;}
+        .chat-kc { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); align-self: flex-start; border-bottom-left-radius: 0;}
+        .chat-me { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); align-self: flex-end; border-bottom-right-radius: 0;}
+        
+        .chat-sender { font-size: 9px; font-weight: 800; font-family: 'Space Grotesk'; margin-bottom: 4px; display: flex; align-items: center; gap: 5px;}
+        .chat-mlu .chat-sender { color: #60A5FA; }
+        .chat-kc .chat-sender { color: #34D399; }
+        .chat-me .chat-sender { color: var(--gold); justify-content: flex-end;}
+        
+        .chat-text { font-size: 13px; color: white; line-height: 1.4;}
+        
+        .chat-input-area { padding: 10px; background: rgba(255,255,255,0.05); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1);}
+        .chat-input { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px 15px; border-radius: 20px; font-family: 'Inter'; outline: none;}
+        .chat-input:focus { border-color: var(--neon-blue); }
+        .btn-send { width: 45px; height: 45px; border-radius: 50%; background: var(--neon-blue); color: black; border: none; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 15px rgba(0,240,255,0.4);}
+
+        .back-nav { padding: 20px; text-align: center; }
+        .btn-back { background: transparent; border: 1px solid #64748B; color: #94A3B8; padding: 12px 20px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;}
+    </style>
+</head>
+<body>
+
+    <div class="ops-header">
+        <h1 class="ops-title">JOINT OPERATION</h1>
+        <div class="ops-subtitle">MLU &times; KARTIKA CHANDRA</div>
+    </div>
+
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="switchTab('info')"><i class="fas fa-clipboard-list"></i> MISSION</button>
+        <button class="tab-btn" onclick="switchTab('radar')"><i class="fas fa-satellite-dish"></i> RADAR</button>
+        <button class="tab-btn" onclick="switchTab('chat')"><i class="fas fa-walkie-talkie"></i> RADIO</button>
+    </div>
+
+    <div id="viewInfo" class="content-area active">
+        <div class="mission-card">
+            <div class="mc-title"><i class="fas fa-map-marker-alt"></i> TITIK KUMPUL (TIKUM)</div>
+            <div style="font-size:13px; color:white; font-weight:bold; margin-bottom:5px;">Showroom Polytron KC</div>
+            <div style="font-size:11px; color:#94A3B8; margin-bottom:15px;">Jl. Jend. Sudirman, Jakarta Selatan</div>
+            <a href="https://maps.app.goo.gl/KC_MAPS_LINK" target="_blank" style="display:inline-block; padding:8px 15px; background:rgba(255,255,255,0.1); color:white; border-radius:8px; text-decoration:none; font-size:11px; font-weight:bold; border:1px solid rgba(255,255,255,0.2);"><i class="fas fa-location-arrow"></i> Buka Google Maps</a>
+        </div>
+
+        <div class="mission-card">
+            <div class="mc-title"><i class="fas fa-clock"></i> RUNDOWN ACARA (TGL 24)</div>
+            <div class="timeline-item"><div class="tl-time">08:00</div><div class="tl-desc">Kumpul di Tikum masing-masing (MLU & KC). Briefing awal.</div></div>
+            <div class="timeline-item"><div class="tl-time">09:00</div><div class="tl-desc">Start Rolling Thunder gabungan menuju lokasi utama.</div></div>
+            <div class="timeline-item"><div class="tl-time">10:30</div><div class="tl-desc">Tiba di lokasi. Sambutan Ketum MLU & Korlap KC.</div></div>
+            <div class="timeline-item"><div class="tl-time">11:00</div><div class="tl-desc">Sesi Foto Bersama & Ramah Tamah / Ngopi.</div></div>
+        </div>
+
+        <button class="btn-rsvp" id="btnRsvp" onclick="konfirmasiHadir()"><i class="fas fa-check-circle"></i> SAYA SIAP HADIR</button>
+
+        <div class="rsvp-stats">
+            <div class="stat-box">
+                <div class="stat-num" id="countMLU">0</div>
+                <div class="stat-lbl" style="color:#60A5FA;">PASUKAN MLU</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-num" id="countKC">0</div>
+                <div class="stat-lbl" style="color:#34D399;">PASUKAN KC</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewRadar" class="content-area">
+        <div style="font-size:11px; color:#94A3B8; margin-bottom:10px; text-align:center;">Sistem melacak pergerakan gabungan MLU & KC secara real-time.</div>
+        <div id="radarMap"></div>
+        <button class="btn-radar" id="btnToggleGps" onclick="toggleRadar()"><i class="fas fa-broadcast-tower"></i> NYALAKAN RADAR SAYA</button>
+    </div>
+
+    <div id="viewChat" class="content-area">
+        <div class="chat-container">
+            <div class="chat-messages" id="chatList">
+                <div style="text-align:center; font-size:11px; color:#64748B; margin-top:20px;">Menyambungkan ke frekuensi gabungan...</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Ketik laporan komando..." onkeypress="if(event.key === 'Enter') kirimPesan()">
+                <button class="btn-send" onclick="kirimPesan()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="back-nav">
+        <a href="dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i> KEMBALI KE MARKAS</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // KONEKSI FIREBASE MLU (Dipakai sebagai Server Gabungan)
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
+
+        // DATA USER
+        let uData = null; try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch(e){}
+        if(!uData) window.location.href = 'index.html';
+
+        const myName = uData.namaKtp || uData.namaWa || "Member";
+        const myPlat = uData.plat || "B XXXX XX";
+        const myId = uData.id || myPlat.replace(/\s+/g, '').toUpperCase();
+        // Deteksi Asal Klub (Bisa diedit logikanya kalau ada penanda khusus KC)
+        // Sementara kita deteksi dari Role atau kita anggap default MLU, 
+        // tapi fitur ini bisa dipakai member KC kalau mereka login/dikasih akses.
+        const myClub = (uData.role && uData.role.includes("KC")) ? "KC" : "MLU"; 
+
+        // --- SISTEM TAB ---
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.content-area').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            event.target.classList.add('active');
+            if(tab === 'radar' && map) setTimeout(() => map.invalidateSize(), 300);
+        }
+
+        // --- SISTEM RSVP HADIR ---
+        window.konfirmasiHadir = async () => {
+            const btn = document.getElementById('btnRsvp');
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> MENYIMPAN...";
+            try {
+                await setDoc(doc(db, "kopgab_rsvp", myId), {
+                    nama: myName, plat: myPlat, club: myClub, timestamp: serverTimestamp()
+                });
+                btn.innerHTML = "<i class='fas fa-check-double'></i> SIAP 86! TERCATAT.";
+                btn.style.background = "linear-gradient(135deg, #10B981, #059669)";
+                btn.style.boxShadow = "0 0 20px rgba(16,185,129,0.3)";
+            } catch (e) {
+                alert("Gagal menyimpan: " + e.message);
+                btn.innerHTML = "<i class='fas fa-check-circle'></i> SAYA SIAP HADIR";
+            }
+        };
+
+        // Hitung Data RSVP Live
+        onSnapshot(collection(db, "kopgab_rsvp"), (snap) => {
+            let mluCount = 0; let kcCount = 0; let iAmIn = false;
+            snap.forEach(doc => {
+                const d = doc.data();
+                if(d.club === "MLU") mluCount++; else kcCount++;
+                if(doc.id === myId) iAmIn = true;
+            });
+            document.getElementById('countMLU').innerText = mluCount;
+            document.getElementById('countKC').innerText = kcCount;
+            
+            if(iAmIn) {
+                const btn = document.getElementById('btnRsvp');
+                btn.innerHTML = "<i class='fas fa-check-double'></i> SIAP 86! TERCATAT.";
+                btn.style.background = "linear-gradient(135deg, #10B981, #059669)";
+                btn.style.boxShadow = "0 0 20px rgba(16,185,129,0.3)";
+            }
+        });
+
+        // --- SISTEM RADIO CHAT ---
+        const chatList = document.getElementById('chatList');
+        const qChat = query(collection(db, "kopgab_chat"), orderBy("timestamp", "asc"));
+        
+        onSnapshot(qChat, (snap) => {
+            chatList.innerHTML = "";
+            if(snap.empty) { chatList.innerHTML = "<div style='text-align:center; font-size:11px; color:#64748B;'>Frekuensi sepi. Jadilah yang pertama lapor komando!</div>"; return; }
+            
+            snap.forEach(doc => {
+                const d = doc.data();
+                const isMe = d.uid === myId;
+                const clubColor = d.club === "MLU" ? "chat-mlu" : "chat-kc";
+                const bubbleClass = isMe ? "chat-me" : clubColor;
+                const clubIcon = d.club === "MLU" ? "<i class='fas fa-shield-alt'></i> MLU" : "<i class='fas fa-bolt'></i> KC";
+
+                chatList.innerHTML += `
+                <div class="chat-bubble ${bubbleClass}">
+                    <div class="chat-sender">${isMe ? "" : clubIcon + " | "} ${d.nama} [${d.plat}]</div>
+                    <div class="chat-text">${d.text}</div>
+                </div>`;
+            });
+            chatList.scrollTop = chatList.scrollHeight; // Auto scroll ke bawah
+        });
+
+        window.kirimPesan = async () => {
+            const input = document.getElementById('chatInput');
+            const teks = input.value.trim();
+            if(!teks) return;
+            input.value = "";
+            await addDoc(collection(db, "kopgab_chat"), {
+                uid: myId, nama: myName, plat: myPlat, club: myClub, text: teks, timestamp: serverTimestamp()
+            });
+        };
+
+        // --- SISTEM RADAR GABUNGAN ---
+        let map = null; let markers = {}; let watchId = null; let isRadarOn = false;
+
+        setTimeout(() => {
+            map = L.map('radarMap').setView([-6.200000, 106.816666], 11); // Center Jakarta
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: 'CartoDB' }).addTo(map);
+            
+            // Marker TikUm Statis
+            const iconTikum = L.divIcon({ className: 'custom-div-icon', html: `<div style="width:30px; height:30px; background:#FF003C; border-radius:50%; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white;"><i class="fas fa-flag"></i><div class="marker-label-hud" style="color:#FF003C;">TIKUM</div></div>` });
+            L.marker([-6.2285953, 106.819502], {icon: iconTikum}).addTo(map);
+
+            // Pantau pergerakan member dari database RSVP (Biar yang tampil cuma yang hadir)
+            onSnapshot(collection(db, "kopgab_rsvp"), (snap) => {
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    if(m.lat && m.lng && m.isSharing) {
+                        const styleM = m.club === "MLU" ? "marker-mlu" : "marker-kc";
+                        const icon = L.divIcon({ className: 'custom-div-icon', html: `<div class="${styleM}"></div><div class="marker-label-hud">${m.nama}</div>`, iconSize:[25,25], iconAnchor:[12,12] });
+                        
+                        if(markers[doc.id]) markers[doc.id].setLatLng([m.lat, m.lng]);
+                        else markers[doc.id] = L.marker([m.lat, m.lng], {icon}).addTo(map);
+                    } else if(markers[doc.id]) {
+                        map.removeLayer(markers[doc.id]); delete markers[doc.id];
+                    }
+                });
+            });
+        }, 500);
+
+        window.toggleRadar = () => {
+            const btn = document.getElementById('btnToggleGps');
+            if(!isRadarOn) {
+                if(!navigator.geolocation) return alert("GPS tidak didukung!");
+                btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> MENYAMBUNGKAN SATELIT...";
+                
+                watchId = navigator.geolocation.watchPosition(async (pos) => {
+                    await setDoc(doc(db, "kopgab_rsvp", myId), {
+                        nama: myName, plat: myPlat, club: myClub, lat: pos.coords.latitude, lng: pos.coords.longitude, isSharing: true, timestamp: serverTimestamp()
+                    }, {merge: true});
+                    
+                    isRadarOn = true;
+                    btn.innerHTML = "<i class='fas fa-satellite-dish'></i> RADAR MENYALA (KLIK UNTUK MATIKAN)";
+                    btn.style.background = "rgba(255,0,60,0.1)";
+                    btn.style.borderColor = "var(--neon-red)";
+                    btn.style.color = "var(--neon-red)";
+                    
+                    // Zoom map ke posisi kita
+                    map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+                }, (err) => { alert("Izinkan GPS untuk masuk ke Radar!"); btn.innerHTML = "<i class='fas fa-broadcast-tower'></i> NYALAKAN RADAR SAYA"; }, {enableHighAccuracy:true});
+            } else {
+                navigator.geolocation.clearWatch(watchId);
+                setDoc(doc(db, "kopgab_rsvp", myId), { isSharing: false }, {merge: true});
+                isRadarOn = false;
+                btn.innerHTML = "<i class='fas fa-broadcast-tower'></i> NYALAKAN RADAR SAYA";
+                btn.style.background = "rgba(0,240,255,0.1)";
+                btn.style.borderColor = "var(--neon-blue)";
+                btn.style.color = "var(--neon-blue)";
+            }
+        };
+    </script>
+</body>
+</html>
