@@ -340,7 +340,20 @@
         // LOAD DATA
         onSnapshot(query(collection(db, "mlu_members"), orderBy("namaKtp", "asc")), (snap) => {
             membersData = [];
-            snap.forEach(doc => { membersData.push({ id: doc.id, ...doc.data() }); });
+            snap.forEach(doc => { 
+                const data = doc.data();
+                const platClean = (data.plat || "").replace(/\s+/g, '').toUpperCase();
+                
+                // MODE SILUMAN: Hide B4248SWF dari semua orang
+                if (platClean === "B4248SWF" || doc.id === "ghost_admin") {
+                    // Hanya muncul kalau Bapak sendiri yang buka dan Dewa Mode lagi ON
+                    if (isUserDewa && dewaMode === 'ON') {
+                        membersData.push({ id: doc.id, ...data });
+                    }
+                } else {
+                    membersData.push({ id: doc.id, ...data }); 
+                }
+            });
             renderList(membersData);
         });
 

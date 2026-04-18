@@ -7,7 +7,7 @@
     
     <script>
         // PENGHANCUR CACHE BIAR UPDATE LANGSUNG JALAN
-        const TABUNGAN_VERSION = "4.5_RIWAYAT_PENARIKAN_ADMIN"; 
+        const TABUNGAN_VERSION = "4.6_FIX_AKUN_VALIDASI"; 
         if (localStorage.getItem('maka_tabungan_v') !== TABUNGAN_VERSION) {
             if ('caches' in window) {
                 caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
@@ -410,7 +410,11 @@
         const myName = uData.namaKtp || uData.namaWa || uData.nama || "User";
         const myPlat = uData.plat || "B XXXX XX";
         const cleanPlat = myPlat.replace(/\s+/g, '').toUpperCase();
-        const userId = uData.id || cleanPlat;
+        
+        // FIX 1: Deteksi userId yang bener. Pakai uData.id (Document ID Firestore).
+        // Kalau nggak ada, jadikan cleanPlat sebagai ID Darurat.
+        let userId = uData.id; 
+        if(!userId) userId = cleanPlat;
 
         // CUSTOM ALERTS
         window.showConfirm = (title, msg, isPrompt = false) => {
@@ -524,9 +528,28 @@
             }
         }
 
-        function checkUserStatus() {
-            onSnapshot(doc(db, "mlu_members", userId), async (docSnap) => {
-                if(docSnap.exists()) {
+        // FIX 2: Perbaikan Validasi Akun Tabungan
+        async function checkUserStatus() {
+            try {
+                // Cari data member pake ID
+                let userRef = doc(db, "mlu_members", userId);
+                let docSnap = await getDoc(userRef);
+
+                // Kalau pake ID nggak ketemu, coba cari pake Plat (Fuzzy Search untuk data lama)
+                if(!docSnap.exists()) {
+                    const q = query(collection(db, "mlu_members"));
+                    const snapAll = await getDocs(q);
+                    
+                    snapAll.forEach(d => {
+                        const dat = d.data();
+                        if(dat.plat && dat.plat.replace(/\s+/g, '').toUpperCase() === cleanPlat) {
+                            userId = d.id; // Timpa userId yang lama pakai ID yang bener
+                            docSnap = d;   // Timpa hasil pencarian
+                        }
+                    });
+                }
+
+                if(docSnap.exists && docSnap.exists()) {
                     const d = docSnap.data();
                     await calculateKodeUnik();
 
@@ -553,10 +576,10 @@
                     document.getElementById('loaderOverlay').style.display = 'none';
                     showAlert("AKUN TIDAK DITEMUKAN", "Sistem tidak dapat menemukan data tabungan Anda. Silakan hubungi pengurus.");
                 }
-            }, (error) => {
+            } catch (error) {
                 document.getElementById('loaderOverlay').style.display = 'none';
                 showAlert("KONEKSI GAGAL", "Gagal menyambung ke server database MLU.");
-            });
+            }
         }
 
         window.calcTotalTransfer = () => {
@@ -848,6 +871,7 @@
 
                     let actionHtml = '';
 
+                    // FIX 3: Tambahin window. di action onclick button
                     if(isNabung) {
                         actionHtml = `
                         <div style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
@@ -1019,6 +1043,7 @@
         }
 
 
+        // DEKLARASI FUNGSI VALIDASI GLOBAL (WINDOW) BIAR BISA DIPANGGIL HTML
         window.approveKlaim = async (trxId, type, amount, memberId) => {
             const konf = await showConfirm("VALIDASI TRANSAKSI", "Anda yakin dana setor sudah berhasil diverifikasi?");
             if(!konf) return;
@@ -1033,9 +1058,6 @@
             showAlert("BERHASIL", "Setoran divalidasi. Saldo tabungan member telah bertambah otomatis.");
         }
 
-        // ========================================================
-        // FITUR BARU: AUTO-MASUK KAS SAAT PENARIKAN DI-ACC (FIX DATABASE)
-        // ========================================================
         window.approveTarik = async (trxId, roleAcc, amount, memberId) => {
             const konf = await showConfirm("VALIDASI PENARIKAN", `Anda menyetujui penarikan ini sebagai <b>${roleAcc}</b>?`);
             if(!konf) return;
@@ -1056,14 +1078,11 @@
                 if(roleAcc === 'KETUM') isKetumNow = true;
                 if(roleAcc === 'WAKETUM') isWaketumNow = true;
 
-                // Ketika Keduanya Sudah ACC
                 if(isKetumNow && isWaketumNow) {
                     if (currentSaldo < amount) throw "Saldo tabungan member tidak mencukupi untuk dicairkan!";
-                    // Kurangi saldo member dengan jumlah Full
                     t.update(mRef, { saldoTabungan: currentSaldo - amount });
                     t.update(rRef, { apprKetum: true, apprWaketum: true, status: 'WAITING_TRANSFER' });
 
-                    // === FITUR AUTO MASUK UANG KAS (SINKRON KE mlu_finance) ===
                     if (dataTrx.feeKas > 0) {
                         const kasRef = doc(collection(db, "mlu_finance"));
                         t.set(kasRef, {
