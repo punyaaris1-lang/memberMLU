@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MLU - Tactical Route</title>
+    <title>MLU - Tactical Route (OSRM)</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@700;900&family=Outfit:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -61,16 +61,25 @@
 
         #statusText { font-size:10px; font-weight:800; color:var(--electric-blue); text-align:center; background:#EFF6FF; padding:8px; border-radius:8px; display:none; border: 1px dashed #BFDBFE;}
 
-        /* BOTTOM SHEET */
-        .drive-sheet { position: absolute; bottom: -100%; left: 0; width: 100%; background: white; border-top: 1px solid var(--border-glass); border-radius: 30px 30px 0 0; padding: 25px 25px 40px; z-index: 1000; box-shadow: 0 -15px 40px rgba(0,0,0,0.1); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);}
-        .drive-sheet.show { bottom: 0; }
-        
+        /* BOTTOM SHEET SUGGESTION */
+        .suggest-sheet { position: absolute; bottom: -100%; left: 0; width: 100%; background: white; border-top: 1px solid var(--border-glass); border-radius: 30px 30px 0 0; padding: 25px 25px 40px; z-index: 1000; box-shadow: 0 -15px 40px rgba(0,0,0,0.15); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);}
+        .suggest-sheet.show { bottom: 0; }
         .ds-handle { width: 50px; height: 5px; background: #CBD5E1; border-radius: 10px; margin: 0 auto 20px; }
-        .ds-title { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--royal-blue); margin: 0 0 5px; text-transform: uppercase;}
-        .ds-desc { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; line-height: 1.4;}
+        .ds-title { font-family: 'Outfit'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin: 0 0 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px;}
+        .ds-title i { color: var(--electric-blue); }
+
+        /* SUGGESTION CARDS */
+        .sug-list { max-height: 350px; overflow-y: auto; padding-right: 5px; }
+        .sug-card { border: 1px solid #E2E8F0; border-radius: 18px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; background: #F8FAFC; cursor: pointer; transition: 0.2s;}
+        .sug-card:active { transform: scale(0.97); }
+        .sug-card.best { border: 2px solid var(--success); background: #F0FDF4; box-shadow: 0 5px 15px rgba(16,185,129,0.15);}
+        .sug-title-text { font-family: 'Outfit'; font-size: 16px; font-weight: 900; color: var(--royal-blue); margin-bottom: 4px; }
+        .sug-desc { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+        .sug-best-badge { font-size: 9px; background: var(--success); color: white; padding: 4px 8px; border-radius: 6px; font-weight: 900; margin-bottom: 6px; display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.5px;}
+        .sug-diff { font-size: 11px; font-weight: 800; color: var(--danger); display: inline-flex; align-items: center; gap: 4px; background: #FEF2F2; padding: 4px 8px; border-radius: 6px; border: 1px dashed #FCA5A5;}
         
-        .btn-gmaps { width: 100%; background: linear-gradient(135deg, var(--electric-blue), #1D4ED8); color: white; border: none; padding: 18px; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(45,99,237,0.3); cursor: pointer; transition: 0.2s;}
-        .btn-gmaps:active { transform: scale(0.96); }
+        .sug-btn-go { width: 40px; height: 40px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #E2E8F0;}
+        .sug-card.best .sug-btn-go { color: white; background: var(--success); border: none; box-shadow: 0 5px 15px rgba(16,185,129,0.4);}
 
         .btn-cancel { width: 100%; background: transparent; border: 1px solid #E2E8F0; color: var(--text-muted); padding: 15px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; margin-top: 10px; cursor: pointer; background: #F8FAFC;}
         .btn-cancel:active { background: #E2E8F0; }
@@ -89,26 +98,24 @@
                 <i class="fas fa-map-marker-alt"></i>
                 <textarea id="inpTujuan" class="search-input" rows="2" placeholder="Ketik tujuan akhir (Bisa masukkan 2 alamat atau lebih, pisahkan dengan koma/enter)"></textarea>
             </div>
-            <button class="btn-search" onclick="cariMultiTujuan()"><i class="fas fa-route"></i> CARI RUTE</button>
+            <button class="btn-search" onclick="cariMultiTujuan()"><i class="fas fa-route"></i> CARI RUTE OSRM & FC</button>
             <div id="statusText"></div>
         </div>
     </div>
 
     <div id="mapContainer"></div>
 
-    <div class="drive-sheet" id="driveSheet">
+    <div class="suggest-sheet" id="suggestSheet">
         <div class="ds-handle"></div>
-        <div style="display:flex; align-items:flex-start; gap:15px; margin-bottom:20px;">
-            <div style="width:50px; height:50px; background:rgba(45,99,237,0.1); border:1px solid var(--electric-blue); color:var(--electric-blue); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px;">
-                <i class="fas fa-charging-station"></i>
-            </div>
-            <div style="flex:1;">
-                <h3 class="ds-title" id="dsFcName">NAMA FC</h3>
-                <div class="ds-desc">Google Maps akan menuntun Anda mampir ke Charging Station ini sebelum melanjutkan ke tujuan akhir.</div>
-            </div>
+        <h3 class="ds-title"><i class="fas fa-robot"></i> REKOMENDASI FC (OSRM)</h3>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px; font-weight: 600; line-height: 1.4;">
+            Dihitung menggunakan algoritma jarak aspal riil (Open Source Routing Machine). Silakan pilih FC untuk mampir.
         </div>
-        <button class="btn-gmaps" id="btnGas"><i class="fas fa-location-arrow"></i> BUKA GOOGLE MAPS</button>
-        <button class="btn-cancel" onclick="tutupSheet()">BATAL</button>
+        
+        <div class="sug-list" id="sugList">
+            </div>
+
+        <button class="btn-cancel" onclick="tutupSheet()">TUTUP PANEL</button>
     </div>
 
     <script type="module">
@@ -122,19 +129,20 @@
 
         let map, routingControl;
         let myLat = null, myLng = null;
-        let selectedFcLat = null, selectedFcLng = null;
-        
-        // Simpan teks alamat tujuan asli yang diketik user
+        let allFcData = []; 
         let rawDestinations = []; 
-        // Simpan hasil koordinat kasar buat nggambar garis biru
         let geocodedWaypoints = []; 
+
+        // RUMUS MENGHITUNG JARAK LURUS (HAVERSINE) BUAT FILTERING KASAR AJA
+        function calculateDist(lat1, lon1, lat2, lon2) { 
+            const p = 0.017453292519943295, c = Math.cos; 
+            const a = 0.5 - c((lat2 - lat1) * p)/2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p))/2; 
+            return 12742 * Math.asin(Math.sqrt(a)); 
+        }
 
         // INISIALISASI PETA TEMA TERANG (VOYAGER)
         map = L.map('mapContainer', { zoomControl: false }).setView([-6.200000, 106.816666], 12);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '© CartoDB',
-            maxZoom: 19
-        }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© CartoDB', maxZoom: 19 }).addTo(map);
 
         const statusEl = document.getElementById('statusText');
         function setStatus(msg) { statusEl.style.display = 'block'; statusEl.innerText = msg; }
@@ -157,21 +165,20 @@
             }, (err) => { alert("GPS gagal. Pastikan izin lokasi aktif!"); setStatus("GPS Ditolak."); }, {enableHighAccuracy: true});
         }
 
-        // 2. LOAD SEMUA TITIK FC
+        // 2. LOAD SEMUA TITIK FC KE ARRAY GLOBAL
         async function loadFcLocations() {
-            // Masukkan data statis (Gading & KC)
             const fixedStations = [
                 { id: 'gading', name: 'FC Kelapa Gading', lat: -6.159389, lng: 106.901416, class: 'is-gading' },
                 { id: 'kc', name: 'Kartika Chandra', lat: -6.2285953, lng: 106.819502, class: 'is-kc' }
             ];
 
-            let allLocations = [...fixedStations];
+            allFcData = [...fixedStations];
             const snap = await getDocs(collection(dbMLU, "fc_locations"));
             
             snap.forEach(doc => {
                 const data = doc.data();
                 if(data.isActive !== false && doc.id !== 'kc' && doc.id !== 'gading') {
-                    allLocations.push({ 
+                    allFcData.push({ 
                         id: doc.id, name: data.name || doc.id, 
                         lat: parseFloat(data.lat || data.latitude), 
                         lng: parseFloat(data.lng || data.longitude),
@@ -180,34 +187,27 @@
                 }
             });
 
-            allLocations.forEach(loc => {
+            // Tampilkan titiknya di peta
+            allFcData.forEach(loc => {
                 if(!isNaN(loc.lat) && !isNaN(loc.lng)) {
                     const iconHtml = `
                         <div class="marker-fc ${loc.class}"><i class="fas fa-bolt"></i></div>
                         <div class="marker-label">${loc.name.toUpperCase()}</div>
                     `;
-                    const fcMarker = L.marker([loc.lat, loc.lng], {
+                    L.marker([loc.lat, loc.lng], {
                         icon: L.divIcon({ className: 'custom-div-icon', html: iconHtml, iconSize:[35,35], iconAnchor:[17,17] })
                     }).addTo(map);
-
-                    fcMarker.on('click', () => {
-                        selectedFcLat = loc.lat; selectedFcLng = loc.lng;
-                        document.getElementById('dsFcName').innerText = loc.name.toUpperCase();
-                        document.getElementById('driveSheet').classList.add('show');
-                    });
                 }
             });
         }
 
-        // 3. FUNGSI BYPASS GEOCODER (Biar alamat super panjang kayak Bekasi ttp ketemu daerahnya)
+        // 3. FUNGSI BYPASS GEOCODER (Mencari koordinat dari teks super panjang)
         async function getRoughCoordinates(address) {
             try {
-                // Percobaan 1: Alamat Full
                 let res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ", Indonesia")}`);
                 let data = await res.json();
                 if(data && data.length > 0) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
                 
-                // Percobaan 2: Bypass Alamat Kepanjangan (Potong nomor rumah dll, ambil 3 kata terakhir aja misal "Jati Asih Bekasi")
                 let parts = address.split(' ');
                 if(parts.length > 3) {
                     let fallbackStr = parts.slice(-3).join(' ');
@@ -216,30 +216,26 @@
                     if(data2 && data2.length > 0) return { lat: parseFloat(data2[0].lat), lng: parseFloat(data2[0].lon) };
                 }
             } catch(e) { console.log(e); }
-            return null; // Gagal nemu
+            return null; 
         }
 
-        // 4. PROSES MULTI TUJUAN (A -> B -> C)
+        // 4. PROSES PENCARIAN RUTE & PEMANGGILAN OSRM
         window.cariMultiTujuan = async () => {
             const rawInput = document.getElementById('inpTujuan').value;
             if(!rawInput.trim() || !myLat) return alert("Pastikan GPS aktif dan tujuan sudah diisi!");
             
             setStatus("Memindai rute jalan...");
 
-            // Pecah inputan berdasarkan Koma atau Baris Baru
             rawDestinations = rawInput.split(/[,;\n]+/).map(s => s.trim()).filter(s => s.length > 2);
             geocodedWaypoints = [];
 
-            // Hapus Rute Lama
             if(routingControl) map.removeControl(routingControl);
 
-            // Cari koordinat masing-masing tujuan buat ngegambar garis biru
+            // Cari Koordinat Tujuan
             for(let i = 0; i < rawDestinations.length; i++) {
                 let coords = await getRoughCoordinates(rawDestinations[i]);
                 if(coords) {
                     geocodedWaypoints.push(L.latLng(coords.lat, coords.lng));
-                    
-                    // Pasang bendera merah di peta
                     L.marker([coords.lat, coords.lng], {
                         icon: L.divIcon({ className: 'custom-div-icon', html: `<div style="font-size:30px; color:var(--danger); filter:drop-shadow(0 5px 10px rgba(239,68,68,0.5));"><i class="fas fa-map-marker-alt"></i></div><div class="marker-label" style="bottom:-25px;">Tujuan ${i+1}</div>`, iconSize:[30,30], iconAnchor:[15,30] })
                     }).addTo(map);
@@ -247,54 +243,129 @@
             }
 
             if(geocodedWaypoints.length > 0) {
-                // Susun rute: Posisi User -> Tujuan 1 -> Tujuan 2 -> dst
+                // Gambar Garis Biru di Peta (Pake OSRM Bawaan Leaflet Routing Machine)
                 let routingPoints = [ L.latLng(myLat, myLng), ...geocodedWaypoints ];
-                
                 routingControl = L.Routing.control({
-                    waypoints: routingPoints,
-                    lineOptions: { styles: [{ color: '#2D63ED', opacity: 0.7, weight: 5 }] },
-                    createMarker: function() { return null; }, 
-                    fitSelectedRoutes: true, show: false
+                    waypoints: routingPoints, lineOptions: { styles: [{ color: '#2D63ED', opacity: 0.7, weight: 5 }] },
+                    createMarker: function() { return null; }, fitSelectedRoutes: true, show: false
                 }).addTo(map);
 
-                setStatus("Rute Biru Ditemukan! Klik icon FC yang nempel / searah dengan garis biru.");
+                // PANGGIL ALGORITMA OSRM UNTUK REKOMENDASI FC
+                generateOSRMSuggestions(geocodedWaypoints[0].lat, geocodedWaypoints[0].lng);
+                setStatus("Menghitung jarak aspal...");
+                setTimeout(()=> { statusEl.style.display = 'none'; }, 2000);
             } else {
-                alert("Sistem Peta gagal menggambar Garis Biru. Tapi tenang, Google Maps tetap akan mencari alamat tersebut saat Anda klik Gas.");
-                setStatus("Garis rute tidak bisa digambar.");
+                alert("Alamat tidak ditemukan di peta. Pastikan mengetik nama kota/daerah yang jelas.");
+                setStatus("Gagal memuat rute.");
             }
         };
 
-        // 5. BUKA GOOGLE MAPS DENGAN MULTI WAYPOINTS (TEKS ASLI)
-        document.getElementById('btnGas').onclick = () => {
-            if(!selectedFcLat || !myLat) return;
+        // 5. ALGORITMA HYBRID (HAVERSINE -> OSRM)
+        async function generateOSRMSuggestions(targetLat, targetLng) {
+            if(!myLat || allFcData.length === 0) return;
+
+            // Tampilin Loading di Bottom Sheet
+            document.getElementById('sugList').innerHTML = '<div style="text-align:center; padding:30px; color:var(--electric-blue); font-weight:900;"><i class="fas fa-sync fa-spin" style="font-size:28px; margin-bottom:15px;"></i><br>MENGHITUNG JARAK ASPAL OSRM...</div>';
+            document.getElementById('suggestSheet').classList.add('show');
+
+            // LANGKAH 1: FILTER KASAR (HAVERSINE) BUAT NYARI 5 TERBAIK BIAR SERVER GAK JEBOL
+            let evaluatedFCs = allFcData.map(fc => {
+                let distToFc = calculateDist(myLat, myLng, fc.lat, fc.lng);
+                let distFcToTarget = calculateDist(fc.lat, fc.lng, targetLat, targetLng);
+                return { ...fc, straightDist: distToFc + distFcToTarget, distToFc: distToFc };
+            });
+
+            evaluatedFCs.sort((a, b) => a.straightDist - b.straightDist);
+            let top5FCs = evaluatedFCs.slice(0, 5); // Ambil 5 Besar aja buat di-Test Aspalnya
+
+            // LANGKAH 2: HITUNG AKURAT PAKAI OSRM UNTUK 5 FC TERSEBUT
+            let osrmResults = [];
+            for (let i = 0; i < top5FCs.length; i++) {
+                let fc = top5FCs[i];
+                try {
+                    // OSRM URL Format: lon,lat;lon,lat;lon,lat
+                    let osrmUrl = `https://router.project-osrm.org/route/v1/driving/${myLng},${myLat};${fc.lng},${fc.lat};${targetLng},${targetLat}?overview=false`;
+                    let res = await fetch(osrmUrl);
+                    let data = await res.json();
+                    
+                    if(data.code === "Ok") {
+                        // Jarak dari OSRM dalam meter, ubah ke KM
+                        let totalRouteDistanceKm = data.routes[0].distance / 1000;
+                        osrmResults.push({ ...fc, roadDist: totalRouteDistanceKm });
+                    } else {
+                        osrmResults.push({ ...fc, roadDist: fc.straightDist * 1.3 }); // Trik Fallback kalau OSRM error
+                    }
+                } catch(e) {
+                    osrmResults.push({ ...fc, roadDist: fc.straightDist * 1.3 }); // Trik Fallback kalau OSRM nge-blokir
+                }
+            }
+
+            // LANGKAH 3: URUTKAN BERDASARKAN JARAK ASPAL OSRM
+            osrmResults.sort((a, b) => a.roadDist - b.roadDist);
+            let top3 = osrmResults.slice(0, 3);
+            let bestDist = top3[0].roadDist;
+
+            // RENDER HTML
+            let html = '';
+            const labels = ['A', 'B', 'C'];
+
+            top3.forEach((fc, index) => {
+                let badgeHtml = '';
+                let extraHtml = '';
+                let cardClass = 'sug-card';
+
+                if (index === 0) {
+                    cardClass = 'sug-card best';
+                    badgeHtml = `<div class="sug-best-badge"><i class="fas fa-star"></i> OPSI TERBAIK (ASPAL OSRM)</div>`;
+                    extraHtml = `<div style="color:var(--success); font-size:11px; font-weight:800; margin-top:4px;"><i class="fas fa-check-circle"></i> Rute aspal paling efisien</div>`;
+                } else {
+                    let diffKm = (fc.roadDist - bestDist).toFixed(1);
+                    extraHtml = `<div class="sug-diff"><i class="fas fa-route"></i> Lebih jauh +${diffKm} KM aspal dari Opsi A</div>`;
+                }
+
+                html += `
+                <div class="${cardClass}" onclick="gasPilihanFC(${fc.lat}, ${fc.lng})">
+                    <div style="flex:1;">
+                        ${badgeHtml}
+                        <div class="sug-title-text">Opsi ${labels[index]}: ${fc.name.toUpperCase()}</div>
+                        <div class="sug-desc">Jarak Lurus ke FC: ${fc.distToFc.toFixed(1)} KM</div>
+                        <div class="sug-desc" style="color:var(--royal-blue); font-weight:800;">Total Rute Aspal: ${fc.roadDist.toFixed(1)} KM</div>
+                        ${extraHtml}
+                    </div>
+                    <div class="sug-btn-go">
+                        <i class="fas fa-location-arrow"></i>
+                    </div>
+                </div>`;
+            });
+
+            document.getElementById('sugList').innerHTML = html;
+        }
+
+        // 6. GAS BUKA GOOGLE MAPS
+        window.gasPilihanFC = (fcLat, fcLng) => {
+            if(!myLat) return;
             
             let gmapsUrl = "";
             
             if(rawDestinations.length > 0) {
-                // Tujuan Akhir adalah elemen terakhir di array
                 let finalDest = encodeURIComponent(rawDestinations[rawDestinations.length - 1]);
+                let stops = [`${fcLat},${fcLng}`]; // Titik mampir FC
                 
-                // Waypoint mampir pertama adalah FC, dilanjut sisa tujuan (kalau tujuannya lebih dari 1)
-                let stops = [`${selectedFcLat},${selectedFcLng}`]; // Titik mampir wajib: FC
-                
-                // Masukkan tujuan 1, tujuan 2, dll sbg waypoint (kecuali tujuan akhir)
                 for(let i = 0; i < rawDestinations.length - 1; i++) {
                     stops.push(encodeURIComponent(rawDestinations[i]));
                 }
                 
                 let waypointsString = stops.join('|');
-
                 gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${myLat},${myLng}&destination=${finalDest}&waypoints=${waypointsString}&travelmode=driving`;
             } else {
-                // Kalau klik FC tanpa masukin tujuan apa-apa
-                gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${myLat},${myLng}&destination=${selectedFcLat},${selectedFcLng}&travelmode=driving`;
+                gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${myLat},${myLng}&destination=${fcLat},${fcLng}&travelmode=driving`;
             }
             
             window.open(gmapsUrl, '_blank');
             tutupSheet();
         };
 
-        window.tutupSheet = () => { document.getElementById('driveSheet').classList.remove('show'); };
+        window.tutupSheet = () => { document.getElementById('suggestSheet').classList.remove('show'); };
     </script>
 </body>
 </html>
