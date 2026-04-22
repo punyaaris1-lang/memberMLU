@@ -6,7 +6,7 @@
     <title>MLU - Dashboard Beta</title>
     
     <script>
-        const DASH_VERSION = "BETA_4.2_LOGO_LINKS_FIX"; 
+        const DASH_VERSION = "BETA_4.3_LINK_FIX"; 
         if (localStorage.getItem('maka_dash_beta_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_beta_v', DASH_VERSION); window.location.reload(true); 
@@ -71,7 +71,6 @@
         }
         .vip-card::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(10,25,49,0.05) 1px, transparent 1px); background-size: 15px 15px; opacity: 1; pointer-events: none; z-index: 1;}
         
-        /* LOGO TENGAH BESAR (TRANSPARAN) & LOGO KECIL POJOK (DIPERBESAR) */
         .vc-center-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 260px; opacity: 0.12; z-index: 1; pointer-events: none; filter: grayscale(100%); }
         .vc-small-logo { position: absolute; top: 20px; right: 20px; height: 55px; z-index: 3; opacity: 0.9; }
 
@@ -625,15 +624,11 @@
             }).catch(e => window.showEliteAlert("ERROR", e)); 
         }
 
-        // =========================================================================
-        // 4. APP LAUNCHER PIHAK KETIGA (FIXED LINK MAPPING)
-        // =========================================================================
         window.bukaAppKetiga = (appNama) => {
             let linkWeb = (appNama === 'Starvo') ? "https://play.google.com/store/apps/details?id=com.moizasia.starvo_mobile" : "https://casan.id/home/index";
             let teksBuka = (appNama === 'Starvo') ? "aplikasi" : "website";
             window.showConfirm("BUKA APLIKASI", `Buka ${teksBuka} ${appNama} untuk scan barcode?`, "normal", () => {
-                window.open(linkWeb, '_blank');
-                closeConfirm(true);
+                window.location.href = linkWeb;
             });
         }
 
