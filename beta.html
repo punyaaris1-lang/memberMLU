@@ -6,7 +6,7 @@
     <title>MLU - Dashboard Beta</title>
     
     <script>
-        const DASH_VERSION = "BETA_4.3_LINK_FIX"; 
+        const DASH_VERSION = "BETA_5.1_RIDING_LACI"; 
         if (localStorage.getItem('maka_dash_beta_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_beta_v', DASH_VERSION); window.location.reload(true); 
@@ -60,7 +60,7 @@
         .date-badge { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); padding: 5px 12px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; color: var(--navy-main); letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--glass-border); margin-bottom: 5px; box-shadow: 0 5px 10px rgba(0,0,0,0.02);}
         .greet-txt { font-family: 'Outfit'; font-size: 28px; font-weight: 900; color: var(--navy-main); line-height: 1; letter-spacing: -0.5px;}
 
-        /* --- VIP CARD (WHITE PEARL GLASSMORPHISM + LOGO FIX) --- */
+        /* --- VIP CARD --- */
         .vip-card { 
             margin: 5px 20px 20px; border-radius: 28px; 
             background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.7) 100%); 
@@ -122,13 +122,20 @@
         .bl-danger { background: linear-gradient(135deg, #DC2626, #991B1B) !important; color: white !important; }
         .bl-success { background: linear-gradient(135deg, #10B981, #059669) !important; color: white !important; }
 
-        /* --- LOKASI FC ALTERNATIF --- */
-        .fc-banner-alt { border-radius: 20px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; margin-bottom: 5px;}
-        .fc-banner-alt:active { transform: scale(0.98); }
-        .fc-banner-alt::before { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--warning); border-radius: 20px 0 0 20px;}
-        .fc-kc::before { background: #10B981; } 
-        .banner-val { font-size: 20px; color: var(--warning); text-align: right; background: rgba(245,158,11,0.1); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px;}
-        .fc-kc .banner-val { color: #10B981; background: rgba(16,185,129,0.1); }
+        /* --- RIDING MODE WRAPPER (DROPDOWN CANGGIH) --- */
+        .riding-wrapper { background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); overflow: hidden; transition: 0.4s; margin-bottom: 5px; }
+        .riding-banner { padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; position: relative; z-index: 2;}
+        .riding-banner::before { content: ''; position: absolute; left: 0; top: 0; width: 6px; height: 100%; background: var(--gold-main); border-radius: 20px 0 0 20px;}
+        .riding-icon { font-size: 18px; color: var(--navy-main); transition: 0.4s; background: var(--white); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .riding-wrapper.open .riding-icon { transform: rotate(180deg); background: var(--gold-main); color: white;}
+        
+        .riding-laci { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s; background: rgba(248,250,252,0.8); border-top: 1px solid transparent;}
+        .riding-wrapper.open .riding-laci { max-height: 800px; padding: 15px 20px; border-top-color: var(--glass-border); }
+
+        /* Mini Radar 3D UI */
+        .mini-radar { background: linear-gradient(135deg, var(--navy-dark), var(--navy-main)); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); margin-bottom: 15px; border: 1px solid var(--navy-light);}
+        .radar-pulse { width: 80px; height: 80px; border-radius: 50%; border: 2px solid rgba(45,99,237,0.8); animation: radarPing 2.5s infinite; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);}
+        @keyframes radarPing { 0% { width: 0; height: 0; opacity: 1; } 100% { width: 150px; height: 150px; opacity: 0; } }
 
         /* --- PILL BUTTONS (CHARGING PIHAK KETIGA) --- */
         .third-party-pills { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -222,9 +229,10 @@
 
         .list-area { overflow-y: auto; flex: 1; padding-right: 5px; }
         .list-item { background: white; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
-        .li-plat { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--navy-main); margin-bottom: 4px;}
-        .li-name { font-size: 11px; font-weight: 700; color: var(--text-gray); text-transform: uppercase;}
-        .li-batre { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: var(--success); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 10px;}
+        .li-plat { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--navy-main); margin-bottom: 4px;}
+        .li-name { font-size: 10px; font-weight: 700; color: var(--text-gray); text-transform: uppercase;}
+        .li-batre { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: var(--success); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 8px;}
+        .btn-beli { background: var(--navy-main); color: var(--gold-main); padding: 8px 12px; border-radius: 10px; border: none; font-family: 'Space Grotesk'; font-size: 10px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 10px rgba(10,25,49,0.2);}
 
     </style>
 </head>
@@ -317,14 +325,46 @@
             </div>
         </div>
 
-        <div class="sect-title fade-up d-3"><i class="fas fa-map-signs"></i> LOKASI FC ALTERNATIF</div>
-        <div class="fc-banner-alt fade-up d-3" id="altFcBanner" onclick="alert('Nyalakan GPS Anda!')">
-            <div class="banner-left">
-                <div class="banner-title" id="altFcNama" style="font-size: 14px;"><i class="fas fa-satellite-dish" style="color: var(--warning);"></i> MEMINDAI LOKASI...</div>
-                <div class="banner-status" id="statusAltFC" style="background:rgba(245,158,11,0.1); color:var(--warning);"><i class="fas fa-spinner fa-spin"></i> Menghitung GPS...</div>
+        <div class="riding-wrapper fade-up d-3" id="ridingAccordion">
+            <div class="riding-banner" onclick="toggleRidingMode()">
+                <div style="display:flex; align-items:center; gap:15px; text-align:left;">
+                    <div style="width:40px; height:40px; background:rgba(45,99,237,0.1); color:var(--electric-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px;"><i class="fas fa-motorcycle"></i></div>
+                    <div>
+                        <div style="font-family:'Space Grotesk'; font-size:14px; font-weight:900; color:var(--navy-main);">SMART NAVIGATION</div>
+                        <div style="font-size:10px; color:var(--text-gray); font-weight:700;"><i class="fas fa-route"></i> Route Plan & Radar Lokasi FC</div>
+                    </div>
+                </div>
+                <div class="riding-icon"><i class="fas fa-chevron-down"></i></div>
             </div>
-            <div class="banner-right">
-                <div class="banner-val" id="altFcIcon" style="color: var(--warning); background: rgba(245,158,11,0.1);"><i class="fas fa-location-arrow"></i></div>
+            
+            <div class="riding-laci">
+                <div class="mini-radar">
+                    <div class="radar-pulse"></div>
+                    <div class="radar-pulse" style="animation-delay: 1.25s;"></div>
+                    <i class="fas fa-location-arrow" style="font-size:30px; color:var(--gold-main); z-index:2; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.5));"></i>
+                    <div id="ridingGpsStatus" style="z-index:2; margin-top:12px; font-family:'Space Grotesk'; font-size:12px; font-weight:800; letter-spacing:1.5px; color:rgba(255,255,255,0.9);">MEMINDAI LOKASI...</div>
+                </div>
+                
+                <div class="sect-title" style="padding-left:0; margin-top:10px;">STASIUN FC TERDEKAT</div>
+                <div id="ridingFcList" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="text-align:center; padding:10px; color:var(--text-gray); font-size:11px;"><i class="fas fa-spinner fa-spin"></i> Menunggu GPS...</div>
+                </div>
+                
+                <div class="sect-title" style="padding-left:0; margin-top:20px;">RUTE TOURING & PLAN</div>
+                <div class="list-item" onclick="window.open('https://maps.app.goo.gl/d3KzP9vYZD6y9uRUA', '_blank')" style="cursor:pointer; border-left: 4px solid var(--electric-blue); padding:12px 15px; margin-bottom:8px;">
+                    <div>
+                        <div class="li-plat" style="font-size:14px; margin-bottom:2px;">Gading - Puncak</div>
+                        <div class="li-name" style="font-size:9px;">Via Jalur Bukit Pelangi</div>
+                    </div>
+                    <i class="fas fa-route" style="font-size:20px; color:var(--text-gray);"></i>
+                </div>
+                <div class="list-item" onclick="alert('Rute belum tersedia.')" style="cursor:pointer; border-left: 4px solid var(--warning); padding:12px 15px;">
+                    <div>
+                        <div class="li-plat" style="font-size:14px; margin-bottom:2px;">Gading - Lembang</div>
+                        <div class="li-name" style="font-size:9px;">Via Purwakarta</div>
+                    </div>
+                    <i class="fas fa-route" style="font-size:20px; color:var(--text-gray);"></i>
+                </div>
             </div>
         </div>
 
@@ -552,22 +592,36 @@
 
             const btnWrapper = document.getElementById('fcDynamicAction');
             const slotWrapper = document.getElementById('fcSlotAction');
-            slotWrapper.style.display = 'none';
+            
+            let myQIndex = localQueue.findIndex(q => cleanStr(q.plat) === cleanStr(myPlatClean));
+            let mySlotIndex = localSlots.findIndex(s => s && cleanStr(s.plat) === cleanStr(myPlatClean));
 
-            let myQIndex = localQueue.findIndex(q => cleanStr(q.plat) === cleanStr(myPlat));
-            let mySlotIndex = localSlots.findIndex(s => s && cleanStr(s.plat) === cleanStr(myPlat));
-
+            // LOGIKA UX ANTI NYANGKUT
             if (mySlotIndex > -1) {
                 btnWrapper.innerHTML = `<button class="btn-laci bl-success" onclick="stopChargingDash(${mySlotIndex})"><i class="fas fa-plug"></i> SELESAI CHARGING</button>`;
+                slotWrapper.style.display = 'none';
             } else if (myQIndex > -1) {
-                btnWrapper.innerHTML = `<button class="btn-laci bl-danger" onclick="batalAntrianDash()"><i class="fas fa-times-circle"></i> BATALKAN ANTRIAN SAYA</button>`;
                 if (myQIndex === 0 && emptySlots > 0) {
-                    slotWrapper.style.display = 'block'; let slotBtns = '';
-                    localSlots.forEach((s, i) => { if(!s) slotBtns += `<button class="btn-laci bl-primary" style="margin-bottom:10px; background:var(--navy-main);" onclick="pilihSlotDash(${i})">MASUK SLOT 0${i+1}</button>`; });
-                    slotWrapper.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:10px; font-weight:800; letter-spacing:1px;">GILIRAN ANDA! PILIH SLOT:</div>` + slotBtns;
+                    slotWrapper.style.display = 'block'; 
+                    let slotBtns = '';
+                    localSlots.forEach((s, i) => { 
+                        if(!s) slotBtns += `<button class="btn-laci" style="margin-bottom:10px; background:var(--success); color:white; box-shadow:0 5px 15px rgba(16,185,129,0.3);" onclick="pilihSlotDash(${i})"><i class="fas fa-bolt"></i> MASUK SLOT 0${i+1}</button>`; 
+                    });
+                    slotWrapper.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:10px; font-weight:800; letter-spacing:1px;">GILIRAN ANDA! PILIH SLOT KOSONG:</div>` + slotBtns;
+                    
+                    btnWrapper.innerHTML = `<button class="btn-laci bl-danger" style="margin-top:10px;" onclick="batalAntrianDash()"><i class="fas fa-times-circle"></i> BATALKAN ANTRIAN</button>`;
+                } else {
+                    slotWrapper.style.display = 'none';
+                    btnWrapper.innerHTML = `
+                        <button class="btn-laci" style="background: linear-gradient(135deg, #F59E0B, #B45309); color: white; margin-bottom:10px; font-size:12px;" onclick="window.showEliteAlert('INFO ANTREAN', 'Silakan tunggu giliran Anda.<br><br>Tombol <b>MASUK SLOT</b> akan muncul otomatis saat Anda di <b>Urutan #1</b> dan ada <b>Slot Kosong</b>.')">
+                            <i class="fas fa-hourglass-half"></i> MENUNGGU GILIRAN (#${myQIndex + 1})
+                        </button>
+                        <button class="btn-laci bl-danger" onclick="batalAntrianDash()"><i class="fas fa-times-circle"></i> BATALKAN ANTRIAN</button>
+                    `;
                 }
             } else {
-                btnWrapper.innerHTML = `<button class="btn-laci bl-primary" onclick="persiapanDaftar()"><i class="fas fa-ticket-alt"></i> MASUK ANTRIAN</button>`;
+                btnWrapper.innerHTML = `<button class="btn-laci bl-primary" onclick="persiapanDaftar()"><i class="fas fa-ticket-alt"></i> DAFTAR ANTRIAN</button>`;
+                slotWrapper.style.display = 'none';
             }
         }
 
@@ -579,7 +633,7 @@
                 let html = '';
                 localQueue.forEach((q, i) => {
                     let bat = q.batreSisa || q.batre || q.battery || "-";
-                    let isMe = (cleanStr(q.plat) === cleanStr(myPlat)) ? 'border: 2px solid var(--gold-main); background:rgba(212,175,55,0.05);' : '';
+                    let isMe = (cleanStr(q.plat) === cleanStr(myPlatClean)) ? 'border: 2px solid var(--gold-main); background:rgba(212,175,55,0.05);' : '';
                     html += `<div class="list-item" style="${isMe}"><div><div class="li-plat">${q.plat}</div><div class="li-name">#${i+1} • ${cleanName(q.userName)}</div></div><div class="li-batre" style="color:var(--navy-main); background:rgba(10,25,49,0.05);"><i class="fas fa-battery-half"></i> ${bat.replace('%','')} %</div></div>`;
                 });
                 listArea.innerHTML = html;
@@ -589,35 +643,60 @@
 
         window.persiapanDaftar = () => { const m = document.getElementById('modalDaftarAntrian'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
         window.tutupDaftarAntrian = () => { const m = document.getElementById('modalDaftarAntrian'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
+        
         window.submitDaftarAntrian = async () => {
             const b = document.getElementById('inpBatre').value;
             if(!b) return window.showEliteAlert("PERINGATAN", "Isi sisa baterai motor Anda!");
             if(parseInt(b) > 100) return window.showEliteAlert("PERINGATAN", "Baterai maksimal 100%");
+            
             try { 
                 const snap = await getDoc(refGading); 
                 if(snap.exists()) { 
                     let d = snap.data(); let q = d.waitingQueue || []; let s = d.chargingSlots || []; 
-                    if(q.find(x => cleanStr(x.plat) === cleanStr(myPlat)) || s.find(y => y && cleanStr(y.plat) === cleanStr(myPlat))) { window.showEliteAlert("INFO", "Anda sudah terdaftar di sistem!"); tutupDaftarAntrian(); return; } 
-                    q.push({ userName: myName, plat: myPlat, batre: b + "%", battery: b + "%", batreSisa: b, role: myRole, timestamp: Date.now(), qNo: (d.lastTicket || 0) + 1 }); 
+                    if(q.find(x => cleanStr(x.plat) === cleanStr(myPlatClean)) || s.find(y => y && cleanStr(y.plat) === cleanStr(myPlatClean))) { 
+                        window.showEliteAlert("INFO", "Anda sudah terdaftar di sistem!"); 
+                        tutupDaftarAntrian(); return; 
+                    } 
+                    q.push({ userName: myName, plat: myPlatClean, batre: b + "%", battery: b + "%", batreSisa: b, role: myRole, timestamp: Date.now(), qNo: (d.lastTicket || 0) + 1 }); 
                     await updateDoc(refGading, { waitingQueue: q, lastTicket: (d.lastTicket || 0) + 1 }); 
-                    tutupDaftarAntrian(); window.showEliteAlert("SUKSES", "Anda berhasil masuk daftar tunggu.");
+                    
+                    tutupDaftarAntrian(); 
+                    document.getElementById('fcAccordion').classList.add('open');
                 } 
             } catch(e) { window.showEliteAlert("ERROR", e.message); } 
         }
+
         window.batalAntrianDash = () => {
             window.showConfirm("BATAL ANTRIAN", "Keluar dari antrian FC Kelapa Gading?", "danger", () => {
-                runTransaction(dbGading, async(t) => { const d = (await t.get(refGading)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); t.update(refGading, { waitingQueue: newQ }); }).catch(e => window.showEliteAlert("ERROR", e)); 
+                const btnW = document.getElementById('fcDynamicAction');
+                if(btnW) btnW.innerHTML = '<button class="btn-laci" style="background:#E2E8F0; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> MEMPROSES...</button>';
+                
+                runTransaction(dbGading, async(t) => { 
+                    const d = (await t.get(refGading)).data(); 
+                    const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlatClean)); 
+                    t.update(refGading, { waitingQueue: newQ }); 
+                }).catch(e => window.showEliteAlert("ERROR", e)); 
             });
         }
+        
         window.stopChargingDash = (idx) => {
             window.showConfirm("SELESAI CHARGING", "Kosongkan slot ini sekarang?", "normal", () => {
-                runTransaction(dbGading, async(t)=>{ const d = (await t.get(refGading)).data(); d.chargingSlots[idx] = null; t.update(refGading, {chargingSlots: d.chargingSlots}); });
+                const btnW = document.getElementById('fcDynamicAction');
+                if(btnW) btnW.innerHTML = '<button class="btn-laci" style="background:#E2E8F0; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> MEMPROSES...</button>';
+                
+                runTransaction(dbGading, async(t)=>{ 
+                    const d = (await t.get(refGading)).data(); d.chargingSlots[idx] = null; t.update(refGading, {chargingSlots: d.chargingSlots}); 
+                });
             });
         }
+        
         window.pilihSlotDash = (i) => {
+            const slotW = document.getElementById('fcSlotAction');
+            if(slotW) slotW.innerHTML = '<div style="text-align:center; padding:10px; color:var(--text-gray);"><i class="fas fa-spinner fa-spin"></i> Memasuki Slot...</div>';
+            
             runTransaction(dbGading, async(t)=>{ 
                 const d = (await t.get(refGading)).data(); if(d.chargingSlots[i]) throw "SLOT SUDAH TERISI!"; 
-                let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlat)); 
+                let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === cleanStr(myPlatClean)); 
                 if(idx === -1) throw "DATA ANDA TIDAK DITEMUKAN!"; 
                 const me = q[idx]; q.splice(idx, 1); me.startTime = Date.now(); d.chargingSlots[i] = me; 
                 t.update(refGading, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
@@ -626,10 +705,7 @@
 
         window.bukaAppKetiga = (appNama) => {
             let linkWeb = (appNama === 'Starvo') ? "https://play.google.com/store/apps/details?id=com.moizasia.starvo_mobile" : "https://casan.id/home/index";
-            let teksBuka = (appNama === 'Starvo') ? "aplikasi" : "website";
-            window.showConfirm("BUKA APLIKASI", `Buka ${teksBuka} ${appNama} untuk scan barcode?`, "normal", () => {
-                window.location.href = linkWeb;
-            });
+            if(confirm(`Buka ${appNama} untuk scan barcode?`)) { window.location.href = linkWeb; }
         }
 
         onSnapshot(query(collection(db, "mlu_members"), orderBy("saldoTabungan", "desc"), limit(3)), (snap) => {
@@ -640,65 +716,72 @@
 
             let podHTML = '';
             if(arr[1]) podHTML += `<div class="pod-item pod-2"><img src="${arr[1].foto||'https://ui-avatars.com/api/?background=E2E8F0&color=0F172A'}" class="pod-avatar"><div class="pod-title">CRAZY RICH</div><div class="pod-name">${arr[1].namaKtp || arr[1].namaWa || "Member"}</div></div>`;
-            if(arr[0]) podHTML += `<div class="pod-item pod-1"><div class="pod-badge">👑</div><img src="${arr[0].foto||'https://ui-avatars.com/api/?background=D4AF37&color=000'}" class="pod-avatar"><div class="pod-title">SULTAN</div><div class="pod-name">${arr[0].namaKtp || arr[0].namaWa || "Member"}</div></div>`;
+            if(arr[0]) podHTML += `<div class="pod-item pod-1"><div class="pod-badge">👑</div><img src="${arr[0].foto||'https://ui-avatars.com/api/?background=D4AF37&color=000'}" class="pod-avatar"><div class="pod-title">SULTAN ELITE</div><div class="pod-name">${arr[0].namaKtp || arr[0].namaWa || "Member"}</div></div>`;
             if(arr[2]) podHTML += `<div class="pod-item pod-3"><img src="${arr[2].foto||'https://ui-avatars.com/api/?background=FDBA74&color=78350F'}" class="pod-avatar"><div class="pod-title">JURAGAN</div><div class="pod-name">${arr[2].namaKtp || arr[2].namaWa || "Member"}</div></div>`;
             list.innerHTML = podHTML;
         });
 
-        let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
-        onSnapshot(doc(dbKC, "antrian", "utama"), (snap) => {
-            if(snap.exists()) {
-                const d = snap.data(); const slots = d.chargingSlots || [null, null, null, null, null];
-                const emptySlots = slots.filter(s => s === null).length; const qLen = (d.waitingQueue || []).length;
-                if (emptySlots > 0) { kcLiveStatus = `<span style="color:#10B981;"><i class="fas fa-check-circle"></i> ${emptySlots} Tersedia</span>`; } 
-                else { kcLiveStatus = `<span style="color:var(--warning);"><i class="fas fa-battery-full"></i> FULL | <i class="fas fa-users"></i> ${qLen} ANTRE</span>`; }
-                if (window.currentNearestFC === 'kc') { const ind = document.getElementById('liveKcIndicator'); if(ind) ind.innerHTML = kcLiveStatus; }
+        // --- RIDING MODE LOGIC (LACI) ---
+        window.radarRunning = false;
+        
+        window.toggleRidingMode = () => {
+            const wrp = document.getElementById('ridingAccordion');
+            wrp.classList.toggle('open');
+            
+            // Nyalakan radar cuma pas lacinya kebuka
+            if(wrp.classList.contains('open') && !window.radarRunning) {
+                startNearestFCRadar();
+                window.radarRunning = true;
             }
-        });
+        }
 
         function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
-        let isRadarNotified = false;
-
+        
         function startNearestFCRadar() {
             if(!navigator.geolocation) {
-                document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> GPS MATI`; 
-                document.getElementById('statusAltFC').innerHTML = "Perangkat Anda tidak mendukung fitur lokasi GPS."; return;
+                document.getElementById('ridingGpsStatus').innerHTML = "GPS MATI / TIDAK DIDUKUNG"; 
+                return;
             }
 
-            onSnapshot(collection(db, "fc_locations"), (snap) => {
-                let lokasiAlternatif = [ { id: "kc", name: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, color: "#10B981" } ];
-                snap.forEach(doc => { const data = doc.data(); if(data.isActive !== false && doc.id !== 'gading') { lokasiAlternatif.push({ id: doc.id, name: data.name || doc.id, lat: data.lat, lng: data.lng, color: "var(--electric-blue)", mapLink: data.mapLink }); }});
+            // Data dummy (bisa dari Firebase nanti)
+            let lokasiAlternatif = [ 
+                { id: "kc", name: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, color: "#10B981", mapLink: "https://maps.app.goo.gl/P8uWJ857JcBNi5A5A" },
+                { id: "motoriz", name: "MOTORIZ SUKAPURA", lat: -6.141517, lng: 106.918342, color: "#2D63ED", mapLink: "https://maps.app.goo.gl/Z5wL6u9E8hJ9fF7q6" }
+            ];
 
-                navigator.geolocation.watchPosition((pos) => {
-                    let nearestFC = null; let minDist = Infinity;
-                    lokasiAlternatif.forEach(fc => { let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); if(d < minDist) { minDist = d; nearestFC = fc; } });
+            navigator.geolocation.watchPosition((pos) => {
+                let allDistances = [];
+                
+                lokasiAlternatif.forEach(fc => { 
+                    let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); 
+                    fc.dist = d;
+                    allDistances.push(fc);
+                });
 
-                    if(nearestFC) {
-                        window.currentNearestFC = nearestFC.id;
-                        document.getElementById('altFcNama').innerHTML = `<i class="fas fa-map-marker-alt" style="color: ${nearestFC.color};"></i> ${nearestFC.name.toUpperCase()}`;
-                        let statusHtml = `<span><i class="fas fa-location-arrow"></i> ${minDist.toFixed(1)} KM</span>`;
-                        
-                        if (nearestFC.id === 'kc') {
-                            document.getElementById('altFcBanner').classList.add('fc-kc'); statusHtml += ` <span style="margin: 0 5px;">|</span> <span id="liveKcIndicator">${kcLiveStatus}</span>`;
-                            document.getElementById('altFcBanner').onclick = () => window.location.href = 'antriankc.html';
-                        } else {
-                            document.getElementById('altFcBanner').classList.remove('fc-kc'); const gmapsUrl = nearestFC.mapLink || `http://googleusercontent.com/maps.google.com/?q=${nearestFC.lat},${nearestFC.lng}`;
-                            document.getElementById('altFcBanner').onclick = () => window.open(gmapsUrl, '_blank');
-                        }
-                        document.getElementById('statusAltFC').innerHTML = statusHtml;
+                allDistances.sort((a, b) => a.dist - b.dist); 
+                
+                let rHtml = '';
+                allDistances.forEach(fc => {
+                    const gmapsUrl = fc.mapLink || `http://googleusercontent.com/maps.google.com/?q=${fc.lat},${fc.lng}`;
+                    rHtml += `
+                    <div class="list-item" style="cursor:pointer; margin-bottom:8px; box-shadow:0 2px 8px rgba(0,0,0,0.05); padding:12px 15px;" onclick="window.open('${gmapsUrl}', '_blank')">
+                        <div>
+                            <div class="li-plat" style="font-size:14px; margin-bottom:2px;">${fc.name}</div>
+                            <div class="li-name" style="color:var(--text-main); font-weight:800;"><i class="fas fa-location-arrow" style="color:var(--electric-blue);"></i> ${fc.dist.toFixed(1)} KM DARI SINI</div>
+                        </div>
+                        <button class="btn-beli" style="width:auto; padding:8px 12px; margin:0; border-radius:8px; background:rgba(45,99,237,0.1); color:var(--electric-blue); box-shadow:none;"><i class="fas fa-route"></i> ARAH</button>
+                    </div>
+                    `;
+                });
+                
+                document.getElementById('ridingFcList').innerHTML = rHtml;
+                document.getElementById('ridingGpsStatus').innerHTML = "RADAR AKTIF";
 
-                        if(minDist <= 0.3 && !isRadarNotified) {
-                            isRadarNotified = true; if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                            window.showEliteAlert("⚡ RADAR AKTIF", `Anda berada di radius ${minDist.toFixed(2)} KM dari <b>${nearestFC.name.toUpperCase()}</b>. Mau mampir ngecas?`);
-                            setTimeout(() => { isRadarNotified = false; }, 300000);
-                        }
-                    }
-                }, () => { 
-                    document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> GPS MATI`; document.getElementById('statusAltFC').innerHTML = "Mohon izinkan akses GPS."; document.getElementById('statusAltFC').style.background = "rgba(239,68,68,0.1)"; document.getElementById('statusAltFC').style.color = "var(--danger)";
-                }, { enableHighAccuracy: true });
-            });
+            }, () => { 
+                document.getElementById('ridingGpsStatus').innerHTML = "IZINKAN LOKASI (GPS)";
+            }, { enableHighAccuracy: true });
         }
-        startNearestFCRadar();
+
     </script>
 </body>
 </html>
