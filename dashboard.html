@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "14.4_STARVO_PODIUM_PERFECT"; 
+        const DASH_VERSION = "14.6_SUPER_FAST_RESPONSE"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -44,6 +44,7 @@
         .fade-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(30px); }
         .d-1 { animation-delay: 0.1s; } .d-2 { animation-delay: 0.2s; } .d-3 { animation-delay: 0.3s; } .d-4 { animation-delay: 0.4s; }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* --- HEADER --- */
         .top-header { padding: 30px 20px 10px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10;}
@@ -224,6 +225,11 @@
 
     <div class="ambient-light light-1"></div>
     <div class="ambient-light light-2"></div>
+
+    <div id="actionLoader" style="position:fixed; inset:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(5px); z-index:999999; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:0.3s;">
+        <div style="width:50px; height:50px; border:5px solid #E2E8F0; border-top:5px solid var(--electric-blue); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:15px;"></div>
+        <div style="font-family:'Space Grotesk'; font-weight:900; color:var(--royal-blue); letter-spacing:2px;">MEMPROSES...</div>
+    </div>
 
     <div class="modal-glass-overlay" id="reminderTabunganModal" style="z-index: 100000;">
         <div class="modal-glass-box" style="text-align:center; max-width: 320px;">
@@ -424,7 +430,7 @@
             <h2 style="font-family:'Outfit'; font-size:20px; color:var(--royal-blue); margin-top:0; margin-bottom: 20px; text-align:center; padding-right:20px;"><i class="fas fa-bolt" style="color:var(--gold-lux);"></i> MASUK ANTRIAN</h2>
             <div class="form-group"><label class="form-label">Nama Pilot</label><input type="text" id="inpNama" class="form-input" readonly></div>
             <div class="form-group"><label class="form-label">Plat Kendaraan</label><input type="text" id="inpPlat" class="form-input" readonly style="background: #E2E8F0; color: #64748B;"></div>
-            <div class="form-group"><label class="form-label">Sisa Baterai (%)</label><input type="number" id="inpBatre" class="form-input" placeholder="Contoh: 15" min="0" max="100" style="font-size:18px; text-align:center;"></div>
+            <div class="form-group"><label class="form-label">Sisa Baterai (%)</label><input type="text" inputmode="numeric" pattern="[0-9]*" id="inpBatre" class="form-input" placeholder="Contoh: 15" style="font-size:18px; text-align:center;"></div>
             <button class="btn-submit" onclick="submitDaftarAntrian()"><i class="fas fa-check-circle"></i> KONFIRMASI DAFTAR</button>
         </div>
     </div>
@@ -462,6 +468,18 @@
         import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
         // =========================================================================
+        // LOADER ANTI LEMOT (SUPER FAST FEEDBACK)
+        // =========================================================================
+        window.showActionLoader = () => {
+            const l = document.getElementById('actionLoader');
+            if(l) { l.style.display = 'flex'; setTimeout(() => l.style.opacity = '1', 10); }
+        };
+        window.hideActionLoader = () => {
+            const l = document.getElementById('actionLoader');
+            if(l) { l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 300); }
+        };
+
+        // =========================================================================
         // 1. DEKLARASI FUNGSI TOMBOL
         // =========================================================================
         window.bukaInbox = () => { 
@@ -471,44 +489,27 @@
             document.querySelectorAll('.inbox-item.unread').forEach(el => el.classList.remove('unread'));
         };
         window.tutupInbox = (e) => { if(e.target.id === 'modalInbox') { e.target.classList.remove('show'); setTimeout(()=>e.target.style.display='none',300); }};
-        
-        window.tutupReminderTabungan = () => { 
-            const m = document.getElementById('reminderTabunganModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); 
-        };
+        window.tutupReminderTabungan = () => { const m = document.getElementById('reminderTabunganModal'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
 
         window.tampilkanQR = () => { 
             let uid = "GUEST", uName = "Nama", uPlat = "B 0000";
             try { 
                 const uData = JSON.parse(localStorage.getItem('maka_user')); 
-                if(uData) {
-                    uid = uData.id || uData.plat.replace(/\s+/g, '').toUpperCase(); 
-                    uName = uData.namaKtp || uData.namaWa || "Member";
-                    uPlat = uData.plat || "-";
-                }
+                if(uData) { uid = uData.id || uData.plat.replace(/\s+/g, '').toUpperCase(); uName = uData.namaKtp || uData.namaWa || "Member"; uPlat = uData.plat || "-"; }
             }catch(e){}
             document.getElementById('imgQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(uid)}&margin=10`; 
-            document.getElementById('qrNamaFull').innerText = uName;
-            document.getElementById('qrPlat').innerHTML = `<i class="fas fa-car"></i> ${uPlat}`;
+            document.getElementById('qrNamaFull').innerText = uName; document.getElementById('qrPlat').innerHTML = `<i class="fas fa-car"></i> ${uPlat}`;
             const m = document.getElementById('modalQR'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); 
         };
         window.tutupQR = () => { const m = document.getElementById('modalQR'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
         
         window.bukaSetting = () => { const m = document.getElementById('modalSetting'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
         window.tutupSetting = () => { const m = document.getElementById('modalSetting'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); };
-        
         window.openSosModal = () => { const m = document.getElementById('sosModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); };
         window.tutupBroadcast = () => { const m = document.getElementById('broadcastModal'); m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 300); };
         
         window.showConfirm = (msg, callback) => { document.getElementById('confirmMsg').innerText = msg; const modal = document.getElementById('confirmModal'); modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10); window.confirmCallback = callback; }
         window.closeConfirm = (res) => { const modal = document.getElementById('confirmModal'); modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
-        
-        window.showEliteAlert = (title, msg) => {
-            document.getElementById('confirmTitle').innerText = title; document.getElementById('confirmMsg').innerHTML = msg;
-            document.getElementById('emIcon').innerHTML = '<i class="fas fa-info-circle"></i>'; document.getElementById('emIcon').style.background = 'rgba(212,175,55,0.1)'; document.getElementById('emIcon').style.color = 'var(--gold-main)';
-            document.getElementById('confirmBtns').innerHTML = `<button class="btn-modal" onclick="closeConfirm(false)" style="background:#2D63ED !important; color:white !important; width:100%; box-shadow:0 10px 20px rgba(45,99,237,0.3);">MENGERTI</button>`;
-            const modal = document.getElementById('confirmModal'); modal.style.display = 'flex'; setTimeout(()=>modal.classList.add('show'), 10);
-        }
-
         window.logoutApp = () => { if(confirm("Yakin keluar?")) { localStorage.removeItem('maka_user'); window.location.href = 'index.html'; } };
 
         // =========================================================================
@@ -535,7 +536,7 @@
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
                     const token = await getToken(messaging, { vapidKey: "BG9QR4ri9KdYe8ZYDiR5tqYeykJcDBgu7Eum2ka41Ahf8G6_81YXaIMWslFexo1igGyyLrGVIxnuE2cGK6dj_q4" });
-                    if (token && userId) { await updateDoc(doc(db, "mlu_members", userId), { fcmToken: token }); console.log("Token FCM tersimpan!"); }
+                    if (token && userId) { await updateDoc(doc(db, "mlu_members", userId), { fcmToken: token }); }
                 }
             } catch (e) { console.log("Notif Error: ", e); }
         }
@@ -573,26 +574,28 @@
         if (myPlatClean === "B4248SWF") document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
         else document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> ` + (uData.role || "MEMBER").toUpperCase();
 
+        // FIX UNTUK AUTO-FILL DI DASHBOARD DAN MODAL
         document.getElementById('setNama').value = myName; 
         document.getElementById('setWa').value = uData.noWa || ""; 
         document.getElementById('setPlat').value = myPlat;
         document.getElementById('qrNamaFull').innerText = myName;
         document.getElementById('qrPlat').innerText = myPlat;
+        
+        // ISI OTOMATIS DATA DI MODAL ANTREAN
+        if(document.getElementById('inpNama')) document.getElementById('inpNama').value = myName;
+        if(document.getElementById('inpPlat')) document.getElementById('inpPlat').value = myPlat;
 
         if (isPengurus || myPlatClean === "B4248SWF") {
-            const btnAbsen = document.getElementById('btnAbsenKopdar');
-            if(btnAbsen) btnAbsen.style.display = 'flex';
-            const btnAdmin = document.getElementById('btnAdminMlu');
-            if(btnAdmin) btnAdmin.style.display = 'flex';
+            const btnAbsen = document.getElementById('btnAbsenKopdar'); if(btnAbsen) btnAbsen.style.display = 'flex';
+            const btnAdmin = document.getElementById('btnAdminMlu'); if(btnAdmin) btnAdmin.style.display = 'flex';
         }
 
         // -------------------------------------------------------------------------
-        // CEK & TAMPILKAN REMINDER TABUNGAN
+        // CEK REMINDER TABUNGAN
         // -------------------------------------------------------------------------
         async function checkTabunganReminder() {
             const todayStr = new Date().toDateString();
             const lastReminder = localStorage.getItem('maka_last_tabungan_reminder');
-            
             if (lastReminder === todayStr) return;
 
             try {
@@ -603,61 +606,40 @@
                 const userData = userSnap.data();
                 const saldo = userData.saldoTabungan || 0;
 
-                let isHarusDiingatkan = false;
-                let pesanKhusus = "";
+                let isHarusDiingatkan = false; let pesanKhusus = "";
 
-                if (saldo === 0) {
-                    isHarusDiingatkan = true;
-                    pesanKhusus = "Sistem mendeteksi bahwa kamu sama sekali belum melakukan kegiatan menabung.";
-                } else {
+                if (saldo === 0) { isHarusDiingatkan = true; pesanKhusus = "Sistem mendeteksi bahwa kamu sama sekali belum melakukan kegiatan menabung."; } 
+                else {
                     const qTrx = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", userId));
                     const trxSnap = await getDocs(qTrx);
-                    
                     let lastInTime = 0;
-                    trxSnap.forEach(d => {
-                        const data = d.data();
-                        if(data.type === 'IN' && data.status === 'SUCCESS' && data.timestamp > lastInTime) {
-                            lastInTime = data.timestamp;
-                        }
-                    });
-                    
-                    if (lastInTime === 0) {
-                        isHarusDiingatkan = true;
-                        pesanKhusus = "Sistem mendeteksi bahwa kamu belum memiliki catatan setoran tabungan yang divalidasi.";
-                    } else {
+                    trxSnap.forEach(d => { const data = d.data(); if(data.type === 'IN' && data.status === 'SUCCESS' && data.timestamp > lastInTime) lastInTime = data.timestamp; });
+                    if (lastInTime === 0) { isHarusDiingatkan = true; pesanKhusus = "Sistem mendeteksi bahwa kamu belum memiliki catatan setoran tabungan yang divalidasi."; } 
+                    else {
                         const daysDiff = (Date.now() - lastInTime) / (1000 * 3600 * 24);
-                        if (daysDiff >= 3) {
-                            isHarusDiingatkan = true;
-                            pesanKhusus = "Sistem mendeteksi bahwa kamu sudah beberapa hari ini tidak menabung.";
-                        }
+                        if (daysDiff >= 3) { isHarusDiingatkan = true; pesanKhusus = "Sistem mendeteksi bahwa kamu sudah beberapa hari ini tidak menabung."; }
                     }
                 }
 
                 if (isHarusDiingatkan) {
                     const textEl = document.getElementById('reminderText');
                     textEl.innerHTML = `Hai, <b>${myName}</b><br><br>${pesanKhusus} Tahukah kamu bahwa Maka Lintas Utara, wadah yang menaungi kamu memiliki program agar keluarga MLU bebas dari OD lewat program tabungan.<br><br>Yuk mulai menabung mulai hari ini, biar kita bisa terus sama-sama sebagai keluarga sampai motor kita lunas.`;
-                    
-                    const m = document.getElementById('reminderTabunganModal');
-                    m.style.display = 'flex';
-                    setTimeout(() => m.classList.add('show'), 100);
-
+                    const m = document.getElementById('reminderTabunganModal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 100);
                     localStorage.setItem('maka_last_tabungan_reminder', todayStr);
                 }
-            } catch (e) {
-                console.log("Error reminder: ", e);
-            }
+            } catch (e) {}
         }
-        
         setTimeout(checkTabunganReminder, 1500);
 
         window.simpanProfil = async () => {
             const newNama = document.getElementById('setNama').value; const newWa = document.getElementById('setWa').value;
             if(!newNama || !newWa) return alert("Data kosong!");
-            try { await updateDoc(doc(db, "mlu_members", userId), { namaKtp: newNama, noWa: newWa }); uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData)); alert("Profil diperbarui!"); location.reload(); } catch(e) { alert("Error: " + e.message); }
+            window.showActionLoader();
+            try { await updateDoc(doc(db, "mlu_members", userId), { namaKtp: newNama, noWa: newWa }); uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData)); alert("Profil diperbarui!"); location.reload(); } catch(e) { window.hideActionLoader(); alert("Error: " + e.message); }
         };
 
         // =========================================================================
-        // 4. LOGIKA LACI ANTREAN FC GADING
+        // 4. LOGIKA LACI ANTREAN FC GADING (DENGAN SUPER FAST SYNC)
         // =========================================================================
         const TOTAL_SLOTS = 3;
         let localSlots = [null, null, null];
@@ -670,6 +652,7 @@
             const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; updateFCUI();
         });
 
+        function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
 
         function updateFCUI() {
@@ -743,58 +726,64 @@
         window.persiapanDaftar = () => { const m = document.getElementById('modalDaftarAntrian'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
         window.tutupDaftarAntrian = () => { const m = document.getElementById('modalDaftarAntrian'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
         
+        // --- PROSES SUBMIT DENGAN FEEDBACK SUPER FAST ---
         window.submitDaftarAntrian = async () => {
             const b = document.getElementById('inpBatre').value;
             if(!b) return alert("Isi sisa baterai motor Anda!");
             if(parseInt(b) > 98) return alert("⚠️ KONDISI ABNORMAL!\n\nMaksimal charging dibatasi 98%. DILARANG charging 100% atau tunggu indikator biru!");
             
+            window.showActionLoader();
             try { 
                 const snap = await getDoc(refGading); 
                 if(snap.exists()) { 
                     let d = snap.data(); let q = d.waitingQueue || []; let s = d.chargingSlots || []; 
                     if(q.find(x => cleanStr(x.plat) === myPlatClean) || s.find(y => y && cleanStr(y.plat) === myPlatClean)) { 
+                        window.hideActionLoader();
                         alert("Anda sudah terdaftar di sistem!"); tutupDaftarAntrian(); return; 
                     } 
                     q.push({ userName: myName, plat: myPlatClean, batre: b + "%", battery: b + "%", batreSisa: b, role: roleCek, timestamp: Date.now(), qNo: (d.lastTicket || 0) + 1 }); 
                     await updateDoc(refGading, { waitingQueue: q, lastTicket: (d.lastTicket || 0) + 1 }); 
+                    
+                    window.hideActionLoader();
                     tutupDaftarAntrian(); 
+                    document.getElementById('inpBatre').value = '';
                     document.getElementById('fcAccordion').classList.add('open');
-                } 
-            } catch(e) { alert("ERROR: " + e.message); } 
+                } else {
+                    window.hideActionLoader();
+                    alert("Database antrean tidak ditemukan.");
+                }
+            } catch(e) { window.hideActionLoader(); alert("ERROR: " + e.message); } 
         }
 
         window.batalAntrianDash = () => {
             if(confirm("Keluar dari antrian FC Kelapa Gading?")) {
-                const btnW = document.getElementById('fcDynamicAction');
-                if(btnW) btnW.innerHTML = '<button class="btn-laci" style="background:#E2E8F0; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> MEMPROSES...</button>';
+                window.showActionLoader();
                 runTransaction(dbGading, async(t) => { 
                     const d = (await t.get(refGading)).data(); 
                     const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== myPlatClean); 
                     t.update(refGading, { waitingQueue: newQ }); 
-                }).catch(e => alert("ERROR: " + e.message)); 
+                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert("ERROR: " + e.message); }); 
             }
         }
         
         window.stopChargingDash = (idx) => {
             if(confirm("Kosongkan slot ini sekarang?")) {
-                const btnW = document.getElementById('fcDynamicAction');
-                if(btnW) btnW.innerHTML = '<button class="btn-laci" style="background:#E2E8F0; color:#94A3B8;"><i class="fas fa-spinner fa-spin"></i> MEMPROSES...</button>';
+                window.showActionLoader();
                 runTransaction(dbGading, async(t)=>{ 
                     const d = (await t.get(refGading)).data(); d.chargingSlots[idx] = null; t.update(refGading, {chargingSlots: d.chargingSlots}); 
-                });
+                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert("ERROR: " + e.message); }); 
             }
         }
         
         window.pilihSlotDash = (i) => {
-            const slotW = document.getElementById('fcSlotAction');
-            if(slotW) slotW.innerHTML = '<div style="text-align:center; padding:10px; color:var(--text-gray);"><i class="fas fa-spinner fa-spin"></i> Memasuki Slot...</div>';
+            window.showActionLoader();
             runTransaction(dbGading, async(t)=>{ 
                 const d = (await t.get(refGading)).data(); if(d.chargingSlots[i]) throw "SLOT SUDAH TERISI!"; 
                 let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === myPlatClean); 
                 if(idx === -1) throw "DATA ANDA TIDAK DITEMUKAN!"; 
                 const me = q[idx]; q.splice(idx, 1); me.startTime = Date.now(); d.chargingSlots[i] = me; 
                 t.update(refGading, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-            }).catch(e => alert("ERROR: " + e.message)); 
+            }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert("ERROR: " + e); }); 
         }
 
         // =========================================================================
@@ -803,14 +792,11 @@
         window.bukaAppKetiga = (appNama) => {
             let linkWeb = "";
             if (appNama === 'Starvo') {
-                // JALUR RESMI PLAYSTORE (ANTI ERROR PWA)
                 linkWeb = "https://play.google.com/store/apps/details?id=com.moizasia.starvo_mobile";
             } else {
                 linkWeb = "https://casan.id/home/index";
             }
-            if(confirm(`Buka ${appNama} untuk scan barcode?`)) {
-                window.location.href = linkWeb;
-            }
+            if(confirm(`Buka ${appNama} untuk scan barcode?`)) { window.location.href = linkWeb; }
         }
 
         let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
@@ -869,54 +855,21 @@
         onSnapshot(query(collection(db, "mlu_members"), orderBy("saldoTabungan", "desc"), limit(3)), (snap) => {
             const list = document.getElementById('topSaversList'); list.innerHTML = ""; let rank = 1;
             
-            // Siapkan wadah untuk data 3 orang teratas
             let savers = [];
-            snap.forEach(doc => { 
-                const data = doc.data(); 
-                if(data.saldoTabungan && data.saldoTabungan > 0) {
-                    savers.push(data);
-                }
-            });
+            snap.forEach(doc => { const data = doc.data(); if(data.saldoTabungan && data.saldoTabungan > 0) { savers.push(data); } });
 
-            if(savers.length === 0) { 
-                list.innerHTML = `<div style="text-align: center; width: 100%; font-size: 11px; color: var(--text-muted); padding: 20px;">Belum ada data Sultan.</div>`; 
-                return; 
-            }
+            if(savers.length === 0) { list.innerHTML = `<div style="text-align: center; width: 100%; font-size: 11px; color: var(--text-muted); padding: 20px;">Belum ada data Sultan.</div>`; return; }
 
-            // Render Podium 3D (Logic dari Beta)
             let podHTML = '';
-            
-            // JUARA 2 (KIRI)
             if(savers[1]) {
-                podHTML += `
-                <div class="pod-item pod-2">
-                    <img src="${savers[1].foto||'https://ui-avatars.com/api/?background=E2E8F0&color=0F172A'}" class="pod-avatar" onerror="this.src='https://ui-avatars.com/api/?background=E2E8F0&color=0F172A'">
-                    <div class="pod-title">CRAZY RICH</div>
-                    <div class="pod-name">${savers[1].namaKtp || savers[1].namaWa || "Member"}</div>
-                </div>`;
+                podHTML += `<div class="pod-item pod-2"><img src="${savers[1].foto||'https://ui-avatars.com/api/?background=E2E8F0&color=0F172A'}" class="pod-avatar" onerror="this.src='https://ui-avatars.com/api/?background=E2E8F0&color=0F172A'"><div class="pod-title">CRAZY RICH</div><div class="pod-name">${savers[1].namaKtp || savers[1].namaWa || "Member"}</div></div>`;
             }
-
-            // JUARA 1 (TENGAH)
             if(savers[0]) {
-                podHTML += `
-                <div class="pod-item pod-1">
-                    <div class="pod-badge">👑</div>
-                    <img src="${savers[0].foto||'https://ui-avatars.com/api/?background=D4AF37&color=000'}" class="pod-avatar" onerror="this.src='https://ui-avatars.com/api/?background=D4AF37&color=000'">
-                    <div class="pod-title">SULTAN ELITE</div>
-                    <div class="pod-name">${savers[0].namaKtp || savers[0].namaWa || "Member"}</div>
-                </div>`;
+                podHTML += `<div class="pod-item pod-1"><div class="pod-badge">👑</div><img src="${savers[0].foto||'https://ui-avatars.com/api/?background=D4AF37&color=000'}" class="pod-avatar" onerror="this.src='https://ui-avatars.com/api/?background=D4AF37&color=000'"><div class="pod-title">SULTAN ELITE</div><div class="pod-name">${savers[0].namaKtp || savers[0].namaWa || "Member"}</div></div>`;
             }
-
-            // JUARA 3 (KANAN)
             if(savers[2]) {
-                podHTML += `
-                <div class="pod-item pod-3">
-                    <img src="${savers[2].foto||'https://ui-avatars.com/api/?background=FDBA74&color=78350F'}" class="pod-avatar" onerror="this.src='https://ui-avatars.com/api/?background=FDBA74&color=78350F'">
-                    <div class="pod-title">JURAGAN</div>
-                    <div class="pod-name">${savers[2].namaKtp || savers[2].namaWa || "Member"}</div>
-                </div>`;
+                podHTML += `<div class="pod-item pod-3"><img src="${savers[2].foto||'https://ui-avatars.com/api/?background=FDBA74&color=78350F'}" class="pod-avatar" onerror="this.src='https://ui-avatars.com/api/?background=FDBA74&color=78350F'"><div class="pod-title">JURAGAN</div><div class="pod-name">${savers[2].namaKtp || savers[2].namaWa || "Member"}</div></div>`;
             }
-            
             list.innerHTML = podHTML;
         });
 
