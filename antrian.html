@@ -9,7 +9,8 @@
         const globalTheme = localStorage.getItem('mlu_global_theme');
         if (globalTheme === 'lebaran') { document.documentElement.classList.add('theme-lebaran'); }
         
-        const DASH_VERSION = "6.3_SUPER_FAST_SYNC";
+        // AUTO CLEAR CACHE BIAR SCRIPT BARU LANGSUNG JALAN
+        const DASH_VERSION = "6.4_NATIVE_NOTIF";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -420,8 +421,19 @@
         } else if (navigator.geolocation) {
             navigator.geolocation.watchPosition((pos) => {
                 const dist = calculateDist(STATION_LAT, STATION_LNG, pos.coords.latitude, pos.coords.longitude);
-                if(dist <= MAX_DIST_KM) { isInLocation = true; gpsInd.className = "gps-badge ok"; gpsInd.innerHTML = "<i class='fas fa-map-marker-alt'></i> ANDA DI LOKASI"; } 
-                else { isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = `<i class='fas fa-eye'></i> MODE PANTAU (${(dist).toFixed(1)} KM)`; }
+                if(dist <= MAX_DIST_KM) { 
+                    isInLocation = true; gpsInd.className = "gps-badge ok"; gpsInd.innerHTML = "<i class='fas fa-map-marker-alt'></i> ANDA DI LOKASI"; 
+                    
+                    // --- ILMU HITAM: NOTIFIKASI NATIVE SAAT MASUK RADIUS ---
+                    if (!window.radarNotifSent) {
+                        if (window.AndroidNative) AndroidNative.triggerNotif("📍 LOKASI FC TERDETEKSI", "Anda sudah masuk radius FC Kelapa Gading. Silakan ambil antrean!");
+                        window.radarNotifSent = true;
+                    }
+                } 
+                else { 
+                    isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = `<i class='fas fa-eye'></i> MODE PANTAU (${(dist).toFixed(1)} KM)`; 
+                    window.radarNotifSent = false; // Reset if they leave
+                }
                 updateUI();
             }, (err) => { isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = "<i class='fas fa-eye'></i> MODE PANTAU (NO GPS)"; updateUI(); }, {enableHighAccuracy: true, maximumAge: 10000});
         }
@@ -577,6 +589,7 @@
             // --- 2. LOGIKA TOMBOL BAWAH ---
             if (mySlotIndex > -1) {
                 // Di Slot
+                window.notifAntreanTerkirim = false; // Reset notif
                 btnCancel.style.display = 'none';
                 btnTake.style.display = 'flex';
                 btnTake.className = "btn-hub"; 
@@ -589,12 +602,19 @@
                 btnCancel.innerHTML = `<i class="fas fa-times-circle"></i> BATALKAN ANTRIAN SAYA (#${myQIndex+1})`;
                 
                 if (myQIndex === 0 && emptySlots > 0) {
+                    // --- ILMU HITAM: NOTIF NATIVE PANGGILAN SLOT ---
+                    if (!window.notifAntreanTerkirim) {
+                        if (window.AndroidNative) AndroidNative.triggerNotif("⚡ GILIRAN ANDA TIBA!", "Silakan tekan tombol 'PILIH SLOT KOSONG' sekarang.");
+                        window.notifAntreanTerkirim = true;
+                    }
+
                     btnTake.style.display = 'flex';
                     btnTake.className = "btn-hub";
                     btnTake.style.background = "var(--success)"; btnTake.style.color = "white";
                     btnTake.innerHTML = "<i class='fas fa-bolt'></i> PILIH SLOT KOSONG";
                     btnTake.onclick = () => autoAssignSlot();
                 } else {
+                    window.notifAntreanTerkirim = false; // Reset Notif
                     btnTake.style.display = 'flex';
                     btnTake.className = "btn-hub";
                     btnTake.style.background = "linear-gradient(135deg, var(--warning) 0%, #B45309 100%)"; btnTake.style.color = "white";
@@ -603,6 +623,7 @@
                 }
             } else {
                 // Belum Ngapa-ngapain
+                window.notifAntreanTerkirim = false; // Reset Notif
                 btnCancel.style.display = 'none';
                 btnTake.style.display = 'flex';
                 btnTake.style.background = ""; btnTake.style.color = "";

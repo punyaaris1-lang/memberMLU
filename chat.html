@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MLU - Ruang Obrolan</title>
+    
+    <script>
+        const CHAT_VERSION = "2.1_NATIVE_NOTIF"; 
+        if (localStorage.getItem('maka_chat_v') !== CHAT_VERSION) {
+            if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
+            localStorage.setItem('maka_chat_v', CHAT_VERSION); window.location.reload(true); 
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { 
+            --navy-main: #0A1931; --navy-light: #15305B;
+            --gold-main: #D4AF37; --bg-chat: #E8F0F8; 
+            --blue-chat: #2D63ED; --white: #FFFFFF;
+        }
+        body { 
+            margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-chat); 
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+        }
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent;}
+
+        /* HEADER */
+        .chat-header { 
+            background: linear-gradient(135deg, var(--navy-main), var(--navy-light)); 
+            padding: 20px 20px 15px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 10px 20px rgba(10,25,49,0.15); z-index: 10; position: relative;
+        }
+        .btn-back { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.1); color: var(--white); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: 0.2s;}
+        .btn-back:active { transform: scale(0.9); background: var(--gold-main); }
+        .header-info { flex: 1; }
+        .h-title { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--white); margin: 0; display: flex; align-items: center; gap: 8px;}
+        .h-sub { font-size: 10px; color: var(--gold-main); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;}
+
+        /* CHAT AREA */
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth;}
+        .chat-box::-webkit-scrollbar { display: none; }
+        
+        .msg-wrapper { display: flex; flex-direction: column; max-width: 85%; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { opacity: 0; transform: translateY(20px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        .msg-other { align-self: flex-start; }
+        .msg-me { align-self: flex-end; align-items: flex-end; }
+        
+        .msg-sender { font-size: 10px; font-weight: 800; color: #64748B; margin-bottom: 4px; padding: 0 5px; display: flex; align-items: center; gap: 5px;}
+        .sender-admin { color: #EF4444; }
+        .msg-sender span { font-family: 'Space Grotesk'; color: #94A3B8; font-size: 9px; }
+
+        .msg-bubble { padding: 12px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; line-height: 1.4; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); word-wrap: break-word;}
+        .msg-other .msg-bubble { background: var(--white); color: var(--navy-main); border-bottom-left-radius: 4px; border: 1px solid rgba(226,232,240,0.8); }
+        .msg-other.is-admin .msg-bubble { border: 1px solid rgba(239,68,68,0.3); background: #FEF2F2; }
+        .msg-me .msg-bubble { background: var(--blue-chat); color: var(--white); border-bottom-right-radius: 4px; box-shadow: 0 5px 15px rgba(45,99,237,0.2); }
+
+        .msg-time { font-size: 9px; color: #94A3B8; margin-top: 4px; font-weight: 600; padding: 0 5px;}
+
+        /* INPUT AREA */
+        .input-area { background: var(--white); padding: 15px 20px 25px; display: flex; gap: 10px; align-items: flex-end; box-shadow: 0 -10px 20px rgba(10,25,49,0.05); z-index: 10;}
+        .chat-input { flex: 1; background: #F1F5F9; border: 1px solid #E2E8F0; border-radius: 20px; padding: 14px 20px; font-family: 'Inter'; font-size: 14px; font-weight: 600; color: var(--navy-main); outline: none; resize: none; max-height: 100px; min-height: 45px; transition: 0.2s;}
+        .chat-input:focus { border-color: var(--blue-chat); background: var(--white); }
+        .btn-send { width: 50px; height: 50px; border-radius: 18px; background: var(--blue-chat); color: var(--white); border: none; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: 0.2s; flex-shrink: 0; box-shadow: 0 5px 15px rgba(45,99,237,0.3);}
+        .btn-send:active { transform: scale(0.9); background: var(--navy-main); }
+        .btn-send:disabled { background: #E2E8F0; color: #94A3B8; box-shadow: none; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div class="chat-header">
+        <button class="btn-back" onclick="window.location.href='dashboard.html'"><i class="fas fa-arrow-left"></i></button>
+        <div class="header-info">
+            <h1 class="h-title"><i class="fas fa-comments"></i> OBROLAN MLU</h1>
+            <div class="h-sub"><span id="onlineCount"><i class="fas fa-circle fa-fade" style="color:#10B981; font-size:8px;"></i> KONEK KE SERVER...</span></div>
+        </div>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        <div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px; font-weight:600;"><i class="fas fa-spinner fa-spin"></i> Memuat percakapan...</div>
+    </div>
+
+    <div class="input-area">
+        <textarea id="inpMsg" class="chat-input" placeholder="Ketik pesan..." rows="1" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+        <button id="btnSend" class="btn-send" onclick="kirimPesan()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // KONEKSI DATABASE MLU UTAMA
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // DATA USER
+        let myPlat = ""; let myName = "Member"; let myRole = "MEMBER";
+        try { 
+            const uData = JSON.parse(localStorage.getItem('maka_user')); 
+            if(uData) {
+                myPlat = uData.plat || localStorage.getItem('myPlat') || "B 0000";
+                myName = uData.namaKtp || uData.namaWa || "Member";
+                myRole = uData.role ? uData.role.toUpperCase() : "MEMBER";
+            } 
+        } catch(e){}
+
+        const isPengurus = (myRole !== 'MEMBER' && myRole !== 'KELUARGA MLU' && myRole !== 'GUEST') || (myPlat.replace(/\s+/g,'').toUpperCase() === 'B4248SWF');
+
+        const chatBox = document.getElementById('chatBox');
+        const inpMsg = document.getElementById('inpMsg');
+        const btnSend = document.getElementById('btnSend');
+
+        // LOGIKA ENTER UNTUK KIRIM
+        inpMsg.addEventListener("keypress", function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                kirimPesan();
+            }
+        });
+
+        // BACA PESAN REAL-TIME DARI FIREBASE
+        const q = query(collection(db, "mlu_chats"), orderBy("timestamp", "asc"), limit(100));
+        let isFirstLoadChat = true; // Mencegah bunyi beruntun pas pertama kali buka obrolan
+
+        onSnapshot(q, (snapshot) => {
+            chatBox.innerHTML = '';
+            if(snapshot.empty) { chatBox.innerHTML = '<div style="text-align:center; color:#94A3B8; padding:20px; font-size:12px;">Belum ada obrolan. Jadilah yang pertama menyapa!</div>'; }
+            
+            document.getElementById('onlineCount').innerHTML = `<i class="fas fa-circle" style="color:#10B981; font-size:8px;"></i> LIVE SERVER ON`;
+
+            // --- ILMU HITAM 3: NOTIF CHAT MASUK VIA AIDE (NATIVE) ---
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added" && !isFirstLoadChat) {
+                    const data = change.doc.data();
+                    const isMe = data.plat.replace(/\s+/g,'').toUpperCase() === myPlat.replace(/\s+/g,'').toUpperCase();
+                    
+                    // Trigger Native Notif di Android
+                    if (!isMe && window.AndroidNative) {
+                        AndroidNative.triggerNotif("💬 Pesan Baru dari: " + data.nama, data.pesan);
+                    }
+                }
+            });
+            isFirstLoadChat = false;
+
+            // RENDER ISI CHAT
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const isMe = data.plat.replace(/\s+/g,'').toUpperCase() === myPlat.replace(/\s+/g,'').toUpperCase();
+                const isSenderAdmin = (data.role !== 'MEMBER' && data.role !== 'KELUARGA MLU' && data.role !== 'GUEST') || data.plat.replace(/\s+/g,'').toUpperCase() === 'B4248SWF';
+                
+                const timeStr = new Date(data.timestamp).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                const wrapperClass = isMe ? 'msg-wrapper msg-me' : `msg-wrapper msg-other ${isSenderAdmin ? 'is-admin' : ''}`;
+                
+                let senderLabel = '';
+                if(!isMe) {
+                    const badge = isSenderAdmin ? '<i class="fas fa-shield-alt" style="color:#EF4444; font-size:9px;"></i>' : '';
+                    const senderColorClass = isSenderAdmin ? 'sender-admin' : '';
+                    senderLabel = `<div class="msg-sender ${senderColorClass}">${data.nama} ${badge} <span>• ${data.plat}</span></div>`;
+                }
+
+                const msgHtml = data.pesan.replace(/\n/g, '<br>');
+
+                chatBox.innerHTML += `
+                    <div class="${wrapperClass}">
+                        ${senderLabel}
+                        <div class="msg-bubble">${msgHtml}</div>
+                        <div class="msg-time">${timeStr}</div>
+                    </div>
+                `;
+            });
+            // Auto scroll ke paling bawah
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        // FUNGSI KIRIM PESAN KE FIREBASE
+        window.kirimPesan = async () => {
+            const pesan = inpMsg.value.trim();
+            if(!pesan) return;
+
+            btnSend.disabled = true;
+            btnSend.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+
+            try {
+                await addDoc(collection(db, "mlu_chats"), {
+                    nama: myName,
+                    plat: myPlat,
+                    role: myRole,
+                    pesan: pesan,
+                    timestamp: Date.now()
+                });
+                inpMsg.value = '';
+                inpMsg.style.height = ''; // reset tinggi textarea
+            } catch (error) {
+                alert("Gagal kirim pesan: " + error.message);
+            } finally {
+                btnSend.disabled = false;
+                btnSend.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        };
+    </script>
+</body>
+</html>
