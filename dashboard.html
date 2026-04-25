@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "14.6_SUPER_FAST_RESPONSE"; 
+        const DASH_VERSION = "14.7_QUEUE_LIST_FIX"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -214,7 +214,7 @@
         .btn-logout-modal { width: 100%; padding: 16px; background: white; color: var(--danger); border: 2px solid rgba(239,68,68,0.2); border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s;}
     
         /* UTILS UNTUK LACI ANTREAN */
-        .list-area { overflow-y: auto; flex: 1; padding-right: 5px; }
+        .list-area { overflow-y: auto; max-height: 50vh; flex: 1; padding-right: 5px; }
         .list-item { background: white; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
         .li-plat { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin-bottom: 4px;}
         .li-name { font-size: 11px; font-weight: 700; color: var(--text-gray); text-transform: uppercase;}
@@ -229,62 +229,6 @@
     <div id="actionLoader" style="position:fixed; inset:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(5px); z-index:999999; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:0.3s;">
         <div style="width:50px; height:50px; border:5px solid #E2E8F0; border-top:5px solid var(--electric-blue); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:15px;"></div>
         <div style="font-family:'Space Grotesk'; font-weight:900; color:var(--royal-blue); letter-spacing:2px;">MEMPROSES...</div>
-    </div>
-
-    <div class="modal-glass-overlay" id="reminderTabunganModal" style="z-index: 100000;">
-        <div class="modal-glass-box" style="text-align:center; max-width: 320px;">
-            <div style="width:70px; height:70px; background:linear-gradient(135deg, var(--gold-lux), #F59E0B); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:white; font-size:30px; box-shadow: 0 10px 20px rgba(212,175,55,0.4);">
-                <i class="fas fa-piggy-bank"></i>
-            </div>
-            <h3 style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin:0 0 10px;">PESAN CINTA MLU 💙</h3>
-            <p id="reminderText" style="font-size:12px; color:var(--text-main); margin-bottom:20px; line-height: 1.5; text-align: left;">
-                Hai, <b>Nama</b><br><br>...
-            </p>
-            <div style="font-family:'Space Grotesk'; font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom: 20px;">
-                Dari Kami yang peduli Kamu,<br>MAKA LINTAS UTARA
-            </div>
-            <button class="btn-modal" style="background:var(--electric-blue); color:white; width:100%; box-shadow: 0 10px 20px rgba(45,99,237,0.3);" onclick="tutupReminderTabungan()">SAYA SIAP MENABUNG</button>
-        </div>
-    </div>
-
-    <div id="confirmModal" class="modal-glass-overlay">
-        <div class="modal-glass-box">
-            <h3 style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin-bottom:10px;">KONFIRMASI</h3>
-            <p id="confirmMsg" style="font-size:14px; color:#64748B; margin-bottom:25px;">...</p>
-            <div style="display:flex;">
-                <button class="btn-modal" style="background:#E2E8F0; color:#64748B;" onclick="closeConfirm(false)">BATAL</button>
-                <button class="btn-modal" style="background:var(--electric-blue); color:white; box-shadow:0 10px 20px rgba(45,99,237,0.3);" onclick="closeConfirm(true)">YA</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-glass-overlay" id="broadcastModal">
-        <div class="modal-glass-box" style="text-align:center;">
-            <div style="width:60px; height:60px; background:rgba(212,175,55,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:var(--gold-lux); font-size:24px;">
-                <i class="fa-solid fa-bullhorn fa-shake"></i>
-            </div>
-            <h3 id="bcTitle" style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); margin:0 0 10px;">INFO PENTING</h3>
-            <p id="bcBody" style="font-size:13px; color:var(--text-main); margin-bottom:25px;">Isi pengumuman...</p>
-            <button class="btn-modal" style="background:var(--electric-blue); color:white; width:100%;" onclick="tutupBroadcast()">SAYA MENGERTI</button>
-        </div>
-    </div>
-
-    <div class="modal-glass-overlay" id="sosModal">
-        <div class="modal-glass-box" style="text-align:left;">
-            <h3 style="font-family:'Outfit'; color:#EF4444; margin-top:0; margin-bottom:15px;"><i class="fas fa-broadcast-tower"></i> DARURAT S.O.S</h3>
-            <select id="sosType" class="form-input" style="margin-bottom:15px;">
-                <option>Unit Mogok / Trouble</option>
-                <option>Ban Bocor</option>
-                <option>Kecelakaan</option>
-                <option>Habis Baterai</option>
-                <option>Begal/Kriminal</option>
-            </select>
-            <textarea id="sosDesc" class="form-input" rows="3" placeholder="Lokasi/Keterangan Darurat..." style="resize:none;"></textarea>
-            <div style="margin-top:20px; display:flex; gap:10px;">
-                <button class="btn-modal" style="background:#E2E8F0; color:#64748B; padding:12px;" onclick="document.getElementById('sosModal').classList.remove('show'); setTimeout(()=>document.getElementById('sosModal').style.display='none',300);">BATAL</button>
-                <button class="btn-modal" style="background: linear-gradient(135deg, #EF4444, #991B1B); color: white; padding:12px; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);" onclick="sendSos()">KIRIM SOS</button>
-            </div>
-        </div>
     </div>
 
     <div class="top-header fade-up d-1">
@@ -435,6 +379,14 @@
         </div>
     </div>
 
+    <div class="modal-glass-overlay" id="modalListAntrian">
+        <div class="modal-glass-box">
+            <h3 class="m-title" style="font-family:'Outfit'; font-size:18px; color:var(--royal-blue); margin:0 0 15px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:12px; padding-right:30px; text-align:left;"><i class="fas fa-users" style="color:var(--electric-blue);"></i> DAFTAR TUNGGU</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('modalListAntrian').classList.remove('show'); setTimeout(()=>document.getElementById('modalListAntrian').style.display='none',300);"><i class="fas fa-times"></i></button>
+            <div class="list-area" id="listAntrianContent"></div>
+        </div>
+    </div>
+
     <div class="modal-glass-overlay" id="modalQR">
         <div class="modal-glass-box" style="max-width: 300px;">
             <button class="btn-close-modal" onclick="tutupQR()"><i class="fas fa-times"></i></button>
@@ -467,9 +419,6 @@
         import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage, isSupported } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-        // =========================================================================
-        // LOADER ANTI LEMOT (SUPER FAST FEEDBACK)
-        // =========================================================================
         window.showActionLoader = () => {
             const l = document.getElementById('actionLoader');
             if(l) { l.style.display = 'flex'; setTimeout(() => l.style.opacity = '1', 10); }
@@ -479,9 +428,6 @@
             if(l) { l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 300); }
         };
 
-        // =========================================================================
-        // 1. DEKLARASI FUNGSI TOMBOL
-        // =========================================================================
         window.bukaInbox = () => { 
             const m = document.getElementById('modalInbox'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); 
             localStorage.setItem('maka_last_read_inbox', Date.now().toString()); localStorage.setItem('maka_unread_count', '0');
@@ -512,9 +458,6 @@
         window.closeConfirm = (res) => { const modal = document.getElementById('confirmModal'); modal.classList.remove('show'); setTimeout(()=>modal.style.display = 'none', 300); if(window.confirmCallback) window.confirmCallback(res); }
         window.logoutApp = () => { if(confirm("Yakin keluar?")) { localStorage.removeItem('maka_user'); window.location.href = 'index.html'; } };
 
-        // =========================================================================
-        // 2. INISIALISASI FIREBASE
-        // =========================================================================
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
         const appMain = initializeApp(firebaseConfig); 
         const db = getFirestore(appMain);
@@ -548,9 +491,6 @@
         const appKC = initializeApp({ apiKey: "AIzaSyDfsTAGclYUSRe6YhiljS-xb-v-9RBYVEM", authDomain: "antriankcnew.firebaseapp.com", projectId: "antriankcnew" }, "AppKC");
         const dbKC = getFirestore(appKC);
 
-        // =========================================================================
-        // 3. LOAD DATA USER & RENDER UI
-        // =========================================================================
         let uData = null;
         try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
         if (!uData || !uData.plat) window.location.href = 'index.html'; 
@@ -574,14 +514,12 @@
         if (myPlatClean === "B4248SWF") document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
         else document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> ` + (uData.role || "MEMBER").toUpperCase();
 
-        // FIX UNTUK AUTO-FILL DI DASHBOARD DAN MODAL
         document.getElementById('setNama').value = myName; 
         document.getElementById('setWa').value = uData.noWa || ""; 
         document.getElementById('setPlat').value = myPlat;
         document.getElementById('qrNamaFull').innerText = myName;
         document.getElementById('qrPlat').innerText = myPlat;
         
-        // ISI OTOMATIS DATA DI MODAL ANTREAN
         if(document.getElementById('inpNama')) document.getElementById('inpNama').value = myName;
         if(document.getElementById('inpPlat')) document.getElementById('inpPlat').value = myPlat;
 
@@ -590,9 +528,6 @@
             const btnAdmin = document.getElementById('btnAdminMlu'); if(btnAdmin) btnAdmin.style.display = 'flex';
         }
 
-        // -------------------------------------------------------------------------
-        // CEK REMINDER TABUNGAN
-        // -------------------------------------------------------------------------
         async function checkTabunganReminder() {
             const todayStr = new Date().toDateString();
             const lastReminder = localStorage.getItem('maka_last_tabungan_reminder');
@@ -638,9 +573,6 @@
             try { await updateDoc(doc(db, "mlu_members", userId), { namaKtp: newNama, noWa: newWa }); uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData)); alert("Profil diperbarui!"); location.reload(); } catch(e) { window.hideActionLoader(); alert("Error: " + e.message); }
         };
 
-        // =========================================================================
-        // 4. LOGIKA LACI ANTREAN FC GADING (DENGAN SUPER FAST SYNC)
-        // =========================================================================
         const TOTAL_SLOTS = 3;
         let localSlots = [null, null, null];
         let localQueue = [];
@@ -661,6 +593,11 @@
 
             if(emptySlots > 0) { document.getElementById('statusGading').innerHTML = `<span style="color:var(--success);"><i class="fas fa-check-circle"></i> ${emptySlots} KOSONG</span>`; } 
             else { document.getElementById('statusGading').innerHTML = `<span style="color:var(--warning);"><i class="fas fa-battery-full"></i> FULL <span style="margin:0 4px; color:#E2E8F0;">|</span> <i class="fas fa-users"></i> ${localQueue.length} ANTRE</span>`; }
+
+            // FIX: UPDATE ANGKA DAFTAR TUNGGU
+            if(document.getElementById('qCountText')) {
+                document.getElementById('qCountText').innerText = localQueue.length;
+            }
 
             const slotContainer = document.getElementById('dashLiveSlots');
             let slotsHTML = '';
@@ -715,7 +652,7 @@
                 let html = '';
                 localQueue.forEach((q, i) => {
                     let bat = q.batreSisa || q.batre || q.battery || "-";
-                    let isMe = (cleanStr(q.plat) === myPlatClean) ? 'border: 2px solid var(--gold-main); background:rgba(212,175,55,0.05);' : '';
+                    let isMe = (cleanStr(q.plat) === myPlatClean) ? 'border: 2px solid var(--gold-lux); background:rgba(212,175,55,0.05);' : '';
                     html += `<div class="list-item" style="${isMe}"><div><div class="li-plat">${q.plat}</div><div class="li-name">#${i+1} • ${cleanName(q.userName)}</div></div><div class="li-batre" style="color:var(--navy-main); background:rgba(10,25,49,0.05);"><i class="fas fa-battery-half"></i> ${bat.replace('%','')} %</div></div>`;
                 });
                 listArea.innerHTML = html;
@@ -726,7 +663,6 @@
         window.persiapanDaftar = () => { const m = document.getElementById('modalDaftarAntrian'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
         window.tutupDaftarAntrian = () => { const m = document.getElementById('modalDaftarAntrian'); m.classList.remove('show'); setTimeout(()=>m.style.display='none',300); }
         
-        // --- PROSES SUBMIT DENGAN FEEDBACK SUPER FAST ---
         window.submitDaftarAntrian = async () => {
             const b = document.getElementById('inpBatre').value;
             if(!b) return alert("Isi sisa baterai motor Anda!");
@@ -786,9 +722,6 @@
             }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert("ERROR: " + e); }); 
         }
 
-        // =========================================================================
-        // 5. APP PIHAK KETIGA (STARVO & CASAN)
-        // =========================================================================
         window.bukaAppKetiga = (appNama) => {
             let linkWeb = "";
             if (appNama === 'Starvo') {
@@ -827,7 +760,6 @@
                     lokasiAlternatif.forEach(fc => { let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); if(d < minDist) { minDist = d; nearestFC = fc; } });
 
                     if(nearestFC) {
-                        window.currentNearestFC = nearestFC.id;
                         document.getElementById('altFcNama').innerHTML = `<i class="fas fa-map-marker-alt" style="color: ${nearestFC.color};"></i> ${nearestFC.name.toUpperCase()}`;
                         let statusHtml = `<span><i class="fas fa-location-arrow"></i> ${minDist.toFixed(1)} KM</span>`;
                         
@@ -853,7 +785,7 @@
         // 6. PODIUM SULTAN TABUNGAN 3D & INBOX
         // =========================================================================
         onSnapshot(query(collection(db, "mlu_members"), orderBy("saldoTabungan", "desc"), limit(3)), (snap) => {
-            const list = document.getElementById('topSaversList'); list.innerHTML = ""; let rank = 1;
+            const list = document.getElementById('topSaversList'); list.innerHTML = ""; let arr = [];
             
             let savers = [];
             snap.forEach(doc => { const data = doc.data(); if(data.saldoTabungan && data.saldoTabungan > 0) { savers.push(data); } });
