@@ -750,6 +750,23 @@
             if(unreadCount > 0) { badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount; const savedUnread = parseInt(localStorage.getItem('maka_unread_count') || '0'); if(unreadCount > savedUnread && navigator.vibrate) navigator.vibrate([100, 50, 100]); } else { badge.style.display = 'none'; }
             localStorage.setItem('maka_unread_count', unreadCount.toString());
         });
+                // =======================================================
+        // CCTV CHAT GLOBAL (BIAR NOTIF TETEP BUNYI DIMANA AJA)
+        // =======================================================
+        let isFirstLoadCCTV = true;
+        onSnapshot(query(collection(db, "mlu_chats"), orderBy("timestamp", "desc"), limit(1)), (snap) => {
+            snap.docChanges().forEach((change) => {
+                if (change.type === "added" && !isFirstLoadCCTV) {
+                    const data = change.doc.data();
+                    // Cek biar nggak ngebunyiin notif buat pesan kita sendiri
+                    if (data.plat.replace(/\s+/g,'').toUpperCase() !== myPlatClean && window.AndroidNative) {
+                        AndroidNative.triggerNotif("💬 Pesan dari " + data.nama, data.pesan);
+                    }
+                }
+            });
+            isFirstLoadCCTV = false;
+        });
+
     </script>
 </body>
 </html>
