@@ -6,7 +6,7 @@
     <title>MLU - Ruang Obrolan</title>
     
     <script>
-        const CHAT_VERSION = "2.1_NATIVE_NOTIF"; 
+        const CHAT_VERSION = "3.0_ONESIGNAL_PUSH"; 
         if (localStorage.getItem('maka_chat_v') !== CHAT_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_chat_v', CHAT_VERSION); window.location.reload(true); 
@@ -93,6 +93,24 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
+        window.tembakNotif = function(judul, isi) {
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Authorization": "Basic Os_v2_app_br5t3yqa6bcwdm7xhgjeacsxmfbw4bmitq6eew45ddydv3vrvmrpfphcraqo2wxkxvqlcgxhaa6ra7kqixgx5e43iqx7cvp7pw6puaa"
+                },
+                body: JSON.stringify({
+                    app_id: "0c7b3de2-00f0-4561-b3f7-3992400a5761",
+                    included_segments: ["Subscribed Users"], 
+                    headings: { "en": judul },
+                    contents: { "en": isi }
+                })
+            }).catch(err => console.error("Notif Gagal:", err));
+        };
+        // ====================================================
+
         // KONEKSI DATABASE MLU UTAMA
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
         const app = initializeApp(firebaseConfig);
@@ -125,27 +143,12 @@
 
         // BACA PESAN REAL-TIME DARI FIREBASE
         const q = query(collection(db, "mlu_chats"), orderBy("timestamp", "asc"), limit(100));
-        let isFirstLoadChat = true; // Mencegah bunyi beruntun pas pertama kali buka obrolan
 
         onSnapshot(q, (snapshot) => {
             chatBox.innerHTML = '';
             if(snapshot.empty) { chatBox.innerHTML = '<div style="text-align:center; color:#94A3B8; padding:20px; font-size:12px;">Belum ada obrolan. Jadilah yang pertama menyapa!</div>'; }
             
             document.getElementById('onlineCount').innerHTML = `<i class="fas fa-circle" style="color:#10B981; font-size:8px;"></i> LIVE SERVER ON`;
-
-            // --- ILMU HITAM 3: NOTIF CHAT MASUK VIA AIDE (NATIVE) ---
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === "added" && !isFirstLoadChat) {
-                    const data = change.doc.data();
-                    const isMe = data.plat.replace(/\s+/g,'').toUpperCase() === myPlat.replace(/\s+/g,'').toUpperCase();
-                    
-                    // Trigger Native Notif di Android
-                    if (!isMe && window.AndroidNative) {
-                        AndroidNative.triggerNotif("💬 Pesan Baru dari: " + data.nama, data.pesan);
-                    }
-                }
-            });
-            isFirstLoadChat = false;
 
             // RENDER ISI CHAT
             snapshot.forEach((doc) => {
@@ -193,6 +196,11 @@
                     pesan: pesan,
                     timestamp: Date.now()
                 });
+                
+                // --- DI SINI PISTOLNYA BARU DITEMBAKKAN ---
+                window.tembakNotif("💬 " + myName, pesan);
+                // ------------------------------------------
+
                 inpMsg.value = '';
                 inpMsg.style.height = ''; // reset tinggi textarea
             } catch (error) {
@@ -203,22 +211,6 @@
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         };
-                // =======================================================
-        // CCTV CHAT GLOBAL (BIAR NOTIF TETEP BUNYI DIMANA AJA)
-        // =======================================================
-        let isFirstLoadCCTV = true;
-        onSnapshot(query(collection(db, "mlu_chats"), orderBy("timestamp", "desc"), limit(1)), (snap) => {
-            snap.docChanges().forEach((change) => {
-                if (change.type === "added" && !isFirstLoadCCTV) {
-                    const data = change.doc.data();
-                    // Cek biar nggak ngebunyiin notif buat pesan kita sendiri
-                    if (data.plat.replace(/\s+/g,'').toUpperCase() !== myPlatClean && window.AndroidNative) {
-                        AndroidNative.triggerNotif("💬 Pesan dari " + data.nama, data.pesan);
-                    }
-                }
-            });
-            isFirstLoadCCTV = false;
-        });
 
     </script>
 </body>

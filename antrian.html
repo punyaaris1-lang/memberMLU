@@ -10,7 +10,7 @@
         if (globalTheme === 'lebaran') { document.documentElement.classList.add('theme-lebaran'); }
         
         // AUTO CLEAR CACHE BIAR SCRIPT BARU LANGSUNG JALAN
-        const DASH_VERSION = "6.4_NATIVE_NOTIF";
+        const DASH_VERSION = "7.0_ONESIGNAL_PUSH";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -330,6 +330,25 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, updateDoc, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
+        window.tembakNotif = function(judul, isi) {
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Authorization": "Basic Os_v2_app_br5t3yqa6bcwdm7xhgjeacsxmfbw4bmitq6eew45ddydv3vrvmrpfphcraqo2wxkxvqlcgxhaa6ra7kqixgx5e43iqx7cvp7pw6puaa"
+                },
+                body: JSON.stringify({
+                    app_id: "0c7b3de2-00f0-4561-b3f7-3992400a5761",
+                    included_segments: ["Subscribed Users"], 
+                    headings: { "en": judul },
+                    contents: { "en": isi }
+                })
+            }).then(res => console.log("Notif OneSignal Sukses Ditembak!"))
+              .catch(err => console.error("Notif Gagal:", err));
+        };
+        // ====================================================
+
         // KONEKSI DATABASE
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" };
         const app = initializeApp(firebaseConfig);
@@ -424,9 +443,9 @@
                 if(dist <= MAX_DIST_KM) { 
                     isInLocation = true; gpsInd.className = "gps-badge ok"; gpsInd.innerHTML = "<i class='fas fa-map-marker-alt'></i> ANDA DI LOKASI"; 
                     
-                    // --- ILMU HITAM: NOTIFIKASI NATIVE SAAT MASUK RADIUS ---
+                    // --- ILMU HITAM: NOTIFIKASI ONESIGNAL SAAT MASUK RADIUS ---
                     if (!window.radarNotifSent) {
-                        if (window.AndroidNative) AndroidNative.triggerNotif("📍 LOKASI FC TERDETEKSI", "Anda sudah masuk radius FC Kelapa Gading. Silakan ambil antrean!");
+                        window.tembakNotif("📍 LOKASI FC TERDETEKSI", "Anda sudah masuk radius FC Kelapa Gading. Silakan ambil antrean!");
                         window.radarNotifSent = true;
                     }
                 } 
@@ -602,9 +621,9 @@
                 btnCancel.innerHTML = `<i class="fas fa-times-circle"></i> BATALKAN ANTRIAN SAYA (#${myQIndex+1})`;
                 
                 if (myQIndex === 0 && emptySlots > 0) {
-                    // --- ILMU HITAM: NOTIF NATIVE PANGGILAN SLOT ---
+                    // --- ILMU HITAM: NOTIF NATIVE PANGGILAN SLOT ONESIGNAL ---
                     if (!window.notifAntreanTerkirim) {
-                        if (window.AndroidNative) AndroidNative.triggerNotif("⚡ GILIRAN ANDA TIBA!", "Silakan tekan tombol 'PILIH SLOT KOSONG' sekarang.");
+                        window.tembakNotif("⚡ GILIRAN ANDA TIBA!", "Silakan tekan tombol 'PILIH SLOT KOSONG' sekarang.");
                         window.notifAntreanTerkirim = true;
                     }
 
@@ -917,21 +936,21 @@
         };
 
         window.unblockAll = () => { if(confirm("Hapus semua daftar blokir?")) updateDoc(mainRef, {blockedPlates: []}).then(() => forceCloseSheet('sheetManageAntrian')); };
-                // =======================================================
-        // CCTV CHAT GLOBAL (BIAR NOTIF TETEP BUNYI DIMANA AJA)
+
         // =======================================================
-        let isFirstLoadCCTV = true;
-        onSnapshot(query(collection(db, "mlu_chats"), orderBy("timestamp", "desc"), limit(1)), (snap) => {
+        // CCTV CHAT GLOBAL (ANTI-JEBOL ONESIGNAL)
+        // =======================================================
+        const cctvStartTime = Date.now();
+        onSnapshot(query(collection(db, "mlu_chats"), where("timestamp", ">", cctvStartTime), orderBy("timestamp", "asc")), (snap) => {
             snap.docChanges().forEach((change) => {
-                if (change.type === "added" && !isFirstLoadCCTV) {
+                if (change.type === "added") {
                     const data = change.doc.data();
                     // Cek biar nggak ngebunyiin notif buat pesan kita sendiri
-                    if (data.plat.replace(/\s+/g,'').toUpperCase() !== myPlatClean && window.AndroidNative) {
-                        AndroidNative.triggerNotif("💬 Pesan dari " + data.nama, data.pesan);
+                    if (data.plat && data.plat.replace(/\s+/g,'').toUpperCase() !== myPlatClean) {
+                        window.tembakNotif("💬 " + data.nama, data.pesan);
                     }
                 }
             });
-            isFirstLoadCCTV = false;
         });
 
     </script>

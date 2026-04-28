@@ -7,7 +7,7 @@
     
     <script>
         // PENGHANCUR CACHE BIAR UPDATE LANGSUNG JALAN
-        const TABUNGAN_VERSION = "4.6_FIX_AKUN_VALIDASI"; 
+        const TABUNGAN_VERSION = "5.0_ONESIGNAL_FINANCE"; 
         if (localStorage.getItem('maka_tabungan_v') !== TABUNGAN_VERSION) {
             if ('caches' in window) {
                 caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
@@ -398,6 +398,24 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, deleteDoc, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
+        window.tembakNotif = function(judul, isi) {
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Authorization": "Basic Os_v2_app_br5t3yqa6bcwdm7xhgjeacsxmfbw4bmitq6eew45ddydv3vrvmrpfphcraqo2wxkxvqlcgxhaa6ra7kqixgx5e43iqx7cvp7pw6puaa"
+                },
+                body: JSON.stringify({
+                    app_id: "0c7b3de2-00f0-4561-b3f7-3992400a5761",
+                    included_segments: ["Subscribed Users"], 
+                    headings: { "en": judul },
+                    contents: { "en": isi }
+                })
+            }).catch(err => console.error("Notif Gagal:", err));
+        };
+        // ====================================================
+
         // === KONEKSI FIREBASE MLU ===
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); 
@@ -411,8 +429,6 @@
         const myPlat = uData.plat || "B XXXX XX";
         const cleanPlat = myPlat.replace(/\s+/g, '').toUpperCase();
         
-        // FIX 1: Deteksi userId yang bener. Pakai uData.id (Document ID Firestore).
-        // Kalau nggak ada, jadikan cleanPlat sebagai ID Darurat.
         let userId = uData.id; 
         if(!userId) userId = cleanPlat;
 
@@ -528,14 +544,11 @@
             }
         }
 
-        // FIX 2: Perbaikan Validasi Akun Tabungan
         async function checkUserStatus() {
             try {
-                // Cari data member pake ID
                 let userRef = doc(db, "mlu_members", userId);
                 let docSnap = await getDoc(userRef);
 
-                // Kalau pake ID nggak ketemu, coba cari pake Plat (Fuzzy Search untuk data lama)
                 if(!docSnap.exists()) {
                     const q = query(collection(db, "mlu_members"));
                     const snapAll = await getDocs(q);
@@ -543,8 +556,8 @@
                     snapAll.forEach(d => {
                         const dat = d.data();
                         if(dat.plat && dat.plat.replace(/\s+/g, '').toUpperCase() === cleanPlat) {
-                            userId = d.id; // Timpa userId yang lama pakai ID yang bener
-                            docSnap = d;   // Timpa hasil pencarian
+                            userId = d.id; 
+                            docSnap = d;   
                         }
                     });
                 }
@@ -599,15 +612,16 @@
                     memberId: userId, memberName: myName,
                     type: 'IN', amount: total, desc: 'Pengajuan Setoran (App)', timestamp: Date.now(), status: 'PENDING'
                 });
+                
+                // TEMBAK NOTIF SETORAN
+                window.tembakNotif("💰 SETORAN BARU MASUK", `Member ${myName} mengajukan setoran Rp ${total.toLocaleString('id-ID')}. Mohon divalidasi!`);
+
                 await showAlert("SUKSES", "Pengajuan berhasil dikirim! Saldo masuk setelah divalidasi Admin.");
                 document.getElementById('modalQris').style.display = 'none';
                 document.getElementById('inputNabungBase').value = ''; calcTotalTransfer();
             }
         }
 
-        // ========================================================
-        // KALKULATOR POTONGAN 5% UNTUK KAS
-        // ========================================================
         window.calcPotongan = () => {
             const amt = parseInt(document.getElementById('inputTarikAmount').value) || 0;
             const info = document.getElementById('infoPotongan');
@@ -665,6 +679,10 @@
                     desc: 'Tarik: ' + desc, timestamp: Date.now(), 
                     status: 'PENDING_APPROVAL', apprKetum: false, apprWaketum: false
                 });
+
+                // TEMBAK NOTIF PENARIKAN
+                window.tembakNotif("💸 PENGAJUAN PENARIKAN", `Member ${myName} ingin menarik Rp ${amount.toLocaleString('id-ID')}. Menunggu ACC Ketum & Waketum.`);
+
                 await showAlert("SUKSES", "Pengajuan berhasil dikirim! Menunggu ACC Ketum & Waketum.");
                 document.getElementById('modalTarik').style.display = 'none';
                 document.getElementById('inputTarikAmount').value = '';
@@ -681,6 +699,10 @@
             const konfirm = await showConfirm("TERIMA DANA", "Apakah Anda sudah mengecek dan memastikan bahwa dana benar-benar sudah masuk ke rekening/tangan Anda?");
             if(konfirm) {
                 await updateDoc(doc(db, "mlu_tabungan_trx", trxId), { status: 'SUCCESS' });
+                
+                // TEMBAK NOTIF TERIMA DANA
+                window.tembakNotif("🤝 PENARIKAN SELESAI", `Member telah mengkonfirmasi penerimaan dana penarikan. Transaksi sukses!`);
+
                 showAlert("SELESAI", "Transaksi selesai. Terima kasih!");
             }
         }
@@ -818,14 +840,10 @@
         function unlockApp() { document.getElementById('securityScreen').style.opacity = 0; setTimeout(() => { document.getElementById('securityScreen').style.display = 'none'; document.getElementById('mainApp').style.display = 'block'; }, 500); }
 
 
-        // ========================================================
-        // MODIFIKASI SORTING DI ADMIN VIEW (SALDO TERBANYAK)
-        // ========================================================
         function initAdminData() {
             onSnapshot(query(collection(db, "mlu_members")), (snap) => {
                 let allMembers = []; snap.forEach(d => allMembers.push({id:d.id, ...d.data()}));
                 
-                // 1. Kalkulasi Kode Unik yang stabil (berdasarkan Hierarki seperti di menu QRIS)
                 let tempForKode = [...allMembers].filter(m => m.plat && m.plat.replace(/\s+/g, '').toUpperCase() !== "B4248SWF");
                 tempForKode.sort((a,b) => {
                     const rankA = getRank(a.role); const rankB = getRank(b.role);
@@ -833,17 +851,15 @@
                     return (a.namaKtp||a.nama||'').localeCompare(b.namaKtp||b.nama||'');
                 });
                 
-                // Ikat Kode Unik yang stabil ke objek member
                 allMembers.forEach(m => {
                     let idx = tempForKode.findIndex(x => x.id === m.id);
                     m.kodeUnikFinal = idx !== -1 ? String(idx + 1).padStart(3, '0') : '999';
                 });
 
-                // 2. SORTING UTAMA: Berdasarkan Saldo Terbanyak (Descending)
                 allMembers.sort((a,b) => {
                     const saldoA = a.saldoTabungan || 0;
                     const saldoB = b.saldoTabungan || 0;
-                    return saldoB - saldoA; // Dari yang terbanyak ke terkecil
+                    return saldoB - saldoA; 
                 });
 
                 window.allMembersCache = allMembers;
@@ -851,7 +867,6 @@
                 if(searchKey) window.filterMembers(); else window.renderMembers(allMembers);
             });
 
-            // LISTENER ANTRIAN PERSETUJUAN
             const qApp = query(collection(db, "mlu_tabungan_trx"), where("status", "in", ["PENDING", "PENDING_APPROVAL", "WAITING_TRANSFER", "WAITING_CONFIRMATION"]));
             onSnapshot(qApp, (snap) => {
                 const cont = document.getElementById('approvalList'); cont.innerHTML = "";
@@ -871,7 +886,6 @@
 
                     let actionHtml = '';
 
-                    // FIX 3: Tambahin window. di action onclick button
                     if(isNabung) {
                         actionHtml = `
                         <div style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
@@ -938,7 +952,6 @@
                 });
             });
 
-            // LISTENER RIWAYAT PENARIKAN SUKSES
             const qHistOut = query(collection(db, "mlu_tabungan_trx"), where("status", "==", "SUCCESS"));
             onSnapshot(qHistOut, (snap) => {
                 const contHist = document.getElementById('historyWithdrawList'); contHist.innerHTML = "";
@@ -1033,6 +1046,10 @@
                     buktiTransfer: currentBuktiBase64,
                     status: 'WAITING_CONFIRMATION'
                 });
+                
+                // TEMBAK NOTIF BUKTI TRANSFER
+                window.tembakNotif("🧾 BUKTI TRANSFER DIKIRIM", `Admin telah mengunggah bukti transfer. Silakan cek dan konfirmasi!`);
+
                 document.getElementById('modalUploadBukti').style.display = 'none';
                 showAlert("BERHASIL", "Bukti transfer telah dikirim ke User.");
             } catch(e) {
@@ -1043,7 +1060,6 @@
         }
 
 
-        // DEKLARASI FUNGSI VALIDASI GLOBAL (WINDOW) BIAR BISA DIPANGGIL HTML
         window.approveKlaim = async (trxId, type, amount, memberId) => {
             const konf = await showConfirm("VALIDASI TRANSAKSI", "Anda yakin dana setor sudah berhasil diverifikasi?");
             if(!konf) return;
@@ -1055,6 +1071,10 @@
                 if (type === 'IN') currentSaldo += amount;
                 t.update(mRef, { saldoTabungan: currentSaldo }); t.update(r, { status: 'SUCCESS' });
             });
+            
+            // TEMBAK NOTIF SETORAN DIVALIDASI
+            window.tembakNotif("✅ SETORAN DIVALIDASI", `Setoran Rp ${amount.toLocaleString('id-ID')} telah sukses masuk ke Tabungan!`);
+
             showAlert("BERHASIL", "Setoran divalidasi. Saldo tabungan member telah bertambah otomatis.");
         }
 
@@ -1095,9 +1115,12 @@
                             timestamp: Date.now()
                         });
                     }
-
+                    // KEDUA BELAH PIHAK UDAH ACC
+                    window.tembakNotif("✅ PENARIKAN FULL ACC", `Penarikan Tabungan telah di-ACC. Menunggu Admin mentransfer dana!`);
                 } else {
                     t.update(rRef, { apprKetum: isKetumNow, apprWaketum: isWaketumNow });
+                    // BARU 1 PIHAK YANG ACC
+                    window.tembakNotif("⏳ UPDATE ACC PENARIKAN", `Persetujuan ${roleAcc} berhasil dicatat.`);
                 }
             }).then(() => {
                 showAlert("BERHASIL", `Persetujuan ${roleAcc} berhasil dicatat.`);

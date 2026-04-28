@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "15.1_NOTIF_ADDED"; 
+        const DASH_VERSION = "16.0_ONESIGNAL"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -422,6 +422,24 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
+        window.tembakNotif = function(judul, isi) {
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Authorization": "Basic Os_v2_app_br5t3yqa6bcwdm7xhgjeacsxmfbw4bmitq6eew45ddydv3vrvmrpfphcraqo2wxkxvqlcgxhaa6ra7kqixgx5e43iqx7cvp7pw6puaa"
+                },
+                body: JSON.stringify({
+                    app_id: "0c7b3de2-00f0-4561-b3f7-3992400a5761",
+                    included_segments: ["Subscribed Users"], 
+                    headings: { "en": judul },
+                    contents: { "en": isi }
+                })
+            }).catch(err => console.error("Notif Gagal:", err));
+        };
+        // ====================================================
+
         window.showActionLoader = () => {
             const l = document.getElementById('actionLoader');
             if(l) { l.style.display = 'flex'; setTimeout(() => l.style.opacity = '1', 10); }
@@ -550,9 +568,9 @@
                 slotWrapper.style.display = 'none';
             } else if (myQIndex > -1) {
                 if (myQIndex === 0 && emptySlots > 0) {
-                    // --- ILMU HITAM 1: NOTIF ANTREAN ---
+                    // --- ILMU HITAM ONESIGNAL: PANGGILAN SLOT DARI DASHBOARD ---
                     if (!window.notifAntreanTerkirim) {
-                        if (window.AndroidNative) AndroidNative.triggerNotif("⚡ GILIRAN ANDA TIBA!", "Silakan pilih Slot Kosong sekarang.");
+                        window.tembakNotif("⚡ GILIRAN ANDA TIBA!", "Silakan pilih Slot Kosong sekarang.");
                         window.notifAntreanTerkirim = true;
                     }
                     
@@ -644,7 +662,7 @@
         }
 
         // =========================================================================
-        // RADAR GPS ALTERNATIF & NOTIF (ILMU HITAM 2)
+        // RADAR GPS ALTERNATIF (LOKAL ONLY, TIDAK NEMBAK ONESIGNAL BIAR GA SPAM)
         // =========================================================================
         let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
         onSnapshot(doc(dbKC, "antrian", "utama"), (snap) => {
@@ -689,14 +707,14 @@
                         }
                         document.getElementById('statusAltFC').innerHTML = statusHtml;
 
-                        // --- ILMU HITAM 2: NOTIF RADAR (JIKA MASUK RADIUS 300 METER / 0.3 KM) ---
+                        // RADAR TETAP PAKAI ANDROID NATIVE BUKAN ONESIGNAL (Biar notifnya ga nyebar ke member lain)
                         if (minDist <= 0.3) {
                             if (window.lastNotifLokasi !== nearestFC.id) {
                                 if (window.AndroidNative) AndroidNative.triggerNotif("🗺️ RADAR MLU: " + nearestFC.name, "FC ini berjarak " + (minDist * 1000).toFixed(0) + " meter dari Anda.");
                                 window.lastNotifLokasi = nearestFC.id;
                             }
                         } else {
-                            window.lastNotifLokasi = null; // Reset notif kalau motor menjauh lagi
+                            window.lastNotifLokasi = null;
                         }
                     }
                 }, () => { 
@@ -749,22 +767,6 @@
             const badge = document.getElementById('inboxBadge');
             if(unreadCount > 0) { badge.style.display = 'flex'; badge.innerText = unreadCount > 9 ? '9+' : unreadCount; const savedUnread = parseInt(localStorage.getItem('maka_unread_count') || '0'); if(unreadCount > savedUnread && navigator.vibrate) navigator.vibrate([100, 50, 100]); } else { badge.style.display = 'none'; }
             localStorage.setItem('maka_unread_count', unreadCount.toString());
-        });
-                // =======================================================
-        // CCTV CHAT GLOBAL (BIAR NOTIF TETEP BUNYI DIMANA AJA)
-        // =======================================================
-        let isFirstLoadCCTV = true;
-        onSnapshot(query(collection(db, "mlu_chats"), orderBy("timestamp", "desc"), limit(1)), (snap) => {
-            snap.docChanges().forEach((change) => {
-                if (change.type === "added" && !isFirstLoadCCTV) {
-                    const data = change.doc.data();
-                    // Cek biar nggak ngebunyiin notif buat pesan kita sendiri
-                    if (data.plat.replace(/\s+/g,'').toUpperCase() !== myPlatClean && window.AndroidNative) {
-                        AndroidNative.triggerNotif("💬 Pesan dari " + data.nama, data.pesan);
-                    }
-                }
-            });
-            isFirstLoadCCTV = false;
         });
 
     </script>
