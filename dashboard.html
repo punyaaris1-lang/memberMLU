@@ -719,7 +719,7 @@
                     }
                 }, () => { 
                     document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> MENCARI GPS...`; document.getElementById('statusAltFC').innerHTML = "Pastikan GPS Anda nyala."; document.getElementById('statusAltFC').style.background = "rgba(239,68,68,0.1)"; document.getElementById('statusAltFC').style.color = "var(--danger)";
-                }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+                }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 });
             });
         }
         startNearestFCRadar();
