@@ -454,7 +454,7 @@
                     window.radarNotifSent = false; // Reset if they leave
                 }
                 updateUI();
-            }, (err) => { isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = "<i class='fas fa-eye'></i> MODE PANTAU (NO GPS)"; updateUI(); }, {enableHighAccuracy: true, maximumAge: 10000});
+            }, (err) => { isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = "<i class='fas fa-eye'></i> MODE PANTAU (NO GPS)"; updateUI(); }, {enableHighAccuracy: false, maximumAge: 10000});
         }
 
         // --- SISTEM FIREBASE DATA ---
@@ -713,7 +713,7 @@
             const bInt = parseInt(rawBatre);
             if(!rawBatre) return alert("Isi sisa baterai!");
             if(bInt > 98) {
-                alert("⚠️ KONDISI FC ABNORMAL!\n\nMaksimal charging dibatasi 98%. DILARANG charging 100% atau tunggu indikator biru!");
+                alert("⚠️ KONDISI FC ABNORMAL!\n\nMaksimal charging dibatasi 95%. DILARANG charging 100% atau tunggu indikator biru!");
                 return;
             }
             
