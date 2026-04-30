@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "16.4_MODAL_FIX"; 
+        const DASH_VERSION = "17.0_SYNC_FIX"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -514,8 +514,6 @@
         let userId = uData.id || myPlatClean;
 
         // === WHITELIST ADMIN DELEGASI ===
-        // Tambahkan Plat Nomor tanpa spasi di sini jika ingin memberikan akses tombol Admin
-        // Walaupun akun mereka cuma "MEMBER" biasa, tombol admin otomatis akan muncul.
         const platAdminKhusus = ["B4231SWF", "B4146SWH", "B4769SWE", "B4457SWF", "B4248SWF"];
         const isKhusus = platAdminKhusus.includes(myPlatClean);
 
@@ -528,8 +526,17 @@
         if (uData.foto && typeof uData.foto === 'string' && uData.foto.length > 50) document.getElementById('userPhoto').src = uData.foto;
 
         const roleCek = (uData.role || "").toUpperCase();
-        if (myPlatClean === "B4248SWF") document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
-        else document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> ` + roleCek;
+        
+        // --- CUSTOM ROLE VIP ---
+        if (myPlatClean === "B4248SWF") {
+            document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
+        } else if (myPlatClean === "B4794SWF") {
+            // SPESIAL BUAT FERY
+            document.getElementById('userRole').innerHTML = `<i class="fas fa-tree" style="color:#10B981;"></i> KELUARGA CEMARA`;
+            document.getElementById('userRole').style.background = 'rgba(16,185,129,0.1)';
+        } else {
+            document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> ` + roleCek;
+        }
 
         document.getElementById('setNama').value = myName; 
         document.getElementById('setWa').value = uData.noWa || ""; 
@@ -539,17 +546,14 @@
         if(document.getElementById('inpNama')) document.getElementById('inpNama').value = myName;
         if(document.getElementById('inpPlat')) document.getElementById('inpPlat').value = myPlat;
 
-        // === LOGIKA PENGECEKAN ADMIN YANG LEBIH SEDERHANA & ANTI-GAGAL ===
         let isSuperUser = false;
         if (roleCek.includes('PENGURUS') || roleCek.includes('KETUA') || roleCek === 'KELUARGA MLU' || isKhusus) {
             isSuperUser = true;
         }
 
-        // MENAMPILKAN TOMBOL MENU & SHORTCUT ADMIN LACI
         if (isSuperUser) {
             const btnAbsen = document.getElementById('btnAbsenKopdar'); if(btnAbsen) btnAbsen.style.display = 'flex';
             const btnAdmin = document.getElementById('btnAdminMlu'); if(btnAdmin) btnAdmin.style.display = 'flex';
-            
             const btnAdminLaci = document.getElementById('btnShortcutAdminLaci'); 
             if(btnAdminLaci) {
                 btnAdminLaci.style.setProperty('display', 'block', 'important');
@@ -573,6 +577,17 @@
 
         window.toggleFCAccordion = () => { document.getElementById('fcAccordion').classList.toggle('open'); }
 
+        // --- SISTEM TELEPATI (SYNC NAMA REALTIME DARI DATABASE ANGGOTA) ---
+        window.memberDict = {};
+        onSnapshot(collection(db, "mlu_members"), (snap) => {
+            snap.forEach(doc => {
+                const d = doc.data();
+                if(d.plat) window.memberDict[cleanStr(d.plat)] = { nama: d.namaKtp || d.namaWa || d.nama, role: d.role };
+            });
+            updateFCUI();
+            if(document.getElementById('modalListAntrian').classList.contains('show')) bukaDaftarTunggu();
+        });
+
         onSnapshot(refGading, (snap) => {
             if(!snap.exists()) return; 
             const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; updateFCUI();
@@ -594,11 +609,8 @@
                     if(myIndex !== 0 && myIndex !== 1) throw "Hanya Antrian urutan 1 dan 2 yang bisa kudeta!";
                     
                     const me = q[myIndex];
-                    // Keluarkan saya dari antrian
                     q.splice(myIndex, 1); 
                     me.startTime = Date.now();
-                    
-                    // Timpa (hapus) siapa pun yang ada di slot tersebut
                     slots[idx] = me; 
                     
                     t.update(refGading, { chargingSlots: slots, waitingQueue: q }); 
@@ -629,21 +641,24 @@
                 if(s) {
                     let bat = s.batreSisa || s.batre || s.battery || "-";
                     let kudetaBtn = '';
-                    // RULES: Hanya antrian urutan 1 dan 2 yang bisa kudeta slot yang terisi orang lain
+                    
+                    // --- SYNC NAMA DARI DATABASE ANGGOTA ---
+                    let dispName = cleanName(s.userName);
+                    if(window.memberDict[cleanStr(s.plat)]) dispName = cleanName(window.memberDict[cleanStr(s.plat)].nama);
+                    
                     if ((myQIndex === 0 || myQIndex === 1) && cleanStr(s.plat) !== myPlatClean) {
                         kudetaBtn = `<button style="background:var(--danger); color:white; border:none; border-radius:8px; padding:8px; font-size:10px; font-family:'Space Grotesk'; font-weight:900; margin-top:5px; cursor:pointer; width:100%; box-shadow:0 4px 10px rgba(239,68,68,0.3); letter-spacing:0.5px;" onclick="prosesKudetaDash(${i})"><i class="fas fa-hand-rock"></i> KUDETA SLOT (HAPUS USER)</button>`;
                     }
                     
                     slotsHTML += `<div class="live-slot-item">
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                                        <div class="lsi-left"><div class="lsi-lbl">SLOT 0${i+1}</div><div class="lsi-name" style="word-break:break-word;">${cleanName(s.userName)}</div></div>
+                                        <div class="lsi-left"><div class="lsi-lbl">SLOT 0${i+1}</div><div class="lsi-name" style="word-break:break-word;">${dispName}</div></div>
                                         <div class="lsi-batre"><i class="fas fa-bolt"></i> ${bat.replace('%','')} %</div>
                                     </div>
                                     ${kudetaBtn}
                                   </div>`;
                 } else {
                     let kudetaBtn = '';
-                    // RULES: Jika Slot Kosong, Antrean #1 dan #2 bisa langsung bypass ambil alih slot ini dari dashboard laci
                     if (myQIndex === 0 || myQIndex === 1) {
                         kudetaBtn = `<button style="background:var(--success); color:white; border:none; border-radius:8px; padding:8px; font-size:10px; font-family:'Space Grotesk'; font-weight:900; margin-top:5px; cursor:pointer; width:100%; box-shadow:0 4px 10px rgba(16,185,129,0.3); letter-spacing:0.5px;" onclick="prosesKudetaDash(${i})"><i class="fas fa-bolt"></i> AMBIL ALIH SLOT KOSONG</button>`;
                     }
@@ -697,7 +712,12 @@
                 localQueue.forEach((q, i) => {
                     let bat = q.batreSisa || q.batre || q.battery || "-";
                     let isMe = (cleanStr(q.plat) === myPlatClean) ? 'border: 2px solid var(--gold-main); background:rgba(212,175,55,0.05);' : '';
-                    html += `<div class="list-item" style="${isMe}"><div><div class="li-plat">${q.plat}</div><div class="li-name">#${i+1} • ${cleanName(q.userName)}</div></div><div class="li-batre"><i class="fas fa-battery-half"></i> ${bat.replace('%','')} %</div></div>`;
+                    
+                    // --- SYNC NAMA DARI DATABASE ANGGOTA ---
+                    let dispName = cleanName(q.userName);
+                    if(window.memberDict[cleanStr(q.plat)]) dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
+
+                    html += `<div class="list-item" style="${isMe}"><div><div class="li-plat">${q.plat}</div><div class="li-name">#${i+1} • ${dispName}</div></div><div class="li-batre"><i class="fas fa-battery-half"></i> ${bat.replace('%','')} %</div></div>`;
                 });
                 listArea.innerHTML = html;
             }
@@ -721,7 +741,7 @@
                     await updateDoc(refGading, { waitingQueue: q }); 
                     window.hideActionLoader(); tutupDaftarAntrian(); document.getElementById('fcAccordion').classList.add('open');
                 } 
-            } catch(e) { window.hideActionLoader(); alert("ERROR"); } 
+            } catch(e) { window.hideActionLoader(); alert("ERROR: " + e.message); } 
         }
 
         window.batalAntrianDash = () => {
@@ -731,7 +751,7 @@
                     const d = (await t.get(refGading)).data(); 
                     const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== myPlatClean); 
                     t.update(refGading, { waitingQueue: newQ }); 
-                }).then(() => window.hideActionLoader());
+                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert(e); });
             }
         }
         
@@ -740,7 +760,7 @@
                 window.showActionLoader();
                 runTransaction(dbGading, async(t)=>{ 
                     const d = (await t.get(refGading)).data(); d.chargingSlots[idx] = null; t.update(refGading, {chargingSlots: d.chargingSlots}); 
-                }).then(() => window.hideActionLoader());
+                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert(e); });
             }
         }
         
@@ -749,9 +769,10 @@
             runTransaction(dbGading, async(t)=>{ 
                 const d = (await t.get(refGading)).data(); if(d.chargingSlots[i]) throw "Penuh!"; 
                 let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === myPlatClean); 
+                if(idx === -1) throw "Anda tidak di antrean!";
                 const me = q.splice(idx, 1)[0]; me.startTime = Date.now(); d.chargingSlots[i] = me; 
                 t.update(refGading, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-            }).then(() => window.hideActionLoader());
+            }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert(e); });
         }
 
         window.bukaAppKetiga = (appNama) => {
@@ -784,7 +805,6 @@
                 let lokasiAlternatif = [ { id: "kc", name: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, color: "#10B981" } ];
                 snap.forEach(doc => { const data = doc.data(); if(data.isActive !== false && doc.id !== 'gading') { lokasiAlternatif.push({ id: doc.id, name: data.name || doc.id, lat: data.lat, lng: data.lng, color: "var(--electric-blue)", mapLink: data.mapLink }); }});
 
-                // MENGGUNAKAN WATCH POSITION (GPS RADAR AKTIF)
                 navigator.geolocation.watchPosition((pos) => {
                     let nearestFC = null; let minDist = Infinity;
                     lokasiAlternatif.forEach(fc => { let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); if(d < minDist) { minDist = d; nearestFC = fc; } });
@@ -805,7 +825,6 @@
                         }
                         document.getElementById('statusAltFC').innerHTML = statusHtml;
 
-                        // RADAR TETAP PAKAI ANDROID NATIVE BUKAN ONESIGNAL (Biar notifnya ga nyebar ke member lain)
                         if (minDist <= 0.3) {
                             if (window.lastNotifLokasi !== nearestFC.id) {
                                 if (window.AndroidNative) AndroidNative.triggerNotif("🗺️ RADAR MLU: " + nearestFC.name, "FC ini berjarak " + (minDist * 1000).toFixed(0) + " meter dari Anda.");
@@ -817,7 +836,7 @@
                     }
                 }, () => { 
                     document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> MENCARI GPS...`; document.getElementById('statusAltFC').innerHTML = "Pastikan GPS Anda nyala."; document.getElementById('statusAltFC').style.background = "rgba(239,68,68,0.1)"; document.getElementById('statusAltFC').style.color = "var(--danger)";
-                }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 });
+                }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 });
             });
         }
         startNearestFCRadar();

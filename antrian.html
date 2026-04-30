@@ -10,7 +10,7 @@
         if (globalTheme === 'lebaran') { document.documentElement.classList.add('theme-lebaran'); }
         
         // AUTO CLEAR CACHE BIAR SCRIPT BARU LANGSUNG JALAN
-        const DASH_VERSION = "7.0_ONESIGNAL_PUSH";
+        const DASH_VERSION = "7.5_SUPER_FIX";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -328,7 +328,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, runTransaction, updateDoc, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, runTransaction, updateDoc, collection, query, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
         window.tembakNotif = function(judul, isi) {
@@ -344,8 +344,7 @@
                     headings: { "en": judul },
                     contents: { "en": isi }
                 })
-            }).then(res => console.log("Notif OneSignal Sukses Ditembak!"))
-              .catch(err => console.error("Notif Gagal:", err));
+            }).catch(err => console.error("Notif Gagal:", err));
         };
         // ====================================================
 
@@ -358,6 +357,10 @@
         const fbStoreConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
         const appStore = initializeApp(fbStoreConfig, "AppStore");
         const dbStore = getFirestore(appStore);
+
+        // KONEKSI DATABASE UTAMA MLU UNTUK SINKRONISASI NAMA
+        const appMLU = initializeApp({ apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" }, "AppMLU"); 
+        const dbMLU = getFirestore(appMLU);
 
         // --- SISTEM GLOBAL LOADER (ANTI LEMOT) ---
         window.showGlobalLoader = (txt) => {
@@ -398,9 +401,6 @@
         });
 
         // NOTIFIKASI
-        const appMLU = initializeApp({ apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" }, "AppMLU"); 
-        const dbMLU = getFirestore(appMLU);
-
         window.kirimNotifKePlat = async (platTarget, title, body) => {
             try {
                 const cleanPlatTarget = platTarget.replace(/\s+/g, '').toUpperCase();
@@ -442,8 +442,6 @@
                 const dist = calculateDist(STATION_LAT, STATION_LNG, pos.coords.latitude, pos.coords.longitude);
                 if(dist <= MAX_DIST_KM) { 
                     isInLocation = true; gpsInd.className = "gps-badge ok"; gpsInd.innerHTML = "<i class='fas fa-map-marker-alt'></i> ANDA DI LOKASI"; 
-                    
-                    // --- ILMU HITAM: NOTIFIKASI ONESIGNAL SAAT MASUK RADIUS ---
                     if (!window.radarNotifSent) {
                         window.tembakNotif("📍 LOKASI FC TERDETEKSI", "Anda sudah masuk radius FC Kelapa Gading. Silakan ambil antrean!");
                         window.radarNotifSent = true;
@@ -451,7 +449,7 @@
                 } 
                 else { 
                     isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = `<i class='fas fa-eye'></i> MODE PANTAU (${(dist).toFixed(1)} KM)`; 
-                    window.radarNotifSent = false; // Reset if they leave
+                    window.radarNotifSent = false;
                 }
                 updateUI();
             }, (err) => { isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = "<i class='fas fa-eye'></i> MODE PANTAU (NO GPS)"; updateUI(); }, {enableHighAccuracy: false, maximumAge: 10000});
@@ -467,13 +465,17 @@
         window.promoItemData = null;
 
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
-        function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+        function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
 
         // FUNGSI PINTAR: BADGE PENGURUS
         function getRoleBadge(role, plat) {
+            let cPlat = cleanStr(plat);
+            if (cPlat === 'B4794SWF') {
+                return `<span class="badge-pengurus" style="background:rgba(16,185,129,0.1); color:#10B981; border-color:rgba(16,185,129,0.3);"><i class="fas fa-tree"></i> KELUARGA CEMARA</span>`;
+            }
             let r = (role || '').toUpperCase();
             let ignored = ['MEMBER', 'GUEST', 'KELUARGA MLU', 'MANUAL', 'KUDETA', '', 'NON-MEMBER'];
-            if (!ignored.includes(r) && cleanStr(plat) !== 'B4248SWF') {
+            if (!ignored.includes(r) && cPlat !== 'B4248SWF') {
                 return `<span class="badge-pengurus">${r}</span>`;
             }
             return '';
@@ -494,47 +496,22 @@
         });
 
         // ==========================================================
-        // AUTO-SYNC DATA & ONSNAPSHOT UI
+        // SISTEM TELEPATI (SINKRONISASI NAMA & ROLE DARI DB UTAMA)
         // ==========================================================
-        let isSyncing = false;
-        
+        window.memberDict = {};
+        onSnapshot(collection(dbMLU, "mlu_members"), (snap) => {
+            snap.forEach(doc => {
+                const d = doc.data();
+                if(d.plat) window.memberDict[cleanStr(d.plat)] = { nama: d.namaKtp || d.namaWa || d.nama, role: d.role };
+            });
+            updateUI();
+            if (document.getElementById('sheetManageAntrian').classList.contains('show')) window.renderQueueAdmin();
+            if (document.getElementById('sheetDaftarAntrian').classList.contains('show')) window.renderQueueList();
+        });
+
         onSnapshot(mainRef, (snap) => { 
             if (!snap.exists()) return; 
             const d = snap.data(); 
-
-            // Cek kalau Profile Lu Beda dengan yang di Antrean, langsung disinkronisasi diam-diam!
-            if(!isSyncing) {
-                let needsUpdate = false;
-                let newSlots = [...(d.chargingSlots || [null, null, null])];
-                let newQueue = [...(d.waitingQueue || [])];
-                const cPlat = cleanStr(myPlat);
-
-                let sIdx = newSlots.findIndex(s => s && cleanStr(s.plat) === cPlat);
-                if(sIdx > -1) {
-                    if(newSlots[sIdx].userName !== myName || newSlots[sIdx].role !== myRole) {
-                        newSlots[sIdx].userName = myName;
-                        newSlots[sIdx].role = myRole;
-                        needsUpdate = true;
-                    }
-                }
-
-                let qIdx = newQueue.findIndex(q => cleanStr(q.plat) === cPlat);
-                if(qIdx > -1) {
-                    if(newQueue[qIdx].userName !== myName || newQueue[qIdx].role !== myRole) {
-                        newQueue[qIdx].userName = myName;
-                        newQueue[qIdx].role = myRole;
-                        needsUpdate = true;
-                    }
-                }
-
-                if(needsUpdate) {
-                    isSyncing = true;
-                    updateDoc(mainRef, { chargingSlots: newSlots, waitingQueue: newQueue })
-                        .then(() => { isSyncing = false; })
-                        .catch(() => { isSyncing = false; });
-                    return; 
-                }
-            }
 
             localSlots = d.chargingSlots || [null, null, null]; 
             localQueue = d.waitingQueue || []; 
@@ -549,7 +526,9 @@
         // UPDATE UI SUPER KETAT
         // ==========================================================
         function updateUI() {
-            const container = document.getElementById('slotsContainer'); container.innerHTML = ''; 
+            const container = document.getElementById('slotsContainer'); 
+            if(!container) return;
+            container.innerHTML = ''; 
             
             let myQIndex = localQueue.findIndex(q => cleanStr(q.plat) === cleanStr(myPlat));
             let mySlotIndex = localSlots.findIndex(s => s && cleanStr(s.plat) === cleanStr(myPlat));
@@ -583,8 +562,12 @@
                     let batreValue = s.batre || s.battery; let batreInfo = (batreValue && batreValue !== '-' && batreValue !== 'undefined') ? `<span class="badge-batre"><i class="fas fa-bolt"></i> ${batreValue}</span>` : '';
                     
                     let roleBadge = getRoleBadge(s.role, s.plat);
+                    
+                    // SINKRONISASI NAMA TELEPATI
+                    let dispName = cleanName(s.userName);
+                    if(window.memberDict && window.memberDict[cleanStr(s.plat)]) dispName = cleanName(window.memberDict[cleanStr(s.plat)].nama);
 
-                    div.innerHTML = `<div class="sb-num">${i+1}</div><div class="sb-info"><div class="sb-name" style="flex-wrap:wrap;">${escapeHtml(s.userName)} ${batreInfo} ${roleBadge}</div><div class="sb-plat">${s.plat}</div>${timerHTML}</div>${adminBtn}`;
+                    div.innerHTML = `<div class="sb-num">${i+1}</div><div class="sb-info"><div class="sb-name" style="flex-wrap:wrap;">${escapeHtml(dispName)} ${batreInfo} ${roleBadge}</div><div class="sb-plat">${s.plat}</div>${timerHTML}</div>${adminBtn}`;
                     if(isMe) { div.onclick = () => { if(confirm("Selesai pengisian?")) stopCharging(i); }; div.style.cursor = "pointer"; }
                 } else {
                     div.className = `slot-bay is-empty`;
@@ -603,7 +586,16 @@
                 }
                 container.appendChild(div);
             });
-            document.getElementById('totalQDisplay').innerText = localQueue.length; document.getElementById('nextQDisplay').innerText = localQueue.length > 0 ? localQueue[0].userName : "KOSONG";
+            
+            document.getElementById('totalQDisplay').innerText = localQueue.length; 
+            
+            if (localQueue.length > 0) {
+                let nqName = cleanName(localQueue[0].userName);
+                if (window.memberDict && window.memberDict[cleanStr(localQueue[0].plat)]) nqName = cleanName(window.memberDict[cleanStr(localQueue[0].plat)].nama);
+                document.getElementById('nextQDisplay').innerText = nqName;
+            } else {
+                document.getElementById('nextQDisplay').innerText = "KOSONG";
+            }
 
             // --- 2. LOGIKA TOMBOL BAWAH ---
             if (mySlotIndex > -1) {
@@ -621,7 +613,6 @@
                 btnCancel.innerHTML = `<i class="fas fa-times-circle"></i> BATALKAN ANTRIAN SAYA (#${myQIndex+1})`;
                 
                 if (myQIndex === 0 && emptySlots > 0) {
-                    // --- ILMU HITAM: NOTIF NATIVE PANGGILAN SLOT ONESIGNAL ---
                     if (!window.notifAntreanTerkirim) {
                         window.tembakNotif("⚡ GILIRAN ANDA TIBA!", "Silakan tekan tombol 'PILIH SLOT KOSONG' sekarang.");
                         window.notifAntreanTerkirim = true;
@@ -677,7 +668,7 @@
             }).then((nextUser) => {
                 hideGlobalLoader();
                 if(nextUser) window.kirimNotifKePlat(nextUser, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby di dekat stasiun FC.");
-            }).catch(e => { hideGlobalLoader(); alert(e); });
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
         };
 
         window.userTriggerKudeta = (idx, plat) => {
@@ -697,7 +688,7 @@
                 alert("KUDETA BERHASIL! Anda langsung menempati slot."); 
                 if(res.kicked) window.kirimNotifKePlat(res.kicked, "⚔️ ANDA DI-KUDETA!", "Waktu Anda sudah habis dan Slot telah diambil alih paksa oleh member lain.");
                 if(res.next) window.kirimNotifKePlat(res.next, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby di dekat stasiun FC.");
-            }).catch(e => { hideGlobalLoader(); alert(e); });
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
         };
 
         // --- SISTEM INPUT BATRE MEMBER (BARU DAFTAR) ---
@@ -713,7 +704,7 @@
             const bInt = parseInt(rawBatre);
             if(!rawBatre) return alert("Isi sisa baterai!");
             if(bInt > 98) {
-                alert("⚠️ KONDISI FC ABNORMAL!\n\nMaksimal charging dibatasi 95%. DILARANG charging 100% atau tunggu indikator biru!");
+                alert("⚠️ KONDISI FC ABNORMAL!\n\nMaksimal charging dibatasi 98%. DILARANG charging 100% atau tunggu indikator biru!");
                 return;
             }
             
@@ -730,7 +721,7 @@
                 }).then(() => {
                     hideGlobalLoader();
                     setTimeout(() => { showPromoKampas(); }, 1000);
-                }).catch(e => { hideGlobalLoader(); alert(e); });
+                }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
             } else if (memberActionType === 'slot') {
                 runTransaction(db, async(t)=>{ 
                     const d = (await t.get(mainRef)).data(); if(d.chargingSlots[memberActionSlotIdx]) throw "SLOT PENUH!"; 
@@ -739,7 +730,7 @@
                     let me = idx > -1 ? q.splice(idx, 1)[0] : { plat: myPlat, userName: myName, role: myRole }; 
                     me.startTime = Date.now(); me.batre = batreFinal; me.battery = batreFinal; d.chargingSlots[memberActionSlotIdx] = me; 
                     t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e); }); 
+                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
             } else if (memberActionType === 'kudeta') {
                 runTransaction(db, async(t) => {
                     const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; q = q.filter(x => cleanStr(x.plat) !== cleanStr(myPlat));
@@ -748,7 +739,7 @@
                 }).then((kickedPlat) => { 
                     forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader(); alert("KUDETA ADMIN BERHASIL!"); 
                     if(kickedPlat) window.kirimNotifKePlat(kickedPlat, "⚔️ ANDA DI-KUDETA!", "Admin telah mengeluarkan Anda paksa dari Slot.");
-                }).catch(e => { hideGlobalLoader(); alert(e); });
+                }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
             }
         };
 
@@ -781,7 +772,7 @@
             }).then((nextUser) => {
                 hideGlobalLoader();
                 if(nextUser) window.kirimNotifKePlat(nextUser, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
-            }).catch(e => { hideGlobalLoader(); alert(e); }); 
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
         
         window.cancelQueue = () => { 
@@ -789,7 +780,7 @@
                 showGlobalLoader();
                 runTransaction(db, async(t) => { 
                     const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); t.update(mainRef, { waitingQueue: newQ }); 
-                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e); }); 
+                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
             }
         };
 
@@ -805,7 +796,7 @@
                 d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot]; d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); return d.chargingSlots[targetIdx].plat;
             }).then((p) => { 
                 forceCloseSheet('sheetPilihSlot'); hideGlobalLoader(); if(p) window.kirimNotifKePlat(p, "🔄 PINDAH SLOT", `Admin telah memindahkan Anda ke Slot 0${targetIdx+1}.`);
-            }).catch(e => { hideGlobalLoader(); alert(e); }); 
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
         
         window.adminKick = () => { 
@@ -818,7 +809,7 @@
                 forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader();
                 if(res.kicked) window.kirimNotifKePlat(res.kicked, "⛔ ANDA DIKELUARKAN", "Admin telah mengeluarkan kendaraan Anda dari Slot Charging.");
                 if(res.next) window.kirimNotifKePlat(res.next, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
-            }).catch(e => { hideGlobalLoader(); alert(e); }); 
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
         
         window.adminToQueue = () => { 
@@ -829,7 +820,7 @@
                 t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); return s ? s.plat : null;
             }).then((p) => { 
                 forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader(); if(p) window.kirimNotifKePlat(p, "⚠️ PERHATIAN!", "Admin telah mengembalikan posisi Anda dari Slot menjadi Antrean.");
-            }).catch(e => { hideGlobalLoader(); alert(e); }); 
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
 
         window.adminTriggerKudeta = () => {
@@ -864,7 +855,7 @@
                     else { if(d.chargingSlots[targetIdx] !== null) throw "Slot keburu terisi!"; }
                     newObj.startTime = Date.now(); d.chargingSlots[targetIdx] = newObj; t.update(mainRef, { chargingSlots: d.chargingSlots });
                 }
-            }).then(() => { forceCloseSheet('sheetDaftarAdmin'); hideGlobalLoader(); }).catch(e => { hideGlobalLoader(); alert(e); });
+            }).then(() => { forceCloseSheet('sheetDaftarAdmin'); hideGlobalLoader(); }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
         };
 
         window.adminPromoteToSlot = (index) => {
@@ -882,7 +873,7 @@
                 forceCloseSheet('sheetManageAntrian'); hideGlobalLoader();
                 if(res.promoted) window.kirimNotifKePlat(res.promoted, "🔌 GILIRAN ANDA!", `Admin telah memasukkan Anda ke Slot 0${res.slotNum}. Silakan mulai charging!`);
                 if(res.next) window.kirimNotifKePlat(res.next, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby.");
-            }).catch(e => { hideGlobalLoader(); alert(e); });
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
         };
 
         window.adminReorder = (index, dir) => { 
@@ -890,7 +881,7 @@
             runTransaction(db, async(t)=>{ 
                 const d = (await t.get(mainRef)).data(); let q = d.waitingQueue; let temp = q[index]; q[index] = q[index + dir]; q[index + dir] = temp; 
                 t.update(mainRef, {waitingQueue: q}); 
-            }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e); }); 
+            }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
 
         window.adminKickQueue = (plat) => { 
@@ -899,7 +890,7 @@
                 runTransaction(db, async(t)=>{ 
                     const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(plat)); 
                     t.update(mainRef, {waitingQueue: newQ}); 
-                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e); }); 
+                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
             } 
         };
 
@@ -909,11 +900,15 @@
             localQueue.forEach((q, i) => {
                 let b = q.batre || q.battery; let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` ⚡ ${b}` : '';
                 let roleBadge = getRoleBadge(q.role, q.plat);
+                
+                let dispName = cleanName(q.userName);
+                if (window.memberDict && window.memberDict[cleanStr(q.plat)]) dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
+
                 body.innerHTML += `
                     <div class="q-item">
                         <div>
                             <div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900; color:var(--royal-blue);">${q.plat}</div>
-                            <div style="font-size:10px; color:var(--text-muted); display:flex; align-items:center; gap:4px; flex-wrap:wrap;">#${i+1} | ${q.userName}${batreInfo} ${roleBadge}</div>
+                            <div style="font-size:10px; color:var(--text-muted); display:flex; align-items:center; gap:4px; flex-wrap:wrap;">#${i+1} | ${dispName}${batreInfo} ${roleBadge}</div>
                         </div>
                         <div class="qi-ctrl">
                             <button class="qi-btn" style="background:var(--success); color:white; box-shadow:var(--glow-green);" onclick="adminPromoteToSlot(${i})" title="Masukkan ke Slot Kosong"><i class="fas fa-bolt"></i></button>
@@ -931,7 +926,11 @@
             localQueue.forEach((q, i) => {
                 let b = q.batre || q.battery; let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` <span style="color:var(--gold); font-size:11px; text-shadow:0 0 5px rgba(212,175,55,0.4);"><i class="fas fa-bolt"></i> ${b}</span>` : '';
                 let roleBadge = getRoleBadge(q.role, q.plat);
-                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:4px; flex-wrap:wrap;">${q.userName}${batreInfo} ${roleBadge}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px; box-shadow:var(--glow-blue); font-weight:900;">#${i+1}</div></div>`;
+                
+                let dispName = cleanName(q.userName);
+                if (window.memberDict && window.memberDict[cleanStr(q.plat)]) dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
+
+                body.innerHTML += `<div class="q-item"><div><div style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--royal-blue);">${q.plat}</div><div style="font-size:11px; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:4px; flex-wrap:wrap;">${dispName}${batreInfo} ${roleBadge}</div></div><div style="font-family:'Space Grotesk'; font-size:14px; background:var(--electric-blue); color:white; padding:5px 12px; border-radius:10px; box-shadow:var(--glow-blue); font-weight:900;">#${i+1}</div></div>`;
             });
         };
 
@@ -941,12 +940,11 @@
         // CCTV CHAT GLOBAL (ANTI-JEBOL ONESIGNAL)
         // =======================================================
         const cctvStartTime = Date.now();
-        onSnapshot(query(collection(db, "mlu_chats"), where("timestamp", ">", cctvStartTime), orderBy("timestamp", "asc")), (snap) => {
+        onSnapshot(query(collection(dbMLU, "mlu_chats"), where("timestamp", ">", cctvStartTime), orderBy("timestamp", "asc")), (snap) => {
             snap.docChanges().forEach((change) => {
                 if (change.type === "added") {
                     const data = change.doc.data();
-                    // Cek biar nggak ngebunyiin notif buat pesan kita sendiri
-                    if (data.plat && data.plat.replace(/\s+/g,'').toUpperCase() !== myPlatClean) {
+                    if (data.plat && data.plat.replace(/\s+/g,'').toUpperCase() !== cleanStr(myPlat)) {
                         window.tembakNotif("💬 " + data.nama, data.pesan);
                     }
                 }

@@ -128,7 +128,7 @@
         .modal-title { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--royal-blue); }
         .btn-close { background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text-muted); transition: 0.2s;}
         
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px;}
         .form-input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; transition: 0.2s;}
         .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1); }
@@ -150,7 +150,7 @@
         .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid white; padding: 14px 25px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; color: var(--royal-blue); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(10,34,89,0.15); transition: 0.2s;}
         .btn-premium-back:active { transform: scale(0.95); }
 
-        .hist-list { margin-top: 15px; max-height: 400px; overflow-y: auto; }
+        .hist-list { margin-top: 15px; max-height: 400px; overflow-y: auto; text-align: left; }
         .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #E2E8F0; }
         .hist-item:last-child { border-bottom: none; }
         .hist-desc { font-size: 12px; font-weight: 700; color: var(--text-main); }
@@ -271,7 +271,7 @@
                 <div class="modal-title">Riwayat Tabungan</div>
                 <button class="btn-close" onclick="document.getElementById('historyModal').classList.remove('show'); setTimeout(()=>document.getElementById('historyModal').style.display='none',300);"><i class="fas fa-times"></i></button>
             </div>
-            <div id="historyTargetName" style="font-size:12px; font-weight:800; color:#64748B; margin-top:-15px; margin-bottom:15px; text-transform:uppercase; border-bottom:1px solid #eee; padding-bottom:10px;"></div>
+            <div id="historyTargetName" style="font-size:12px; font-weight:800; color:#64748B; margin-top:-15px; margin-bottom:15px; text-transform:uppercase; border-bottom:1px solid #eee; padding-bottom:10px; text-align:center;"></div>
             <div id="historyContent" class="hist-list"></div>
         </div>
     </div>
@@ -297,7 +297,9 @@
         const isAtasan = isKetum || isWaketum || (isUserDewa && dewaMode === 'ON');
         
         // Pengecekan Admin Umum (Bisa Edit/Hapus User)
-        const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
+        // TERMASUK VIP DELEGASI
+        const platAdminKhusus = ["B4231SWF", "B4146SWH", "B4769SWE", "B4457SWF", "B4248SWF"];
+        const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST') || platAdminKhusus.includes(platKu);
 
         // Render Tombol Saklar Khusus Bapak
         if (isUserDewa) {
@@ -367,7 +369,18 @@
             });
 
             data.forEach((m, index) => {
-                const isPengurus = m.role && m.role !== 'KELUARGA MLU';
+                const cleanPlatCheck = (m.plat || "").replace(/\s+/g, '').toUpperCase();
+                let isPengurus = m.role && m.role !== 'KELUARGA MLU';
+                
+                // EASTER EGG FERY KELUARGA CEMARA
+                let roleDisplay = m.role || 'KELUARGA MLU';
+                let roleHtml = '';
+                if (cleanPlatCheck === 'B4794SWF') {
+                    roleHtml = `<span class="badge" style="background:#ECFDF5; color:#10B981; border-color:#A7F3D0;"><i class="fas fa-tree"></i> KELUARGA CEMARA</span>`;
+                } else if (isPengurus) {
+                    roleHtml = `<span class="badge bg-role" style="color:#B45309">${roleDisplay}</span>`;
+                }
+                
                 const cardClass = isPengurus ? 'member-card is-pengurus' : 'member-card';
                 const nameKtp = m.namaKtp || m.nama || "-";
                 const nameWa = m.namaWa || "-";
@@ -415,7 +428,7 @@
                             <div class="m-badges">
                                 <span class="badge bg-plat">${m.plat}</span>
                                 <span class="badge bg-role">${m.type||'RTO'}</span>
-                                ${isPengurus ? `<span class="badge bg-role" style="color:#B45309">${m.role}</span>` : ''}
+                                ${roleHtml}
                             </div>
                             ${saldoHtml}
                             ${daruratHtml}
@@ -441,35 +454,39 @@
             document.getElementById('historyContent').innerHTML = `<div style="text-align:center; padding:20px; color:#94A3B8;">Memuat data...</div>`;
             const m = document.getElementById('historyModal'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10);
 
-            const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", id));
-            const snap = await getDocs(q);
-            
-            let dataArr = [];
-            snap.forEach(d => dataArr.push(d.data()));
-            dataArr.sort((a,b) => b.timestamp - a.timestamp); 
-
-            const cont = document.getElementById('historyContent'); cont.innerHTML = "";
-            
-            if(dataArr.length === 0) {
-                cont.innerHTML = `<div style="text-align:center; padding:20px; color:#cbd5e1; font-size:12px;">Belum ada riwayat transaksi.</div>`;
-                return;
-            }
-
-            dataArr.forEach(data => {
-                const isIn = data.type === 'IN';
-                const cls = isIn ? 'val-in' : 'val-out';
-                const sign = isIn ? '+' : '-';
-                const date = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+            try {
+                const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", id));
+                const snap = await getDocs(q);
                 
-                cont.innerHTML += `
-                <div class="hist-item">
-                    <div style="flex:1;">
-                        <div class="hist-desc">${data.desc || (isIn ? 'Setoran Tabungan' : 'Penarikan')}</div>
-                        <div class="hist-date">${date} • oleh ${data.adminName||'Admin'}</div>
-                    </div>
-                    <div class="hist-val ${cls}">${sign} Rp ${data.amount.toLocaleString('id-ID')}</div>
-                </div>`;
-            });
+                let dataArr = [];
+                snap.forEach(d => dataArr.push(d.data()));
+                dataArr.sort((a,b) => b.timestamp - a.timestamp); 
+
+                const cont = document.getElementById('historyContent'); cont.innerHTML = "";
+                
+                if(dataArr.length === 0) {
+                    cont.innerHTML = `<div style="text-align:center; padding:20px; color:#cbd5e1; font-size:12px;">Belum ada riwayat transaksi.</div>`;
+                    return;
+                }
+
+                dataArr.forEach(data => {
+                    const isIn = data.type === 'IN';
+                    const cls = isIn ? 'val-in' : 'val-out';
+                    const sign = isIn ? '+' : '-';
+                    const date = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+                    
+                    cont.innerHTML += `
+                    <div class="hist-item">
+                        <div style="flex:1;">
+                            <div class="hist-desc">${data.desc || (isIn ? 'Setoran Tabungan' : 'Penarikan')}</div>
+                            <div class="hist-date">${date} • oleh ${data.adminName||'Admin'}</div>
+                        </div>
+                        <div class="hist-val ${cls}">${sign} Rp ${data.amount.toLocaleString('id-ID')}</div>
+                    </div>`;
+                });
+            } catch (err) {
+                document.getElementById('historyContent').innerHTML = `<div style="text-align:center; padding:20px; color:#EF4444;">Gagal memuat data.</div>`;
+            }
         }
 
         window.viewPhoto = (src) => { document.getElementById('pvImage').src = src; document.getElementById('photoViewer').style.display = 'flex'; };
@@ -523,14 +540,28 @@
                 if (pin !== undefined && pin !== "") payload.pin = pin;
                 if(currentPhotoBase64 !== "") payload.foto = currentPhotoBase64;
 
-                if (id) await updateDoc(doc(db, "mlu_members", id), payload);
-                else await addDoc(collection(db, "mlu_members"), payload);
+                if (id) {
+                    await updateDoc(doc(db, "mlu_members", id), payload);
+                } else {
+                    await addDoc(collection(db, "mlu_members"), payload);
+                }
                 closeModal();
-            } catch (e) { alert("Gagal menyimpan: " + e.message); } 
-            finally { btn.innerText = "SIMPAN DATA"; btn.style.opacity = '1'; }
+            } catch (e) { 
+                alert("Gagal menyimpan: " + e.message); 
+            } finally { 
+                btn.innerText = "SIMPAN DATA"; btn.style.opacity = '1'; 
+            }
         };
 
-        window.deleteData = async (id) => { if(confirm("Hapus anggota ini permanen?")) { await deleteDoc(doc(db, "mlu_members", id)); } };
+        window.deleteData = async (id) => { 
+            if(confirm("Hapus anggota ini permanen?")) { 
+                try {
+                    await deleteDoc(doc(db, "mlu_members", id)); 
+                } catch (e) {
+                    alert("Gagal menghapus: " + e.message);
+                }
+            } 
+        };
     </script>
 </body>
 </html>
