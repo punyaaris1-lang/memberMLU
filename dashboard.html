@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "17.1_KEYBOARD_FIX"; 
+        const DASH_VERSION = "18.2_REAL_FIX_DASHBOARD"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -89,17 +89,17 @@
         .fc-wrapper.open .banner-icon { transform: rotate(180deg); background: var(--royal-blue); color: white;}
         
         .fc-laci { max-height: 0; overflow: hidden; transition: 0.4s; background: rgba(248,250,252,0.8); border-top: 1px solid transparent;}
-        .fc-wrapper.open .fc-laci { max-height: 800px; padding: 15px 20px; border-top-color: var(--glass-border); }
+        .fc-wrapper.open .fc-laci { max-height: 800px; padding: 15px 20px; border-top-color: var(--glass-border); overflow-y: auto;}
         
-        .live-slot-item { background: var(--white); border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px;}
-        .lsi-left { display: flex; flex-direction: column; }
-        .lsi-lbl { font-size: 10px; font-weight: 800; color: var(--text-gray); text-transform: uppercase; margin-bottom: 2px;}
-        .lsi-name { font-family: 'Outfit'; font-size: 16px; font-weight: 900; color: var(--royal-blue); word-break: break-word;}
-        .lsi-batre { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--success); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 8px;}
-        .lsi-empty { color: var(--text-gray); font-style: italic; font-weight: 600; font-size: 14px;}
+        /* DESAIN KARTU SLOT DALAM LACI REBORN */
+        .live-slot-item { background: var(--white); border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .lsi-batre { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--success); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(16,185,129,0.2);}
+        
+        /* BADGE PENGURUS DALAM KARTU SLOT LACI */
+        .badge-pengurus { background: rgba(212,175,55,0.1); color: var(--gold-lux); border: 1px solid rgba(212,175,55,0.3); font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; display: inline-block; white-space: nowrap; margin-top:2px;}
 
         .btn-lihat-antrian { width: 100%; padding: 12px; background: transparent; border: 2px dashed #CBD5E1; color: var(--text-gray); border-radius: 12px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-bottom: 12px;}
-        .btn-lihat-antrian:active { background: #F1F5F9; transform: scale(0.98); }
+        .btn-lihat-antrian:active { transform: scale(0.95); }
         
         .btn-laci { width: 100%; padding: 15px; border: none; border-radius: 14px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; letter-spacing: 1px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);}
         .btn-laci:active { transform: scale(0.96); }
@@ -181,8 +181,9 @@
             position: fixed; inset: 0; 
             background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); 
             z-index: 99999; display: none; 
-            align-items: center; justify-content: center; 
+            align-items: flex-start; justify-content: center; 
             opacity: 0; transition: opacity 0.3s; padding: 15px; 
+            overflow-y: auto; overscroll-behavior: contain;
         }
         .modal-glass-overlay.show { opacity: 1; display: flex; }
         .modal-glass-box { 
@@ -190,8 +191,7 @@
             width: 100%; max-width: 350px; text-align: center; 
             box-shadow: 0 30px 80px rgba(0,0,0,0.2); 
             transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 1px solid white; position: relative;
-            max-height: 85vh; overflow-y: auto; overscroll-behavior: contain;
+            border: 1px solid white; position: relative; margin: auto;
         }
         .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
         
@@ -227,24 +227,17 @@
         .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1);}
         .btn-submit { width: 100%; padding: 16px; background: var(--electric-blue); color: white; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; box-shadow: 0 10px 20px rgba(45,99,237,0.3); transition: 0.2s;}
         .btn-logout-modal { width: 100%; padding: 16px; background: white; color: var(--danger); border: 2px solid rgba(239,68,68,0.2); border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s;}
-    
-        /* UTILS UNTUK LACI ANTREAN */
-        .list-area { overflow-y: auto; max-height: 50vh; flex: 1; padding-right: 5px; }
-        .list-item { background: white; border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
-        .li-plat { font-family: 'Space Grotesk'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin-bottom: 4px;}
-        .li-name { font-size: 11px; font-weight: 700; color: var(--text-gray); text-transform: uppercase;}
-        .li-batre { font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; color: var(--success); background: rgba(16,185,129,0.1); padding: 4px 10px; border-radius: 10px;}
     </style>
 </head>
 <body>
-
-    <div class="ambient-light light-1"></div>
-    <div class="ambient-light light-2"></div>
 
     <div id="actionLoader" style="position:fixed; inset:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(5px); z-index:999999; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:0.3s;">
         <div style="width:50px; height:50px; border:5px solid #E2E8F0; border-top:5px solid var(--electric-blue); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:15px;"></div>
         <div style="font-family:'Space Grotesk'; font-weight:900; color:var(--royal-blue); letter-spacing:2px;">MEMPROSES...</div>
     </div>
+
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
 
     <div class="top-header fade-up d-1">
         <div class="greet-box">
@@ -292,15 +285,21 @@
             
             <div class="fc-laci">
                 <div style="font-size: 11px; font-weight: 900; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">STATUS SLOT CHARGER</div>
-                <div id="dashLiveSlots" style="display:flex; flex-direction:column; gap:8px; margin-bottom:15px;">
+                
+                <div id="dashLiveSlots" style="display:flex; flex-direction:column; margin-bottom:20px;">
                     <div style="text-align:center; font-size:12px; color:var(--text-muted);">Memuat data slot...</div>
                 </div>
-                
-                <button class="btn-lihat-antrian" onclick="bukaDaftarTunggu()">LIHAT DAFTAR TUNGGU (<span id="qCountText">0</span>)</button>
-                
-                <button class="btn-lihat-antrian" id="btnShortcutAdminLaci" style="display:none;" onclick="window.location.href='admin.html'">
-                    <i class="fas fa-user-shield"></i> KONTROL ADMIN PANEL
-                </button>
+
+                <div id="laciMenuGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+                    <button class="btn-lihat-antrian" style="margin:0; background:white; border-color:var(--electric-blue); color:var(--electric-blue); box-shadow:0 5px 15px rgba(45,99,237,0.1); height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:15px;" onclick="bukaDaftarTunggu()">
+                        <i class="fas fa-users" style="font-size:22px;"></i>
+                        <span style="font-size:10px;">ANTREAN (<b id="qCountText">0</b>)</span>
+                    </button>
+                    <button class="btn-lihat-antrian" id="btnShortcutAdminLaci" style="display:none; margin:0; background:#FEF2F2; border-color:#FCA5A5; color:#DC2626; box-shadow:0 5px 15px rgba(239,68,68,0.1); height:100%; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:15px;" onclick="window.location.href='admin.html'">
+                        <i class="fas fa-user-shield" style="font-size:22px;"></i>
+                        <span style="font-size:10px;">PANEL ADMIN</span>
+                    </button>
+                </div>
 
                 <div id="fcDynamicAction">
                     <button class="btn-laci bl-primary" onclick="persiapanDaftar()"><i class="fas fa-ticket-alt"></i> DAFTAR ANTRIAN</button>
@@ -403,14 +402,6 @@
         </div>
     </div>
 
-    <div class="modal-glass-overlay" id="modalListAntrian">
-        <div class="modal-glass-box">
-            <h3 class="m-title" style="font-family:'Outfit'; font-size:18px; color:var(--royal-blue); margin:0 0 15px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:12px; padding-right:30px; text-align:left;"><i class="fas fa-users" style="color:var(--electric-blue);"></i> DAFTAR TUNGGU</h3>
-            <button class="btn-close-modal" onclick="document.getElementById('modalListAntrian').classList.remove('show'); setTimeout(()=>document.getElementById('modalListAntrian').style.display='none',300);"><i class="fas fa-times"></i></button>
-            <div class="list-area" id="listAntrianContent"></div>
-        </div>
-    </div>
-
     <div class="modal-glass-overlay" id="modalQR">
         <div class="modal-glass-box" style="max-width: 300px;">
             <button class="btn-close-modal" onclick="tutupQR()"><i class="fas fa-times"></i></button>
@@ -440,7 +431,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
         window.tembakNotif = function(judul, isi) {
@@ -530,7 +521,6 @@
         if (myPlatClean === "B4248SWF") {
             document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
         } else if (myPlatClean === "B4794SWF") {
-            // SPESIAL BUAT FERY
             document.getElementById('userRole').innerHTML = `<i class="fas fa-tree" style="color:#10B981;"></i> KELUARGA CEMARA`;
             document.getElementById('userRole').style.background = 'rgba(16,185,129,0.1)';
         } else {
@@ -555,11 +545,7 @@
             const btnAdmin = document.getElementById('btnAdminMlu'); if(btnAdmin) btnAdmin.style.display = 'flex';
             const btnAdminLaci = document.getElementById('btnShortcutAdminLaci'); 
             if(btnAdminLaci) {
-                btnAdminLaci.style.setProperty('display', 'block', 'important');
-                btnAdminLaci.style.borderColor = 'rgba(239,68,68,0.4)';
-                btnAdminLaci.style.color = 'var(--danger)';
-                btnAdminLaci.style.background = 'rgba(239,68,68,0.03)';
-                btnAdminLaci.style.marginBottom = '12px';
+                btnAdminLaci.style.setProperty('display', 'flex', 'important');
             }
         }
 
@@ -584,7 +570,6 @@
                 if(d.plat) window.memberDict[cleanStr(d.plat)] = { nama: d.namaKtp || d.namaWa || d.nama, role: d.role };
             });
             updateFCUI();
-            if(document.getElementById('modalListAntrian').classList.contains('show')) bukaDaftarTunggu();
         });
 
         onSnapshot(refGading, (snap) => {
@@ -592,12 +577,23 @@
             const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; updateFCUI();
         });
 
-        // FUNGSI PENGAMAN STRING
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
         function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
-        // === FUNGSI KUDETA DASHBOARD ===
+        function getRoleBadge(role, plat) {
+            let cPlat = cleanStr(plat);
+            if (cPlat === 'B4794SWF') {
+                return `<span class="badge-pengurus" style="background:rgba(16,185,129,0.1); color:#10B981; border-color:rgba(16,185,129,0.3);"><i class="fas fa-tree"></i> KELUARGA CEMARA</span>`;
+            }
+            let r = (role || '').toUpperCase();
+            let ignored = ['MEMBER', 'GUEST', 'KELUARGA MLU', 'MANUAL', 'KUDETA', '', 'NON-MEMBER'];
+            if (!ignored.includes(r) && cPlat !== 'B4248SWF') {
+                return `<span class="badge-pengurus">${r}</span>`;
+            }
+            return '';
+        }
+
         window.prosesKudetaDash = (idx) => {
             if(confirm("AMBIL ALIH SLOT?\n\nAnda yakin ingin mengambil alih slot ini secara paksa? Data pengguna sebelumnya akan langsung dihapus dari sistem.")) {
                 window.showActionLoader();
@@ -607,7 +603,7 @@
                     let slots = d.chargingSlots || [null, null, null];
                     
                     const myIndex = q.findIndex(x => cleanStr(x.plat) === myPlatClean); 
-                    if(myIndex !== 0 && myIndex !== 1) throw "Hanya Antrian urutan 1 dan 2 yang bisa kudeta!";
+                    if(myIndex !== 0 && myIndex !== 1) throw new Error("Hanya Antrian urutan 1 dan 2 yang bisa kudeta!");
                     
                     const me = q[myIndex];
                     q.splice(myIndex, 1); 
@@ -617,10 +613,10 @@
                     t.update(refGading, { chargingSlots: slots, waitingQueue: q }); 
                 }).then(() => { 
                     window.hideActionLoader();
-                    alert("Berhasil mengambil alih slot!");
+                    setTimeout(() => alert("Berhasil mengambil alih slot!"), 350);
                 }).catch(e => {
                     window.hideActionLoader();
-                    alert("Gagal Kudeta: " + e);
+                    setTimeout(() => alert("Gagal Kudeta: " + (e.message || e)), 350);
                 }); 
             }
         }
@@ -638,39 +634,55 @@
 
             const slotContainer = document.getElementById('dashLiveSlots');
             let slotsHTML = '';
+            
             localSlots.forEach((s, i) => {
                 if(s) {
                     let bat = s.batreSisa || s.batre || s.battery || "-";
                     let kudetaBtn = '';
                     
-                    // --- SYNC NAMA DARI DATABASE ANGGOTA ---
                     let dispName = cleanName(s.userName);
                     if(window.memberDict[cleanStr(s.plat)]) dispName = cleanName(window.memberDict[cleanStr(s.plat)].nama);
                     
+                    let roleBadge = getRoleBadge(s.role, s.plat);
+                    
                     if ((myQIndex === 0 || myQIndex === 1) && cleanStr(s.plat) !== myPlatClean) {
-                        kudetaBtn = `<button style="background:var(--danger); color:white; border:none; border-radius:8px; padding:8px; font-size:10px; font-family:'Space Grotesk'; font-weight:900; margin-top:5px; cursor:pointer; width:100%; box-shadow:0 4px 10px rgba(239,68,68,0.3); letter-spacing:0.5px;" onclick="prosesKudetaDash(${i})"><i class="fas fa-hand-rock"></i> KUDETA SLOT (HAPUS USER)</button>`;
+                        kudetaBtn = `<button style="background:linear-gradient(135deg, var(--danger), #991B1B); color:white; border:none; border-radius:12px; padding:10px; font-size:11px; font-family:'Space Grotesk'; font-weight:900; margin-top:10px; cursor:pointer; width:100%; box-shadow:0 4px 15px rgba(239,68,68,0.3); letter-spacing:1px;" onclick="prosesKudetaDash(${i})"><i class="fas fa-hand-rock"></i> KUDETA SLOT 0${i+1}</button>`;
                     }
                     
-                    slotsHTML += `<div class="live-slot-item">
-                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                                        <div class="lsi-left"><div class="lsi-lbl">SLOT 0${i+1}</div><div class="lsi-name" style="word-break:break-word;">${escapeHtml(dispName)}</div></div>
-                                        <div class="lsi-batre"><i class="fas fa-bolt"></i> ${bat.replace('%','')} %</div>
-                                    </div>
-                                    ${kudetaBtn}
-                                  </div>`;
+                    slotsHTML += `
+                    <div class="live-slot-item">
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:42px; height:42px; background:#F1F5F9; border-radius:14px; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk'; font-weight:900; color:var(--royal-blue); font-size:16px;">0${i+1}</div>
+                                <div>
+                                    <div style="font-size:10px; color:#64748B; font-weight:800; text-transform:uppercase; letter-spacing:1px;"></div>
+                                    <div style="font-family:'Outfit'; font-size:15px; font-weight:900; color:var(--royal-blue); line-height:1.2; word-break:break-word; display:flex; align-items:center; gap:6px; flex-wrap:wrap;">${escapeHtml(dispName)} ${roleBadge}</div>
+                                </div>
+                            </div>
+                            <div class="lsi-batre"><i class="fas fa-bolt"></i> ${bat.replace('%','')} %</div>
+                        </div>
+                        ${kudetaBtn}
+                    </div>`;
                 } else {
                     let kudetaBtn = '';
                     if (myQIndex === 0 || myQIndex === 1) {
-                        kudetaBtn = `<button style="background:var(--success); color:white; border:none; border-radius:8px; padding:8px; font-size:10px; font-family:'Space Grotesk'; font-weight:900; margin-top:5px; cursor:pointer; width:100%; box-shadow:0 4px 10px rgba(16,185,129,0.3); letter-spacing:0.5px;" onclick="prosesKudetaDash(${i})"><i class="fas fa-bolt"></i> AMBIL ALIH SLOT KOSONG</button>`;
+                        kudetaBtn = `<button style="background:linear-gradient(135deg, var(--success), #059669); color:white; border:none; border-radius:12px; padding:10px; font-size:11px; font-family:'Space Grotesk'; font-weight:900; margin-top:10px; cursor:pointer; width:100%; box-shadow:0 4px 15px rgba(16,185,129,0.3); letter-spacing:1px;" onclick="prosesKudetaDash(${i})"><i class="fas fa-bolt"></i> AMBIL ALIH SLOT 0${i+1}</button>`;
                     }
                     
-                    slotsHTML += `<div class="live-slot-item" style="background: rgba(255,255,255,0.5);">
-                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                                        <div class="lsi-left"><div class="lsi-lbl">SLOT 0${i+1}</div><div class="lsi-empty">Tersedia</div></div>
-                                        <div style="color:var(--text-gray); opacity:0.5;"><i class="fas fa-battery-empty fa-2x"></i></div>
-                                    </div>
-                                    ${kudetaBtn}
-                                  </div>`;
+                    slotsHTML += `
+                    <div class="live-slot-item" style="background:#F8FAFC; border:1px dashed #CBD5E1;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div style="width:42px; height:42px; background:#E2E8F0; border-radius:14px; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk'; font-weight:900; color:#94A3B8; font-size:16px;">0${i+1}</div>
+                                <div>
+                                    <div style="font-size:10px; color:#94A3B8; font-weight:800; text-transform:uppercase; letter-spacing:1px;">KOSONG</div>
+                                    <div style="font-family:'Outfit'; font-size:15px; font-weight:900; color:#CBD5E1; font-style:italic;">Tersedia</div>
+                                </div>
+                            </div>
+                            <div style="color:#CBD5E1;"><i class="fas fa-battery-empty fa-2x"></i></div>
+                        </div>
+                        ${kudetaBtn}
+                    </div>`;
                 }
             });
             slotContainer.innerHTML = slotsHTML;
@@ -690,39 +702,19 @@
                     
                     slotWrapper.style.display = 'block'; 
                     let slotBtns = '';
-                    localSlots.forEach((s, i) => { if(!s) slotBtns += `<button class="btn-laci" style="margin-bottom:10px; background:var(--success); color:white;" onclick="pilihSlotDash(${i})"><i class="fas fa-bolt"></i> MASUK SLOT 0${i+1}</button>`; });
-                    slotWrapper.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:10px; font-weight:800;">GILIRAN ANDA! PILIH SLOT:</div>` + slotBtns;
-                    btnWrapper.innerHTML = `<button class="btn-laci bl-danger" style="margin-top:10px;" onclick="batalAntrianDash()"><i class="fas fa-times-circle"></i> BATALKAN ANTRIAN</button>`;
+                    localSlots.forEach((s, i) => { if(!s) slotBtns += `<button class="btn-laci" style="margin-bottom:10px; background:linear-gradient(135deg, var(--success), #059669); color:white; box-shadow:0 5px 15px rgba(16,185,129,0.3);" onclick="pilihSlotDash(${i})"><i class="fas fa-bolt"></i> MASUK SLOT 0${i+1}</button>`; });
+                    slotWrapper.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:10px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Giliran Anda! Pilih Slot:</div>` + slotBtns;
+                    btnWrapper.innerHTML = `<button class="btn-laci bl-danger" style="margin-top:5px;" onclick="batalAntrianDash()"><i class="fas fa-times-circle"></i> BATALKAN ANTRIAN</button>`;
                 } else {
                     window.notifAntreanTerkirim = false;
                     slotWrapper.style.display = 'none';
-                    btnWrapper.innerHTML = `<button class="btn-laci" style="background:linear-gradient(135deg,#F59E0B,#B45309); color:white; margin-bottom:10px;" onclick="alert('Tunggu giliran Anda.')"><i class="fas fa-hourglass-half"></i> GILIRAN (#${myQIndex + 1})</button><button class="btn-laci bl-danger" onclick="batalAntrianDash()"><i class="fas fa-times-circle"></i> BATALKAN ANTRIAN</button>`;
+                    btnWrapper.innerHTML = `<button class="btn-laci" style="background:linear-gradient(135deg,#F59E0B,#B45309); color:white; margin-bottom:10px; box-shadow:0 5px 15px rgba(245,158,11,0.3);" onclick="alert('Tunggu giliran Anda.')"><i class="fas fa-hourglass-half"></i> MENUNGGU GILIRAN (#${myQIndex + 1})</button><button class="btn-laci bl-danger" onclick="batalAntrianDash()"><i class="fas fa-times-circle"></i> BATALKAN ANTRIAN</button>`;
                 }
             } else {
                 window.notifAntreanTerkirim = false;
                 btnWrapper.innerHTML = `<button class="btn-laci bl-primary" onclick="persiapanDaftar()"><i class="fas fa-ticket-alt"></i> DAFTAR ANTRIAN</button>`;
                 slotWrapper.style.display = 'none';
             }
-        }
-
-        window.bukaDaftarTunggu = () => {
-            const listArea = document.getElementById('listAntrianContent');
-            if(localQueue.length === 0) { listArea.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-gray);">Antrian Kosong.</div>`; } 
-            else {
-                let html = '';
-                localQueue.forEach((q, i) => {
-                    let bat = q.batreSisa || q.batre || q.battery || "-";
-                    let isMe = (cleanStr(q.plat) === myPlatClean) ? 'border: 2px solid var(--gold-main); background:rgba(212,175,55,0.05);' : '';
-                    
-                    // --- SYNC NAMA DARI DATABASE ANGGOTA ---
-                    let dispName = cleanName(q.userName);
-                    if(window.memberDict[cleanStr(q.plat)]) dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
-
-                    html += `<div class="list-item" style="${isMe}"><div><div class="li-plat">${escapeHtml(q.plat)}</div><div class="li-name">#${i+1} • ${escapeHtml(dispName)}</div></div><div class="li-batre"><i class="fas fa-battery-half"></i> ${bat.replace('%','')} %</div></div>`;
-                });
-                listArea.innerHTML = html;
-            }
-            const m = document.getElementById('modalListAntrian'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10);
         }
 
         window.persiapanDaftar = () => { const m = document.getElementById('modalDaftarAntrian'); m.style.display='flex'; setTimeout(()=>m.classList.add('show'),10); }
@@ -737,12 +729,12 @@
                 const snap = await getDoc(refGading); 
                 if(snap.exists()) { 
                     let d = snap.data(); let q = d.waitingQueue || [];
-                    if(q.find(x => cleanStr(x.plat) === myPlatClean)) { window.hideActionLoader(); alert("Sudah terdaftar!"); return; } 
+                    if(q.find(x => cleanStr(x.plat) === myPlatClean)) { window.hideActionLoader(); setTimeout(()=>alert("Sudah terdaftar!"), 350); return; } 
                     q.push({ userName: myName, plat: myPlatClean, batre: b + "%", role: roleCek, timestamp: Date.now() }); 
                     await updateDoc(refGading, { waitingQueue: q }); 
                     window.hideActionLoader(); tutupDaftarAntrian(); document.getElementById('fcAccordion').classList.add('open');
                 } 
-            } catch(e) { window.hideActionLoader(); alert("ERROR: " + e.message); } 
+            } catch(e) { window.hideActionLoader(); setTimeout(()=>alert("ERROR: " + (e.message || e)), 350); } 
         }
 
         window.batalAntrianDash = () => {
@@ -752,7 +744,7 @@
                     const d = (await t.get(refGading)).data(); 
                     const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== myPlatClean); 
                     t.update(refGading, { waitingQueue: newQ }); 
-                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert(e); });
+                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
             }
         }
         
@@ -761,19 +753,23 @@
                 window.showActionLoader();
                 runTransaction(dbGading, async(t)=>{ 
                     const d = (await t.get(refGading)).data(); d.chargingSlots[idx] = null; t.update(refGading, {chargingSlots: d.chargingSlots}); 
-                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert(e); });
+                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
             }
         }
         
         window.pilihSlotDash = (i) => {
             window.showActionLoader();
             runTransaction(dbGading, async(t)=>{ 
-                const d = (await t.get(refGading)).data(); if(d.chargingSlots[i]) throw "Penuh!"; 
+                const d = (await t.get(refGading)).data(); if(d.chargingSlots[i]) throw new Error("Penuh!"); 
                 let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === myPlatClean); 
-                if(idx === -1) throw "Anda tidak di antrean!";
+                if(idx === -1) throw new Error("Anda tidak di antrean!");
                 const me = q.splice(idx, 1)[0]; me.startTime = Date.now(); d.chargingSlots[i] = me; 
                 t.update(refGading, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-            }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); alert(e); });
+            }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
+        }
+
+        window.bukaDaftarTunggu = () => {
+            window.location.href = 'antrian.html';
         }
 
         window.bukaAppKetiga = (appNama) => {
@@ -782,7 +778,7 @@
         }
 
         // =========================================================================
-        // RADAR GPS ALTERNATIF (LOKAL ONLY, TIDAK NEMBAK ONESIGNAL BIAR GA SPAM)
+        // RADAR GPS ALTERNATIF
         // =========================================================================
         let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
         onSnapshot(doc(dbKC, "antrian", "utama"), (snap) => {
