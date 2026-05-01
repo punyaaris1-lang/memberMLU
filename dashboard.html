@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "17.0_SYNC_FIX"; 
+        const DASH_VERSION = "17.1_KEYBOARD_FIX"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -176,14 +176,13 @@
         .nav-item.active { color: var(--electric-blue); transform: translateY(-4px);}
         .nav-text { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* MODALS KACA ANTI SCROLL BUG */
+        /* MODALS KACA ANTI SCROLL BUG (SUDAH DIPERBAIKI BUAT KEYBOARD) */
         .modal-glass-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            position: fixed; inset: 0; 
             background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); 
             z-index: 99999; display: none; 
-            align-items: flex-start; justify-content: center; 
-            opacity: 0; transition: opacity 0.3s; padding: 20px; 
-            overflow-y: auto; overscroll-behavior: contain; 
+            align-items: center; justify-content: center; 
+            opacity: 0; transition: opacity 0.3s; padding: 15px; 
         }
         .modal-glass-overlay.show { opacity: 1; display: flex; }
         .modal-glass-box { 
@@ -192,7 +191,7 @@
             box-shadow: 0 30px 80px rgba(0,0,0,0.2); 
             transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             border: 1px solid white; position: relative;
-            margin: auto; 
+            max-height: 85vh; overflow-y: auto; overscroll-behavior: contain;
         }
         .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
         
@@ -399,7 +398,7 @@
             <h2 style="font-family:'Outfit'; font-size:20px; color:var(--royal-blue); margin-top:0; margin-bottom: 20px; text-align:center; padding-right:20px;"><i class="fas fa-bolt" style="color:var(--gold-lux);"></i> MASUK ANTRIAN</h2>
             <div class="form-group"><label class="form-label">Nama Pilot</label><input type="text" id="inpNama" class="form-input" readonly></div>
             <div class="form-group"><label class="form-label">Plat Kendaraan</label><input type="text" id="inpPlat" class="form-input" readonly style="background: #E2E8F0; color: #64748B;"></div>
-            <div class="form-group"><label class="form-label">Sisa Baterai (%)</label><input type="text" inputmode="numeric" pattern="[0-9]*" id="inpBatre" class="form-input" placeholder="Contoh: 15" style="font-size:18px; text-align:center;"></div>
+            <div class="form-group"><label class="form-label">Sisa Baterai (%)</label><input type="number" inputmode="numeric" pattern="[0-9]*" id="inpBatre" class="form-input" placeholder="Contoh: 15" style="font-size:18px; text-align:center;"></div>
             <button class="btn-submit" onclick="submitDaftarAntrian()"><i class="fas fa-check-circle"></i> KONFIRMASI DAFTAR</button>
         </div>
     </div>
@@ -593,8 +592,10 @@
             const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; updateFCUI();
         });
 
+        // FUNGSI PENGAMAN STRING
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
+        function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
         // === FUNGSI KUDETA DASHBOARD ===
         window.prosesKudetaDash = (idx) => {
@@ -652,7 +653,7 @@
                     
                     slotsHTML += `<div class="live-slot-item">
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                                        <div class="lsi-left"><div class="lsi-lbl">SLOT 0${i+1}</div><div class="lsi-name" style="word-break:break-word;">${dispName}</div></div>
+                                        <div class="lsi-left"><div class="lsi-lbl">SLOT 0${i+1}</div><div class="lsi-name" style="word-break:break-word;">${escapeHtml(dispName)}</div></div>
                                         <div class="lsi-batre"><i class="fas fa-bolt"></i> ${bat.replace('%','')} %</div>
                                     </div>
                                     ${kudetaBtn}
@@ -717,7 +718,7 @@
                     let dispName = cleanName(q.userName);
                     if(window.memberDict[cleanStr(q.plat)]) dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
 
-                    html += `<div class="list-item" style="${isMe}"><div><div class="li-plat">${q.plat}</div><div class="li-name">#${i+1} • ${dispName}</div></div><div class="li-batre"><i class="fas fa-battery-half"></i> ${bat.replace('%','')} %</div></div>`;
+                    html += `<div class="list-item" style="${isMe}"><div><div class="li-plat">${escapeHtml(q.plat)}</div><div class="li-name">#${i+1} • ${escapeHtml(dispName)}</div></div><div class="li-batre"><i class="fas fa-battery-half"></i> ${bat.replace('%','')} %</div></div>`;
                 });
                 listArea.innerHTML = html;
             }
