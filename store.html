@@ -6,7 +6,7 @@
     <title>MLU Market - Official Store</title>
     
     <script>
-        const STORE_VERSION = "4.0_SHARE_WITH_IMAGE"; 
+        const STORE_VERSION = "7.2_AUTO_STOCK"; 
         if (localStorage.getItem('maka_store_v') !== STORE_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_store_v', STORE_VERSION); window.location.reload(true); 
@@ -24,9 +24,6 @@
             --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; 
             --danger: #EF4444; --success: #10B981;
             
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.9);
-            --shadow-soft: 0 15px 40px rgba(10, 34, 89, 0.08);
             --glow-gold: 0 5px 20px rgba(212, 175, 55, 0.3);
             --glow-green: 0 5px 20px rgba(16, 185, 129, 0.3);
             --glow-blue: 0 5px 20px rgba(45, 99, 237, 0.3);
@@ -35,14 +32,13 @@
         body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; }
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
-        /* AMBIENT LIGHT & BACKGROUND */
         .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: floatLight 10s infinite alternate; }
         .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #bfdbfe; }
         .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: rgba(212, 175, 55, 0.15); animation-delay: 2s; }
         .bg-watermark { position: fixed; top: 15%; right: -15%; width: 100%; height: 80%; background-image: url('logomlu.png'); background-repeat: no-repeat; background-size: contain; background-position: center; opacity: 0.04; transform: rotate(-15deg); z-index: -2; pointer-events: none; }
         @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(20px, 40px);} }
 
-        /* HERO HEADER (SEARCH FOCUSED) */
+        /* HERO HEADER */
         .header-market { 
             background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); 
             padding: 40px 20px 80px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
@@ -52,63 +48,73 @@
         .main-title { font-family: 'Outfit'; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: -1px; text-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .sub-tag { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; letter-spacing: 3px; color: var(--gold-lux); text-transform: uppercase; margin-bottom: 5px; display: block; }
 
+        /* TABS NAVIGASI */
+        .tab-nav { display: flex; justify-content: center; gap: 10px; margin-top: -30px; position: relative; z-index: 15; padding: 0 15px;}
+        .tab-btn { background: white; padding: 12px 15px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; border: none; color: var(--text-muted); box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; flex: 1; transition: 0.3s;}
+        .tab-btn.active { background: var(--electric-blue); color: white; box-shadow: var(--glow-blue); transform: scale(1.05);}
+
+        /* VIEW AREAS */
+        .view-section { display: none; padding: 25px 15px 30px; position: relative; z-index: 11; max-width: 800px; margin: 0 auto; }
+        .view-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
         /* SEARCH BAR MEWAH */
-        .search-wrapper { position: relative; max-width: 600px; margin: 0 auto; }
+        .search-wrapper { position: relative; margin-bottom: 20px; }
         .search-input { 
-            width: 100%; padding: 16px 20px 16px 50px; border-radius: 20px; border: none; 
+            width: 100%; padding: 16px 20px 16px 50px; border-radius: 20px; border: 1px solid white; 
             background: rgba(255,255,255,0.9); font-family: 'Inter'; font-weight: 600; font-size: 14px; 
-            color: var(--royal-blue); box-shadow: 0 10px 30px rgba(0,0,0,0.15); outline: none; transition: 0.3s;
+            color: var(--royal-blue); box-shadow: 0 10px 30px rgba(0,0,0,0.05); outline: none; transition: 0.3s;
         }
-        .search-input:focus { transform: scale(1.02); background: white; box-shadow: 0 15px 40px rgba(45,99,237,0.25); }
+        .search-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 15px 40px rgba(45,99,237,0.15); }
         .search-icon { position: absolute; left: 20px; top: 16px; color: var(--text-muted); font-size: 16px; }
 
-        /* --- PRODUCT GRID (E-COMMERCE STYLE) --- */
-        .feed-container { padding: 0 15px; margin-top: -40px; position: relative; z-index: 101; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; max-width: 800px; margin-left: auto; margin-right: auto;}
-        
+        /* --- PRODUCT GRID --- */
+        .feed-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .product-card { 
             background: var(--white); border-radius: 18px; cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.5); 
-            position: relative; overflow: hidden; display: flex; flex-direction: column;
-            transition: 0.3s; transform: translateY(0);
+            position: relative; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; 
         }
         .product-card:active { transform: scale(0.97); }
-        
-        /* IMAGE AREA */
         .p-image-box { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #F8FAFC; }
-        .p-image { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        
-        /* BADGES */
+        .p-image { width: 100%; height: 100%; object-fit: cover; }
         .p-price-tag { 
             position: absolute; bottom: 8px; left: 8px; 
-            background: rgba(10, 34, 89, 0.9); backdrop-filter: blur(5px);
-            padding: 4px 10px; border-radius: 8px; 
-            font-family: 'Space Grotesk'; font-size: 13px; font-weight: 900; color: var(--gold-lux); 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 1px solid rgba(212,175,55,0.3);
+            background: rgba(10, 34, 89, 0.9); backdrop-filter: blur(5px); padding: 4px 10px; border-radius: 8px; 
+            font-family: 'Space Grotesk'; font-size: 12px; font-weight: 900; color: var(--gold-lux); 
         }
-        
-        /* ADMIN/OWNER BUTTONS ON CARD */
         .card-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 5px; z-index: 5; }
-        .btn-mini { 
-            width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            border: none; cursor: pointer; font-size: 12px; backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;
-        }
+        .btn-mini { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-size: 12px; backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: rgba(255,255,255,0.9); transition: 0.2s; }
         .btn-mini:active { transform: scale(0.9); }
-        .bm-del { background: rgba(255,255,255,0.9); color: var(--danger); }
-        .bm-edit { background: rgba(255,255,255,0.9); color: var(--warning); }
-        .bm-share { background: rgba(255,255,255,0.9); color: var(--electric-blue); }
-
+        .bm-del { color: var(--danger); } .bm-edit { color: var(--warning); }
+        
         .p-content { padding: 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .p-title { font-family: 'Inter'; font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px;}
         .p-seller { font-size: 10px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: auto; }
         
-        .btn-buy-card {
-            width: 100%; padding: 10px; background: linear-gradient(135deg, var(--success) 0%, #059669 100%); 
-            color: white; border: none; font-family: 'Space Grotesk'; font-weight: 800; font-size: 11px; 
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
-            margin-top: 10px; border-radius: 10px; box-shadow: 0 4px 10px rgba(16,185,129,0.2);
+        .stock-badge {
+            font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 5px;
+            background: #E2E8F0; color: var(--text-muted); display: inline-block; margin-top: 4px; width: fit-content;
         }
+        .stock-badge.empty { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; }
 
-        /* --- FAB (TOMBOL BUKA LAPAK - MEMBER ONLY) --- */
+        /* --- ORDER LIST ITEM --- */
+        .order-card { background: white; border-radius: 16px; padding: 15px; margin-bottom: 12px; border: 1px solid #E2E8F0; box-shadow: 0 5px 15px rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 10px;}
+        .o-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 10px;}
+        .o-status { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px; }
+        .os-unpaid { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5;}
+        .os-verify { background: #FFFBEB; color: var(--warning); border: 1px solid #FCD34D;}
+        .os-done { background: #ECFDF5; color: var(--success); border: 1px solid #A7F3D0;}
+        .o-date { font-size: 10px; color: var(--text-muted); font-weight: 600;}
+        .o-body { display: flex; justify-content: space-between; align-items: center; }
+        .o-title { font-family: 'Outfit'; font-size: 15px; font-weight: 800; color: var(--royal-blue); margin-bottom: 4px; }
+        .o-seller { font-size: 11px; color: var(--text-muted); font-weight: 600;}
+        .o-price { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--electric-blue); }
+        .o-actions { display: flex; gap: 8px; margin-top: 5px; }
+        .btn-order-act { flex: 1; padding: 12px; border-radius: 10px; border: none; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;}
+        .btn-order-act:active { transform: scale(0.96); }
+
+        /* --- FAB (TOMBOL BUKA LAPAK) --- */
         .fab-sell { 
             position: fixed; bottom: 100px; right: 20px; padding: 0 25px; height: 60px; 
             background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); 
@@ -118,16 +124,21 @@
         }
         .fab-sell:active { transform: scale(0.95); }
 
-        /* --- MODAL FORM & DETAIL --- */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; z-index: 99999; }
+        /* --- MODAL SYSTEM KACA ANTI-SCROLL BUG --- */
+        .modal-overlay { 
+            position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(10px); 
+            display: none; align-items: flex-end; justify-content: center; z-index: 99999; 
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; display: flex; }
         
         .modal-box { 
             background: #F8FAFC; width: 100%; max-width: 500px; 
             border-top-left-radius: 35px; border-top-right-radius: 35px; border-top: 1px solid rgba(255,255,255,0.5);
             padding: 0; box-shadow: 0 -10px 50px rgba(0,0,0,0.2); transform: translateY(100%); 
-            animation: slideUp 0.4s forwards cubic-bezier(0.19, 1, 0.22, 1); max-height: 95vh; display: flex; flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); max-height: 95vh; display: flex; flex-direction: column; overflow: hidden;
         }
-        @keyframes slideUp { to { transform: translateY(0); } }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
 
         /* DETAIL IMAGE HEADER */
         .detail-header { position: relative; height: 350px; width: 100%; background: #ddd; flex-shrink: 0;}
@@ -140,45 +151,51 @@
         }
 
         .detail-body { padding: 25px 25px 100px; overflow-y: auto; background: white; border-radius: 30px 30px 0 0; margin-top: -30px; position: relative; z-index: 5; flex: 1; }
-        
         .d-price { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--electric-blue); margin-bottom: 5px; }
-        .d-title { font-family: 'Outfit'; font-size: 22px; font-weight: 800; color: var(--royal-blue); line-height: 1.3; margin-bottom: 15px; }
+        .d-title { font-family: 'Outfit'; font-size: 22px; font-weight: 800; color: var(--royal-blue); line-height: 1.3; margin-bottom: 10px; }
+        .d-stock { display: inline-block; font-size: 11px; font-weight: 800; color: var(--text-muted); background: #E2E8F0; padding: 4px 10px; border-radius: 8px; margin-bottom: 15px;}
+        .d-stock.empty { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; }
         
-        .d-seller-box { display: flex; align-items: center; gap: 12px; padding: 15px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; margin-bottom: 20px; }
-        .d-avatar { width: 45px; height: 45px; background: var(--royal-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        
+        .d-seller-box { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; margin-bottom: 20px; }
+        .d-avatar-wrap { display: flex; align-items: center; gap: 12px; }
+        .d-avatar { width: 40px; height: 40px; background: var(--royal-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .d-desc-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .d-desc { font-size: 14px; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; }
 
-        /* FIXED BOTTOM BAR DI DETAIL */
+        /* FIXED BOTTOM BAR DI DETAIL (DENGAN TOMBOL TANYA PENJUAL) */
         .detail-actions { 
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; 
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 20px; 
             background: white; border-top: 1px solid #E2E8F0; display: flex; gap: 10px; z-index: 10;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
         }
-        .btn-action-l { flex: 1; padding: 16px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;}
-        .act-share { background: #F1F5F9; color: var(--electric-blue); }
-        .act-buy { background: var(--success); color: white; flex: 2; box-shadow: var(--glow-green); }
+        .act-chat { flex: 0.8; background: #E0F2FE; color: var(--electric-blue); border: none; padding: 16px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s;}
+        .act-chat:active { transform: scale(0.98); background: #BAE6FD;}
+        .act-buy { flex: 1.2; background: var(--success); color: white; border: none; padding: 16px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: var(--glow-green); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;}
+        .act-buy:active { transform: scale(0.98); }
+        .act-buy:disabled { background: #CBD5E1; box-shadow: none; cursor: not-allowed; }
 
         /* FORM INPUT STYLES */
-        .form-padding { padding: 30px 25px; overflow-y: auto; }
+        .form-padding { padding: 30px 25px; overflow-y: auto; overscroll-behavior: contain; }
         .inp-group { margin-bottom: 15px; }
         .inp-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; }
         .inp-text { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; outline: none; transition: 0.2s;}
-        .inp-text:focus { border-color: var(--electric-blue); background: white; }
+        .inp-text:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1); }
         
         .upload-box { 
             width: 100%; padding: 30px; border: 2px dashed #93C5FD; border-radius: 18px; text-align: center; 
             color: var(--electric-blue); font-weight: 800; font-size: 12px; cursor: pointer; background: #F0F9FF;
-            position: relative; overflow: hidden;
+            position: relative; overflow: hidden; display: block; transition: 0.2s;
         }
+        .upload-box:active { transform: scale(0.98); background: #E0F2FE; }
         .upload-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+        .upload-box input { display: none; } 
 
-        .btn-submit { width: 100%; padding: 18px; border: none; border-radius: 18px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-blue); margin-top: 10px; }
+        .btn-submit { width: 100%; padding: 18px; border: none; border-radius: 18px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-blue); margin-top: 10px; transition: 0.2s;}
+        .btn-submit:active { transform: scale(0.98); }
 
         /* BACK NAV */
-        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100; }
-        .btn-premium-back { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); color: var(--royal-blue); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100; text-align: center;}
+        .btn-premium-back { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); color: var(--royal-blue); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.2s; }
+        .btn-premium-back:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -192,48 +209,69 @@
             <span class="sub-tag">OFFICIAL STORE & COMMUNITY</span>
             <h1 class="main-title">PASAR MLU</h1>
         </div>
-        
+    </header>
+
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('home', this)"><i class="fas fa-store"></i> Beranda</button>
+        <button class="tab-btn" onclick="switchTab('orders', this)" id="btnTabOrders" style="display:none;"><i class="fas fa-shopping-bag"></i> Pesanan</button>
+        <button class="tab-btn" onclick="switchTab('shop', this)" id="btnTabShop" style="display:none;"><i class="fas fa-store-alt"></i> Lapakku</button>
+    </div>
+
+    <div id="viewHome" class="view-section active">
         <div class="search-wrapper">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="searchInput" class="search-input" placeholder="Cari barang (misal: Velg, Rem)..." onkeyup="filterProduct()">
         </div>
-    </header>
-
-    <div class="feed-container" id="productList">
-        <div style="grid-column: 1 / -1; text-align:center; padding: 50px; color: #94A3B8; font-weight: 600;">
-            <i class="fas fa-circle-notch fa-spin" style="font-size:24px; color:var(--electric-blue); margin-bottom:10px;"></i><br>
-            Sedang memuat lapak...
+        <div class="feed-container" id="productList">
+            <div style="grid-column: 1 / -1; text-align:center; padding: 50px; color: #94A3B8; font-weight: 600;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size:24px; color:var(--electric-blue); margin-bottom:10px;"></i><br>Sedang memuat lapak...
+            </div>
         </div>
     </div>
 
-    <button class="fab-sell" id="btnSell" onclick="openModal()">
-        <i class="fas fa-camera"></i> BUKA LAPAK
-    </button>
+    <div id="viewOrders" class="view-section">
+        <div style="font-family:'Outfit'; font-size:18px; font-weight:900; color:var(--royal-blue); margin-bottom:15px;"><i class="fas fa-shopping-bag"></i> Riwayat Pembelian</div>
+        <div id="myOrdersList">
+            <div style="text-align:center; padding: 50px; color: #94A3B8; font-weight: 600;">Memuat pesanan...</div>
+        </div>
+    </div>
+
+    <div id="viewShop" class="view-section">
+        <button class="btn-submit" style="margin-top:0; margin-bottom:20px;" onclick="openPostModal()"><i class="fas fa-plus-circle"></i> TAMBAH BARANG JUALAN</button>
+        
+        <div style="font-family:'Outfit'; font-size:18px; font-weight:900; color:var(--royal-blue); margin-bottom:15px;"><i class="fas fa-inbox"></i> Pesanan Masuk</div>
+        <div id="incomingOrdersList">
+            <div style="text-align:center; padding: 50px; color: #94A3B8; font-weight: 600;">Memuat pesanan masuk...</div>
+        </div>
+
+        <div style="font-family:'Outfit'; font-size:18px; font-weight:900; color:var(--royal-blue); margin-top:30px; margin-bottom:15px;"><i class="fas fa-box"></i> Barang Saya</div>
+        <div class="feed-container" id="myProductList"></div>
+    </div>
 
     <div class="back-nav">
         <a href="javascript:void(0)" onclick="handleBack()" class="btn-premium-back">
-            <i class="fas fa-home"></i> KEMBALI KE MENU
+            <i class="fas fa-arrow-left"></i> KEMBALI KE MENU UTAMA
         </a>
     </div>
 
     <div class="modal-overlay" id="postModal">
-        <div class="modal-box" style="height: auto; max-height: 90vh;">
+        <div class="modal-box">
             <div class="form-padding">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <div id="postModalTitle" style="font-family:'Space Grotesk'; font-size:20px; font-weight:900; color:var(--royal-blue);">Buka Lapak</div>
-                    <button class="btn-close-modal" style="position:static; background:#F1F5F9; color:#64748B;" onclick="closeModal()"><i class="fas fa-times"></i></button>
+                    <button class="btn-close-modal" style="position:static; background:#F1F5F9; color:#64748B;" onclick="closeModal('postModal')"><i class="fas fa-times"></i></button>
                 </div>
 
                 <input type="hidden" id="formProductId">
 
                 <div class="inp-group">
                     <label class="inp-label">Foto Barang (Wajib)</label>
-                    <label class="upload-box" for="fileInput">
+                    <label class="upload-box">
                         <i class="fas fa-camera" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
-                        TAP UNTUK PILIH FOTO
+                        <div>TAP UNTUK PILIH FOTO</div>
                         <img id="imgPreview" src="">
+                        <input type="file" id="fileInput" accept="image/*">
                     </label>
-                    <input type="file" id="fileInput" accept="image/*">
                 </div>
                 
                 <div class="inp-group">
@@ -241,37 +279,46 @@
                     <input type="text" id="inpTitle" class="inp-text" placeholder="Contoh: Shockbreaker Tabung">
                 </div>
 
-                <div class="inp-group">
-                    <label class="inp-label">Harga (Rp)</label>
-                    <input type="number" id="inpPrice" class="inp-text" style="font-family:'Space Grotesk'; font-size:18px;" placeholder="150000">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="inp-group">
+                        <label class="inp-label">Harga (Rp)</label>
+                        <input type="number" id="inpPrice" class="inp-text" style="font-family:'Space Grotesk'; font-size:16px;" placeholder="150000">
+                    </div>
+                    <div class="inp-group">
+                        <label class="inp-label">Stok Tersedia</label>
+                        <input type="number" id="inpStock" class="inp-text" style="font-family:'Space Grotesk'; font-size:16px;" placeholder="10">
+                    </div>
                 </div>
 
                 <div class="inp-group">
                     <label class="inp-label">Kondisi & Keterangan</label>
-                    <textarea id="inpDesc" class="inp-text" style="height:100px; resize:none;" placeholder="Jelaskan minus (jika ada), lokasi COD, dll."></textarea>
+                    <textarea id="inpDesc" class="inp-text" style="height:100px; resize:none;" placeholder="Jelaskan spesifikasi, lokasi COD, dll."></textarea>
                 </div>
 
-                <button class="btn-submit" id="btnSave" onclick="saveProduct()">SIMPAN BARANG</button>
+                <button class="btn-submit" id="btnSaveProduct" onclick="saveProduct()">SIMPAN BARANG</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="detailModal">
-        <div class="detail-box" style="background: #F8FAFC; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; border-top: 1px solid rgba(255,255,255,0.5); padding: 0; box-shadow: 0 -10px 50px rgba(0,0,0,0.2); transform: translateY(100%); animation: slideUp 0.4s forwards cubic-bezier(0.19, 1, 0.22, 1); max-height: 95vh; display: flex; flex-direction: column;">
+        <div class="modal-box" style="border-radius: 35px 35px 0 0; max-height: 95vh; padding:0; overflow:hidden;">
             <div class="detail-header">
                 <img id="detailImage" class="detail-img" src="">
-                <button class="btn-close-modal" onclick="closeDetailModal()"><i class="fas fa-arrow-down"></i></button>
+                <button class="btn-close-modal" onclick="closeModal('detailModal')"><i class="fas fa-arrow-down"></i></button>
             </div>
             
             <div class="detail-body">
                 <div id="detailPrice" class="d-price">Rp 0</div>
                 <div id="detailTitle" class="d-title">Nama Barang</div>
+                <div id="detailStock" class="d-stock"><i class="fas fa-box"></i> Stok: 0</div>
                 
                 <div class="d-seller-box">
-                    <div class="d-avatar"><i class="fas fa-user"></i></div>
-                    <div>
-                        <div style="font-size: 10px; font-weight: 800; color: #64748B; text-transform: uppercase;">Penjual</div>
-                        <div id="detailSeller" style="font-weight: 800; font-size: 14px; color: var(--royal-blue);">Nama Penjual</div>
+                    <div class="d-avatar-wrap">
+                        <div class="d-avatar"><i class="fas fa-user"></i></div>
+                        <div>
+                            <div style="font-size: 10px; font-weight: 800; color: #64748B; text-transform: uppercase;">Penjual</div>
+                            <div id="detailSeller" style="font-weight: 800; font-size: 14px; color: var(--royal-blue);">Nama Penjual</div>
+                        </div>
                     </div>
                 </div>
 
@@ -280,278 +327,464 @@
             </div>
 
             <div class="detail-actions">
-                <button class="btn-action-l act-share" id="btnDetailShare"><i class="fas fa-share-alt"></i> SHARE</button>
-                <button class="btn-action-l act-buy" id="btnDetailContact"><i class="fab fa-whatsapp"></i> BELI / NEGO</button>
+                <button class="act-chat" id="btnChatAction" onclick="chatSeller()"><i class="fab fa-whatsapp"></i> TANYA</button>
+                <button class="act-buy" id="btnBuyAction" onclick="openCheckoutModal()"><i class="fas fa-shopping-cart"></i> BELI</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-box" style="height: auto; max-height: 90vh;">
+            <div class="form-padding">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <div style="font-family:'Space Grotesk'; font-size:20px; font-weight:900; color:var(--royal-blue);">Buat Pesanan</div>
+                    <button class="btn-close-modal" style="position:static; background:#F1F5F9; color:#64748B;" onclick="closeModal('checkoutModal')"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:15px; border-radius:16px; margin-bottom:15px;">
+                    <div style="font-size:11px; color:#64748B; font-weight:700; margin-bottom:4px;">Barang yang dibeli:</div>
+                    <div id="coTitle" style="font-family:'Outfit'; font-size:16px; font-weight:800; color:var(--royal-blue);">Nama</div>
+                    <div id="coPrice" style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--success); margin-top:5px;">Rp 0</div>
+                </div>
+                
+                <div class="inp-group">
+                    <label class="inp-label">Catatan untuk Penjual (Opsional)</label>
+                    <textarea id="coNotes" class="inp-text" style="height:80px; resize:none;" placeholder="Contoh: Tolong bungkus yang rapi ya, COD di FC Gading aja..."></textarea>
+                </div>
+
+                <div style="font-size:11px; color:#94A3B8; text-align:center; margin-bottom:10px;">Penjual akan menerima Notifikasi WhatsApp dari pesanan ini.</div>
+                
+                <button class="btn-submit" id="btnSubmitOrder" style="background:var(--success); box-shadow:var(--glow-green);" onclick="submitOrder()">BUAT PESANAN SEKARANG</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-box" style="height: auto;">
+            <div class="form-padding">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <div style="font-family:'Space Grotesk'; font-size:20px; font-weight:900; color:var(--royal-blue);">Upload Bukti Transfer</div>
+                    <button class="btn-close-modal" style="position:static; background:#F1F5F9; color:#64748B;" onclick="closeModal('paymentModal')"><i class="fas fa-times"></i></button>
+                </div>
+                <input type="hidden" id="payOrderId">
+                <div class="inp-group">
+                    <label class="upload-box">
+                        <i class="fas fa-receipt" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
+                        <div>TAP UNTUK FOTO RESI</div>
+                        <img id="payPreview" src="">
+                        <input type="file" id="payInput" accept="image/*">
+                    </label>
+                </div>
+                <button class="btn-submit" id="btnSubmitPay" onclick="submitPayment()">KIRIM BUKTI</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="receiptModal">
+        <div class="modal-box" style="padding: 25px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <div style="font-family:'Space Grotesk'; font-size:16px; font-weight:900; color:var(--royal-blue);"><i class="fas fa-receipt"></i> BUKTI BAYAR</div>
+                <button class="btn-close-modal" style="position:static; background:#F1F5F9; color:#64748B; width:30px; height:30px;" onclick="closeModal('receiptModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="overflow-y: auto; max-height: 60vh;">
+                <img id="imgReceipt" src="" style="width:100%; border-radius:12px; border:1px solid #E2E8F0; object-fit:contain;">
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
+        // ILMU HITAM ONESIGNAL (Buat Notif Push)
+        window.tembakNotif = function(judul, isi) {
+            fetch("https://onesignal.com/api/v1/notifications", {
+                method: "POST",
+                headers: { "Content-Type": "application/json; charset=utf-8", "Authorization": "Basic Os_v2_app_br5t3yqa6bcwdm7xhgjeacsxmfbw4bmitq6eew45ddydv3vrvmrpfphcraqo2wxkxvqlcgxhaa6ra7kqixgx5e43iqx7cvp7pw6puaa" },
+                body: JSON.stringify({ app_id: "0c7b3de2-00f0-4561-b3f7-3992400a5761", included_segments: ["Subscribed Users"], headings: { "en": judul }, contents: { "en": isi } })
+            }).catch(err => console.log(err));
+        };
+
+        const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
         // LOGIKA GUEST / MEMBER
-        let u = null;
-        let isGuest = true;
-        
-        try {
-            const rawUser = localStorage.getItem('maka_user');
-            if (rawUser) {
-                u = JSON.parse(rawUser);
-                isGuest = false;
-            }
-        } catch(e) {}
+        let u = null; let isGuest = true;
+        try { const rawUser = localStorage.getItem('maka_user'); if (rawUser) { u = JSON.parse(rawUser); isGuest = false; } } catch(e) {}
 
-        const myPlat = isGuest ? "GUEST" : u.plat;
-        const isAdmin = !isGuest && (u.isSuperAdmin || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST'));
+        const myPlat = isGuest ? "GUEST" : (u.plat || "GUEST");
+        const myPlatClean = String(myPlat).replace(/\s+/g, '').toUpperCase();
+        const myName = isGuest ? "Tamu" : (u.namaKtp || u.namaWa || u.nama);
 
-        // Jika Member: Tampilkan Tombol Jual
+        // Tampilkan Tab Khusus Member
         if (!isGuest) {
-            document.getElementById('btnSell').style.display = 'flex';
+            document.getElementById('btnTabOrders').style.display = 'block';
+            document.getElementById('btnTabShop').style.display = 'block';
         }
 
-        // Logic Tombol Kembali
-        window.handleBack = () => {
-            if (isGuest) window.location.href = 'index.html'; // Tamu balik ke Login
-            else window.location.href = 'dashboard.html'; // Member balik ke Dashboard
+        window.handleBack = () => { if (isGuest) window.location.href = 'index.html'; else window.location.href = 'dashboard.html'; };
+
+        // NAVIGATION TABS
+        window.switchTab = (tabName, btnElement) => {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('view' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+            if(btnElement) btnElement.classList.add('active');
+        };
+
+        // SISTEM MODAL ANTI NYANGKUT
+        window.openModal = (id) => {
+            const m = document.getElementById(id);
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('show'), 10);
+        };
+        window.closeModal = (id) => {
+            const m = document.getElementById(id);
+            m.classList.remove('show');
+            setTimeout(() => m.style.display = 'none', 300);
         };
 
         let currentImageBase64 = ""; 
+        let currentPayBase64 = "";
         window.productsData = {}; 
         let productsArray = [];
-        let urlIdToCheck = new URLSearchParams(window.location.search).get('id');
+        let currentCheckoutItem = null;
 
-        // --- RENDER PRODUK ---
-        onSnapshot(query(collection(db, 'mlu_store'), orderBy('timestamp', 'desc')), (snap) => {
-            const list = document.getElementById('productList');
-            if (snap.empty) {
-                list.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; color:#94A3B8; padding:30px; border:1px dashed #CBD5E1; border-radius:20px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px;"></i><br>Pasar masih sepi.</div>';
-                return;
-            }
-            
-            window.productsData = {}; 
-            productsArray = [];
-
-            snap.forEach(docSnap => {
-                const d = docSnap.data();
-                const item = { id: docSnap.id, ...d };
-                window.productsData[docSnap.id] = item; 
-                productsArray.push(item);
-            });
-            
-            renderGrid(productsArray);
-
-            // LOGIC AUTO-OPEN JIKA ADA URL PARAMETER "?id=..."
-            if (urlIdToCheck && window.productsData[urlIdToCheck]) {
-                window.openDetailModal(urlIdToCheck);
-                urlIdToCheck = null; // Hapus dari antrean biar gak kebuka terus tiap refresh database
-            }
-        });
-
-        function renderGrid(dataArr) {
-            const list = document.getElementById('productList');
+        // FUNGSI RENDER GRID BARANG
+        function renderGrid(dataArr, containerId) {
+            const list = document.getElementById(containerId);
+            if(!list) return;
             list.innerHTML = "";
             
-            dataArr.forEach(d => {
-                // Hak Edit & Delete (Hanya Pemilik/Admin)
-                const canModify = !isGuest && (isAdmin || (cleanStr(d.sellerPlat) === cleanStr(myPlat)));
+            if (dataArr.length === 0) {
+                list.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; color:#94A3B8; padding:30px; border:1px dashed #CBD5E1; border-radius:20px;">Tidak ada barang.</div>`;
+                return;
+            }
+
+            dataArr.forEach(item => {
+                const isMyLapak = cleanStr(item.sellerPlat) === myPlatClean;
+                const imageSrc = item.image ? item.image : 'https://placehold.co/400x400/E2E8F0/94A3B8?text=NO+IMAGE';
                 
-                const btnEditHtml = canModify ? `<button class="btn-mini bm-edit" onclick="event.stopPropagation(); window.editProduct('${d.id}')"><i class="fas fa-pen"></i></button>` : '';
-                const btnDelHtml = canModify ? `<button class="btn-mini bm-del" onclick="event.stopPropagation(); window.delProduct('${d.id}')"><i class="fas fa-trash"></i></button>` : '';
-                
-                const imageSrc = d.image ? d.image : 'https://placehold.co/400x400/E2E8F0/94A3B8?text=NO+IMAGE';
+                // AUTO STOK BARANG LAMA
+                const stockVal = item.stock !== undefined ? item.stock : 99;
+
+                let stockBadge = `<span class="stock-badge"><i class="fas fa-box"></i> Stok: ${stockVal}</span>`;
+                if(stockVal <= 0) stockBadge = `<span class="stock-badge empty"><i class="fas fa-times-circle"></i> Habis</span>`;
 
                 list.innerHTML += `
-                    <div class="product-card" onclick="window.openDetailModal('${d.id}')">
+                    <div class="product-card" onclick="window.openDetailModal('${item.id}')">
                         <div class="p-image-box">
                             <div class="card-actions">
-                                <button class="btn-mini bm-share" onclick="event.stopPropagation(); window.shareProduct('${d.id}')"><i class="fas fa-share-alt"></i></button>
-                                ${btnEditHtml}
-                                ${btnDelHtml}
+                                ${isMyLapak ? `<button class="btn-mini bm-edit" onclick="event.stopPropagation(); window.editProduct('${item.id}')"><i class="fas fa-pen"></i></button><button class="btn-mini bm-del" onclick="event.stopPropagation(); window.delProduct('${item.id}')"><i class="fas fa-trash"></i></button>` : ''}
                             </div>
-                            <div class="p-price-tag">Rp ${formatK(d.price)}</div>
+                            <div class="p-price-tag">Rp ${formatK(item.price)}</div>
                             <img src="${imageSrc}" class="p-image">
                         </div>
                         <div class="p-content">
-                            <div class="p-title">${d.title}</div>
-                            <div class="p-seller"><i class="fas fa-user-circle"></i> ${d.sellerName}</div>
-                            <button class="btn-buy-card"><i class="fab fa-whatsapp"></i> LIHAT DETAIL</button>
+                            <div class="p-title">${item.title}</div>
+                            ${stockBadge}
+                            <div class="p-seller"><i class="fas fa-user-circle"></i> ${isMyLapak ? 'Anda' : item.sellerName}</div>
                         </div>
                     </div>`;
             });
         }
 
-        window.filterProduct = () => {
-            const key = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = productsArray.filter(p => p.title.toLowerCase().includes(key));
-            renderGrid(filtered);
+        // --- RENDER PRODUK DARI DATABASE ---
+        onSnapshot(query(collection(db, 'mlu_store'), orderBy('timestamp', 'desc')), (snap) => {
+            const list = document.getElementById('productList');
+            const myList = document.getElementById('myProductList');
+            
+            window.productsData = {}; 
+            productsArray = [];
+            let myLapakData = [];
+
+            if (snap.empty) {
+                list.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; color:#94A3B8; padding:30px; border:1px dashed #CBD5E1; border-radius:20px;"><i class="fas fa-box-open" style="font-size:30px; margin-bottom:10px;"></i><br>Pasar masih sepi.</div>';
+                myList.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; color:#94A3B8; padding:30px;">Anda belum punya barang jualan.</div>';
+                return;
+            }
+
+            snap.forEach(docSnap => {
+                const item = { id: docSnap.id, ...docSnap.data() };
+                window.productsData[docSnap.id] = item; 
+                productsArray.push(item);
+                
+                if (cleanStr(item.sellerPlat) === myPlatClean) {
+                    myLapakData.push(item);
+                }
+            });
+            
+            renderGrid(productsArray, 'productList');
+            renderGrid(myLapakData, 'myProductList');
+        });
+
+        // --- RENDER PESANAN (Marketplace Flow) ---
+        if(!isGuest) {
+            onSnapshot(query(collection(db, 'mlu_store_orders'), orderBy('timestamp', 'desc')), (snap) => {
+                const myOrdersCont = document.getElementById('myOrdersList');
+                const incomingCont = document.getElementById('incomingOrdersList');
+                let myHtml = ""; let inHtml = "";
+
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    const orderId = docSnap.id;
+                    const isBuyer = cleanStr(d.buyerPlat) === myPlatClean;
+                    const isSeller = cleanStr(d.sellerPlat) === myPlatClean;
+
+                    if(isBuyer || isSeller) {
+                        let statusColor = "os-unpaid"; let statusText = "BELUM BAYAR";
+                        if(d.status === 'VERIFYING') { statusColor = "os-verify"; statusText = "MENUNGGU KONFIRMASI"; }
+                        else if(d.status === 'DONE') { statusColor = "os-done"; statusText = "SELESAI"; }
+
+                        let actionBtn = "";
+                        
+                        // Action buat Pembeli
+                        if(isBuyer) {
+                            if(d.status === 'UNPAID') actionBtn = `<button class="btn-order-act" style="background:var(--electric-blue); color:white;" onclick="window.openPaymentModal('${orderId}')"><i class="fas fa-upload"></i> UPLOAD BUKTI BAYAR</button>`;
+                            else if(d.status === 'VERIFYING') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-clock"></i> MENUNGGU PENJUAL</button>`;
+                        }
+                        
+                        // Action buat Penjual
+                        if(isSeller) {
+                            if(d.status === 'UNPAID') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-hourglass-half"></i> MENUNGGU PEMBELI BAYAR</button>`;
+                            else if(d.status === 'VERIFYING') actionBtn = `<button class="btn-order-act" style="background:#F1F5F9; color:var(--electric-blue); border:1px solid var(--electric-blue);" onclick="window.viewReceipt('${d.buktiTransfer}')"><i class="fas fa-image"></i> CEK RESI</button> <button class="btn-order-act" style="background:var(--success); color:white;" onclick="window.confirmOrder('${orderId}', '${d.buyerName}')"><i class="fas fa-check"></i> KONFIRMASI</button>`;
+                        }
+
+                        const card = `
+                        <div class="order-card">
+                            <div class="o-header">
+                                <span class="o-status ${statusColor}">${statusText}</span>
+                                <span class="o-date">${new Date(d.timestamp).toLocaleDateString('id-ID')}</span>
+                            </div>
+                            <div class="o-body">
+                                <div>
+                                    <div class="o-title">${d.productTitle}</div>
+                                    <div class="o-seller"><i class="fas ${isBuyer?'fa-store':'fa-user'}"></i> ${isBuyer ? d.sellerName : 'Pembeli: '+d.buyerName}</div>
+                                    ${d.notes ? `<div style="font-size:10px; color:#94A3B8; margin-top:4px; font-style:italic;">"${d.notes}"</div>` : ''}
+                                </div>
+                                <div class="o-price">Rp ${formatK(d.price)}</div>
+                            </div>
+                            ${d.status !== 'DONE' ? `<div class="o-actions">${actionBtn}</div>` : ''}
+                        </div>`;
+
+                        if(isBuyer) myHtml += card;
+                        if(isSeller) inHtml += card;
+                    }
+                });
+
+                myOrdersCont.innerHTML = myHtml || '<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada pembelian.</div>';
+                incomingCont.innerHTML = inHtml || '<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada pesanan masuk.</div>';
+            });
         }
 
-        function formatK(num) {
-            if(num >= 1000000) return (num/1000000).toFixed(1) + 'jt';
-            if(num >= 1000) return (num/1000).toFixed(0) + 'rb';
-            return num;
+        window.filterProduct = () => { 
+            const key = document.getElementById('searchInput').value.toLowerCase(); 
+            renderGrid(productsArray.filter(p => p.title.toLowerCase().includes(key)), 'productList'); 
         }
+        
+        function formatK(num) { if(num >= 1000000) return (num/1000000).toFixed(1) + 'jt'; if(num >= 1000) return (num/1000).toFixed(0) + 'rb'; return num; }
+        function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
 
-        // --- DETAIL MODAL ---
+        // --- DETAIL BARANG ---
         window.openDetailModal = (id) => {
-            const data = window.productsData[id];
-            if(!data) return;
-
+            const data = window.productsData[id]; if(!data) return;
+            currentCheckoutItem = data;
             document.getElementById('detailImage').src = data.image ? data.image : '';
             document.getElementById('detailTitle').innerText = data.title;
             document.getElementById('detailPrice').innerText = "Rp " + Number(data.price).toLocaleString('id-ID');
             document.getElementById('detailSeller').innerText = data.sellerName;
             document.getElementById('detailDesc').innerText = data.desc ? data.desc : "Tidak ada deskripsi tambahan.";
             
-            document.getElementById('btnDetailShare').onclick = () => window.shareProduct(id);
-            document.getElementById('btnDetailContact').onclick = () => window.hubungiPenjual(id);
-
-            document.getElementById('detailModal').style.display = 'flex';
-        };
-
-        window.closeDetailModal = () => document.getElementById('detailModal').style.display = 'none';
-
-        // --- SHARE DENGAN FOTO (NATIVE WEB SHARE API) ---
-        window.shareProduct = async (id) => {
-            const data = window.productsData[id];
-            
-            let baseUrl = window.location.href.split('?')[0]; 
-            if (!baseUrl.includes('.html')) { baseUrl += (baseUrl.endsWith('/') ? '' : '/') + 'store.html'; }
-            
-            const productUrl = `${baseUrl}?id=${id}`;
-            const shareText = `🔥 *PASAR MLU* 🔥\n\n*${data.title}*\n💰 *Rp ${Number(data.price).toLocaleString('id-ID')}*\n\n${data.desc}\n\n_Klik link di bawah untuk detail & beli:_\n${productUrl}`;
-            
-            if (navigator.share) { 
-                try {
-                    // Konversi Base64 ke File Image beneran
-                    if (data.image && data.image.startsWith('data:image')) {
-                        const res = await fetch(data.image);
-                        const blob = await res.blob();
-                        const file = new File([blob], 'barang_mlu.jpg', { type: blob.type });
-
-                        // Kalau HP-nya support ngirim gambar ke WA
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                            await navigator.share({
-                                title: `Pasar MLU - ${data.title}`,
-                                text: shareText,
-                                files: [file]
-                            });
-                            return; // Selesai
-                        }
-                    }
-                    
-                    // Kalau nggak support gambar, kirim teks + link
-                    await navigator.share({ 
-                        title: `Pasar MLU - ${data.title}`, 
-                        text: shareText
-                    });
-                } catch (error) {
-                    console.log('Share dibatalkan atau error:', error);
-                }
-            } 
-            else { 
-                // Fallback buat PC / Browser jadul
-                window.location.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`; 
+            // AUTO STOK BARANG LAMA
+            const stockVal = data.stock !== undefined ? data.stock : 99;
+            const stockEl = document.getElementById('detailStock');
+            if(stockVal > 0) {
+                stockEl.innerHTML = `<i class="fas fa-box"></i> Stok: ${stockVal}`;
+                stockEl.className = "d-stock";
+            } else {
+                stockEl.innerHTML = `<i class="fas fa-times-circle"></i> Stok Habis`;
+                stockEl.className = "d-stock empty";
             }
+            
+            const btnBuy = document.getElementById('btnBuyAction');
+            const btnChat = document.getElementById('btnChatAction');
+            
+            if(isGuest || cleanStr(data.sellerPlat) === myPlatClean) { 
+                btnBuy.style.display = 'none'; 
+                btnChat.style.display = 'none';
+            } else if (stockVal <= 0) {
+                btnBuy.style.display = 'flex';
+                btnBuy.disabled = true;
+                btnBuy.innerHTML = '<i class="fas fa-ban"></i> HABIS';
+                btnChat.style.display = 'flex';
+            } else { 
+                btnBuy.style.display = 'flex'; 
+                btnBuy.disabled = false;
+                btnBuy.innerHTML = '<i class="fas fa-shopping-cart"></i> BELI';
+                btnChat.style.display = 'flex';
+            }
+
+            window.openModal('detailModal');
         };
 
-        window.hubungiPenjual = (id) => {
-            const data = window.productsData[id];
-            
-            if(!isGuest && cleanStr(data.sellerPlat) === cleanStr(myPlat)) return alert("Ini lapak Anda sendiri!");
-            
-            let noWa = data.sellerWa;
+        window.chatSeller = () => {
+            if(!currentCheckoutItem) return;
+            let noWa = currentCheckoutItem.sellerWa; if(!noWa) return alert("Penjual tidak melampirkan no WA.");
             if(noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
+            window.location.href = `https://wa.me/${noWa}?text=Halo%20${currentCheckoutItem.sellerName},%20saya%20tertarik%20dengan%20barang%20${currentCheckoutItem.title}%20di%20Pasar%20MLU.`;
+        }
+
+        // --- CHECKOUT PROCESS ---
+        window.openCheckoutModal = () => {
+            if(!currentCheckoutItem) return;
+            window.closeModal('detailModal'); // Tutup detail dulu
             
-            let baseUrl = window.location.href.split('?')[0]; 
-            if (!baseUrl.includes('.html')) { baseUrl += (baseUrl.endsWith('/') ? '' : '/') + 'store.html'; }
-            const productUrl = `${baseUrl}?id=${id}`;
+            document.getElementById('coTitle').innerText = currentCheckoutItem.title;
+            document.getElementById('coPrice').innerText = "Rp " + Number(currentCheckoutItem.price).toLocaleString('id-ID');
+            document.getElementById('coNotes').value = '';
+            
+            // Buka checkout setelah detail ketutup
+            setTimeout(() => { window.openModal('checkoutModal'); }, 300);
+        }
 
-            const msg = `Halo *${data.sellerName}*, saya lihat iklan Anda di *Pasar MLU*.\n\nBarang: *${data.title}*\nHarga: *Rp ${Number(data.price).toLocaleString('id-ID')}*\nLink: ${productUrl}\n\nApakah barang ini masih tersedia?`;
-            window.location.href = `https://wa.me/${noWa}?text=${encodeURIComponent(msg)}`;
-        };
+        window.submitOrder = async () => {
+            const btn = document.getElementById('btnSubmitOrder');
+            btn.innerText = "MEMPROSES..."; btn.style.opacity = '0.7';
+            try {
+                // CEK STOK DULU BIAR AMAN
+                const itemRef = doc(db, 'mlu_store', currentCheckoutItem.id);
+                const itemSnap = await getDoc(itemRef);
+                
+                if(itemSnap.exists()) {
+                    // AUTO STOK BARANG LAMA SAAT DIBELI
+                    const currentStock = itemSnap.data().stock !== undefined ? itemSnap.data().stock : 99;
+                    if(currentStock <= 0) {
+                        alert("Mohon maaf Bos, barang ini baru saja dibeli orang lain dan stoknya habis!");
+                        window.closeModal('checkoutModal');
+                        return;
+                    }
+                    // Kurangi stok di database
+                    await updateDoc(itemRef, { stock: currentStock - 1 });
+                }
 
-        function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
+                const orderNotes = document.getElementById('coNotes').value.trim();
 
-        // --- IMAGE COMPRESSOR ---
+                // Buat Pesanan Baru
+                await addDoc(collection(db, 'mlu_store_orders'), {
+                    productId: currentCheckoutItem.id, productTitle: currentCheckoutItem.title, price: currentCheckoutItem.price,
+                    buyerName: myName, buyerPlat: myPlatClean, sellerName: currentCheckoutItem.sellerName, sellerPlat: currentCheckoutItem.sellerPlat,
+                    notes: orderNotes, status: 'UNPAID', timestamp: Date.now()
+                });
+                
+                // --- AUTO WA KE PENJUAL ---
+                let noWa = currentCheckoutItem.sellerWa; 
+                if(noWa) {
+                    if(noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
+                    const waMsg = `Halo *${currentCheckoutItem.sellerName}*! 🎉\n\nAda pesanan baru masuk dari *${myName}* (${myPlatClean}) di Pasar MLU.\n\n*Barang:* ${currentCheckoutItem.title}\n*Harga:* Rp ${Number(currentCheckoutItem.price).toLocaleString('id-ID')}\n*Catatan Pembeli:* ${orderNotes || '-'}\n\nSilakan cek aplikasi MLU Anda di tab *Pesanan* untuk memprosesnya.`;
+                    
+                    window.open(`https://wa.me/${noWa}?text=${encodeURIComponent(waMsg)}`, '_blank');
+                } else {
+                    // Fallback pake OneSignal kalau WA ga ada
+                    window.tembakNotif("🛒 PESANAN BARU MASUK!", `Ada yang beli ${currentCheckoutItem.title} dari Lapak lu Bos! Cek aplikasi sekarang.`);
+                }
+                
+                window.closeModal('checkoutModal');
+                
+                setTimeout(() => {
+                    alert("Pesanan berhasil dibuat! Silakan bayar dan upload bukti transfer di menu PESANAN SAYA.");
+                    // Pindah ke tab pesanan secara otomatis
+                    const btnTabOrders = document.getElementById('btnTabOrders');
+                    window.switchTab('orders', btnTabOrders);
+                }, 500);
+                
+            } catch(e) { alert("Gagal: " + e.message); } finally { btn.innerText = "BUAT PESANAN SEKARANG"; btn.style.opacity = '1'; }
+        }
+
+        // --- UPLOAD PAYMENT ---
+        window.openPaymentModal = (orderId) => {
+            document.getElementById('payOrderId').value = orderId;
+            currentPayBase64 = ""; document.getElementById('payPreview').style.display = 'none'; document.getElementById('payInput').value = '';
+            window.openModal('paymentModal');
+        }
+
+        document.getElementById('payInput').addEventListener('change', function(e) {
+            compressImage(e, (base64) => { currentPayBase64 = base64; document.getElementById('payPreview').src = base64; document.getElementById('payPreview').style.display = 'block'; });
+        });
+
+        window.submitPayment = async () => {
+            if(!currentPayBase64) return alert("Upload bukti transfer dulu Bos!");
+            const btn = document.getElementById('btnSubmitPay'); btn.innerText = "MENGIRIM..."; btn.style.opacity = '0.7';
+            try {
+                await updateDoc(doc(db, 'mlu_store_orders', document.getElementById('payOrderId').value), { status: 'VERIFYING', buktiTransfer: currentPayBase64 });
+                window.tembakNotif("🧾 BUKTI BAYAR DIKIRIM", `Pembeli udah transfer buat pesanan lu. Buruan di-ACC Bos!`);
+                window.closeModal('paymentModal'); alert("Bukti berhasil dikirim! Tunggu penjual konfirmasi ya.");
+            } catch(e) { alert("Gagal: " + e.message); } finally { btn.innerText = "KIRIM BUKTI"; btn.style.opacity = '1'; }
+        }
+
+        // --- SELLER CONFIRMATION ---
+        window.viewReceipt = (url) => { document.getElementById('imgReceipt').src = url; window.openModal('receiptModal'); }
+        
+        window.confirmOrder = async (orderId, buyerName) => {
+            if(confirm("Yakin dana udah masuk dan pesanan selesai?")) {
+                await updateDoc(doc(db, 'mlu_store_orders', orderId), { status: 'DONE' });
+                window.tembakNotif("✅ PESANAN SELESAI", `Penjual udah mengkonfirmasi pembayaran lu. Mantap!`);
+                alert("Pesanan berhasil diselesaikan!");
+            }
+        }
+
+        // --- BUKA LAPAK (ADD PRODUCT) ---
         document.getElementById('fileInput').addEventListener('change', function(e) {
+            compressImage(e, (base64) => { currentImageBase64 = base64; document.getElementById('imgPreview').src = base64; document.getElementById('imgPreview').style.display = 'block'; });
+        });
+
+        function compressImage(e, callback) {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                    const MAX_WIDTH = 800; let width = img.width; let height = img.height;
+                    const MAX_WIDTH = 600; let width = img.width; let height = img.height;
                     if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                     canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
-                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    const preview = document.getElementById('imgPreview'); preview.src = currentImageBase64; preview.style.display = 'block';
+                    callback(canvas.toDataURL('image/jpeg', 0.7));
                 }
                 img.src = event.target.result;
             }
             reader.readAsDataURL(file);
-        });
+        }
 
-        // --- POSTING / EDITING ---
-        window.openModal = () => {
-            document.getElementById('formProductId').value = '';
-            document.getElementById('inpTitle').value = '';
-            document.getElementById('inpPrice').value = '';
-            document.getElementById('inpDesc').value = '';
-            currentImageBase64 = "";
-            document.getElementById('imgPreview').src = "";
-            document.getElementById('imgPreview').style.display = 'none';
-            document.getElementById('postModalTitle').innerText = "Buka Lapak";
-            document.getElementById('postModal').style.display = 'flex';
+        window.openPostModal = () => {
+            document.getElementById('formProductId').value = ''; document.getElementById('inpTitle').value = ''; 
+            document.getElementById('inpPrice').value = ''; document.getElementById('inpStock').value = ''; document.getElementById('inpDesc').value = '';
+            currentImageBase64 = ""; document.getElementById('imgPreview').src = ""; document.getElementById('imgPreview').style.display = 'none';
+            document.getElementById('postModalTitle').innerText = "Buka Lapak"; window.openModal('postModal');
         };
 
         window.editProduct = (id) => {
-            const data = window.productsData[id];
-            if(!data) return;
-            document.getElementById('formProductId').value = id;
-            document.getElementById('inpTitle').value = data.title;
-            document.getElementById('inpPrice').value = data.price;
-            document.getElementById('inpDesc').value = data.desc || '';
-            currentImageBase64 = data.image;
-            document.getElementById('imgPreview').src = currentImageBase64;
-            document.getElementById('imgPreview').style.display = 'block';
-            document.getElementById('postModalTitle').innerText = "Edit Lapak";
-            document.getElementById('postModal').style.display = 'flex';
+            const data = window.productsData[id]; if(!data) return;
+            document.getElementById('formProductId').value = id; document.getElementById('inpTitle').value = data.title; 
+            document.getElementById('inpPrice').value = data.price; document.getElementById('inpStock').value = data.stock !== undefined ? data.stock : 99; document.getElementById('inpDesc').value = data.desc || '';
+            currentImageBase64 = data.image; document.getElementById('imgPreview').src = currentImageBase64; document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('postModalTitle').innerText = "Edit Lapak"; window.openModal('postModal');
         };
 
-        window.closeModal = () => document.getElementById('postModal').style.display = 'none';
-
         window.saveProduct = async () => {
-            const id = document.getElementById('formProductId').value;
-            const title = document.getElementById('inpTitle').value.trim();
-            const price = parseInt(document.getElementById('inpPrice').value) || 0;
+            const id = document.getElementById('formProductId').value; 
+            const title = document.getElementById('inpTitle').value.trim(); 
+            const price = parseInt(document.getElementById('inpPrice').value) || 0; 
+            const stock = parseInt(document.getElementById('inpStock').value) || 0; 
             const desc = document.getElementById('inpDesc').value.trim();
-            const btn = document.getElementById('btnSave');
+            const btn = document.getElementById('btnSaveProduct');
 
-            if(!title || !price || !currentImageBase64) return alert("Lengkapi data & foto!");
+            if(!title || !price || !currentImageBase64 || stock <= 0) return alert("Lengkapi data, foto, dan minimal stok 1 ya Bos!");
 
             btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
-
             try {
-                if (id) {
-                    // Update Barang
-                    await updateDoc(doc(db, 'mlu_store', id), {
-                        title: title, price: price, desc: desc, image: currentImageBase64
-                    });
-                } else {
-                    // Tambah Barang Baru
-                    await addDoc(collection(db, 'mlu_store'), {
-                        title: title, price: price, desc: desc, image: currentImageBase64, 
-                        sellerName: u.namaKtp || u.namaWa, sellerPlat: myPlat, sellerWa: u.hp || "", timestamp: Date.now()
-                    });
-                }
-                closeModal();
-            } catch(e) { alert("Gagal: " + e.message); } 
-            finally { btn.innerText = "SIMPAN BARANG"; btn.style.opacity = '1'; }
+                if (id) { await updateDoc(doc(db, 'mlu_store', id), { title: title, price: price, stock: stock, desc: desc, image: currentImageBase64 }); } 
+                else { await addDoc(collection(db, 'mlu_store'), { title: title, price: price, stock: stock, desc: desc, image: currentImageBase64, sellerName: myName, sellerPlat: myPlat, sellerWa: u.hp || "", timestamp: Date.now() }); }
+                window.closeModal('postModal');
+            } catch(e) { alert("Gagal: " + e.message); } finally { btn.innerText = "SIMPAN BARANG"; btn.style.opacity = '1'; }
         };
 
         window.delProduct = async (id) => { if(confirm("Yakin ingin menghapus lapak ini?")) await deleteDoc(doc(db, 'mlu_store', id)); };
