@@ -6,7 +6,7 @@
     <title>MLU Market - Official Store</title>
     
     <script>
-        const STORE_VERSION = "7.2_AUTO_STOCK"; 
+        const STORE_VERSION = "7.5_SUPER_FIX_UPLOAD"; 
         if (localStorage.getItem('maka_store_v') !== STORE_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_store_v', STORE_VERSION); window.location.reload(true); 
@@ -114,16 +114,6 @@
         .btn-order-act { flex: 1; padding: 12px; border-radius: 10px; border: none; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;}
         .btn-order-act:active { transform: scale(0.96); }
 
-        /* --- FAB (TOMBOL BUKA LAPAK) --- */
-        .fab-sell { 
-            position: fixed; bottom: 100px; right: 20px; padding: 0 25px; height: 60px; 
-            background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); 
-            color: white; border-radius: 30px; display: none; align-items: center; justify-content: center; gap: 10px;
-            font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px;
-            box-shadow: var(--glow-gold); border: 2px solid rgba(255,255,255,0.2); cursor: pointer; z-index: 1000; transition: 0.3s;
-        }
-        .fab-sell:active { transform: scale(0.95); }
-
         /* --- MODAL SYSTEM KACA ANTI-SCROLL BUG --- */
         .modal-overlay { 
             position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(10px); 
@@ -162,7 +152,7 @@
         .d-desc-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .d-desc { font-size: 14px; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; }
 
-        /* FIXED BOTTOM BAR DI DETAIL (DENGAN TOMBOL TANYA PENJUAL) */
+        /* FIXED BOTTOM BAR DI DETAIL */
         .detail-actions { 
             position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 20px; 
             background: white; border-top: 1px solid #E2E8F0; display: flex; gap: 10px; z-index: 10;
@@ -173,7 +163,7 @@
         .act-buy:active { transform: scale(0.98); }
         .act-buy:disabled { background: #CBD5E1; box-shadow: none; cursor: not-allowed; }
 
-        /* FORM INPUT STYLES */
+        /* FORM INPUT STYLES (FIX UPLOAD BOX ANDROID) */
         .form-padding { padding: 30px 25px; overflow-y: auto; overscroll-behavior: contain; }
         .inp-group { margin-bottom: 15px; }
         .inp-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; }
@@ -186,8 +176,10 @@
             position: relative; overflow: hidden; display: block; transition: 0.2s;
         }
         .upload-box:active { transform: scale(0.98); background: #E0F2FE; }
-        .upload-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
-        .upload-box input { display: none; } 
+        .upload-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; z-index: 5;}
+        
+        /* FIX FATAL: Input tidak boleh display none, tapi dibikin tembus pandang */
+        .upload-box input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; }
 
         .btn-submit { width: 100%; padding: 18px; border: none; border-radius: 18px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-blue); margin-top: 10px; transition: 0.2s;}
         .btn-submit:active { transform: scale(0.98); }
@@ -266,12 +258,12 @@
 
                 <div class="inp-group">
                     <label class="inp-label">Foto Barang (Wajib)</label>
-                    <label class="upload-box">
+                    <div class="upload-box">
                         <i class="fas fa-camera" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
                         <div>TAP UNTUK PILIH FOTO</div>
                         <img id="imgPreview" src="">
                         <input type="file" id="fileInput" accept="image/*">
-                    </label>
+                    </div>
                 </div>
                 
                 <div class="inp-group">
@@ -368,12 +360,12 @@
                 </div>
                 <input type="hidden" id="payOrderId">
                 <div class="inp-group">
-                    <label class="upload-box">
+                    <div class="upload-box">
                         <i class="fas fa-receipt" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
                         <div>TAP UNTUK FOTO RESI</div>
                         <img id="payPreview" src="">
                         <input type="file" id="payInput" accept="image/*">
-                    </label>
+                    </div>
                 </div>
                 <button class="btn-submit" id="btnSubmitPay" onclick="submitPayment()">KIRIM BUKTI</button>
             </div>
@@ -773,11 +765,11 @@
             const id = document.getElementById('formProductId').value; 
             const title = document.getElementById('inpTitle').value.trim(); 
             const price = parseInt(document.getElementById('inpPrice').value) || 0; 
-            const stock = parseInt(document.getElementById('inpStock').value) || 0; 
+            const stock = parseInt(document.getElementById('inpStock').value); 
             const desc = document.getElementById('inpDesc').value.trim();
             const btn = document.getElementById('btnSaveProduct');
 
-            if(!title || !price || !currentImageBase64 || stock <= 0) return alert("Lengkapi data, foto, dan minimal stok 1 ya Bos!");
+            if(!title || !price || !currentImageBase64 || isNaN(stock) || stock < 0) return alert("Lengkapi data, foto, dan stok tidak boleh minus ya Bos!");
 
             btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
             try {
