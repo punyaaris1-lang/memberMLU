@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "18.2_REAL_FIX_DASHBOARD"; 
+        const DASH_VERSION = "18.3_SCROLL_LACI_FIX"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -88,8 +88,9 @@
         .banner-icon { font-size: 18px; color: var(--royal-blue); transition: 0.4s; background: var(--bg-body); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .fc-wrapper.open .banner-icon { transform: rotate(180deg); background: var(--royal-blue); color: white;}
         
-        .fc-laci { max-height: 0; overflow: hidden; transition: 0.4s; background: rgba(248,250,252,0.8); border-top: 1px solid transparent;}
-        .fc-wrapper.open .fc-laci { max-height: 800px; padding: 15px 20px; border-top-color: var(--glass-border); overflow-y: auto;}
+        /* FIX SCROLL TRAP LACI */
+        .fc-laci { max-height: 0; overflow: hidden; transition: max-height 0.5s ease, padding 0.4s ease; background: rgba(248,250,252,0.8); border-top: 1px solid transparent;}
+        .fc-wrapper.open .fc-laci { max-height: 2000px; padding: 15px 20px; border-top-color: var(--glass-border); }
         
         /* DESAIN KARTU SLOT DALAM LACI REBORN */
         .live-slot-item { background: var(--white); border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
@@ -402,6 +403,14 @@
         </div>
     </div>
 
+    <div class="modal-glass-overlay" id="modalListAntrian">
+        <div class="modal-glass-box">
+            <h3 class="m-title" style="font-family:'Outfit'; font-size:18px; color:var(--royal-blue); margin:0 0 15px; border-bottom:1px solid rgba(0,0,0,0.1); padding-bottom:12px; padding-right:30px; text-align:left;"><i class="fas fa-users" style="color:var(--electric-blue);"></i> DAFTAR TUNGGU</h3>
+            <button class="btn-close-modal" onclick="document.getElementById('modalListAntrian').classList.remove('show'); setTimeout(()=>document.getElementById('modalListAntrian').style.display='none',300);"><i class="fas fa-times"></i></button>
+            <div class="list-area" id="listAntrianContent"></div>
+        </div>
+    </div>
+
     <div class="modal-glass-overlay" id="modalQR">
         <div class="modal-glass-box" style="max-width: 300px;">
             <button class="btn-close-modal" onclick="tutupQR()"><i class="fas fa-times"></i></button>
@@ -431,7 +440,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
         window.tembakNotif = function(judul, isi) {
@@ -521,6 +530,7 @@
         if (myPlatClean === "B4248SWF") {
             document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
         } else if (myPlatClean === "B4794SWF") {
+            // SPESIAL BUAT FERY
             document.getElementById('userRole').innerHTML = `<i class="fas fa-tree" style="color:#10B981;"></i> KELUARGA CEMARA`;
             document.getElementById('userRole').style.background = 'rgba(16,185,129,0.1)';
         } else {
@@ -577,6 +587,7 @@
             const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; updateFCUI();
         });
 
+        // FUNGSI PENGAMAN STRING
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
         function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
@@ -640,6 +651,7 @@
                     let bat = s.batreSisa || s.batre || s.battery || "-";
                     let kudetaBtn = '';
                     
+                    // --- SYNC NAMA DARI DATABASE ANGGOTA ---
                     let dispName = cleanName(s.userName);
                     if(window.memberDict[cleanStr(s.plat)]) dispName = cleanName(window.memberDict[cleanStr(s.plat)].nama);
                     
@@ -655,7 +667,7 @@
                             <div style="display:flex; align-items:center; gap:12px;">
                                 <div style="width:42px; height:42px; background:#F1F5F9; border-radius:14px; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk'; font-weight:900; color:var(--royal-blue); font-size:16px;">0${i+1}</div>
                                 <div>
-                                    <div style="font-size:10px; color:#64748B; font-weight:800; text-transform:uppercase; letter-spacing:1px;"></div>
+                                    <div style="font-size:10px; color:#64748B; font-weight:800; text-transform:uppercase; letter-spacing:1px;">TERISI</div>
                                     <div style="font-family:'Outfit'; font-size:15px; font-weight:900; color:var(--royal-blue); line-height:1.2; word-break:break-word; display:flex; align-items:center; gap:6px; flex-wrap:wrap;">${escapeHtml(dispName)} ${roleBadge}</div>
                                 </div>
                             </div>
@@ -778,7 +790,7 @@
         }
 
         // =========================================================================
-        // RADAR GPS ALTERNATIF
+        // RADAR GPS ALTERNATIF (LOKAL ONLY, TIDAK NEMBAK ONESIGNAL BIAR GA SPAM)
         // =========================================================================
         let kcLiveStatus = `<i class="fas fa-spinner fa-spin"></i> Memuat...`;
         onSnapshot(doc(dbKC, "antrian", "utama"), (snap) => {
