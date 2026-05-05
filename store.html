@@ -6,7 +6,7 @@
     <title>MLU Market - Official Store</title>
     
     <script>
-        const STORE_VERSION = "8.0_MARKET_SHARE_FIX"; 
+        const STORE_VERSION = "9.0_FULL_ECOMMERCE_REKBER"; 
         if (localStorage.getItem('maka_store_v') !== STORE_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_store_v', STORE_VERSION); window.location.reload(true); 
@@ -50,52 +50,38 @@
 
         /* TABS NAVIGASI */
         .tab-nav { display: flex; justify-content: center; gap: 10px; margin-top: -30px; position: relative; z-index: 15; padding: 0 15px;}
-        .tab-btn { background: white; padding: 12px 15px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; border: none; color: var(--text-muted); box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; flex: 1; transition: 0.3s;}
+        .tab-btn { background: white; padding: 12px 15px; border-radius: 20px; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; border: none; color: var(--text-muted); box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; flex: 1; transition: 0.3s; white-space: nowrap;}
         .tab-btn.active { background: var(--electric-blue); color: white; box-shadow: var(--glow-blue); transform: scale(1.05);}
+        .tab-admin { background: #FFFBEB; color: #B45309; border: 1px solid #FCD34D;}
+        .tab-admin.active { background: #D97706; color: white; box-shadow: var(--glow-gold); border-color: #D97706;}
 
         /* VIEW AREAS */
         .view-section { display: none; padding: 25px 15px 30px; position: relative; z-index: 11; max-width: 800px; margin: 0 auto; }
         .view-section.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-        /* SEARCH BAR MEWAH */
+        /* SEARCH BAR */
         .search-wrapper { position: relative; margin-bottom: 20px; }
-        .search-input { 
-            width: 100%; padding: 16px 20px 16px 50px; border-radius: 20px; border: 1px solid white; 
-            background: rgba(255,255,255,0.9); font-family: 'Inter'; font-weight: 600; font-size: 14px; 
-            color: var(--royal-blue); box-shadow: 0 10px 30px rgba(0,0,0,0.05); outline: none; transition: 0.3s;
-        }
+        .search-input { width: 100%; padding: 16px 20px 16px 50px; border-radius: 20px; border: 1px solid white; background: rgba(255,255,255,0.9); font-family: 'Inter'; font-weight: 600; font-size: 14px; color: var(--royal-blue); box-shadow: 0 10px 30px rgba(0,0,0,0.05); outline: none; transition: 0.3s;}
         .search-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 15px 40px rgba(45,99,237,0.15); }
         .search-icon { position: absolute; left: 20px; top: 16px; color: var(--text-muted); font-size: 16px; }
 
         /* --- PRODUCT GRID --- */
         .feed-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .product-card { 
-            background: var(--white); border-radius: 18px; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.5); 
-            position: relative; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; 
-        }
+        .product-card { background: var(--white); border-radius: 18px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.5); position: relative; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
         .product-card:active { transform: scale(0.97); }
         .p-image-box { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #F8FAFC; }
         .p-image { width: 100%; height: 100%; object-fit: cover; }
-        .p-price-tag { 
-            position: absolute; bottom: 8px; left: 8px; 
-            background: rgba(10, 34, 89, 0.9); backdrop-filter: blur(5px); padding: 4px 10px; border-radius: 8px; 
-            font-family: 'Space Grotesk'; font-size: 12px; font-weight: 900; color: var(--gold-lux); 
-        }
+        .p-price-tag { position: absolute; bottom: 8px; left: 8px; background: rgba(10, 34, 89, 0.9); backdrop-filter: blur(5px); padding: 4px 10px; border-radius: 8px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 900; color: var(--gold-lux); }
         .card-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 5px; z-index: 5; }
         .btn-mini { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-size: 12px; backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: rgba(255,255,255,0.9); transition: 0.2s; }
         .btn-mini:active { transform: scale(0.9); }
         .bm-del { color: var(--danger); } .bm-edit { color: var(--warning); }
-        
         .p-content { padding: 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
         .p-title { font-family: 'Inter'; font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 34px;}
         .p-seller { font-size: 10px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: auto; }
         
-        .stock-badge {
-            font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 5px;
-            background: #E2E8F0; color: var(--text-muted); display: inline-block; margin-top: 4px; width: fit-content;
-        }
+        .stock-badge { font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 5px; background: #E2E8F0; color: var(--text-muted); display: inline-block; margin-top: 4px; width: fit-content; }
         .stock-badge.empty { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5; }
 
         /* --- ORDER LIST ITEM --- */
@@ -103,42 +89,29 @@
         .o-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 10px;}
         .o-status { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px; }
         .os-unpaid { background: #FEF2F2; color: var(--danger); border: 1px solid #FCA5A5;}
-        .os-verify { background: #FFFBEB; color: var(--warning); border: 1px solid #FCD34D;}
+        .os-verify { background: #FFFBEB; color: #D97706; border: 1px solid #FCD34D;}
+        .os-cod { background: #F3E8FF; color: #0369A1; border: 1px solid #BAE6FD;}
+        .os-verified { background: #E0F2FE; color: var(--electric-blue); border: 1px solid #7DD3FC;}
         .os-done { background: #ECFDF5; color: var(--success); border: 1px solid #A7F3D0;}
         .o-date { font-size: 10px; color: var(--text-muted); font-weight: 600;}
         .o-body { display: flex; justify-content: space-between; align-items: center; }
         .o-title { font-family: 'Outfit'; font-size: 15px; font-weight: 800; color: var(--royal-blue); margin-bottom: 4px; }
         .o-seller { font-size: 11px; color: var(--text-muted); font-weight: 600;}
         .o-price { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--electric-blue); }
-        .o-actions { display: flex; gap: 8px; margin-top: 5px; }
+        .o-actions { display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap;}
         .btn-order-act { flex: 1; padding: 12px; border-radius: 10px; border: none; font-family: 'Space Grotesk'; font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;}
         .btn-order-act:active { transform: scale(0.96); }
 
         /* --- MODAL SYSTEM KACA ANTI-SCROLL BUG --- */
-        .modal-overlay { 
-            position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(10px); 
-            display: none; align-items: flex-end; justify-content: center; z-index: 99999; 
-            opacity: 0; transition: opacity 0.3s;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; z-index: 99999; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.show { opacity: 1; display: flex; }
-        
-        .modal-box { 
-            background: #F8FAFC; width: 100%; max-width: 500px; 
-            border-top-left-radius: 35px; border-top-right-radius: 35px; border-top: 1px solid rgba(255,255,255,0.5);
-            padding: 0; box-shadow: 0 -10px 50px rgba(0,0,0,0.2); transform: translateY(100%); 
-            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); max-height: 95vh; display: flex; flex-direction: column; overflow: hidden;
-        }
+        .modal-box { background: #F8FAFC; width: 100%; max-width: 500px; border-top-left-radius: 35px; border-top-right-radius: 35px; border-top: 1px solid rgba(255,255,255,0.5); padding: 0; box-shadow: 0 -10px 50px rgba(0,0,0,0.2); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); max-height: 95vh; display: flex; flex-direction: column; overflow: hidden;}
         .modal-overlay.show .modal-box { transform: translateY(0); }
 
         /* DETAIL IMAGE HEADER */
         .detail-header { position: relative; height: 350px; width: 100%; background: #ddd; flex-shrink: 0;}
         .detail-img { width: 100%; height: 100%; object-fit: cover; }
-        .btn-close-modal { 
-            position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; 
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px);
-            border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 10; font-size: 18px;
-        }
+        .btn-close-modal { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(5px); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 18px;}
 
         .detail-body { padding: 25px 25px 100px; overflow-y: auto; background: white; border-radius: 30px 30px 0 0; margin-top: -30px; position: relative; z-index: 5; flex: 1; }
         .d-price { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 900; color: var(--electric-blue); margin-bottom: 5px; }
@@ -152,27 +125,25 @@
         .d-desc-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .d-desc { font-size: 14px; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; }
 
-        /* FIXED BOTTOM BAR DI DETAIL (DENGAN TOMBOL TANYA PENJUAL) */
-        .detail-actions { 
-            position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 20px; 
-            background: white; border-top: 1px solid #E2E8F0; display: flex; gap: 10px; z-index: 10;
-        }
+        /* FIXED BOTTOM BAR DI DETAIL */
+        .detail-actions { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 20px; background: white; border-top: 1px solid #E2E8F0; display: flex; gap: 10px; z-index: 10;}
         .act-chat { flex: 0.8; background: #E0F2FE; color: var(--electric-blue); border: none; padding: 16px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s;}
         .act-chat:active { transform: scale(0.98); background: #BAE6FD;}
         .act-buy { flex: 1.2; background: var(--success); color: white; border: none; padding: 16px; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: var(--glow-green); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px;}
         .act-buy:active { transform: scale(0.98); }
         .act-buy:disabled { background: #CBD5E1; box-shadow: none; cursor: not-allowed; }
 
-        /* === UPLOAD BOX FIX (KEMBALI KE GAYA DATA ANGGOTA) === */
+        /* UPLOAD BOX FIX & FORM */
         .form-padding { padding: 30px 25px; overflow-y: auto; overscroll-behavior: contain; }
         .inp-group { margin-bottom: 15px; text-align: left;}
         .inp-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; }
         .inp-text { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; outline: none; transition: 0.2s;}
         .inp-text:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1); }
         
-        .upload-area { border: 2px dashed #93C5FD; border-radius: 18px; padding: 20px; text-align: center; background: #F0F9FF; cursor: pointer; position: relative; margin-bottom: 15px; transition: 0.2s;}
+        .upload-area { display: block; border: 2px dashed #93C5FD; border-radius: 18px; padding: 25px 20px; text-align: center; background: #F0F9FF; cursor: pointer; position: relative; margin-bottom: 15px; transition: 0.2s;}
+        .upload-area:active { transform: scale(0.98); background: #E0F2FE; }
         .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 10; }
-        .preview-img { width: 100%; height: 160px; border-radius: 16px; object-fit: cover; display: none; margin: 10px auto 0; border: 2px solid var(--electric-blue); box-shadow: 0 5px 15px rgba(45,99,237,0.2); position: relative; z-index: 5; }
+        .preview-img { width: 100%; height: 180px; border-radius: 16px; object-fit: cover; display: none; margin: 10px auto 0; border: 2px solid var(--electric-blue); box-shadow: 0 5px 15px rgba(45,99,237,0.2); position: relative; z-index: 5; }
 
         .btn-submit { width: 100%; padding: 18px; border: none; border-radius: 18px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: var(--glow-blue); margin-top: 10px; transition: 0.2s;}
         .btn-submit:active { transform: scale(0.98); }
@@ -181,6 +152,10 @@
         .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100; text-align: center;}
         .btn-premium-back { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); color: var(--royal-blue); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.2s; }
         .btn-premium-back:active { transform: scale(0.95); }
+
+        /* LOADING SUPER FAST ACTION */
+        #actionLoader { position:fixed; inset:0; background:rgba(232,240,248,0.9); backdrop-filter:blur(5px); z-index:999999; display:none; flex-direction:column; align-items:center; justify-content:center; transition:0.3s; opacity:0;}
+        .spinner { width:40px; height:40px; border:4px solid #E2E8F0; border-top:4px solid var(--electric-blue); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:15px; }
     </style>
 </head>
 <body>
@@ -188,6 +163,11 @@
     <div class="ambient-light light-1"></div>
     <div class="ambient-light light-2"></div>
     <div class="bg-watermark"></div>
+
+    <div id="actionLoader">
+        <div class="spinner"></div>
+        <div style="font-family:'Space Grotesk'; font-weight:900; color:var(--royal-blue); letter-spacing:2px;">MEMPROSES...</div>
+    </div>
 
     <header class="header-market">
         <div class="market-brand">
@@ -200,6 +180,7 @@
         <button class="tab-btn active" onclick="switchTab('home', this)"><i class="fas fa-store"></i> Beranda</button>
         <button class="tab-btn" onclick="switchTab('orders', this)" id="btnTabOrders" style="display:none;"><i class="fas fa-shopping-bag"></i> Pesanan</button>
         <button class="tab-btn" onclick="switchTab('shop', this)" id="btnTabShop" style="display:none;"><i class="fas fa-store-alt"></i> Lapakku</button>
+        <button class="tab-btn tab-admin" onclick="switchTab('admin', this)" id="btnTabAdmin" style="display:none;"><i class="fas fa-shield-alt"></i> Validasi</button>
     </div>
 
     <div id="viewHome" class="view-section active">
@@ -233,6 +214,17 @@
         <div class="feed-container" id="myProductList"></div>
     </div>
 
+    <div id="viewAdmin" class="view-section">
+        <div style="background:#FFFBEB; border:1px solid #FCD34D; padding:15px; border-radius:16px; margin-bottom:20px; font-size:11px; color:#B45309; line-height:1.5;">
+            <b><i class="fas fa-info-circle"></i> TUGAS ADMIN (REKBER)</b><br>Pastikan dana dari pembeli sudah masuk ke Rekening Kas MLU sebelum klik Validasi. Dana akan di-hold sampai pembeli klik Selesai, lalu otomatis dipotong 5% untuk Kas dan 95% diteruskan ke Saldo Penjual.
+        </div>
+        
+        <div style="font-family:'Outfit'; font-size:18px; font-weight:900; color:var(--royal-blue); margin-bottom:15px;"><i class="fas fa-tasks"></i> Menunggu Validasi</div>
+        <div id="adminOrdersList">
+            <div style="text-align:center; padding: 50px; color: #94A3B8; font-weight: 600;">Memuat data...</div>
+        </div>
+    </div>
+
     <div class="back-nav">
         <a href="javascript:void(0)" onclick="handleBack()" class="btn-premium-back">
             <i class="fas fa-arrow-left"></i> KEMBALI KE MENU UTAMA
@@ -251,12 +243,12 @@
 
                 <div class="inp-group">
                     <label class="inp-label">Foto Barang (Wajib)</label>
-                    <div class="upload-area">
+                    <label class="upload-area" for="fileInput">
                         <i class="fas fa-camera" style="font-size: 28px; margin-bottom: 8px; display: block; color: var(--electric-blue);"></i>
                         <div style="font-size: 11px; font-weight: 800; color: var(--electric-blue);">TAP UNTUK PILIH FOTO</div>
                         <input type="file" id="fileInput" accept="image/*">
                         <img id="imgPreview" class="preview-img" src="">
-                    </div>
+                    </label>
                 </div>
                 
                 <div class="inp-group">
@@ -277,7 +269,7 @@
 
                 <div class="inp-group">
                     <label class="inp-label">Kondisi & Keterangan</label>
-                    <textarea id="inpDesc" class="inp-text" style="height:100px; resize:none;" placeholder="Jelaskan spesifikasi, lokasi COD, dll."></textarea>
+                    <textarea id="inpDesc" class="inp-text" style="height:100px; resize:none;" placeholder="Jelaskan spesifikasi, minus (jika ada), dll."></textarea>
                 </div>
 
                 <button class="btn-submit" id="btnSaveProduct" onclick="saveProduct()">SIMPAN BARANG</button>
@@ -334,13 +326,23 @@
                     <div id="coTitle" style="font-family:'Outfit'; font-size:16px; font-weight:800; color:var(--royal-blue);">Nama</div>
                     <div id="coPrice" style="font-family:'Space Grotesk'; font-size:18px; font-weight:900; color:var(--success); margin-top:5px;">Rp 0</div>
                 </div>
+
+                <div class="inp-group">
+                    <label class="inp-label">Metode Pembayaran</label>
+                    <select id="coMethod" class="inp-text" style="appearance:none; -webkit-appearance:none;" onchange="changePaymentNote()">
+                        <option value="QRIS">Transfer QRIS (Rekber Kas MLU)</option>
+                        <option value="COD">Bayar Tunai / COD Gading</option>
+                    </select>
+                </div>
                 
                 <div class="inp-group">
                     <label class="inp-label">Catatan untuk Penjual (Opsional)</label>
-                    <textarea id="coNotes" class="inp-text" style="height:80px; resize:none;" placeholder="Contoh: Tolong bungkus yang rapi ya, COD di FC Gading aja..."></textarea>
+                    <textarea id="coNotes" class="inp-text" style="height:80px; resize:none;" placeholder="Contoh: Tolong bungkus yang rapi ya..."></textarea>
                 </div>
 
-                <div style="font-size:11px; color:#94A3B8; text-align:center; margin-bottom:10px;">Penjual akan menerima Notifikasi WhatsApp dari pesanan ini.</div>
+                <div id="coWarning" style="font-size:11px; color:#94A3B8; text-align:center; margin-bottom:10px; background:#FFFBEB; padding:10px; border-radius:12px; border:1px solid #FCD34D; color:#B45309;">
+                    <b>KHUSUS TRANSFER QRIS:</b><br>Dana ditampung di Rekber Kas MLU (Aman). Penjual otomatis dipotong 5% untuk Kas.
+                </div>
                 
                 <button class="btn-submit" id="btnSubmitOrder" style="background:var(--success); box-shadow:var(--glow-green);" onclick="submitOrder()">BUAT PESANAN SEKARANG</button>
             </div>
@@ -348,22 +350,29 @@
     </div>
 
     <div class="modal-overlay" id="paymentModal">
-        <div class="modal-box" style="height: auto;">
+        <div class="modal-box" style="height: auto; max-height: 90vh;">
             <div class="form-padding">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <div style="font-family:'Space Grotesk'; font-size:20px; font-weight:900; color:var(--royal-blue);">Upload Bukti Transfer</div>
+                    <div style="font-family:'Space Grotesk'; font-size:20px; font-weight:900; color:var(--royal-blue);">Pembayaran QRIS</div>
                     <button class="btn-close-modal" style="position:static; background:#F1F5F9; color:#64748B;" onclick="closeModal('paymentModal')"><i class="fas fa-times"></i></button>
                 </div>
                 <input type="hidden" id="payOrderId">
+                
+                <div style="text-align:center; margin-bottom:20px;">
+                    <div style="font-size:12px; color:#64748B; font-weight:700;">TOTAL BAYAR:</div>
+                    <div id="payNominal" style="font-family:'Space Grotesk'; font-size:32px; font-weight:900; color:var(--success);">Rp 0</div>
+                    <img src="qrisnabung.jpg" style="width:200px; border-radius:12px; margin-top:15px; border:2px dashed #E2E8F0;" onerror="this.style.display='none'">
+                </div>
+
                 <div class="inp-group">
-                    <div class="upload-area">
-                        <i class="fas fa-receipt" style="font-size: 28px; margin-bottom: 8px; display: block; color: var(--electric-blue);"></i>
-                        <div style="font-size: 11px; font-weight: 800; color: var(--electric-blue);">TAP UNTUK FOTO RESI</div>
+                    <label class="upload-area" for="payInput" style="padding: 15px;">
+                        <i class="fas fa-receipt" style="font-size: 24px; margin-bottom: 8px; display: block; color: var(--electric-blue);"></i>
+                        <div style="font-size: 11px; font-weight: 800; color: var(--electric-blue);">UPLOAD BUKTI TRANSFER</div>
                         <input type="file" id="payInput" accept="image/*">
                         <img id="payPreview" class="preview-img" src="">
-                    </div>
+                    </label>
                 </div>
-                <button class="btn-submit" id="btnSubmitPay" onclick="submitPayment()">KIRIM BUKTI</button>
+                <button class="btn-submit" id="btnSubmitPay" onclick="submitPayment()">KIRIM BUKTI KE ADMIN</button>
             </div>
         </div>
     </div>
@@ -382,9 +391,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ILMU HITAM ONESIGNAL (Buat Notif Push)
+        // ILMU HITAM ONESIGNAL
         window.tembakNotif = function(judul, isi) {
             fetch("https://onesignal.com/api/v1/notifications", {
                 method: "POST",
@@ -403,11 +412,20 @@
         const myPlat = isGuest ? "GUEST" : (u.plat || "GUEST");
         const myPlatClean = String(myPlat).replace(/\s+/g, '').toUpperCase();
         const myName = isGuest ? "Tamu" : (u.namaKtp || u.namaWa || u.nama);
+        const myUserId = isGuest ? null : (u.id || myPlatClean);
+        const roleCek = isGuest ? "GUEST" : (u.role || "").toUpperCase();
 
-        // Tampilkan Tab Khusus Member
+        const isUserDewa = (myPlatClean === 'B4248SWF');
+        let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
+        const isKetum = roleCek.includes("KETUM") || roleCek === "KETUA UMUM" || roleCek === "KETUA";
+        const isWaketum = roleCek.includes("WAKETUM") || roleCek.includes("WAKIL");
+        const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || isKetum || isWaketum || myPlatClean === 'B4650SWE';
+
+        // Tampilkan Tab Khusus Member & Admin
         if (!isGuest) {
             document.getElementById('btnTabOrders').style.display = 'block';
             document.getElementById('btnTabShop').style.display = 'block';
+            if(isAdmin) document.getElementById('btnTabAdmin').style.display = 'block';
         }
 
         window.handleBack = () => { if (isGuest) window.location.href = 'index.html'; else window.location.href = 'dashboard.html'; };
@@ -420,23 +438,21 @@
             if(btnElement) btnElement.classList.add('active');
         };
 
-        // SISTEM MODAL ANTI NYANGKUT
-        window.openModal = (id) => {
-            const m = document.getElementById(id);
-            m.style.display = 'flex';
-            setTimeout(() => m.classList.add('show'), 10);
-        };
-        window.closeModal = (id) => {
-            const m = document.getElementById(id);
-            m.classList.remove('show');
-            setTimeout(() => m.style.display = 'none', 300);
-        };
+        // SISTEM MODAL & LOADER
+        window.showActionLoader = () => { document.getElementById('actionLoader').style.display = 'flex'; setTimeout(() => document.getElementById('actionLoader').style.opacity = '1', 10); };
+        window.hideActionLoader = () => { document.getElementById('actionLoader').style.opacity = '0'; setTimeout(() => document.getElementById('actionLoader').style.display = 'none', 300); };
+        
+        window.openModal = (id) => { const m = document.getElementById(id); m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10); };
+        window.closeModal = (id) => { const m = document.getElementById(id); m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 300); };
 
         let currentImageBase64 = ""; 
         let currentPayBase64 = "";
         window.productsData = {}; 
         let productsArray = [];
         let currentCheckoutItem = null;
+
+        function formatK(num) { if(num >= 1000000) return (num/1000000).toFixed(1) + 'jt'; if(num >= 1000) return (num/1000).toFixed(0) + 'rb'; return num; }
+        function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
 
         // FUNGSI RENDER GRID BARANG
         function renderGrid(dataArr, containerId) {
@@ -463,7 +479,7 @@
                         <div class="p-image-box">
                             <div class="card-actions">
                                 ${isMyLapak ? `<button class="btn-mini bm-edit" onclick="event.stopPropagation(); window.editProduct('${item.id}')"><i class="fas fa-pen"></i></button><button class="btn-mini bm-del" onclick="event.stopPropagation(); window.delProduct('${item.id}')"><i class="fas fa-trash"></i></button>` : ''}
-                                <button class="btn-mini" style="color:#D97706;" onclick="event.stopPropagation(); window.shareDirect('${item.id}')"><i class="fas fa-share-alt"></i></button>
+                                <button class="btn-mini" style="color:#D97706;" onclick="event.stopPropagation(); window.shareProductDirect('${item.id}')"><i class="fas fa-share-alt"></i></button>
                             </div>
                             <div class="p-price-tag">Rp ${formatK(item.price)}</div>
                             <img src="${imageSrc}" class="p-image">
@@ -506,53 +522,87 @@
             renderGrid(myLapakData, 'myProductList');
         });
 
-        // --- RENDER PESANAN (Marketplace Flow) ---
+        // --- RENDER PESANAN (Marketplace Flow REKBER) ---
         if(!isGuest) {
             onSnapshot(query(collection(db, 'mlu_store_orders'), orderBy('timestamp', 'desc')), (snap) => {
                 const myOrdersCont = document.getElementById('myOrdersList');
                 const incomingCont = document.getElementById('incomingOrdersList');
-                let myHtml = ""; let inHtml = "";
+                const adminCont = document.getElementById('adminOrdersList');
+                let myHtml = ""; let inHtml = ""; let adminHtml = "";
 
                 snap.forEach(docSnap => {
-                    const d = docSnap.data();
-                    const orderId = docSnap.id;
+                    const d = docSnap.data(); const orderId = docSnap.id;
                     const isBuyer = cleanStr(d.buyerPlat) === myPlatClean;
                     const isSeller = cleanStr(d.sellerPlat) === myPlatClean;
+                    const isQris = d.paymentMethod === 'QRIS';
+
+                    // ADMIN VIEW
+                    if(isAdmin && d.status === 'WAITING_ADMIN' && isQris) {
+                        adminHtml += `
+                        <div class="order-card" style="border-left:4px solid var(--warning);">
+                            <div class="o-header"><span class="o-status os-verify">VALIDASI ADMIN</span><span class="o-date">${new Date(d.timestamp).toLocaleDateString('id-ID')}</span></div>
+                            <div class="o-body">
+                                <div><div class="o-title">${d.productTitle}</div><div class="o-seller">Pembeli: ${d.buyerName}</div></div>
+                                <div class="o-price">Rp ${formatK(d.price)}</div>
+                            </div>
+                            <div class="o-actions">
+                                <button class="btn-order-act" style="background:#F1F5F9; color:var(--electric-blue); border:1px solid var(--electric-blue);" onclick="window.viewReceipt('${d.buktiTransfer}')"><i class="fas fa-image"></i> CEK RESI</button>
+                                <button class="btn-order-act" style="background:var(--success); color:white;" onclick="window.adminValidasi('${orderId}', '${d.sellerPlat}')"><i class="fas fa-check"></i> DANA MASUK</button>
+                            </div>
+                        </div>`;
+                    }
 
                     if(isBuyer || isSeller) {
-                        let statusColor = "os-unpaid"; let statusText = "BELUM BAYAR";
-                        if(d.status === 'VERIFYING') { statusColor = "os-verify"; statusText = "MENUNGGU KONFIRMASI"; }
+                        let statusColor = ""; let statusText = "";
+                        
+                        if(d.status === 'UNPAID') { statusColor = "os-unpaid"; statusText = "BELUM BAYAR"; }
+                        else if(d.status === 'WAITING_ADMIN') { statusColor = "os-verify"; statusText = "VERIFIKASI ADMIN"; }
+                        else if(d.status === 'VERIFIED') { statusColor = "os-verified"; statusText = "DANA DI ADMIN"; }
+                        else if(d.status === 'WAITING_COD') { statusColor = "os-cod"; statusText = "MENUNGGU COD"; }
                         else if(d.status === 'DONE') { statusColor = "os-done"; statusText = "SELESAI"; }
 
                         let actionBtn = "";
                         
-                        // Action buat Pembeli
+                        // BUYER ACTIONS
                         if(isBuyer) {
-                            if(d.status === 'UNPAID') actionBtn = `<button class="btn-order-act" style="background:var(--electric-blue); color:white;" onclick="window.openPaymentModal('${orderId}')"><i class="fas fa-upload"></i> UPLOAD BUKTI BAYAR</button>`;
-                            else if(d.status === 'VERIFYING') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-clock"></i> MENUNGGU PENJUAL</button>`;
+                            if(d.status === 'UNPAID') actionBtn = `<button class="btn-order-act" style="background:var(--electric-blue); color:white;" onclick="window.openPaymentModal('${orderId}', ${d.price})"><i class="fas fa-upload"></i> UPLOAD BUKTI BAYAR</button>`;
+                            else if(d.status === 'WAITING_ADMIN') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-clock"></i> MENUNGGU ADMIN</button>`;
+                            else if(d.status === 'VERIFIED' || d.status === 'WAITING_COD') actionBtn = `<button class="btn-order-act" style="background:var(--success); color:white; box-shadow:var(--glow-green);" onclick="window.selesaikanPesanan('${orderId}')"><i class="fas fa-check-circle"></i> PESANAN DITERIMA</button>`;
                         }
                         
-                        // Action buat Penjual
+                        // SELLER ACTIONS
                         if(isSeller) {
-                            if(d.status === 'UNPAID') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-hourglass-half"></i> MENUNGGU PEMBELI BAYAR</button>`;
-                            else if(d.status === 'VERIFYING') actionBtn = `<button class="btn-order-act" style="background:#F1F5F9; color:var(--electric-blue); border:1px solid var(--electric-blue);" onclick="window.viewReceipt('${d.buktiTransfer}')"><i class="fas fa-image"></i> CEK RESI</button> <button class="btn-order-act" style="background:var(--success); color:white;" onclick="window.confirmOrder('${orderId}', '${d.buyerName}')"><i class="fas fa-check"></i> KONFIRMASI</button>`;
+                            if(d.status === 'UNPAID') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-hourglass-half"></i> NUNGGU PEMBELI BAYAR</button>`;
+                            else if(d.status === 'WAITING_ADMIN') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-clock"></i> ADMIN SEDANG CEK</button>`;
+                            else if(d.status === 'VERIFIED') actionBtn = `<button class="btn-order-act" style="background:#E0F2FE; color:var(--electric-blue);"><i class="fas fa-shield-alt"></i> DANA AMAN! SERAHKAN BARANG</button>`;
+                            else if(d.status === 'WAITING_COD') actionBtn = `<button class="btn-order-act" style="background:#E2E8F0; color:#64748B; cursor:not-allowed;"><i class="fas fa-clock"></i> TUNGGU PEMBELI KLIK SELESAI</button>`;
+                        }
+
+                        // Tombol Chat (Semua status kecuali Done)
+                        let chatBtn = '';
+                        if(d.status !== 'DONE') {
+                            let noWaTarget = isBuyer ? d.sellerWa : d.buyerWa;
+                            if(noWaTarget) {
+                                if(noWaTarget.startsWith('0')) noWaTarget = '62' + noWaTarget.substring(1);
+                                chatBtn = `<button class="btn-order-act" style="flex:0.3; background:#FEF3C7; color:#D97706;" onclick="window.open('https://wa.me/${noWaTarget}','_blank')"><i class="fab fa-whatsapp"></i></button>`;
+                            }
                         }
 
                         const card = `
                         <div class="order-card">
                             <div class="o-header">
                                 <span class="o-status ${statusColor}">${statusText}</span>
-                                <span class="o-date">${new Date(d.timestamp).toLocaleDateString('id-ID')}</span>
+                                <span class="o-date">${isQris ? '<i class="fas fa-shield-alt" style="color:var(--success)"></i> QRIS' : 'COD'} • ${new Date(d.timestamp).toLocaleDateString('id-ID')}</span>
                             </div>
                             <div class="o-body">
                                 <div>
                                     <div class="o-title">${d.productTitle}</div>
                                     <div class="o-seller"><i class="fas ${isBuyer?'fa-store':'fa-user'}"></i> ${isBuyer ? d.sellerName : 'Pembeli: '+d.buyerName}</div>
-                                    ${d.notes ? `<div style="font-size:10px; color:#94A3B8; margin-top:4px; font-style:italic;">"${d.notes}"</div>` : ''}
+                                    ${d.notes ? `<div style="font-size:10px; color:#94A3B8; margin-top:4px; font-style:italic; background:#F8FAFC; padding:4px 8px; border-radius:6px; border:1px solid #E2E8F0;">"${d.notes}"</div>` : ''}
                                 </div>
                                 <div class="o-price">Rp ${formatK(d.price)}</div>
                             </div>
-                            ${d.status !== 'DONE' ? `<div class="o-actions">${actionBtn}</div>` : ''}
+                            ${d.status !== 'DONE' ? `<div class="o-actions">${chatBtn} ${actionBtn}</div>` : ''}
                         </div>`;
 
                         if(isBuyer) myHtml += card;
@@ -562,6 +612,7 @@
 
                 myOrdersCont.innerHTML = myHtml || '<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada pembelian.</div>';
                 incomingCont.innerHTML = inHtml || '<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada pesanan masuk.</div>';
+                if(isAdmin) adminCont.innerHTML = adminHtml || '<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Antrean validasi bersih.</div>';
             });
         }
 
@@ -569,36 +620,35 @@
             const key = document.getElementById('searchInput').value.toLowerCase(); 
             renderGrid(productsArray.filter(p => p.title.toLowerCase().includes(key)), 'productList'); 
         }
-        
-        function formatK(num) { if(num >= 1000000) return (num/1000000).toFixed(1) + 'jt'; if(num >= 1000) return (num/1000).toFixed(0) + 'rb'; return num; }
-        function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
 
-        // --- FITUR SHARE BARANG ---
-        window.shareDirect = (id) => {
+        // --- FITUR SHARE BARANG KE WA (GAMBAR + TEKS) ---
+        window.shareProductDirect = async (id) => {
             const item = window.productsData[id];
             if(!item) return;
-            if (navigator.share) {
-                navigator.share({
+            
+            window.showActionLoader();
+            try {
+                let shareData = {
                     title: `Pasar MLU: ${item.title}`,
-                    text: `Cek ${item.title} seharga Rp ${Number(item.price).toLocaleString('id-ID')} di Pasar MLU!`,
-                    url: window.location.href
-                }).catch(e => console.log('Share cancel/error', e));
-            } else {
-                alert("Fitur share tidak didukung di perangkat ini.");
-            }
-        };
+                    text: `Cek barang ini di Pasar MLU!\n\n*${item.title}*\nHarga: Rp ${Number(item.price).toLocaleString('id-ID')}\nSisa Stok: ${item.stock !== undefined ? item.stock : 99}\n\nKondisi/Ket:\n${item.desc || '-'}\n\nLangsung buka Aplikasi MLU sekarang!`
+                };
 
-        window.shareProduct = () => {
-            if(!currentCheckoutItem) return;
-            if (navigator.share) {
-                navigator.share({
-                    title: `Pasar MLU: ${currentCheckoutItem.title}`,
-                    text: `Cek ${currentCheckoutItem.title} seharga Rp ${Number(currentCheckoutItem.price).toLocaleString('id-ID')} di Pasar MLU!`,
-                    url: window.location.href
-                }).catch(e => console.log('Share cancel/error', e));
-            } else {
-                alert("Fitur share tidak didukung di perangkat ini.");
+                // Coba share dengan file gambar
+                if(item.image && navigator.canShare) {
+                    const fetchRes = await fetch(item.image);
+                    const blob = await fetchRes.blob();
+                    const file = new File([blob], 'mlu_market_item.jpg', { type: 'image/jpeg' });
+                    
+                    if (navigator.canShare({ files: [file] })) {
+                        shareData.files = [file];
+                    }
+                }
+                
+                await navigator.share(shareData);
+            } catch(e) { 
+                console.log('Share error/cancel:', e); 
             }
+            window.hideActionLoader();
         };
 
         // --- DETAIL BARANG ---
@@ -611,7 +661,6 @@
             document.getElementById('detailSeller').innerText = data.sellerName;
             document.getElementById('detailDesc').innerText = data.desc ? data.desc : "Tidak ada deskripsi tambahan.";
             
-            // AUTO STOK BARANG LAMA
             const stockVal = data.stock !== undefined ? data.stock : 99;
             const stockEl = document.getElementById('detailStock');
             if(stockVal > 0) {
@@ -651,74 +700,90 @@
         }
 
         // --- CHECKOUT PROCESS ---
+        window.changePaymentNote = () => {
+            const method = document.getElementById('coMethod').value;
+            const warning = document.getElementById('coWarning');
+            if(method === 'QRIS') {
+                warning.style.display = 'block';
+                warning.innerHTML = `<b>KHUSUS TRANSFER QRIS:</b><br>Dana ditampung di Rekber Kas MLU (Aman). Penjual otomatis dipotong 5% untuk Kas.`;
+            } else {
+                warning.style.display = 'block';
+                warning.innerHTML = `<b>BAYAR TUNAI / COD:</b><br>Pembayaran langsung ke Penjual saat bertemu. Tidak ada potongan Kas.`;
+            }
+        }
+
         window.openCheckoutModal = () => {
             if(!currentCheckoutItem) return;
-            window.closeModal('detailModal'); // Tutup detail dulu
+            window.closeModal('detailModal'); 
             
             document.getElementById('coTitle').innerText = currentCheckoutItem.title;
             document.getElementById('coPrice').innerText = "Rp " + Number(currentCheckoutItem.price).toLocaleString('id-ID');
             document.getElementById('coNotes').value = '';
+            document.getElementById('coMethod').value = 'QRIS';
+            changePaymentNote();
             
-            // Buka checkout setelah detail ketutup
             setTimeout(() => { window.openModal('checkoutModal'); }, 300);
         }
 
         window.submitOrder = async () => {
             const btn = document.getElementById('btnSubmitOrder');
             btn.innerText = "MEMPROSES..."; btn.style.opacity = '0.7';
+            window.showActionLoader();
+            
             try {
                 // CEK STOK DULU BIAR AMAN
                 const itemRef = doc(db, 'mlu_store', currentCheckoutItem.id);
                 const itemSnap = await getDoc(itemRef);
                 
                 if(itemSnap.exists()) {
-                    // AUTO STOK BARANG LAMA SAAT DIBELI
                     const currentStock = itemSnap.data().stock !== undefined ? itemSnap.data().stock : 99;
                     if(currentStock <= 0) {
                         alert("Mohon maaf Bos, barang ini baru saja dibeli orang lain dan stoknya habis!");
-                        window.closeModal('checkoutModal');
-                        return;
+                        window.closeModal('checkoutModal'); window.hideActionLoader(); return;
                     }
-                    // Kurangi stok di database
                     await updateDoc(itemRef, { stock: currentStock - 1 });
                 }
 
                 const orderNotes = document.getElementById('coNotes').value.trim();
+                const payMethod = document.getElementById('coMethod').value;
+                const statusAwal = payMethod === 'QRIS' ? 'UNPAID' : 'WAITING_COD';
 
-                // Buat Pesanan Baru
+                // Buat Pesanan Baru (Simpan sellerId juga buat pencairan nanti)
                 await addDoc(collection(db, 'mlu_store_orders'), {
                     productId: currentCheckoutItem.id, productTitle: currentCheckoutItem.title, price: currentCheckoutItem.price,
-                    buyerName: myName, buyerPlat: myPlatClean, sellerName: currentCheckoutItem.sellerName, sellerPlat: currentCheckoutItem.sellerPlat,
-                    notes: orderNotes, status: 'UNPAID', timestamp: Date.now()
+                    buyerName: myName, buyerPlat: myPlatClean, buyerWa: u.hp || "", 
+                    sellerName: currentCheckoutItem.sellerName, sellerPlat: currentCheckoutItem.sellerPlat, sellerWa: currentCheckoutItem.sellerWa, sellerId: currentCheckoutItem.sellerId || null,
+                    notes: orderNotes, paymentMethod: payMethod, status: statusAwal, timestamp: Date.now()
                 });
                 
-                // --- AUTO WA KE PENJUAL ---
+                // NOTIF KE PENJUAL
                 let noWa = currentCheckoutItem.sellerWa; 
                 if(noWa) {
                     if(noWa.startsWith('0')) noWa = '62' + noWa.substring(1);
-                    const waMsg = `Halo *${currentCheckoutItem.sellerName}*! 🎉\n\nAda pesanan baru masuk dari *${myName}* (${myPlatClean}) di Pasar MLU.\n\n*Barang:* ${currentCheckoutItem.title}\n*Harga:* Rp ${Number(currentCheckoutItem.price).toLocaleString('id-ID')}\n*Catatan Pembeli:* ${orderNotes || '-'}\n\nSilakan cek aplikasi MLU Anda di tab *Pesanan* untuk memprosesnya.`;
+                    const tipeBayarTxt = payMethod === 'QRIS' ? 'Transfer QRIS (Rekber MLU)' : 'COD / Bayar Tunai';
+                    const waMsg = `Halo *${currentCheckoutItem.sellerName}*! 🎉\n\nAda pesanan baru masuk dari *${myName}* (${myPlatClean}) di Pasar MLU.\n\n*Barang:* ${currentCheckoutItem.title}\n*Harga:* Rp ${Number(currentCheckoutItem.price).toLocaleString('id-ID')}\n*Metode:* ${tipeBayarTxt}\n*Catatan Pembeli:* ${orderNotes || '-'}\n\nSilakan cek aplikasi MLU Anda di tab *Pesanan* untuk memprosesnya.`;
                     
                     window.open(`https://wa.me/${noWa}?text=${encodeURIComponent(waMsg)}`, '_blank');
                 } else {
-                    // Fallback pake OneSignal kalau WA ga ada
                     window.tembakNotif("🛒 PESANAN BARU MASUK!", `Ada yang beli ${currentCheckoutItem.title} dari Lapak lu Bos! Cek aplikasi sekarang.`);
                 }
                 
-                window.closeModal('checkoutModal');
+                window.closeModal('checkoutModal'); window.hideActionLoader();
                 
                 setTimeout(() => {
-                    alert("Pesanan berhasil dibuat! Silakan bayar dan upload bukti transfer di menu PESANAN SAYA.");
-                    // Pindah ke tab pesanan secara otomatis
+                    alert("Pesanan berhasil dibuat! Silakan cek menu PESANAN SAYA.");
                     const btnTabOrders = document.getElementById('btnTabOrders');
                     window.switchTab('orders', btnTabOrders);
                 }, 500);
                 
-            } catch(e) { alert("Gagal: " + e.message); } finally { btn.innerText = "BUAT PESANAN SEKARANG"; btn.style.opacity = '1'; }
+            } catch(e) { window.hideActionLoader(); alert("Gagal: " + e.message); } 
+            finally { btn.innerText = "BUAT PESANAN SEKARANG"; btn.style.opacity = '1'; }
         }
 
         // --- UPLOAD PAYMENT ---
-        window.openPaymentModal = (orderId) => {
+        window.openPaymentModal = (orderId, price) => {
             document.getElementById('payOrderId').value = orderId;
+            document.getElementById('payNominal').innerText = "Rp " + Number(price).toLocaleString('id-ID');
             currentPayBase64 = ""; document.getElementById('payPreview').style.display = 'none'; document.getElementById('payInput').value = '';
             window.openModal('paymentModal');
         }
@@ -729,23 +794,83 @@
 
         window.submitPayment = async () => {
             if(!currentPayBase64) return alert("Upload bukti transfer dulu Bos!");
-            const btn = document.getElementById('btnSubmitPay'); btn.innerText = "MENGIRIM..."; btn.style.opacity = '0.7';
+            const btn = document.getElementById('btnSubmitPay'); btn.innerText = "MENGIRIM..."; btn.style.opacity = '0.7'; window.showActionLoader();
             try {
-                await updateDoc(doc(db, 'mlu_store_orders', document.getElementById('payOrderId').value), { status: 'VERIFYING', buktiTransfer: currentPayBase64 });
-                window.tembakNotif("🧾 BUKTI BAYAR DIKIRIM", `Pembeli udah transfer buat pesanan lu. Buruan di-ACC Bos!`);
-                window.closeModal('paymentModal'); alert("Bukti berhasil dikirim! Tunggu penjual konfirmasi ya.");
-            } catch(e) { alert("Gagal: " + e.message); } finally { btn.innerText = "KIRIM BUKTI"; btn.style.opacity = '1'; }
+                await updateDoc(doc(db, 'mlu_store_orders', document.getElementById('payOrderId').value), { status: 'WAITING_ADMIN', buktiTransfer: currentPayBase64 });
+                window.tembakNotif("🧾 RESI MASUK", `Pembeli sudah upload bukti bayar. Menunggu validasi Admin.`);
+                window.closeModal('paymentModal'); alert("Bukti berhasil dikirim! Tunggu Admin memvalidasi ya.");
+            } catch(e) { alert("Gagal: " + e.message); } 
+            finally { btn.innerText = "KIRIM BUKTI KE ADMIN"; btn.style.opacity = '1'; window.hideActionLoader(); }
         }
 
-        // --- SELLER CONFIRMATION ---
+        // --- ADMIN & REKBER CONFIRMATION ---
         window.viewReceipt = (url) => { document.getElementById('imgReceipt').src = url; window.openModal('receiptModal'); }
         
-        window.confirmOrder = async (orderId, buyerName) => {
-            if(confirm("Yakin dana udah masuk dan pesanan selesai?")) {
-                await updateDoc(doc(db, 'mlu_store_orders', orderId), { status: 'DONE' });
-                window.tembakNotif("✅ PESANAN SELESAI", `Penjual udah mengkonfirmasi pembayaran lu. Mantap!`);
-                alert("Pesanan berhasil diselesaikan!");
+        window.adminValidasi = async (orderId, sellerPlat) => {
+            if(confirm("Yakin dana sudah masuk ke Rekening Kas MLU? Seller akan disuruh serahkan barang.")) {
+                window.showActionLoader();
+                try {
+                    await updateDoc(doc(db, 'mlu_store_orders', orderId), { status: 'VERIFIED' });
+                    window.kirimNotifKePlat(sellerPlat, "🛡️ DANA DI TAHAN ADMIN", "Pembayaran sudah masuk ke Kas MLU. Silakan serahkan barang ke pembeli!");
+                    alert("Validasi sukses!");
+                } catch(e) { alert("Error: "+e.message); }
+                window.hideActionLoader();
             }
+        }
+
+        // PEMBELI KLIK "PESANAN DITERIMA" -> CAIRKAN DANA
+        window.selesaikanPesanan = async (orderId) => {
+            if(!confirm("Apakah barang sudah diterima dengan baik dan pesanan selesai?")) return;
+            window.showActionLoader();
+            try {
+                const orderRef = doc(db, 'mlu_store_orders', orderId);
+                const orderSnap = await getDoc(orderRef);
+                const data = orderSnap.data();
+
+                if (data.status === 'DONE') throw new Error("Pesanan sudah selesai sebelumnya.");
+
+                let updates = { status: 'DONE', finishTime: Date.now() };
+
+                // LOGIKA POTONGAN 5% HANYA UNTUK QRIS / REKBER
+                if (data.paymentMethod === 'QRIS') {
+                    const fee = Math.floor(data.price * 0.05);
+                    const net = data.price - fee;
+                    updates.fee = fee;
+                    updates.netPrice = net;
+
+                    // 1. Kas Masuk 5%
+                    await addDoc(collection(db, "mlu_finance"), {
+                        type: 'IN', amount: fee, description: `Potongan Kas 5% (Market: ${data.productTitle})`,
+                        isCollective: false, date: new Date().toLocaleDateString('id-ID'), actor: 'SYSTEM STORE', timestamp: Date.now()
+                    });
+
+                    // 2. Tambah Tabungan Penjual 95%
+                    if (data.sellerId) {
+                        const sellerRef = doc(db, "mlu_members", data.sellerId);
+                        const sellerDoc = await getDoc(sellerRef);
+                        if(sellerDoc.exists()) {
+                            let currentSaldo = sellerDoc.data().saldoTabungan || 0;
+                            await updateDoc(sellerRef, { saldoTabungan: currentSaldo + net });
+
+                            await addDoc(collection(db, "mlu_tabungan_trx"), {
+                                memberId: data.sellerId, memberName: data.sellerName,
+                                type: 'IN', amount: net, desc: `Pencairan Market: ${data.productTitle}`,
+                                timestamp: Date.now(), status: 'SUCCESS'
+                            });
+                        }
+                    }
+                    window.kirimNotifKePlat(data.sellerPlat, "💰 SALDO CAIR!", `Pesanan ${data.productTitle} selesai. Rp ${formatK(net)} masuk ke Tabungan lu Bos!`);
+                } else {
+                    // Kalau COD
+                    window.kirimNotifKePlat(data.sellerPlat, "✅ PESANAN COD SELESAI", `Pembeli sudah mengkonfirmasi pesanan ${data.productTitle} selesai.`);
+                }
+
+                await updateDoc(orderRef, updates);
+                alert("Pesanan Selesai! Terima kasih.");
+            } catch(e) {
+                alert("Error: " + e.message);
+            }
+            window.hideActionLoader();
         }
 
         // --- BUKA LAPAK (ADD PRODUCT) ---
@@ -795,15 +920,16 @@
 
             if(!title || !price || !currentImageBase64 || isNaN(stock) || stock < 0) return alert("Lengkapi data, foto, dan stok tidak boleh minus ya Bos!");
 
-            btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7';
+            btn.innerText = "MENYIMPAN..."; btn.style.opacity = '0.7'; window.showActionLoader();
             try {
                 if (id) { await updateDoc(doc(db, 'mlu_store', id), { title: title, price: price, stock: stock, desc: desc, image: currentImageBase64 }); } 
-                else { await addDoc(collection(db, 'mlu_store'), { title: title, price: price, stock: stock, desc: desc, image: currentImageBase64, sellerName: myName, sellerPlat: myPlat, sellerWa: u.hp || "", timestamp: Date.now() }); }
+                else { await addDoc(collection(db, 'mlu_store'), { title: title, price: price, stock: stock, desc: desc, image: currentImageBase64, sellerName: myName, sellerPlat: myPlat, sellerId: myUserId, sellerWa: u.hp || "", timestamp: Date.now() }); }
                 window.closeModal('postModal');
-            } catch(e) { alert("Gagal: " + e.message); } finally { btn.innerText = "SIMPAN BARANG"; btn.style.opacity = '1'; }
+            } catch(e) { alert("Gagal: " + e.message); } 
+            finally { btn.innerText = "SIMPAN BARANG"; btn.style.opacity = '1'; window.hideActionLoader(); }
         };
 
-        window.delProduct = async (id) => { if(confirm("Yakin ingin menghapus lapak ini?")) await deleteDoc(doc(db, 'mlu_store', id)); };
+        window.delProduct = async (id) => { if(confirm("Yakin ingin menghapus lapak ini?")) { window.showActionLoader(); await deleteDoc(doc(db, 'mlu_store', id)); window.hideActionLoader(); } };
     </script>
 </body>
 </html>
