@@ -55,6 +55,7 @@
         .btn-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; border: none; cursor: pointer; transition: 0.2s;}
         .btn-icon:active { transform: scale(0.9); }
         .btn-toggle { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-edit { background: rgba(245,158,11,0.1); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
         .btn-delete { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
 
         /* MODAL */
@@ -64,7 +65,7 @@
         .form-label { display: block; font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 5px; text-transform: uppercase;}
         .form-input { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-family: 'Inter'; outline: none;}
         .form-input:focus { border-color: var(--border-neon); }
-        .form-input option { background: var(--panel-bg); color: white; } /* Fix dropdown di Android */
+        .form-input option { background: var(--panel-bg); color: white; } 
         
         .btn-submit { width: 100%; padding: 15px; background: var(--border-neon); color: white; border: none; border-radius: 10px; font-family: 'Space Grotesk'; font-weight: 800; margin-top: 10px; cursor: pointer;}
         .btn-cancel { width: 100%; padding: 15px; background: transparent; color: var(--text-muted); border: none; font-weight: 800; margin-top: 5px; cursor: pointer;}
@@ -118,8 +119,10 @@
 
     <div class="modal-overlay" id="modalLoc">
         <div class="modal-box">
-            <h3 style="margin-top:0; font-family:'Space Grotesk'; color:var(--border-neon); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">DATA STASIUN</h3>
+            <h3 id="modalTitle" style="margin-top:0; font-family:'Space Grotesk'; color:var(--border-neon); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">TAMBAH STASIUN</h3>
             
+            <input type="hidden" id="editId">
+
             <div class="form-group">
                 <label class="form-label">Nama FC (Contoh: FC Sunter)</label>
                 <input type="text" id="inpName" class="form-input" placeholder="Masukkan nama...">
@@ -190,6 +193,8 @@
         const db = getFirestore(app);
         const locRef = collection(db, "fc_locations");
 
+        window.currentLocations = []; // Buat nyimpen data sementara buat fitur Edit
+
         // OTORISASI PASSWORD
         window.checkAuth = () => {
             const p = document.getElementById('passInput').value;
@@ -218,8 +223,11 @@
             }
 
             let arr = []; snap.forEach(d => arr.push({id: d.id, ...d.data()}));
+            
             // Sort by name
             arr.sort((a,b) => a.name.localeCompare(b.name));
+            
+            window.currentLocations = arr; // Simpan ke global buat dipake pas klik Edit
 
             arr.forEach(loc => {
                 const isOff = loc.isActive === false;
@@ -245,7 +253,10 @@
                         <button class="btn-icon btn-toggle" onclick="toggleStatus('${loc.id}', ${loc.isActive})" title="Nyalakan/Matikan">
                             <i class="fas fa-power-off" style="color:${isOff ? '#aaa' : 'var(--success)'}"></i>
                         </button>
-                        <button class="btn-icon btn-delete" onclick="deleteLoc('${loc.id}', '${loc.name}')">
+                        <button class="btn-icon btn-edit" onclick="openEditModal('${loc.id}')" title="Edit Lokasi">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="btn-icon btn-delete" onclick="deleteLoc('${loc.id}', '${loc.name}')" title="Hapus Lokasi">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -285,9 +296,9 @@
                             mapLink: mapLink,
                             isActive: true,
                             statusMsg: "",
-                            provider: "PLN", // Default dari Excel
-                            nozzleCount: 1,  // Default dari Excel
-                            is24Hours: true  // Default dari Excel
+                            provider: "PLN", 
+                            nozzleCount: 1,  
+                            is24Hours: true  
                         });
                         successCount++;
                     }
@@ -304,6 +315,8 @@
         // FITUR KELOLA LOKASI
         // ==========================================
         window.openModal = () => {
+            document.getElementById('editId').value = '';
+            document.getElementById('modalTitle').innerText = 'TAMBAH STASIUN BARU';
             document.getElementById('inpName').value = '';
             document.getElementById('inpProvider').value = 'PLN';
             document.getElementById('inpNozzle').value = '1';
@@ -314,7 +327,24 @@
             document.getElementById('modalLoc').style.display = 'flex';
         }
 
+        window.openEditModal = (id) => {
+            const loc = window.currentLocations.find(x => x.id === id);
+            if(!loc) return;
+            
+            document.getElementById('editId').value = loc.id;
+            document.getElementById('modalTitle').innerText = 'EDIT LOKASI FC';
+            document.getElementById('inpName').value = loc.name || '';
+            document.getElementById('inpProvider').value = loc.provider || 'PLN';
+            document.getElementById('inpNozzle').value = loc.nozzleCount || 1;
+            document.getElementById('inp24Jam').value = loc.is24Hours !== false ? 'YA' : 'TIDAK';
+            document.getElementById('inpLat').value = loc.lat || '';
+            document.getElementById('inpLng').value = loc.lng || '';
+            document.getElementById('inpMap').value = loc.mapLink || '';
+            document.getElementById('modalLoc').style.display = 'flex';
+        }
+
         window.saveLocation = async () => {
+            const editId = document.getElementById('editId').value;
             const name = document.getElementById('inpName').value;
             const provider = document.getElementById('inpProvider').value;
             const nozzle = parseInt(document.getElementById('inpNozzle').value) || 1;
@@ -327,20 +357,29 @@
             if(!name || isNaN(lat) || isNaN(lng)) return alert("Nama dan Koordinat wajib diisi dengan benar!");
 
             showLoading("MENYIMPAN LOKASI...");
-            let docId = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            // Kalau diedit, pake ID lama biar ga ganda. Kalau baru, generate ID dari namanya.
+            let docId = editId ? editId : name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            let payload = {
+                name: name,
+                provider: provider,
+                nozzleCount: nozzle,
+                is24Hours: is24Jam,
+                lat: lat,
+                lng: lng,
+                mapLink: mapLink
+            };
+
+            // Jika lokasi baru (bukan hasil edit), set status otomatis ke ON
+            if (!editId) {
+                payload.isActive = true;
+                payload.statusMsg = "";
+            }
             
             try {
-                await setDoc(doc(db, "fc_locations", docId), {
-                    name: name,
-                    provider: provider,
-                    nozzleCount: nozzle,
-                    is24Hours: is24Jam,
-                    lat: lat,
-                    lng: lng,
-                    mapLink: mapLink,
-                    isActive: true,
-                    statusMsg: ""
-                });
+                // merge: true berfungsi supaya pas lagi ngedit, data ON/OFF (isActive) nggak ikut kerestart.
+                await setDoc(doc(db, "fc_locations", docId), payload, { merge: true });
                 hideLoading();
                 document.getElementById('modalLoc').style.display = 'none';
             } catch(e) { hideLoading(); alert(e.message); }
