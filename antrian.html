@@ -10,7 +10,7 @@
         if (globalTheme === 'lebaran') { document.documentElement.classList.add('theme-lebaran'); }
         
         // AUTO CLEAR CACHE BIAR SCRIPT BARU LANGSUNG JALAN
-        const DASH_VERSION = "7.6_REPAIR_SLOT";
+        const DASH_VERSION = "7.7_SUPER_LOG";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -328,7 +328,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, runTransaction, updateDoc, collection, query, orderBy, getDocs, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, runTransaction, updateDoc, collection, query, orderBy, getDocs, where, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
         window.tembakNotif = function(judul, isi) {
@@ -425,6 +425,20 @@
 
         if(isSuperAdmin) { document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); }
 
+        // ==========================================================
+        // FUNGSI PENCATATAN ACTIVITY LOG OTOMATIS
+        // ==========================================================
+        function catatLog(aksi, detail) {
+            try {
+                addDoc(collection(db, "activityLog"), {
+                    action: aksi,
+                    details: detail,
+                    actor: `${myName} (${myPlat})`,
+                    timestamp: new Date()
+                });
+            } catch(e) { console.error("Gagal nyatet log:", e); }
+        }
+
         const STATION_LAT = -6.171583; const STATION_LNG = 106.899844; const MAX_DIST_KM = 0.3; 
         let isInLocation = false; 
 
@@ -467,7 +481,7 @@
         // FUNGSI PENGAMAN STRING
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
-        function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+        function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&lt;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
         // FUNGSI PINTAR: BADGE PENGURUS
         function getRoleBadge(role, plat) {
@@ -668,6 +682,7 @@
                 t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q });
                 let nextUser = (myIdx === 0 && q.length > 0) ? q[0].plat : null; return nextUser;
             }).then((nextUser) => {
+                catatLog("MASUK_SLOT", `Pindah otomatis/mandiri ke Slot 0${slotIndex + 1}`);
                 hideGlobalLoader();
                 if(nextUser) window.kirimNotifKePlat(nextUser, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby di dekat stasiun FC.");
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
@@ -686,6 +701,7 @@
                 t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
                 let nextUser = (myIdx === 0 && q.length > 0) ? q[0].plat : null; return { kicked: kickedPlat, next: nextUser };
             }).then((res) => { 
+                catatLog("KUDETA_USER", `Mengkudeta plat ${res.kicked} dari Slot 0${idx + 1}`);
                 hideGlobalLoader();
                 alert("KUDETA BERHASIL! Anda langsung menempati slot."); 
                 if(res.kicked) window.kirimNotifKePlat(res.kicked, "⚔️ ANDA DI-KUDETA!", "Waktu Anda sudah habis dan Slot telah diambil alih paksa oleh member lain.");
@@ -721,6 +737,7 @@
                     q.push({ plat: myPlat, userName: myName, role: myRole, batre: batreFinal, battery: batreFinal, time: Date.now() });
                     t.update(mainRef, { waitingQueue: q });
                 }).then(() => {
+                    catatLog("AMBIL_ANTREAN", `Masuk daftar antrean (Batre: ${batreFinal})`);
                     hideGlobalLoader();
                     setTimeout(() => { showPromoKampas(); }, 1000);
                 }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
@@ -732,13 +749,17 @@
                     let me = idx > -1 ? q.splice(idx, 1)[0] : { plat: myPlat, userName: myName, role: myRole }; 
                     me.startTime = Date.now(); me.batre = batreFinal; me.battery = batreFinal; d.chargingSlots[memberActionSlotIdx] = me; 
                     t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
+                }).then(() => {
+                    catatLog("MASUK_SLOT_LANGSUNG", `Masuk langsung ke Slot 0${memberActionSlotIdx + 1} (Batre: ${batreFinal})`);
+                    hideGlobalLoader();
+                }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
             } else if (memberActionType === 'kudeta') {
                 runTransaction(db, async(t) => {
                     const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; q = q.filter(x => cleanStr(x.plat) !== cleanStr(myPlat));
                     let kickedPlat = d.chargingSlots[currentTargetSlot].plat; d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal, battery: batreFinal };
                     t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q}); return kickedPlat;
                 }).then((kickedPlat) => { 
+                    catatLog("KUDETA_ADMIN", `Admin mengeluarkan paksa ${kickedPlat} dari Slot 0${currentTargetSlot + 1}`);
                     forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader(); alert("KUDETA ADMIN BERHASIL!"); 
                     if(kickedPlat) window.kirimNotifKePlat(kickedPlat, "⚔️ ANDA DI-KUDETA!", "Admin telah mengeluarkan Anda paksa dari Slot.");
                 }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
@@ -772,6 +793,7 @@
                 const d = (await t.get(mainRef)).data(); d.chargingSlots[i] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); 
                 let nextUser = (d.waitingQueue && d.waitingQueue.length > 0) ? d.waitingQueue[0].plat : null; return nextUser;
             }).then((nextUser) => {
+                catatLog("SELESAI_CHARGING", `Selesai dan keluar dari Slot 0${i + 1}`);
                 hideGlobalLoader();
                 if(nextUser) window.kirimNotifKePlat(nextUser, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
@@ -782,7 +804,10 @@
                 showGlobalLoader();
                 runTransaction(db, async(t) => { 
                     const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(myPlat)); t.update(mainRef, { waitingQueue: newQ }); 
-                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
+                }).then(() => {
+                    catatLog("BATAL_ANTREAN", "Membatalkan antrean secara mandiri");
+                    hideGlobalLoader();
+                }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
             }
         };
 
@@ -797,6 +822,7 @@
                 const d = (await t.get(mainRef)).data(); if(d.chargingSlots[targetIdx] !== null) throw new Error("Slot Tujuan Sedang Terisi!"); 
                 d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot]; d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); return d.chargingSlots[targetIdx].plat;
             }).then((p) => { 
+                catatLog("ADMIN_PINDAH_SLOT", `Memindahkan ${p} dari Slot 0${currentTargetSlot + 1} ke Slot 0${targetIdx + 1}`);
                 forceCloseSheet('sheetPilihSlot'); hideGlobalLoader(); if(p) window.kirimNotifKePlat(p, "🔄 PINDAH SLOT", `Admin telah memindahkan Anda ke Slot 0${targetIdx+1}.`);
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
@@ -808,6 +834,7 @@
                 d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); 
                 let nextUser = (d.waitingQueue && d.waitingQueue.length > 0) ? d.waitingQueue[0].plat : null; return {kicked: kickedPlat, next: nextUser};
             }).then((res) => { 
+                catatLog("ADMIN_KICK", `Mengeluarkan paksa ${res.kicked} dari Slot 0${currentTargetSlot + 1}`);
                 forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader();
                 if(res.kicked) window.kirimNotifKePlat(res.kicked, "⛔ ANDA DIKELUARKAN", "Admin telah mengeluarkan kendaraan Anda dari Slot Charging.");
                 if(res.next) window.kirimNotifKePlat(res.next, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
@@ -821,6 +848,7 @@
                 if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } 
                 t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); return s ? s.plat : null;
             }).then((p) => { 
+                catatLog("ADMIN_TURUN_TAHTA", `Menurunkan ${p} dari Slot 0${currentTargetSlot + 1} kembali ke antrean`);
                 forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader(); if(p) window.kirimNotifKePlat(p, "⚠️ PERHATIAN!", "Admin telah mengembalikan posisi Anda dari Slot menjadi Antrean.");
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
@@ -857,7 +885,10 @@
                     else { if(d.chargingSlots[targetIdx] !== null) throw new Error("Slot keburu terisi!"); }
                     newObj.startTime = Date.now(); d.chargingSlots[targetIdx] = newObj; t.update(mainRef, { chargingSlots: d.chargingSlots });
                 }
-            }).then(() => { forceCloseSheet('sheetDaftarAdmin'); hideGlobalLoader(); }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
+            }).then(() => { 
+                catatLog("ADMIN_INPUT_MANUAL", `Mendaftarkan manual ${plat} (${nama}) ke jalur ${jalur}`);
+                forceCloseSheet('sheetDaftarAdmin'); hideGlobalLoader(); 
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
         };
 
         window.adminPromoteToSlot = (index) => {
@@ -872,6 +903,7 @@
                 
                 let nextUser = (index === 0 && q.length > 0) ? q[0].plat : null; return { promoted: userToPromote.plat, slotNum: emptyIdx + 1, next: nextUser };
             }).then((res) => { 
+                catatLog("ADMIN_PROMOSI", `Memasukkan ${res.promoted} dari antrean ke Slot 0${res.slotNum}`);
                 forceCloseSheet('sheetManageAntrian'); hideGlobalLoader();
                 if(res.promoted) window.kirimNotifKePlat(res.promoted, "🔌 GILIRAN ANDA!", `Admin telah memasukkan Anda ke Slot 0${res.slotNum}. Silakan mulai charging!`);
                 if(res.next) window.kirimNotifKePlat(res.next, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby.");
@@ -880,10 +912,17 @@
 
         window.adminReorder = (index, dir) => { 
             showGlobalLoader();
+            let platYangDigeser = "";
+            let arahGeser = dir === -1 ? "Naik" : "Turun";
             runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue; let temp = q[index]; q[index] = q[index + dir]; q[index + dir] = temp; 
+                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue; 
+                platYangDigeser = q[index].plat;
+                let temp = q[index]; q[index] = q[index + dir]; q[index + dir] = temp; 
                 t.update(mainRef, {waitingQueue: q}); 
-            }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
+            }).then(() => {
+                catatLog("ADMIN_GESER_ANTREAN", `Menggeser urutan antrean ${platYangDigeser} ke arah ${arahGeser}`);
+                hideGlobalLoader();
+            }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
 
         window.adminKickQueue = (plat) => { 
@@ -892,7 +931,10 @@
                 runTransaction(db, async(t)=>{ 
                     const d = (await t.get(mainRef)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(plat)); 
                     t.update(mainRef, {waitingQueue: newQ}); 
-                }).then(() => hideGlobalLoader()).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
+                }).then(() => {
+                    catatLog("ADMIN_HAPUS_ANTREAN", `Menghapus plat ${plat} dari daftar antrean`);
+                    hideGlobalLoader();
+                }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
             } 
         };
 
@@ -936,7 +978,14 @@
             });
         };
 
-        window.unblockAll = () => { if(confirm("Hapus semua daftar blokir?")) updateDoc(mainRef, {blockedPlates: []}).then(() => forceCloseSheet('sheetManageAntrian')); };
+        window.unblockAll = () => { 
+            if(confirm("Hapus semua daftar blokir?")) {
+                updateDoc(mainRef, {blockedPlates: []}).then(() => {
+                    catatLog("ADMIN_UNBLOCK", "Membuka semua daftar blokir plat");
+                    forceCloseSheet('sheetManageAntrian');
+                }); 
+            }
+        };
 
         // =======================================================
         // CCTV CHAT GLOBAL (ANTI-JEBOL ONESIGNAL)
