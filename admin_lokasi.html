@@ -38,11 +38,18 @@
         .loc-card { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
         .loc-card.off { opacity: 0.6; border-color: rgba(239, 68, 68, 0.3); }
         .lc-left { flex: 1; }
-        .lc-name { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
-        .lc-coord { font-size: 10px; color: var(--text-muted); font-family: monospace; }
+        .lc-name { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;}
+        .lc-coord { font-size: 10px; color: var(--text-muted); font-family: monospace; margin-top: 4px; }
         
         .badge-on { background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 900; border: 1px solid var(--success); }
         .badge-off { background: rgba(239, 68, 68, 0.2); color: var(--danger); padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: 900; border: 1px solid var(--danger); }
+        
+        /* NEW BADGES FOR DETAILS */
+        .badge-detail { padding: 3px 6px; border-radius: 4px; font-size: 8px; font-weight: 800; text-transform: uppercase; border: 1px solid; }
+        .bd-provider { background: rgba(45,99,237,0.1); color: var(--border-neon); border-color: rgba(45,99,237,0.3); }
+        .bd-nozzle { background: rgba(245,158,11,0.1); color: var(--warning); border-color: rgba(245,158,11,0.3); }
+        .bd-24j { background: rgba(16,185,129,0.1); color: var(--success); border-color: rgba(16,185,129,0.3); }
+        .bd-not24 { background: rgba(239,68,68,0.1); color: var(--danger); border-color: rgba(239,68,68,0.3); }
 
         .lc-actions { display: flex; gap: 8px; }
         .btn-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; border: none; cursor: pointer; transition: 0.2s;}
@@ -51,12 +58,14 @@
         .btn-delete { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
 
         /* MODAL */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 9999; }
-        .modal-box { background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 20px; width: 90%; max-width: 400px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 9999; overflow-y: auto;}
+        .modal-box { background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 20px; width: 90%; max-width: 400px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: auto; max-height: 90vh; overflow-y: auto;}
         .form-group { margin-bottom: 15px; }
         .form-label { display: block; font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 5px; text-transform: uppercase;}
         .form-input { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px; font-family: 'Inter'; outline: none;}
         .form-input:focus { border-color: var(--border-neon); }
+        .form-input option { background: var(--panel-bg); color: white; } /* Fix dropdown di Android */
+        
         .btn-submit { width: 100%; padding: 15px; background: var(--border-neon); color: white; border: none; border-radius: 10px; font-family: 'Space Grotesk'; font-weight: 800; margin-top: 10px; cursor: pointer;}
         .btn-cancel { width: 100%; padding: 15px; background: transparent; color: var(--text-muted); border: none; font-weight: 800; margin-top: 5px; cursor: pointer;}
 
@@ -109,12 +118,37 @@
 
     <div class="modal-overlay" id="modalLoc">
         <div class="modal-box">
-            <h3 style="margin-top:0; font-family:'Space Grotesk'; color:var(--border-neon); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">DATA STASIUN BARU</h3>
+            <h3 style="margin-top:0; font-family:'Space Grotesk'; color:var(--border-neon); border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">DATA STASIUN</h3>
             
             <div class="form-group">
                 <label class="form-label">Nama FC (Contoh: FC Sunter)</label>
                 <input type="text" id="inpName" class="form-input" placeholder="Masukkan nama...">
             </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Provider</label>
+                    <select id="inpProvider" class="form-input">
+                        <option value="PLN">PLN</option>
+                        <option value="STARVO">Starvo</option>
+                        <option value="CASAN.ID">Casan.id</option>
+                        <option value="LAINNYA">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">Nozzle</label>
+                    <input type="number" id="inpNozzle" class="form-input" placeholder="Jml" value="1" min="1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Waktu Operasional</label>
+                <select id="inp24Jam" class="form-input">
+                    <option value="YA">Buka 24 Jam</option>
+                    <option value="TIDAK">Terbatas (Jam Tertentu)</option>
+                </select>
+            </div>
+
             <div style="display: flex; gap: 10px;">
                 <div class="form-group" style="flex:1;">
                     <label class="form-label">Latitude</label>
@@ -180,7 +214,6 @@
                 document.getElementById('importBox').style.display = 'block';
                 return;
             } else {
-                // Sembunyikan tombol sedot kalau data sudah ada (Biar ga dobel)
                 document.getElementById('importBox').style.display = 'none';
             }
 
@@ -191,12 +224,20 @@
             arr.forEach(loc => {
                 const isOff = loc.isActive === false;
                 const statusBadge = isOff ? `<span class="badge-off"><i class="fas fa-ban"></i> OFF</span>` : `<span class="badge-on"><i class="fas fa-check-circle"></i> ON</span>`;
-                const reasonHtml = isOff ? `<div style="font-size:10px; color:var(--danger); margin-top:3px; font-weight:800;">Note: ${loc.statusMsg || 'Perbaikan'}</div>` : ``;
+                const reasonHtml = isOff ? `<div style="font-size:10px; color:var(--danger); margin-top:4px; font-weight:800;">Note: ${loc.statusMsg || 'Perbaikan'}</div>` : ``;
+
+                // Badge Info Baru
+                const provBadge = loc.provider ? `<span class="badge-detail bd-provider">${loc.provider}</span>` : '';
+                const nozBadge = loc.nozzleCount ? `<span class="badge-detail bd-nozzle">${loc.nozzleCount} Nozzle</span>` : '';
+                const jamBadge = loc.is24Hours ? `<span class="badge-detail bd-24j">24 JAM</span>` : (loc.is24Hours === false ? `<span class="badge-detail bd-not24">TERBATAS</span>` : '');
 
                 list.innerHTML += `
                 <div class="loc-card ${isOff ? 'off' : ''}">
                     <div class="lc-left">
                         <div class="lc-name">${loc.name} ${statusBadge}</div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
+                            ${provBadge} ${nozBadge} ${jamBadge}
+                        </div>
                         <div class="lc-coord"><i class="fas fa-satellite-dish"></i> ${loc.lat}, ${loc.lng}</div>
                         ${reasonHtml}
                     </div>
@@ -224,7 +265,7 @@
                 const res = await fetch(URL_LOKASI);
                 const txtLoc = await res.text();
                 
-                const rows = txtLoc.split('\n').slice(1); // Potong baris pertama (Header)
+                const rows = txtLoc.split('\n').slice(1); 
                 let successCount = 0;
 
                 for (let r of rows) {
@@ -234,10 +275,7 @@
                     let lngVal = parseFloat(c[5] ? c[5].replace(/"/g, '').replace(',', '.') : '');
                     let mapLink = c[6] ? c[6].replace(/"/g, '').trim() : '';
 
-                    // Jika data valid dan bukan Gading/KC (Karena Gading & KC punya sistem antrean sendiri)
                     if(name && !isNaN(latVal) && !isNaN(lngVal) && !name.toUpperCase().includes("GADING") && !name.toUpperCase().includes("CHANDRA")) {
-                        
-                        // Bikin ID unik dari nama (Hilangkan spasi)
                         let docId = name.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
                         
                         await setDoc(doc(db, "fc_locations", docId), {
@@ -246,7 +284,10 @@
                             lng: lngVal,
                             mapLink: mapLink,
                             isActive: true,
-                            statusMsg: ""
+                            statusMsg: "",
+                            provider: "PLN", // Default dari Excel
+                            nozzleCount: 1,  // Default dari Excel
+                            is24Hours: true  // Default dari Excel
                         });
                         successCount++;
                     }
@@ -264,6 +305,9 @@
         // ==========================================
         window.openModal = () => {
             document.getElementById('inpName').value = '';
+            document.getElementById('inpProvider').value = 'PLN';
+            document.getElementById('inpNozzle').value = '1';
+            document.getElementById('inp24Jam').value = 'YA';
             document.getElementById('inpLat').value = '';
             document.getElementById('inpLng').value = '';
             document.getElementById('inpMap').value = '';
@@ -272,6 +316,10 @@
 
         window.saveLocation = async () => {
             const name = document.getElementById('inpName').value;
+            const provider = document.getElementById('inpProvider').value;
+            const nozzle = parseInt(document.getElementById('inpNozzle').value) || 1;
+            const is24Jam = document.getElementById('inp24Jam').value === 'YA';
+            
             const lat = parseFloat(document.getElementById('inpLat').value);
             const lng = parseFloat(document.getElementById('inpLng').value);
             const mapLink = document.getElementById('inpMap').value;
@@ -284,6 +332,9 @@
             try {
                 await setDoc(doc(db, "fc_locations", docId), {
                     name: name,
+                    provider: provider,
+                    nozzleCount: nozzle,
+                    is24Hours: is24Jam,
                     lat: lat,
                     lng: lng,
                     mapLink: mapLink,
@@ -305,12 +356,10 @@
         // SAKLAR MATI/NYALA STASIUN
         window.toggleStatus = async (id, currentIsActive) => {
             if (currentIsActive) {
-                // Kalau lagi nyala, mau dimatiin (Tanya Alasan)
                 document.getElementById('toggleId').value = id;
                 document.getElementById('inpReason').value = '';
                 document.getElementById('modalToggle').style.display = 'flex';
             } else {
-                // Kalau lagi mati, mau dinyalain (Langsung Nyalakan)
                 if(!confirm("Nyalakan kembali stasiun ini? Fitur radar member akan aktif lagi untuk lokasi ini.")) return;
                 showLoading("MENYALAKAN STASIUN...");
                 await updateDoc(doc(db, "fc_locations", id), { isActive: true, statusMsg: "" });
@@ -321,7 +370,7 @@
         window.confirmToggleOff = async () => {
             const id = document.getElementById('toggleId').value;
             let reason = document.getElementById('inpReason').value;
-            if(!reason) reason = "Sedang Perbaikan"; // Default kalau kosong
+            if(!reason) reason = "Sedang Perbaikan"; 
 
             showLoading("MEMATIKAN STASIUN...");
             await updateDoc(doc(db, "fc_locations", id), { isActive: false, statusMsg: reason });
