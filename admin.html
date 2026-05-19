@@ -97,7 +97,7 @@
         .term-container { background: #0F172A; border-radius: 14px; padding: 15px; height: 200px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 11px; color: #94A3B8; display: flex; flex-direction: column; }
         .log-line { margin-bottom: 8px; border-bottom: 1px solid #1E293B; padding-bottom: 6px; }
 
-        /* MODAL FIX (Anti-Bug Keyboard) */
+        /* MODAL FIX */
         .modal-glass-overlay { 
             position: fixed; inset: 0; background: rgba(10,34,89,0.5); backdrop-filter: blur(8px); 
             z-index: 99999; display: none; align-items: flex-start; justify-content: center; 
@@ -191,8 +191,10 @@
         </div>
     </div>
 
-    <div style="font-family:'Space Grotesk'; font-size:11px; font-weight:900; color:var(--text-gray); margin-bottom:8px; letter-spacing:1px;"><i class="fas fa-terminal"></i> AKTIVITAS SISTEM</div>
-    <div class="term-container" id="termLog"></div>
+    <div id="logSectionWrapper" style="display: none;">
+        <div style="font-family:'Space Grotesk'; font-size:11px; font-weight:900; color:var(--text-gray); margin-bottom:8px; letter-spacing:1px;"><i class="fas fa-terminal"></i> AKTIVITAS SISTEM (PRIVATE)</div>
+        <div class="term-container" id="termLog"></div>
+    </div>
 
     <div class="modal-glass-overlay" id="customModal">
         <div class="modal-box">
@@ -236,6 +238,18 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, runTransaction, collection, addDoc, query, orderBy, limit, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // CEK PLAT UNTUK PRIVATE LOG (Cuma B4248SWF yang bisa liat)
+        const checkDewaLog = () => {
+            try {
+                const uDataGlobal = JSON.parse(localStorage.getItem('maka_user') || '{}');
+                const globalPlat = (uDataGlobal.plat || '').replace(/\s+/g, '').toUpperCase();
+                if(globalPlat === 'B4248SWF') {
+                    document.getElementById('logSectionWrapper').style.display = 'block';
+                }
+            } catch(e) {}
+        };
+        checkDewaLog();
 
         const firebaseConfig = { apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22", storageBucket: "fcgadingnew22.firebasestorage.app", messagingSenderId: "537736846678", appId: "1:537736846678:web:53788d71a196423ac08af7" };
         const app = initializeApp(firebaseConfig);
