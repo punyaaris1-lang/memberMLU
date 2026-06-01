@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "18.3_SCROLL_LACI_FIX"; 
+        const DASH_VERSION = "18.4_SUPER_CCTV_SYNC"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -512,6 +512,21 @@
         const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
         let userId = uData.id || myPlatClean;
 
+        // === FUNGSI PENCATATAN SUPER LOG CCTV ===
+        function catatSuperLog(aksi, detailAksi) {
+            try {
+                addDoc(collection(dbGading, "mlu_super_logs"), {
+                    action: aksi,
+                    nama: myName,
+                    plat: myPlatClean,
+                    detail: detailAksi,
+                    sumber: 'DASHBOARD MEMBER',
+                    waktu: new Date().toLocaleString('id-ID'),
+                    timestamp: Date.now()
+                });
+            } catch(e) { console.error("Gagal nyatet super log:", e); }
+        }
+
         // === WHITELIST ADMIN DELEGASI ===
         const platAdminKhusus = ["B4231SWF", "B4146SWH", "B4769SWE", "B4457SWF", "B4248SWF"];
         const isKhusus = platAdminKhusus.includes(myPlatClean);
@@ -623,6 +638,7 @@
                     
                     t.update(refGading, { chargingSlots: slots, waitingQueue: q }); 
                 }).then(() => { 
+                    catatSuperLog("KUDETA", `Mengambil alih paksa (Kudeta) Slot 0${idx + 1}`);
                     window.hideActionLoader();
                     setTimeout(() => alert("Berhasil mengambil alih slot!"), 350);
                 }).catch(e => {
@@ -744,6 +760,7 @@
                     if(q.find(x => cleanStr(x.plat) === myPlatClean)) { window.hideActionLoader(); setTimeout(()=>alert("Sudah terdaftar!"), 350); return; } 
                     q.push({ userName: myName, plat: myPlatClean, batre: b + "%", role: roleCek, timestamp: Date.now() }); 
                     await updateDoc(refGading, { waitingQueue: q }); 
+                    catatSuperLog("DAFTAR_ANTREAN", `Masuk daftar antrean (Batre: ${b}%)`);
                     window.hideActionLoader(); tutupDaftarAntrian(); document.getElementById('fcAccordion').classList.add('open');
                 } 
             } catch(e) { window.hideActionLoader(); setTimeout(()=>alert("ERROR: " + (e.message || e)), 350); } 
@@ -756,7 +773,10 @@
                     const d = (await t.get(refGading)).data(); 
                     const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== myPlatClean); 
                     t.update(refGading, { waitingQueue: newQ }); 
-                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
+                }).then(() => {
+                    catatSuperLog("BATAL_ANTREAN", "Membatalkan antrean secara mandiri");
+                    window.hideActionLoader();
+                }).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
             }
         }
         
@@ -765,7 +785,10 @@
                 window.showActionLoader();
                 runTransaction(dbGading, async(t)=>{ 
                     const d = (await t.get(refGading)).data(); d.chargingSlots[idx] = null; t.update(refGading, {chargingSlots: d.chargingSlots}); 
-                }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
+                }).then(() => {
+                    catatSuperLog("SELESAI_CHARGING", `Selesai dan keluar dari Slot 0${idx + 1}`);
+                    window.hideActionLoader();
+                }).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
             }
         }
         
@@ -777,7 +800,10 @@
                 if(idx === -1) throw new Error("Anda tidak di antrean!");
                 const me = q.splice(idx, 1)[0]; me.startTime = Date.now(); d.chargingSlots[i] = me; 
                 t.update(refGading, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
-            }).then(() => window.hideActionLoader()).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
+            }).then(() => {
+                catatSuperLog("MASUK_SLOT", `Masuk mandiri ke Slot 0${i + 1}`);
+                window.hideActionLoader();
+            }).catch(e => { window.hideActionLoader(); setTimeout(()=>alert(e.message || e), 350); });
         }
 
         window.bukaDaftarTunggu = () => {
