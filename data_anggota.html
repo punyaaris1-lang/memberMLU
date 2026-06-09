@@ -248,6 +248,7 @@
                     <option value="HUMAS">Humas</option>
                     <option value="SATGAS">Satgas</option>
                     <option value="SEKRETARIS">Sekretaris</option>
+                    <option value="BENDAHARA">Bendahara</option> <!-- OPSI BARU -->
                     <option value="WAKIL KETUA">Wakil Ketua</option>
                     <option value="KETUA UMUM">Ketua Umum</option>
                     <option value="PEMBINA">Pembina</option>
@@ -297,12 +298,12 @@
         const myRoleUpper = (u.role || "").toUpperCase();
         const isKetum = myRoleUpper.includes("KETUM") || myRoleUpper === "KETUA UMUM" || myRoleUpper === "KETUA";
         const isWaketum = myRoleUpper.includes("WAKETUM") || myRoleUpper.includes("WAKIL");
+        const isBendahara = myRoleUpper.includes("BENDAHARA");
         
         // Pengecekan Atasan: Yang boleh lihat nomor darurat secara Full
-        const isAtasan = isKetum || isWaketum || (isUserDewa && dewaMode === 'ON');
+        const isAtasan = isKetum || isWaketum || isBendahara || (isUserDewa && dewaMode === 'ON');
         
         // Pengecekan Admin Umum (Bisa Edit/Hapus User)
-        // TERMASUK VIP DELEGASI
         const platAdminKhusus = ["B4231SWF", "B4146SWH", "B4769SWE", "B4457SWF", "B4248SWF"];
         const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST') || platAdminKhusus.includes(platKu);
 
