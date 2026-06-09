@@ -133,33 +133,42 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
-        // MAPPING FOTO MANUAL (SUDAH DIPERBAIKI UNTUK JET LEE)
+        // MAPPING FOTO MANUAL
         const localPhotos = {
             "AMAR": "amar.jpg", "AJI": "aji.jpg", "DONI": "doni.jpg", "UBAY": "ubay.jpg",
-            "AHMAD": "akiaki.jpg", 
-            "PURNOMO": "ipung.jpg", // DATA PURNOMO
-            "IPUNG": "ipung.jpg",   // VARIANT
-            "PUR": "ipung.jpg",     // VARIANT
-            "DAYYAN": "dayan.jpg",
-            "HENDRO": "hendro.jpg", 
-            "IWAN": "iwan.jpg", 
-            "JET LEE": "jetlee.jpg", // Prioritas pertama Jet Lee
-            "WIHARTA": "jetlee.jpg", // Kata kunci cadangan Jet Lee
-            "SANDI": "sandi.jpg"     // Sandi ditaruh di bawah agar tidak menimpa Jet Lee
+            "PURNOMO": "ipung.jpg", "IPUNG": "ipung.jpg", "PUR": "ipung.jpg",
+            "DAYYAN": "dayan.jpg", "HENDRO": "hendro.jpg", "IWAN": "iwan.jpg", 
+            "JET LEE": "jetlee.jpg", "WIHARTA": "jetlee.jpg"
         };
 
         function renderCard(containerId, data, isKetum = false, isSmall = false) {
             const container = document.getElementById(containerId);
             const displayName = data.namaKtp || data.namaWa || data.nama || "";
             const cleanName = displayName.toUpperCase().trim();
+            const cleanRole = (data.role || "").toUpperCase();
             
             // CEK NAMA UNTUK FOTO LOCAL
             let photoUrl = "";
             let foundLocal = false;
-            for (const [key, val] of Object.entries(localPhotos)) {
-                if (cleanName.includes(key)) { photoUrl = val; foundLocal = true; break; }
+            
+            // PRIORITAS 1: FIX FOTO KETUM (Sandi Areza)
+            if (cleanRole === "KETUA UMUM" && cleanName.includes("SANDI")) {
+                photoUrl = "ndut.jpg";
+                foundLocal = true;
+            } 
+            // PRIORITAS 2: FIX FOTO SANDI KORLAP
+            else if (cleanRole.includes("KORLAP") && cleanName.includes("SANDI")) {
+                photoUrl = "sandi.jpg";
+                foundLocal = true;
+            } 
+            // PRIORITAS 3: Loop nama yang lain
+            else {
+                for (const [key, val] of Object.entries(localPhotos)) {
+                    if (cleanName.includes(key)) { photoUrl = val; foundLocal = true; break; }
+                }
             }
 
+            // Kalau gak ada foto lokal, pakai foto Firebase atau inisial
             if (!foundLocal) {
                 if (data.foto && data.foto.length > 50) photoUrl = data.foto;
                 else photoUrl = `https://ui-avatars.com/api/?background=E0F2FE&color=0A2259&bold=true&name=${encodeURIComponent(displayName)}`;
@@ -196,20 +205,42 @@
                 
                 let purnomoFound = false;
 
+                // TAMPUNG SEMUA DATA PENGURUS
+                let listPengurus = [];
                 querySnapshot.forEach((doc) => {
                     const d = doc.data();
-                    const r = (d.role || "").toUpperCase();
                     const n = (d.namaKtp || d.nama || "").toUpperCase();
 
-                    // 1. BLOKIR FERRY (HILANGKAN)
+                    // 1. BLOKIR FERRY (HILANGKAN DARI PENGURUS)
                     if (n.includes('FERRY')) return;
 
-                    // 2. CEK APAKAH PURNOMO SUDAH ADA DI DB
+                    // 2. TANDAI KALAU PURNOMO ADA
                     if (n.includes('PURNOMO') || n.includes('IPUNG') || n.includes('PUR')) {
                         purnomoFound = true;
                     }
+                    
+                    listPengurus.push(d);
+                });
 
-                    // RENDER NORMAL
+                // URUTKAN BERDASARKAN JABATAN (PRIORITAS TINGGI DI ATAS)
+                listPengurus.sort((a, b) => {
+                    const roleOrder = {
+                        "KETUA UMUM": 1, "WAKIL KETUA": 2, "SEKRETARIS": 3, "BENDAHARA": 4, 
+                        "PEMBINA": 5, "PENASEHAT": 6, "KORLAP": 7, "SATGAS": 8, "HUMAS": 9, "TIM SENYAP": 10
+                    };
+                    const roleA = (a.role || "").toUpperCase();
+                    const roleB = (b.role || "").toUpperCase();
+                    
+                    // Kalau role-nya sama persis, urutin berdasarkan abjad nama
+                    if ((roleOrder[roleA] || 99) === (roleOrder[roleB] || 99)) {
+                        return (a.namaKtp || "").localeCompare(b.namaKtp || "");
+                    }
+                    return (roleOrder[roleA] || 99) - (roleOrder[roleB] || 99);
+                });
+
+                // RENDER KARTU SESUAI URUTAN
+                listPengurus.forEach((d) => {
+                    const r = (d.role || "").toUpperCase();
                     if (r === 'KETUA UMUM') renderCard('tier1', d, true);
                     else if (r.includes('WAKIL KETUA') || r.includes('SEKRETARIS') || r.includes('BENDAHARA')) renderCard('tier2', d);
                     else if (r === 'PEMBINA' || r === 'PENASEHAT') renderCard('tier3', d);
