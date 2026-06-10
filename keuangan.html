@@ -268,9 +268,24 @@
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
 
+        // --- SISTEM HAK AKSES (TRANSPARANSI) ---
         const u = JSON.parse(localStorage.getItem('maka_user')) || {};
-        const isAdmin = u.isSuperAdmin || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST');
-        if (isAdmin) document.getElementById('btnAddTx').style.display = 'flex';
+        const myPlatClean = (u.plat || "").replace(/\s+/g, '').toUpperCase();
+        let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
+        const isUserDewa = (myPlatClean === 'B4248SWF');
+        
+        const roleCek = (u.role || "").toUpperCase();
+        const isKetum = roleCek.includes("KETUM") || roleCek === "KETUA UMUM" || roleCek === "KETUA";
+        const isBendahara = roleCek.includes("BENDAHARA");
+        
+        // Keuangan Admin = Dewa, Ketum, Bendahara
+        const isKeuanganAdmin = (isUserDewa && dewaMode === 'ON') || isKetum || isBendahara;
+
+        // Tombol Tambah Transaksi hanya untuk Admin Keuangan
+        if (isKeuanganAdmin) {
+            document.getElementById('btnAddTx').style.display = 'flex';
+        }
+        // ----------------------------------------
 
         document.getElementById('lblDate').innerText = `SALDO KAS MLU PER ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}).toUpperCase()}`;
 
@@ -360,7 +375,7 @@
                             subHtml += `<button class="btn-lihat-kolektif" onclick="showCollectiveDetail('${encodeURIComponent(JSON.stringify(d.details))}')"><i class="fas fa-users"></i> RINCIAN</button>`;
                         }
 
-                        let actionBtns = isAdmin ? `<button class="btn-edit" onclick="window.editTx('${d.id}')"><i class="fas fa-pen"></i></button><button class="btn-del" onclick="window.delTx('${d.id}')"><i class="fas fa-trash"></i></button>` : '';
+                        let actionBtns = isKeuanganAdmin ? `<button class="btn-edit" onclick="window.editTx('${d.id}')"><i class="fas fa-pen"></i></button><button class="btn-del" onclick="window.delTx('${d.id}')"><i class="fas fa-trash"></i></button>` : '';
                         
                         html += `
                             <div class="tx-card">

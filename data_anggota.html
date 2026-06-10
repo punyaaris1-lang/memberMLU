@@ -248,7 +248,7 @@
                     <option value="HUMAS">Humas</option>
                     <option value="SATGAS">Satgas</option>
                     <option value="SEKRETARIS">Sekretaris</option>
-                    <option value="BENDAHARA">Bendahara</option> <!-- OPSI BARU -->
+                    <option value="BENDAHARA">Bendahara</option>
                     <option value="WAKIL KETUA">Wakil Ketua</option>
                     <option value="KETUA UMUM">Ketua Umum</option>
                     <option value="PEMBINA">Pembina</option>
@@ -423,6 +423,12 @@
                     daruratHtml = `<div class="m-darurat"><span class="btn-darurat-empty"><i class="fas fa-exclamation-circle"></i> BELUM ISI DARURAT</span></div>`;
                 }
 
+                // LOGIKA PRIVASI PIN/PASSWORD (KHUSUS KETUM & DEWA)
+                let pinHtml = '';
+                if (isKetum || (isUserDewa && dewaMode === 'ON')) {
+                    pinHtml = `<div style="margin-top:6px; display:inline-block; font-size:10px; color:var(--danger); font-weight:800; background:rgba(239,68,68,0.1); padding:4px 8px; border-radius:6px; border:1px dashed var(--danger);"><i class="fas fa-unlock-alt"></i> PIN: ${m.pin || 'KOSONG'}</div>`;
+                }
+
                 const delay = index * 0.05; 
 
                 list.innerHTML += `
@@ -438,6 +444,8 @@
                             </div>
                             ${saldoHtml}
                             ${daruratHtml}
+                            <br>
+                            ${pinHtml}
                         </div>
                         <div class="m-actions">
                             <a href="${waLink}" class="btn-act btn-call" target="_blank"><i class="fab fa-whatsapp"></i></a>

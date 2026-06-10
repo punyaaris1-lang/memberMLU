@@ -7,7 +7,7 @@
     
     <script>
         // PENGHANCUR CACHE BIAR UPDATE LANGSUNG JALAN
-        const TABUNGAN_VERSION = "5.0_ONESIGNAL_FINANCE"; 
+        const TABUNGAN_VERSION = "5.1_PENGURUS_ACCESS_FIX"; 
         if (localStorage.getItem('maka_tabungan_v') !== TABUNGAN_VERSION) {
             if ('caches' in window) {
                 caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
@@ -471,13 +471,16 @@
         const hierarchy = { "KETUA UMUM": 1, "WAKIL KETUA": 2, "PEMBINA": 3, "PENASEHAT": 4, "SEKRETARIS": 5, "BENDAHARA": 6, "HUMAS INTERNAL": 7, "HUMAS EKSTERNAL": 8, "KREATOR": 9, "URC KC": 10, "URC": 10, "MEMBER": 11 };
         const getRank = (role) => { if(!role) return 11; const r = role.toUpperCase(); return hierarchy[r] || 12; };
         
-        // LOGIKA DETEKSI ADMIN
+        // LOGIKA DETEKSI ADMIN & PENGURUS INTI TABUNGAN
         const roleUpper = uData.role ? uData.role.toUpperCase() : "";
         const isKetum = roleUpper.includes("KETUM") || roleUpper === "KETUA UMUM" || roleUpper === "KETUA";
         const isWaketum = roleUpper.includes("WAKETUM") || roleUpper.includes("WAKIL");
+        const isSekretaris = roleUpper.includes("SEKRETARIS");
+        const isBendahara = roleUpper.includes("BENDAHARA");
         const isSuperAdmin = (cleanPlat === "B4248SWF" || uData.id === "ghost_admin");
         
-        const isTrueAdmin = isKetum || isWaketum || isSuperAdmin || (cleanPlat === "B4650SWE");
+        // PENGURUS INTI DAPAT AKSES ADMIN TABUNGAN (INPUT SETORAN, DLL)
+        const isTrueAdmin = isKetum || isWaketum || isSekretaris || isBendahara || isSuperAdmin || (cleanPlat === "B4650SWE");
         let isViewAdminVisible = isTrueAdmin; 
 
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
@@ -897,6 +900,7 @@
                             let statusKetum = data.apprKetum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Ketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Ketum</span>`;
                             let statusWaketum = data.apprWaketum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Waketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Waketum</span>`;
                             
+                            // TOMBOL ACC PENARIKAN (TETAP KHUSUS KETUM & WAKETUM)
                             let btnKetum = (!data.apprKetum && (isKetum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--royal-blue); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'KETUM', ${data.amount}, '${data.memberId}')">ACC KETUM</button>` : '';
                             let btnWaketum = (!data.apprWaketum && (isWaketum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--warning); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'WAKETUM', ${data.amount}, '${data.memberId}')">ACC WAKETUM</button>` : '';
                             let btnTolak = `<button class="btn-submit bg-cancel" style="padding:8px; margin:0; font-size:11px; flex:0.5;" onclick="window.rejectKlaim('${data.id}', false, ${data.amount}, '${data.memberId}')">TOLAK</button>`;
