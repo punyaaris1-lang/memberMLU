@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "18.5_ABSENSI_FIX"; 
+        const DASH_VERSION = "18.6_CLICK_FIX"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -28,8 +28,9 @@
             --navy-dark: #071022;
         }
 
+        /* PERBAIKAN RUANG BAWAH BIAR GAK KETUTUP TOMBOL SOS */
         body { 
-            margin: 0; font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 100px; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
+            margin: 0; font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 180px; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
             background-color: var(--bg-surface);
             background-image: radial-gradient(at 0% 0%, #FFFFFF 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, #FFFFFF 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(45, 99, 237, 0.1) 0px, transparent 50%);
             background-attachment: fixed;
@@ -88,12 +89,15 @@
         .banner-icon { font-size: 18px; color: var(--royal-blue); transition: 0.4s; background: var(--bg-body); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .fc-wrapper.open .banner-icon { transform: rotate(180deg); background: var(--royal-blue); color: white;}
         
+        /* FIX SCROLL TRAP LACI */
         .fc-laci { max-height: 0; overflow: hidden; transition: max-height 0.5s ease, padding 0.4s ease; background: rgba(248,250,252,0.8); border-top: 1px solid transparent;}
         .fc-wrapper.open .fc-laci { max-height: 2000px; padding: 15px 20px; border-top-color: var(--glass-border); }
         
+        /* DESAIN KARTU SLOT DALAM LACI REBORN */
         .live-slot-item { background: var(--white); border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .lsi-batre { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--success); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(16,185,129,0.2);}
         
+        /* BADGE PENGURUS DALAM KARTU SLOT LACI */
         .badge-pengurus { background: rgba(212,175,55,0.1); color: var(--gold-lux); border: 1px solid rgba(212,175,55,0.3); font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; display: inline-block; white-space: nowrap; margin-top:2px;}
 
         .btn-lihat-antrian { width: 100%; padding: 12px; background: transparent; border: 2px dashed #CBD5E1; color: var(--text-gray); border-radius: 12px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-bottom: 12px;}
@@ -174,10 +178,23 @@
         .nav-item.active { color: var(--electric-blue); transform: translateY(-4px);}
         .nav-text { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* MODALS KACA */
-        .modal-glass-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: flex-start; justify-content: center; opacity: 0; transition: opacity 0.3s; padding: 15px; overflow-y: auto; overscroll-behavior: contain;}
+        /* MODALS KACA ANTI SCROLL BUG (SUDAH DIPERBAIKI BUAT KEYBOARD) */
+        .modal-glass-overlay { 
+            position: fixed; inset: 0; 
+            background: rgba(10,34,89,0.4); backdrop-filter: blur(8px); 
+            z-index: 99999; display: none; 
+            align-items: flex-start; justify-content: center; 
+            opacity: 0; transition: opacity 0.3s; padding: 15px; 
+            overflow-y: auto; overscroll-behavior: contain;
+        }
         .modal-glass-overlay.show { opacity: 1; display: flex; }
-        .modal-glass-box { background: rgba(255,255,255,0.95); border-radius: 25px; padding: 25px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.2); transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid white; position: relative; margin: auto;}
+        .modal-glass-box { 
+            background: rgba(255,255,255,0.95); border-radius: 25px; padding: 25px; 
+            width: 100%; max-width: 350px; text-align: center; 
+            box-shadow: 0 30px 80px rgba(0,0,0,0.2); 
+            transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 1px solid white; position: relative; margin: auto;
+        }
         .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
         
         .btn-modal { padding: 14px 25px; border-radius: 14px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; border: none; cursor: pointer; flex: 1; margin: 0 5px;}
@@ -336,22 +353,23 @@
             <a href="info_mlu.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info MLU</div></a>
 
             <!-- TOMBOL ABSEN KOPDAR (KHUSUS SEMUA PENGURUS) -->
-            <a href="absensi.html" class="menu-btn" id="btnAbsenKopdar" style="display:none;">
+            <div class="menu-btn" id="btnAbsenKopdar" style="display:none; cursor:pointer; position: relative; z-index: 50;" onclick="window.location.href='absensi.html'">
                 <div class="icon-box" style="background: linear-gradient(135deg, #10B981, #059669); box-shadow: 0 5px 15px rgba(16,185,129,0.2);">
                     <i class="fas fa-qrcode"></i>
                 </div>
                 <div class="menu-title">Absen Kopdar</div>
-            </a>
+            </div>
             
             <!-- TOMBOL SUPER ADMIN PANEL (KHUSUS INTI/DEWA) -->
-            <a href="admin.html" class="menu-btn" id="btnAdminMlu" style="display:none; grid-column: span 2; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.02);">
+            <div class="menu-btn" id="btnAdminMlu" style="display:none; grid-column: span 2; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.02); cursor:pointer; position: relative; z-index: 50;" onclick="window.location.href='admin.html'">
                 <div class="icon-box ic-danger"><i class="fas fa-user-shield"></i></div>
                 <div class="menu-title" style="color: var(--danger);">Super Admin Panel</div>
-            </a>
+            </div>
         </div>
 
     </div>
 
+    <!-- FLOATING & BOTTOM NAV -->
     <div class="float-container">
         <div class="btn-sos" onclick="openSosModal()"><i class="fas fa-ambulance"></i></div>
         <a href="https://wa.me/6287722285445?text=Halo%20MAKA%20CS,%20saya%20member%20MLU%20ingin%20bertanya..." target="_blank" class="btn-wa-cs">
