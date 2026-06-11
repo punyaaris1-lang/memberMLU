@@ -9,12 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* Variabel persis dari dashboard.html */
         :root { 
             --royal-blue: #0A2259; --electric-blue: #2D63ED; --gold-lux: #D4AF37;
             --bg-surface: #E8F0F8; --text-main: #0F172A; --text-muted: #64748B; 
             --success: #10B981; --danger: #EF4444; --warning: #F59E0B;
-            --glass-bg: rgba(255, 255, 255, 0.7);
             --glass-border: rgba(255, 255, 255, 0.9);
             --glass-shadow: 0 15px 35px rgba(10, 25, 49, 0.05);
         }
@@ -29,7 +27,6 @@
         }
 
         * { box-sizing: border-box; }
-
         .container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 10;}
 
         /* Header Title */
@@ -56,64 +53,53 @@
             box-shadow: var(--glass-shadow); padding: 40px 20px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        .logo-stack {
-            position: relative;
-            width: 180px; height: 180px;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        /* Trik gambar grayscale vs color */
-        .logo-base, .logo-fill {
-            position: absolute;
-            width: 100%; height: 100%;
-            object-fit: contain;
-        }
-        .logo-base {
-            filter: grayscale(100%) opacity(0.15); /* Hitam putih & redup */
-        }
-        .logo-fill {
-            clip-path: inset(100% 0 0 0); /* Awalnya kepotong habis dari bawah */
-            transition: clip-path 0.5s linear;
-            filter: drop-shadow(0 10px 20px rgba(45, 99, 237, 0.3));
-        }
+        .logo-stack { position: relative; width: 180px; height: 180px; display: flex; justify-content: center; align-items: center; }
+        .logo-base, .logo-fill { position: absolute; width: 100%; height: 100%; object-fit: contain; }
+        .logo-base { filter: grayscale(100%) opacity(0.15); }
+        .logo-fill { clip-path: inset(100% 0 0 0); transition: clip-path 0.5s linear; filter: drop-shadow(0 10px 20px rgba(45, 99, 237, 0.3)); }
 
         /* Stats Grid Glassmorphism */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .stat-box { 
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); 
-            border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px 5px; 
-            text-align: center; box-shadow: var(--glass-shadow); 
-        }
+        .stat-box { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px 5px; text-align: center; box-shadow: var(--glass-shadow); }
         .stat-value { font-family: 'Outfit'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin-bottom: 4px; }
         .stat-label { font-family: 'Space Grotesk'; font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
 
-        /* SWIPE TO STOP BUTTON */
-        .swipe-container {
-            width: 100%; height: 65px;
-            background: rgba(239, 68, 68, 0.1); border: 2px dashed rgba(239, 68, 68, 0.3);
-            border-radius: 50px; position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            margin-top: 10px;
-        }
-        .swipe-text {
-            font-family: 'Space Grotesk'; font-size: 13px; font-weight: 900;
-            color: var(--danger); letter-spacing: 2px; pointer-events: none;
-            z-index: 1; opacity: 0.8;
-        }
-        .swipe-thumb {
-            position: absolute; left: 5px; top: 5px;
-            width: 55px; height: 51px;
-            background: linear-gradient(135deg, #EF4444, #991B1B);
-            border-radius: 50px; color: white;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
-            cursor: grab; z-index: 2; transition: left 0.1s ease-out;
-        }
-        .swipe-thumb:active { cursor: grabbing; }
+        /* TOMBOL START & SWIPE */
+        .btn-start { width: 100%; padding: 18px; border-radius: 50px; background: linear-gradient(135deg, var(--electric-blue), var(--royal-blue)); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(45, 99, 237, 0.4); letter-spacing: 2px; transition: 0.2s; }
+        .btn-start:active { transform: scale(0.95); }
+        
+        .swipe-container { width: 100%; height: 65px; background: rgba(239, 68, 68, 0.1); border: 2px dashed rgba(239, 68, 68, 0.3); border-radius: 50px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+        .swipe-text { font-family: 'Space Grotesk'; font-size: 13px; font-weight: 900; color: var(--danger); letter-spacing: 2px; pointer-events: none; z-index: 1; opacity: 0.8; }
+        .swipe-thumb { position: absolute; left: 5px; top: 5px; width: 55px; height: 51px; background: linear-gradient(135deg, #EF4444, #991B1B); border-radius: 50px; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); cursor: grab; z-index: 2; transition: left 0.1s ease-out; }
         .swipe-thumb.success { background: var(--success); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4); }
 
-        /* Lampu Ambient (Sama kaya Dashboard) */
+        /* CUSTOM POP-UP STRUK DIGITAL (MODAL) */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(10,34,89,0.5); backdrop-filter: blur(8px);
+            z-index: 9999; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease; padding: 20px;
+        }
+        .modal-overlay.show { opacity: 1; display: flex; }
+        .modal-box {
+            background: rgba(255,255,255,0.95); border-radius: 24px; padding: 30px 20px;
+            width: 100%; max-width: 340px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); border: 1px solid white;
+            transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.show .modal-box { transform: scale(1); }
+        .modal-icon { width: 65px; height: 65px; background: rgba(16,185,129,0.1); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 15px; box-shadow: 0 0 20px rgba(16,185,129,0.2);}
+        .modal-title { font-family: 'Outfit'; font-size: 22px; font-weight: 900; color: var(--royal-blue); margin-bottom: 5px; }
+        .modal-subtitle { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .receipt-box { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 16px; padding: 15px; text-align: left; margin-bottom: 20px; }
+        .receipt-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; }
+        .receipt-row span:last-child { color: var(--text-main); font-family: 'Space Grotesk'; }
+        .receipt-row.total { border-top: 1px dashed #CBD5E1; padding-top: 12px; margin-top: 5px; font-family: 'Outfit'; font-size: 18px; font-weight: 900; color: var(--royal-blue); margin-bottom: 0;}
+        .receipt-row.total span:last-child { color: var(--danger); }
+        
+        .btn-modal-close { width: 100%; padding: 16px; background: var(--electric-blue); color: white; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 0 10px 20px rgba(45,99,237,0.3); transition: 0.2s;}
+        .btn-modal-close:active { transform: scale(0.95); }
+
         .ambient-light { position: fixed; border-radius: 50%; filter: blur(90px); z-index: -1; opacity: 0.5; animation: floatLight 12s infinite alternate; }
         .light-1 { top: -10%; left: -20%; width: 500px; height: 500px; background: rgba(45, 99, 237, 0.15); }
         .light-2 { bottom: -10%; right: -20%; width: 450px; height: 450px; background: rgba(212, 175, 55, 0.15); animation-delay: -4s; }
@@ -126,7 +112,6 @@
     <div class="ambient-light light-2"></div>
 
     <div class="container">
-        
         <div class="top-header">
             <div class="greet-txt">CHARGING...</div>
             <div class="sub-txt"><i class="fas fa-bolt"></i> MLU FAST CHARGE</div>
@@ -135,7 +120,7 @@
         <div class="vip-card">
             <div class="wallet-title">SISA SALDO DOMPET</div>
             <div class="wallet-balance" id="sisa-saldo">Rp 20.000</div>
-            <div class="wallet-sub">Terpakai: <span id="saldo-terpakai" style="color: var(--warning);">Rp 0</span></div>
+            <div class="wallet-sub">Estimasi Terpakai: <span id="saldo-terpakai" style="color: var(--warning);">Rp 0</span></div>
         </div>
 
         <div class="fc-wrapper">
@@ -163,15 +148,54 @@
             </div>
         </div>
 
-        <div class="swipe-container" id="swipe-container">
+        <div id="start-container" style="margin-top: 10px;">
+            <button class="btn-start" onclick="mulaiNgecas()"><i class="fas fa-bolt"></i> MULAI PENGISIAN</button>
+        </div>
+
+        <div class="swipe-container" id="swipe-container" style="display: none;">
             <div class="swipe-text" id="swipe-text">GESER UNTUK BERHENTI</div>
             <div class="swipe-thumb" id="swipe-thumb"><i class="fas fa-angle-double-right"></i></div>
         </div>
+    </div>
 
+    <div class="modal-overlay" id="modal-receipt">
+        <div class="modal-box">
+            <div class="modal-icon"><i class="fas fa-check"></i></div>
+            <div class="modal-title">PENGISIAN SELESAI</div>
+            <div class="modal-subtitle" id="receipt-date">10 JUNI 2026 • 17:30 WIB</div>
+            
+            <div class="receipt-box">
+                <div class="receipt-row">
+                    <span>Durasi Cas</span>
+                    <span id="rec-durasi">00:00</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Daya Masuk</span>
+                    <span id="rec-kwh">0.00 kWh</span>
+                </div>
+                <div class="receipt-row" style="margin-top: 15px; border-top: 1px dashed #E2E8F0; padding-top: 10px;">
+                    <span>Biaya Listrik (Rp 2.100/kWh)</span>
+                    <span id="rec-biaya-listrik">Rp 0</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Biaya Layanan (Rp 500/Jam)</span>
+                    <span id="rec-biaya-layanan">Rp 0</span>
+                </div>
+                <div class="receipt-row total">
+                    <span>TOTAL BAYAR</span>
+                    <span id="rec-total">Rp 0</span>
+                </div>
+            </div>
+
+            <div style="background: rgba(16,185,129,0.1); color: var(--success); padding: 10px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-bottom: 20px;">
+                SISA SALDO: <span id="rec-sisa-saldo" style="font-family: 'Space Grotesk'; font-size: 14px;">Rp 0</span>
+            </div>
+
+            <button class="btn-modal-close" onclick="kembaliKeHome()"><i class="fas fa-home"></i> KEMBALI KE DASHBOARD</button>
+        </div>
     </div>
 
     <script>
-        // Konfigurasi Bisnis MLU
         const TARIF_LISTRIK_KWH = 2100; 
         const TARIF_LAYANAN_JAM = 500;  
         const DAYA_KW = 3.5; 
@@ -180,26 +204,33 @@
         let biayaReal = 0; 
         let secondsElapsed = 0;
         let kwhConsumed = 0.000;
-        let isCharging = true;
+        let isCharging = false;
         let chargingInterval;
         
-        const formatRp = (angka) => 'Rp ' + angka.toLocaleString('id-ID');
+        const formatRp = (angka) => 'Rp ' + Math.round(angka).toLocaleString('id-ID');
+
+        function mulaiNgecas() {
+            document.getElementById('start-container').style.display = 'none';
+            document.getElementById('swipe-container').style.display = 'flex';
+            setTimeout(initSwipe, 50); 
+            
+            isCharging = true;
+            chargingInterval = setInterval(updateDashboard, 100); // 100ms buat simulasi cepat
+        }
 
         function updateDashboard() {
             if (!isCharging) return;
             secondsElapsed++;
             
-            // Logika hitungan asli per detik
             kwhConsumed += (DAYA_KW / 3600);
             biayaReal = (kwhConsumed * TARIF_LISTRIK_KWH) + ((secondsElapsed / 3600) * TARIF_LAYANAN_JAM);
             
-            // Logika tampilan (Dibulatkan kelipatan 1000 ke bawah biar tenang)
+            // Di layar, potong kelipatan 1000 biar mata tenang
             let biayaTampil = Math.floor(biayaReal / 1000) * 1000; 
             let sisaTampil = SALDO_AWAL - biayaTampil;
 
-            if (SALDO_AWAL - biayaReal <= 0) { cutOffPower(); return; }
+            if (SALDO_AWAL - biayaReal <= 0) { prosesSelesai(true); return; }
 
-            // Update Teks DOM
             document.getElementById('sisa-saldo').innerText = formatRp(sisaTampil);
             document.getElementById('saldo-terpakai').innerText = formatRp(biayaTampil);
             
@@ -208,22 +239,13 @@
             document.getElementById('time-display').innerText = `${m}:${s}`;
             document.getElementById('kwh-display').innerText = kwhConsumed.toFixed(2);
 
-            // Update Animasi Naik Logo Gambar
             let persentase = (biayaReal / SALDO_AWAL) * 100;
             if (persentase > 100) persentase = 100;
             document.getElementById('logo-fill').style.clipPath = `inset(${100 - persentase}% 0 0 0)`;
         }
 
-        function cutOffPower() {
-            isCharging = false;
-            clearInterval(chargingInterval);
-            document.getElementById('swipe-text').innerText = 'SALDO HABIS (CUT OFF)';
-        }
-
-        chargingInterval = setInterval(updateDashboard, 100); // 100ms buat simulasi cepat
-
         // ==========================================
-        // LOGIKA SWIPE TO STOP (Anti Kepencet)
+        // LOGIKA SWIPE TO STOP 
         // ==========================================
         const thumb = document.getElementById('swipe-thumb');
         const container = document.getElementById('swipe-container');
@@ -234,47 +256,39 @@
         let thumbLeft = 5; 
         let maxScroll = 0;
 
-        function initSwipe() {
-            // Lebar container dikurang lebar thumb dikurang padding
-            maxScroll = container.offsetWidth - thumb.offsetWidth - 10; 
-        }
+        function initSwipe() { maxScroll = container.offsetWidth - thumb.offsetWidth - 10; }
         window.addEventListener('resize', initSwipe);
-        initSwipe();
 
         thumb.addEventListener('touchstart', (e) => {
             if(!isCharging) return;
             isDragging = true;
             startX = e.touches[0].clientX - thumbLeft;
-            thumb.style.transition = 'none'; // Matiin transisi biar mulus ngikutin jari
+            thumb.style.transition = 'none'; 
         });
 
         thumb.addEventListener('touchmove', (e) => {
             if (!isDragging || !isCharging) return;
-            
             let currentX = e.touches[0].clientX - startX;
-            
             if (currentX < 5) currentX = 5;
             if (currentX > maxScroll) currentX = maxScroll;
             
             thumbLeft = currentX;
             thumb.style.left = thumbLeft + 'px';
-            
-            // Bikin tulisan perlahan hilang saat ditarik
             swipeText.style.opacity = 1 - (thumbLeft / maxScroll);
         });
 
         thumb.addEventListener('touchend', (e) => {
             if (!isDragging || !isCharging) return;
             isDragging = false;
-            thumb.style.transition = 'left 0.3s ease-out'; // Nyalain lagi transisi buat snap
+            thumb.style.transition = 'left 0.3s ease-out'; 
 
-            // Kalau tarikan kurang dari 80%, balik ke kiri
             if (thumbLeft < maxScroll * 0.8) {
+                // Tarikan nanggung, balik ke awal
                 thumbLeft = 5;
                 thumb.style.left = '5px';
                 swipeText.style.opacity = 0.8;
             } else {
-                // Berhasil di-swipe pol ke kanan!
+                // Tarikan sukses
                 thumbLeft = maxScroll;
                 thumb.style.left = maxScroll + 'px';
                 thumb.innerHTML = '<i class="fas fa-check"></i>';
@@ -282,16 +296,60 @@
                 swipeText.innerText = 'MEMPROSES...';
                 swipeText.style.opacity = 1;
                 
-                // Matikan sistem ngecas
-                isCharging = false;
-                clearInterval(chargingInterval);
-                
-                // Timeout dikit biar ada animasi selesai
-                setTimeout(() => {
-                    alert(`Sesi Selesai!\nTotal Biaya Real: Rp ${Math.round(biayaReal)}\n\n(Nanti disini bisa panggil fungsi update saldo ke Firebase)`);
-                }, 500);
+                prosesSelesai(false);
             }
         });
+
+        // ==========================================
+        // PROSES MUNCULIN STRUK
+        // ==========================================
+        function prosesSelesai(karenaSaldoHabis) {
+            isCharging = false;
+            clearInterval(chargingInterval);
+            
+            if(karenaSaldoHabis) document.getElementById('swipe-text').innerText = 'SALDO HABIS (CUT OFF)';
+
+            // Bikin jeda 1 detik seolah-olah lagi loading nembak database
+            setTimeout(() => {
+                tampilkanStruk();
+            }, 1000);
+        }
+
+        function tampilkanStruk() {
+            // Kalkulasi real time rincian
+            let detailListrik = kwhConsumed * TARIF_LISTRIK_KWH;
+            let detailLayanan = (secondsElapsed / 3600) * TARIF_LAYANAN_JAM;
+            let totalAkhir = detailListrik + detailLayanan;
+            let sisaAkhir = SALDO_AWAL - totalAkhir;
+            if(sisaAkhir < 0) sisaAkhir = 0;
+
+            const m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+            const s = (secondsElapsed % 60).toString().padStart(2, '0');
+            
+            // Masukin data ke DOM Pop-Up
+            document.getElementById('rec-durasi').innerText = `${m} Menit ${s} Detik`;
+            document.getElementById('rec-kwh').innerText = `${kwhConsumed.toFixed(2)} kWh`;
+            document.getElementById('rec-biaya-listrik').innerText = formatRp(detailListrik);
+            document.getElementById('rec-biaya-layanan').innerText = formatRp(detailLayanan);
+            document.getElementById('rec-total').innerText = formatRp(totalAkhir);
+            document.getElementById('rec-sisa-saldo').innerText = formatRp(sisaAkhir);
+            
+            // Format Tanggal
+            const now = new Date();
+            const ops = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('receipt-date').innerText = now.toLocaleString('id-ID', ops).toUpperCase().replace(',', ' •') + ' WIB';
+
+            // Tampilkan Modal Animation
+            const modal = document.getElementById('modal-receipt');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.classList.add('show'); }, 10);
+        }
+
+        function kembaliKeHome() {
+            // Nanti lu arahin ke file dashboard lu:
+            // window.location.href = "dashboard.html";
+            alert("Akan kembali ke halaman utama dashboard!");
+        }
     </script>
 </body>
 </html>
