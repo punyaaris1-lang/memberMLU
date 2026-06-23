@@ -7,7 +7,7 @@
     
     <script>
         // PENGHANCUR CACHE BIAR UPDATE LANGSUNG JALAN
-        const TABUNGAN_VERSION = "5.1_PENGURUS_ACCESS_FIX"; 
+        const TABUNGAN_VERSION = "5.2_SEKBEN_ACCESS"; 
         if (localStorage.getItem('maka_tabungan_v') !== TABUNGAN_VERSION) {
             if ('caches' in window) {
                 caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
@@ -479,7 +479,6 @@
         const isBendahara = roleUpper.includes("BENDAHARA");
         const isSuperAdmin = (cleanPlat === "B4248SWF" || uData.id === "ghost_admin");
         
-        // PENGURUS INTI DAPAT AKSES ADMIN TABUNGAN (INPUT SETORAN, DLL)
         const isTrueAdmin = isKetum || isWaketum || isSekretaris || isBendahara || isSuperAdmin || (cleanPlat === "B4650SWE");
         let isViewAdminVisible = isTrueAdmin; 
 
