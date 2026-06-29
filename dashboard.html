@@ -6,7 +6,7 @@
     <title>MLU - Premium Dashboard</title>
     
     <script>
-        const DASH_VERSION = "18.7_CLICK_FIX"; 
+        const DASH_VERSION = "18.7_WARNING_POPUP"; 
         if (localStorage.getItem('maka_dash_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_dash_v', DASH_VERSION); window.location.reload(true); 
@@ -28,7 +28,6 @@
             --navy-dark: #071022;
         }
 
-        /* PERBAIKAN RUANG BAWAH BIAR GAK KETUTUP TOMBOL SOS */
         body { 
             margin: 0; font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 180px; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
             background-color: var(--bg-surface);
@@ -89,15 +88,12 @@
         .banner-icon { font-size: 18px; color: var(--royal-blue); transition: 0.4s; background: var(--bg-body); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .fc-wrapper.open .banner-icon { transform: rotate(180deg); background: var(--royal-blue); color: white;}
         
-        /* FIX SCROLL TRAP LACI */
         .fc-laci { max-height: 0; overflow: hidden; transition: max-height 0.5s ease, padding 0.4s ease; background: rgba(248,250,252,0.8); border-top: 1px solid transparent;}
         .fc-wrapper.open .fc-laci { max-height: 2000px; padding: 15px 20px; border-top-color: var(--glass-border); }
         
-        /* DESAIN KARTU SLOT DALAM LACI REBORN */
         .live-slot-item { background: var(--white); border: 1px solid #E2E8F0; border-radius: 16px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .lsi-batre { font-family: 'Space Grotesk'; font-size: 16px; font-weight: 900; color: var(--success); background: rgba(16,185,129,0.1); padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(16,185,129,0.2);}
         
-        /* BADGE PENGURUS DALAM KARTU SLOT LACI */
         .badge-pengurus { background: rgba(212,175,55,0.1); color: var(--gold-lux); border: 1px solid rgba(212,175,55,0.3); font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; display: inline-block; white-space: nowrap; margin-top:2px;}
 
         .btn-lihat-antrian { width: 100%; padding: 12px; background: transparent; border: 2px dashed #CBD5E1; color: var(--text-gray); border-radius: 12px; font-family: 'Space Grotesk'; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; margin-bottom: 12px;}
@@ -166,7 +162,7 @@
         .ic-danger { background: linear-gradient(135deg, #EF4444, #991B1B); box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2);} 
         .menu-title { font-family: 'Outfit'; font-size: 13px; font-weight: 800; color: var(--royal-blue); letter-spacing: 0.5px;}
 
-        /* --- FLOATING & BOTTOM NAV ASLI (MEMBER BIASA) --- */
+        /* --- FLOATING & BOTTOM NAV --- */
         .float-container { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 2000; }
         .btn-sos { width: 55px; height: 55px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 2px solid white; transition: 0.2s; background: linear-gradient(135deg, #ef4444, #b91c1c); animation: pulseSOS 2s infinite; }
         .btn-sos:active { transform: scale(0.9); }
@@ -177,25 +173,6 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #94A3B8; transition: 0.3s; gap: 4px; text-decoration: none;}
         .nav-item.active { color: var(--electric-blue); transform: translateY(-4px);}
         .nav-text { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
-
-        /* --- CSS TAMBAHAN: DOCK KHUSUS PENGURUS (DEFAULT SEMBUNYI) --- */
-        .dock-pengurus {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; background: white; border-radius: 30px;
-            display: none; justify-content: space-between; align-items: center;
-            padding: 10px 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); z-index: 10000;
-        }
-        .dock-pengurus.show { display: flex; }
-        .nav-item-dock { display: flex; flex-direction: column; align-items: center; color: #a0aec0; font-size: 0.75rem; font-weight: bold; flex: 1; text-decoration: none;}
-        .nav-item-dock.active { color: var(--electric-blue); }
-        .scan-btn-wrapper { flex: 1; display: flex; justify-content: center; margin-top: -35px; cursor: pointer;}
-        .scan-circle {
-            background: linear-gradient(135deg, var(--electric-blue), var(--royal-blue));
-            width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 8px 20px rgba(45, 99, 237, 0.4); border: 5px solid var(--bg-surface);
-            color: white; font-size: 1.5rem; transition: 0.2s;
-        }
-        .scan-circle:active { transform: scale(0.9); }
 
         /* MODALS KACA ANTI SCROLL BUG (SUDAH DIPERBAIKI BUAT KEYBOARD) */
         .modal-glass-overlay { 
@@ -248,6 +225,53 @@
         .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1);}
         .btn-submit { width: 100%; padding: 16px; background: var(--electric-blue); color: white; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; box-shadow: 0 10px 20px rgba(45,99,237,0.3); transition: 0.2s;}
         .btn-logout-modal { width: 100%; padding: 16px; background: white; color: var(--danger); border: 2px solid rgba(239,68,68,0.2); border-radius: 16px; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s;}
+
+        /* --- WARNING POPUP MAX 95% --- */
+        .warning-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; padding: 20px; z-index: 105000;
+        }
+        .warning-box {
+            background: #FFFFFF; border-radius: 24px; padding: 0; overflow: hidden;
+            width: 100%; max-width: 380px; box-shadow: 0 25px 50px rgba(239, 68, 68, 0.4);
+            border: 2px solid #EF4444; 
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .warning-header {
+            background: #EF4444; padding: 25px 20px 20px; text-align: center; color: white;
+            position: relative; overflow: hidden;
+        }
+        .warning-header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient( 45deg, transparent, transparent 10px, rgba(0,0,0,0.1) 10px, rgba(0,0,0,0.1) 20px );
+            z-index: 1;
+        }
+        .warning-icon { 
+            font-size: 55px; margin-bottom: 10px; position: relative; z-index: 2;
+            animation: blinkFast 1s infinite alternate; text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        @keyframes blinkFast { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0.8; transform: scale(0.95); } }
+        .warning-title { 
+            font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 900; 
+            margin: 0; line-height: 1.1; letter-spacing: -0.5px; position: relative; z-index: 2;
+        }
+        .warning-body { padding: 25px 20px; text-align: center; }
+        .warning-text-1 { 
+            font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 900; color: #0F172A; margin-bottom: 15px; 
+            line-height: 1.4; text-transform: uppercase;
+        }
+        .warning-text-2 { 
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800; color: #7F1D1D; 
+            background: #FEF2F2; padding: 15px; border-radius: 12px; 
+            border: 2px dashed #FCA5A5; line-height: 1.6;
+        }
+        .btn-mengerti {
+            width: 100%; background: #0F172A; color: #FFFFFF; border: none; padding: 20px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 900;
+            cursor: pointer; transition: 0.2s; letter-spacing: 1px; display: flex; justify-content: center; gap: 8px;
+        }
+        .btn-mengerti:active { background: #1E293B; }
     </style>
 </head>
 <body>
@@ -255,6 +279,28 @@
     <div id="actionLoader" style="position:fixed; inset:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(5px); z-index:999999; display:none; flex-direction:column; align-items:center; justify-content:center; opacity:0; transition:0.3s;">
         <div style="width:50px; height:50px; border:5px solid #E2E8F0; border-top:5px solid var(--electric-blue); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:15px;"></div>
         <div style="font-family:'Space Grotesk'; font-weight:900; color:var(--royal-blue); letter-spacing:2px;">MEMPROSES...</div>
+    </div>
+
+    <!-- WARNING POPUP -->
+    <div class="warning-overlay" id="warningPopupOverlay">
+        <div class="warning-box">
+            <div class="warning-header">
+                <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <h2 class="warning-title">CHARGING MAX 95%</h2>
+            </div>
+            <div class="warning-body">
+                <div class="warning-text-1">
+                    HARAP TETAP SIUMAN SAAT MOTOR ANDA DI CAS DAN PANTAU AGAR TIDAK LEBIH DARI 95%.
+                </div>
+                <div class="warning-text-2">
+                    <i class="fas fa-bullhorn" style="font-size: 16px; margin-bottom: 8px; color: #EF4444; display: block;"></i>
+                    KORLAP DAN SATGAS MLU TUGASNYA HANYA MEMASTIKAN ANTREAN BERJALAN LANCAR, BUKAN JAGAIN MOTOR SAAT ANDA TIDUR!
+                </div>
+            </div>
+            <button class="btn-mengerti" onclick="document.getElementById('warningPopupOverlay').style.display='none'">
+                <i class="fas fa-check-double"></i> SAYA PAHAM & SIAP PANTAU
+            </button>
+        </div>
     </div>
 
     <div class="ambient-light light-1"></div>
@@ -371,7 +417,6 @@
             <a href="pengurus.html" class="menu-btn"><div class="icon-box ic-pengurus"><i class="fas fa-sitemap"></i></div><div class="menu-title">Pengurus</div></a>
             <a href="info_mlu.html" class="menu-btn"><div class="icon-box ic-info"><i class="fas fa-info-circle"></i></div><div class="menu-title">Info MLU</div></a>
 
-            <!-- TOMBOL ABSEN KOPDAR (KHUSUS SEMUA PENGURUS) -->
             <div class="menu-btn" id="btnAbsenKopdar" style="display:none; cursor:pointer; position: relative; z-index: 50;" onclick="window.location.href='absensi.html'">
                 <div class="icon-box" style="background: linear-gradient(135deg, #10B981, #059669); box-shadow: 0 5px 15px rgba(16,185,129,0.2);">
                     <i class="fas fa-qrcode"></i>
@@ -379,7 +424,6 @@
                 <div class="menu-title">Absen Kopdar</div>
             </div>
             
-            <!-- TOMBOL SUPER ADMIN PANEL (KHUSUS INTI/DEWA) -->
             <div class="menu-btn" id="btnAdminMlu" style="display:none; grid-column: span 2; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.02); cursor:pointer; position: relative; z-index: 50;" onclick="window.location.href='admin.html'">
                 <div class="icon-box ic-danger"><i class="fas fa-user-shield"></i></div>
                 <div class="menu-title" style="color: var(--danger);">Super Admin Panel</div>
@@ -388,7 +432,6 @@
 
     </div>
 
-    <!-- FLOATING & BOTTOM NAV ASLI (MEMBER BIASA) -->
     <div class="float-container">
         <div class="btn-sos" onclick="openSosModal()"><i class="fas fa-ambulance"></i></div>
         <a href="https://wa.me/6287722285445?text=Halo%20MAKA%20CS,%20saya%20member%20MLU%20ingin%20bertanya..." target="_blank" class="btn-wa-cs">
@@ -400,26 +443,6 @@
         <a href="lokasi_fc.html" class="nav-item"><i class="fas fa-map-marker-alt"></i><span class="nav-text">LOKASI</span></a>
         <a href="dashboard.html" class="nav-item active"><i class="fas fa-home"></i><span class="nav-text">HOME</span></a>
         <a href="setting.html" class="nav-item"><i class="fas fa-user-cog"></i><span class="nav-text">PROFIL</span></a>
-    </div>
-
-    <!-- FLOATING DOCK KHUSUS PENGURUS (BETA TEST CHARGING) -->
-    <div class="dock-pengurus" id="dockBetaTester">
-        <a href="dashboard.html" class="nav-item-dock active">
-            <span style="font-size: 1.2rem; margin-bottom: 2px;">🏠</span>
-            <span>HOME</span>
-        </a>
-
-        <!-- Tombol Scan Barcode -> Pindah ke charging.html -->
-        <div class="scan-btn-wrapper" onclick="bukaSimulasiCas()">
-            <div class="scan-circle">
-                <i class="fas fa-qrcode"></i>
-            </div>
-        </div>
-
-        <a href="lokasi_fc.html" class="nav-item-dock">
-            <span style="font-size: 1.2rem; margin-bottom: 2px;">📍</span>
-            <span>LOKASI FC</span>
-        </a>
     </div>
 
     <div class="modal-glass-overlay" id="modalInbox" style="align-items: flex-end;" onclick="tutupInbox(event)">
@@ -485,7 +508,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, getDocs, query, where, orderBy, limit, addDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // === ILMU HITAM ONESIGNAL (PISTOL PENEMBAK NOTIF) ===
         window.tembakNotif = function(judul, isi) {
             fetch("https://onesignal.com/api/v1/notifications", {
                 method: "POST",
@@ -501,7 +523,6 @@
                 })
             }).catch(err => console.error("Notif Gagal:", err));
         };
-        // ====================================================
 
         window.showActionLoader = () => {
             const l = document.getElementById('actionLoader');
@@ -555,7 +576,6 @@
         const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
         let userId = uData.id || myPlatClean;
 
-        // === FUNGSI PENCATATAN SUPER LOG CCTV ===
         function catatSuperLog(aksi, detailAksi) {
             try {
                 addDoc(collection(dbGading, "mlu_super_logs"), {
@@ -570,6 +590,9 @@
             } catch(e) { console.error("Gagal nyatet super log:", e); }
         }
 
+        const platAdminKhusus = ["B4231SWF", "B4146SWH", "B4769SWE", "B4457SWF", "B4248SWF"];
+        const isKhusus = platAdminKhusus.includes(myPlatClean);
+
         document.getElementById('displayDate').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' }).toUpperCase();
         const hr = new Date().getHours();
         document.getElementById('greetingText').innerText = hr<10?"Selamat Pagi,":hr<15?"Selamat Siang,":hr<18?"Selamat Sore,":"Selamat Malam,";
@@ -578,45 +601,17 @@
         document.getElementById('userPlat').innerHTML = `<i class="fas fa-car" style="font-size: 10px; margin-right: 5px;"></i> ${myPlat}`;
         if (uData.foto && typeof uData.foto === 'string' && uData.foto.length > 50) document.getElementById('userPhoto').src = uData.foto;
 
-        // =========================================================================
-        // HAK AKSES MENU (DIPERBAIKI)
-        // =========================================================================
         const roleCek = (uData.role || "").toUpperCase();
         
-        // 1. PENGURUS: Siapapun yang punya jabatan selain "KELUARGA MLU" dan "GUEST"
         const isPengurus = roleCek !== "" && roleCek !== "KELUARGA MLU" && roleCek !== "GUEST";
         
-        // 2. SUPER ADMIN: Khusus Inti (Ketum, Waketum, Bendahara, Sekjen) atau Plat Khusus
-        const platAdminKhusus = ["B4231SWF", "B4146SWH", "B4769SWE", "B4457SWF", "B4248SWF"];
-        const isKhusus = platAdminKhusus.includes(myPlatClean);
         const isSuperAdminAccess = roleCek.includes("KETUM") || roleCek === "KETUA UMUM" || roleCek.includes("WAKIL") || roleCek.includes("BENDAHARA") || roleCek.includes("SEKRETARIS") || isKhusus || uData.isSuperAdmin || uData.id === "ghost_admin";
 
-        // Buka Tombol Absen untuk SEMUA PENGURUS
         if (isPengurus || isSuperAdminAccess) {
             const btnAbsen = document.getElementById('btnAbsenKopdar'); 
             if(btnAbsen) btnAbsen.style.display = 'flex';
-
-            // --- TAMBAHAN BARU: MUNCULIN DOCK CHARGING BUAT PENGURUS ---
-            const dockBeta = document.getElementById('dockBetaTester');
-            if(dockBeta) dockBeta.classList.add('show');
-            
-            // Sembunyiin dock lama (dock-container asli bawaan) biar gak numpuk
-            const dockLama = document.querySelector('.dock-container');
-            if(dockLama) dockLama.style.display = 'none';
-            
-            // Sembunyiin tombol SOS & WA biar bawahnya lega
-            const floatCont = document.querySelector('.float-container');
-            if(floatCont) floatCont.style.display = 'none';
         }
 
-        // Fungsi untuk pindah ke simulasi charging (Nyambung ke charging.html)
-        window.bukaSimulasiCas = () => {
-            if(confirm("Ini hanya Simulasi Scan Seandainya MLU punya FC.\n\nKlik OK untuk masuk ke halaman Active Charging (charging.html).")) {
-                window.location.href = "charging.html"; 
-            }
-        };
-
-        // Buka Tombol Panel Admin HANYA untuk SUPER ADMIN
         if (isSuperAdminAccess) {
             const btnAdmin = document.getElementById('btnAdminMlu'); 
             if(btnAdmin) btnAdmin.style.display = 'flex';
@@ -625,7 +620,6 @@
             if(btnAdminLaci) btnAdminLaci.style.setProperty('display', 'flex', 'important');
         }
 
-        // --- CUSTOM ROLE VIP CARD ---
         if (myPlatClean === "B4248SWF") {
             document.getElementById('userRole').innerHTML = `<i class="fas fa-crown"></i> KELUARGA MLU`; 
         } else if (myPlatClean === "B4794SWF") {
@@ -656,7 +650,6 @@
 
         window.toggleFCAccordion = () => { document.getElementById('fcAccordion').classList.toggle('open'); }
 
-        // --- SISTEM TELEPATI (SYNC NAMA REALTIME DARI DATABASE ANGGOTA) ---
         window.memberDict = {};
         onSnapshot(collection(db, "mlu_members"), (snap) => {
             snap.forEach(doc => {
@@ -671,10 +664,9 @@
             const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; updateFCUI();
         });
 
-        // FUNGSI PENGAMAN STRING
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
-        function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+        function escapeHtml(text) { if (!text) return ""; return text.replace(/&/g, "&lt;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
         function getRoleBadge(role, plat) {
             let cPlat = cleanStr(plat);
@@ -736,7 +728,6 @@
                     let bat = s.batreSisa || s.batre || s.battery || "-";
                     let kudetaBtn = '';
                     
-                    // --- SYNC NAMA DARI DATABASE ANGGOTA ---
                     let dispName = cleanName(s.userName);
                     if(window.memberDict[cleanStr(s.plat)]) dispName = cleanName(window.memberDict[cleanStr(s.plat)].nama);
                     
@@ -831,6 +822,9 @@
                     await updateDoc(refGading, { waitingQueue: q }); 
                     catatSuperLog("DAFTAR_ANTREAN", `Masuk daftar antrean (Batre: ${b}%)`);
                     window.hideActionLoader(); tutupDaftarAntrian(); document.getElementById('fcAccordion').classList.add('open');
+                    
+                    // MUNCULIN WARNING POPUP SETELAH DAFTAR SUKSES
+                    setTimeout(() => { document.getElementById('warningPopupOverlay').style.display = 'flex'; }, 300);
                 } 
             } catch(e) { window.hideActionLoader(); setTimeout(()=>alert("ERROR: " + (e.message || e)), 350); } 
         }
