@@ -6,135 +6,152 @@
     <title>MLU - Secure Savings</title>
     
     <script>
-        // PENGHANCUR CACHE BIAR UPDATE LANGSUNG JALAN
-        const TABUNGAN_VERSION = "5.2_SEKBEN_ACCESS"; 
+        const TABUNGAN_VERSION = "ELITE_V2.4_TABUNGAN"; 
         if (localStorage.getItem('maka_tabungan_v') !== TABUNGAN_VERSION) {
-            if ('caches' in window) {
-                caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); });
-            }
+            if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_tabungan_v', TABUNGAN_VERSION);
             window.location.reload(true); 
         }
     </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
     <style>
-        /* === TEMA ULTRA LUXURY MLU (BIRU & EMAS) === */
-        :root { 
-            --royal-blue: #0A2259; --electric-blue: #2D63ED; 
-            --gold-lux: #D4AF37; --bg-surface: #F0F4F8; 
-            --text-main: #0F172A; --white: #FFFFFF; 
-            --danger: #EF4444; --success: #10B981; --warning: #F59E0B;
+        :root {
+            --bg-canvas: #F4F7FC; --obsidian: #0A1128; --cyan-glow: #00E5FF;
+            --gold-lux: #C5A059; --text-main: #0F172A; --text-muted: #64748B;
+            --success: #059669; --warning: #D97706; --danger: #DC2626;
+            --electric-blue: #2D63ED; --fresh-teal: #0EA5E9; 
+            --success-glow: #059669; --danger-glow: #E11D48;
+            --border-light: #E2E8F0;
         }
-        body { margin:0; background:var(--bg-surface); font-family:'Inter',sans-serif; color:var(--text-main); overflow-x:hidden; user-select:none; -webkit-tap-highlight-color: transparent;}
-        * { box-sizing: border-box; outline: none; }
         
-        /* SECURITY UI */
-        #securityScreen { position: fixed; inset: 0; background: #F8FAFC; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s; }
-        .sec-icon-box { width: 90px; height: 90px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 50px rgba(45,99,237,0.2); margin-bottom: 20px; position: relative; overflow: hidden; }
-        .sec-icon-box i { font-size: 35px; color: var(--electric-blue); z-index: 2; }
-        .scan-laser { position: absolute; width: 100%; height: 3px; background: var(--success); top: 0; animation: scanDown 1.5s infinite; opacity: 0.7; box-shadow: 0 0 15px var(--success); z-index: 1; }
+        body { 
+            margin: 0; padding: 0; background-color: var(--bg-canvas);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.05), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(197, 160, 89, 0.06), transparent 40%),
+                linear-gradient(rgba(10, 17, 40, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 17, 40, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            font-family: 'Montserrat', sans-serif; color: var(--text-main);
+            overflow-x:hidden; user-select:none; -webkit-tap-highlight-color: transparent;
+        }
+        
+        * { box-sizing: border-box; outline: none; text-decoration: none;}
+        
+        .bg-watermark { position: fixed; bottom: -10%; right: -25%; height: 100vh; opacity: 0.08; transform: scale(1.1) rotate(-15deg); z-index: -2; pointer-events: none; user-select: none; }
+
+        /* SECURITY UI (GLASSMORPHISM) */
+        #securityScreen { position: fixed; inset: 0; background: rgba(244, 247, 252, 0.95); backdrop-filter: blur(20px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.5s; }
+        .sec-icon-box { width: 90px; height: 90px; border-radius: 50%; background: var(--obsidian); display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 35px rgba(10,17,40,0.3); margin-bottom: 20px; position: relative; overflow: hidden; border: 2px solid var(--gold-lux);}
+        .sec-icon-box i { font-size: 35px; color: var(--gold-lux); z-index: 2; }
+        .scan-laser { position: absolute; width: 100%; height: 3px; background: var(--fresh-teal); top: 0; animation: scanDown 1.5s infinite; opacity: 0.8; box-shadow: 0 0 15px var(--fresh-teal); z-index: 1; }
         @keyframes scanDown { 0% {top:0;} 50% {top:100%;} 100% {top:0;} }
         
-        .camera-container { width: 220px; height: 220px; border-radius: 40px; overflow: hidden; position: relative; border: 4px solid white; box-shadow: 0 20px 60px rgba(0,0,0,0.15); background: #000; display: none; margin-bottom: 20px; }
+        .camera-container { width: 220px; height: 220px; border-radius: 40px; overflow: hidden; position: relative; border: 4px solid white; box-shadow: 0 20px 60px rgba(10,17,40,0.15); background: #000; display: none; margin-bottom: 20px; }
         #videoInput { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         
         .face-frame { position: absolute; inset: 15px; border: 3px dashed rgba(255,255,255,0.8); border-radius: 30px; transition: all 0.3s; pointer-events: none; }
-        .face-frame.scanning { border: 4px solid #10B981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.8), inset 0 0 30px rgba(16, 185, 129, 0.8); animation: facePulse 0.8s infinite alternate; }
+        .face-frame.scanning { border: 4px solid var(--fresh-teal); box-shadow: 0 0 30px rgba(14,165,233, 0.8), inset 0 0 30px rgba(14,165,233, 0.8); animation: facePulse 0.8s infinite alternate; }
         @keyframes facePulse { 0% { transform: scale(0.98); opacity: 0.7;} 100% { transform: scale(1.02); opacity: 1;} }
 
-        .btn-action { width: 100%; max-width: 250px; padding: 16px; border: none; border-radius: 16px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 10px 30px rgba(45,99,237,0.25); background: var(--electric-blue); color: white; transition: 0.2s;}
+        .btn-action { width: 100%; max-width: 250px; padding: 18px; border: none; border-radius: 18px; font-family: 'Montserrat'; font-weight: 900; font-size: 13px; cursor: pointer; box-shadow: 0 10px 30px rgba(10,17,40,0.2); background: var(--obsidian); color: var(--gold-lux); transition: 0.2s; letter-spacing: 1px;}
         .btn-action:active { transform: scale(0.95); }
-        .btn-outline { background: rgba(45,99,237,0.05); color: var(--electric-blue); border: 2px solid var(--electric-blue); box-shadow: none; padding: 14px; }
-        .btn-ghost { background: transparent; color: #94A3B8; box-shadow: none; font-size: 12px; margin-top: 5px; }
+        .btn-outline { background: rgba(255,255,255,0.8); color: var(--obsidian); border: 2px solid var(--obsidian); box-shadow: 0 5px 15px rgba(10,17,40,0.05); padding: 16px; }
+        .btn-ghost { background: transparent; color: var(--text-muted); box-shadow: none; font-size: 12px; margin-top: 5px; }
 
         /* PIN PAD */
         .pin-area { display: none; width: 100%; max-width: 280px; flex-direction: column; align-items: center; }
-        .pin-display { display: flex; gap: 10px; margin-bottom: 30px; }
-        .pin-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--electric-blue); transition: 0.2s; }
-        .pin-dot.filled { background: var(--electric-blue); }
+        .pin-display { display: flex; gap: 12px; margin-bottom: 30px; }
+        .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--obsidian); transition: 0.2s; }
+        .pin-dot.filled { background: var(--gold-lux); border-color: var(--gold-lux); box-shadow: 0 0 10px rgba(197,160,89,0.5);}
         .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; }
-        .pin-key { width: 65px; height: 65px; border-radius: 50%; background: white; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk'; font-size: 22px; font-weight: 800; color: var(--royal-blue); cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s;}
-        .pin-key:active { background: #F1F5F9; transform: scale(0.95); }
+        .pin-key { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 1px solid white; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat'; font-size: 24px; font-weight: 900; color: var(--obsidian); cursor: pointer; box-shadow: 0 10px 20px rgba(10,17,40,0.05); transition: 0.2s;}
+        .pin-key:active { background: var(--obsidian); color: var(--gold-lux); transform: scale(0.95); }
 
         /* APP UI */
         #mainApp { display: none; padding-bottom: 90px; }
-        .header-main { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 35px 20px 80px; border-bottom-left-radius:30px; border-bottom-right-radius:30px; color:white; text-align:center; box-shadow:0 10px 30px rgba(10,34,89,0.3); }
-        .main-title { font-family:'Outfit'; font-size:24px; font-weight:900; margin:0; }
-        .sub-tag { font-size:11px; opacity:0.8; font-weight:600; display:block; margin-top:5px; font-family:'Space Grotesk'; letter-spacing:2px;}
+        .header-main { padding: 40px 20px 80px; text-align:center; position: relative; z-index: 10;}
+        .main-title { font-family:'Montserrat'; font-size:26px; font-weight:900; color:var(--obsidian); margin:0; text-transform: uppercase;}
+        .sub-tag { font-size:10px; font-weight:800; display:block; margin-top:5px; font-family:'Montserrat'; letter-spacing:2px; color: var(--text-muted); text-transform: uppercase;}
 
-        .tab-container { display:flex; justify-content:center; gap:10px; margin-top:-40px; padding:0 20px; position:relative; z-index:10; }
-        .tab-btn { background:white; border:none; padding:12px 15px; border-radius:25px; font-weight:800; font-size:11px; color:#64748B; box-shadow:0 5px 15px rgba(0,0,0,0.05); cursor:pointer; flex:1; transition:0.3s; }
-        .tab-btn.active { background:var(--royal-blue); color:white; box-shadow:0 5px 20px rgba(10,34,89,0.3); transform:scale(1.05); }
-        .content-area { padding:20px; display:none; margin-top: 10px;}
+        .tab-container { display:flex; justify-content:center; gap:10px; margin-top:-30px; padding:0 20px; position:relative; z-index:10; }
+        .tab-btn { background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); border:1px solid white; padding:14px 15px; border-radius:20px; font-weight:800; font-size:11px; color:var(--text-muted); box-shadow:0 10px 20px rgba(10,17,40,0.05); cursor:pointer; flex:1; transition:0.3s; }
+        .tab-btn.active { background:var(--obsidian); color:var(--gold-lux); box-shadow:0 15px 30px rgba(10,17,40,0.2); transform:translateY(-3px); border-color:var(--gold-lux);}
+        .content-area { padding:20px; display:none; margin-top: 10px; position: relative; z-index: 10;}
         .content-area.active { display:block; }
         
-        .saldo-card { background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); padding: 25px; border-radius: 24px; color: white; text-align: center; margin-bottom: 15px; position: relative; box-shadow: 0 15px 40px rgba(45,99,237,0.3); }
-        .saldo-val { font-family:'Space Grotesk'; font-size:36px; font-weight:900; margin:10px 0;}
+        .saldo-card { background: var(--obsidian); padding: 30px 25px; border-radius: 25px; color: white; text-align: center; margin-bottom: 15px; position: relative; box-shadow: 0 20px 50px rgba(10,17,40,0.3); border: 1px solid rgba(197, 160, 89, 0.3);}
+        .saldo-val { font-family:'Montserrat'; font-size:38px; font-weight:900; color: var(--gold-lux); margin:10px 0; letter-spacing: -1px;}
         
         /* KOTAK TOTAL GLOBAL */
-        .global-vault-card { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: 20px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); color: white; display: none; }
-        .gvc-icon { width: 45px; height: 45px; border-radius: 14px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--warning); backdrop-filter: blur(5px); }
+        .global-vault-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(15px); border-radius: 25px; padding: 25px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 15px 35px rgba(10,17,40,0.05); border: 1px solid white; display: none; }
+        .gvc-icon { width: 50px; height: 50px; border-radius: 16px; background: rgba(197, 160, 89, 0.1); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--gold-lux); border: 1px solid rgba(197, 160, 89, 0.3);}
 
-        .trx-item { background: white; padding: 15px; border-radius: 16px; display: flex; flex-direction: column; align-items: stretch; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
+        .trx-item { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 18px; border-radius: 20px; display: flex; flex-direction: column; align-items: stretch; margin-bottom: 12px; box-shadow: 0 5px 20px rgba(10,17,40,0.03); border: 1px solid white; }
         
-        .member-row { background:white; padding:15px; border-radius:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; border:1px solid #E2E8F0; box-shadow:0 2px 5px rgba(0,0,0,0.02); transition: 0.3s background;}
-        .member-row.updated { background: #ECFDF5; } 
+        .member-row { background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); padding:18px; border-radius:20px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; border:1px solid white; box-shadow:0 5px 20px rgba(10,17,40,0.03); transition: 0.3s background;}
+        .member-row.updated { background: #ECFDF5; border-color: #A7F3D0;} 
         
-        .btn-plus { width:40px; height:40px; background:linear-gradient(135deg, #10B981, #059669); color:white; border-radius:12px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:16px; box-shadow:0 5px 15px rgba(16,185,129,0.3);}
-        .btn-reset { width:40px; height:40px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid var(--warning); cursor:pointer; font-size:16px; margin-right: 8px;}
+        .btn-plus { width:40px; height:40px; background:var(--obsidian); color:var(--gold-lux); border-radius:12px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; font-size:16px; box-shadow:0 5px 15px rgba(10,17,40,0.2); transition: 0.2s;}
+        .btn-plus:active { transform: scale(0.9); }
+        .btn-reset { width:40px; height:40px; background:rgba(225, 29, 72, 0.1); color:var(--danger-glow); border-radius:12px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(225, 29, 72, 0.3); cursor:pointer; font-size:16px; margin-right: 8px; transition: 0.2s;}
+        .btn-reset:active { transform: scale(0.9); background: var(--danger-glow); color: white;}
         
-        .app-card { background:white; padding:15px; border-radius:16px; margin-bottom:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:stretch; border: 1px solid #E2E8F0; }
+        .app-card { background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); padding:18px; border-radius:20px; margin-bottom:12px; box-shadow:0 10px 25px rgba(10,17,40,0.04); display:flex; flex-direction:column; align-items:stretch; border: 1px solid white; }
         
         /* MODALS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
-        .modal-box { background: white; width: 100%; max-width: 380px; border-radius: 25px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 85vh; overflow-y: auto; animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(10,17,40,0.7); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-box { background: rgba(255,255,255,0.95); backdrop-filter: blur(25px); width: 100%; max-width: 400px; border-radius: 30px; padding: 30px 25px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,0.3); max-height: 85vh; overflow-y: auto; animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid white;}
         @keyframes zoomIn { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
 
         .form-group { margin-bottom:20px; text-align: left;}
-        .form-label { display:block; font-size:11px; font-weight:800; color:#64748B; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;}
-        .form-input { width:100%; padding:15px; border:1px solid #E2E8F0; border-radius:14px; font-family:'Space Grotesk'; font-weight:700; font-size:14px; background:#F8FAFC; outline:none; transition: 0.2s;}
-        .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1);}
+        .form-label { display:block; font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;}
+        .form-input { width:100%; padding:16px; border:1px solid var(--border-light); border-radius:16px; font-family:'Montserrat'; font-weight:700; font-size:14px; background:#F8FAFC; outline:none; transition: 0.2s;}
+        .form-input:focus { border-color: var(--gold-lux); background: white; box-shadow: 0 0 15px rgba(197, 160, 89, 0.15);}
         
-        .btn-submit { width:100%; padding:16px; border:none; border-radius:16px; font-weight:800; color:white; cursor:pointer; margin-top:10px; font-family:'Space Grotesk'; font-size:13px; transition: 0.2s; letter-spacing: 1px;}
-        .btn-submit:active { transform: scale(0.95); }
-        .btn-outline-modal { background: white; color: var(--electric-blue); border: 2px solid var(--electric-blue); box-shadow: none; font-family: 'Space Grotesk'; font-weight: 800; cursor: pointer; transition: 0.2s;}
+        .btn-submit { width:100%; padding:18px; border:none; border-radius:18px; font-weight:900; color:var(--gold-lux); background: var(--obsidian); cursor:pointer; margin-top:10px; font-family:'Montserrat'; font-size:13px; transition: 0.2s; letter-spacing: 1px; box-shadow: 0 10px 25px rgba(10,17,40,0.2);}
+        .btn-submit:active { transform: scale(0.96); }
+        .btn-outline-modal { background: white; color: var(--obsidian); border: 2px solid var(--obsidian); box-shadow: none; font-family: 'Montserrat'; font-weight: 900; cursor: pointer; transition: 0.2s;}
         .btn-outline-modal:active { background: #F1F5F9; }
         
-        .bg-sukses { background:var(--success); box-shadow: 0 10px 25px rgba(16,185,129,0.3); } 
-        .bg-cancel { background:#E2E8F0; color:#475569; box-shadow:none; }
+        .bg-sukses { background:var(--success-glow); color: white; box-shadow: 0 10px 25px rgba(5,150,105,0.3); } 
+        .bg-cancel { background:#E2E8F0; color:var(--text-muted); box-shadow:none; }
         
         /* ADMIN TRX LIST ITEM */
-        .admin-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #E2E8F0; text-align: left; }
+        .admin-hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px dashed var(--border-light); text-align: left; }
         .admin-hist-item:last-child { border-bottom: none; }
-        .btn-edit { background: rgba(0,0,0,0.05); border: none; color: var(--electric-blue); cursor: pointer; width: 35px; height: 35px; border-radius: 10px; font-size: 14px; display:flex; align-items:center; justify-content:center; transition:0.2s;}
-        .btn-edit:active { transform:scale(0.9); }
+        .btn-edit { background: rgba(14,165,233,0.1); border: none; color: var(--fresh-teal); cursor: pointer; width: 35px; height: 35px; border-radius: 10px; font-size: 14px; display:flex; align-items:center; justify-content:center; transition:0.2s;}
+        .btn-edit:active { transform:scale(0.9); background: var(--fresh-teal); color: white;}
         
-        .btn-nabung { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 12px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px auto 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.2s; width: 100%;}
-        .btn-nabung:active { transform: scale(0.95); background: rgba(255,255,255,0.4); }
+        .btn-nabung { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 14px 10px; border-radius: 16px; font-family: 'Montserrat'; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px auto 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.2s; width: 100%; letter-spacing: 0.5px;}
+        .btn-nabung:active { transform: scale(0.95); background: rgba(255,255,255,0.25); }
 
-        .btn-danger-reset { display: none; width: 100%; padding: 15px; margin-top: 30px; background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 11px; letter-spacing: 1px; }
+        .btn-danger-reset { display: none; width: 100%; padding: 18px; margin-top: 30px; background: rgba(225, 29, 72, 0.1); color: var(--danger-glow); border: 1px solid rgba(225, 29, 72, 0.3); border-radius: 16px; font-weight: 900; font-family: 'Montserrat'; cursor: pointer; font-size: 11px; letter-spacing: 1px; transition: 0.2s;}
+        .btn-danger-reset:active { background: var(--danger-glow); color: white;}
 
-        .back-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
-        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(45,99,237,0.2); padding: 16px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; color: var(--electric-blue); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(45,99,237,0.15); transition: 0.2s;}
-        .btn-premium-back:active { transform: scale(0.95); }
+        .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 1000;}
+        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); border: 1px solid white; padding: 16px; border-radius: 50px; font-family: 'Montserrat'; font-weight: 800; font-size: 12px; color: var(--obsidian); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 35px rgba(10,17,40,0.1); transition: 0.3s;}
+        .btn-premium-back:active { background: var(--obsidian); color: var(--gold-lux); transform: scale(0.95);}
     </style>
 </head>
 <body>
 
-    <div id="loaderOverlay" style="position:fixed; inset:0; background:white; z-index:20000; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div style="width:40px; height:40px; border:4px solid #E2E8F0; border-top:4px solid var(--electric-blue); border-radius:50%; animation:spin 1s infinite linear;"></div>
-        <div style="margin-top:15px; font-weight:800; color:var(--royal-blue); font-size:12px;">MEMUAT...</div>
+    <img src="logomlumaster.png" class="bg-watermark" alt="" onerror="this.style.display='none'">
+
+    <div id="loaderOverlay" style="position:fixed; inset:0; background:rgba(244, 247, 252, 0.9); backdrop-filter:blur(10px); z-index:20000; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div style="width:50px; height:50px; border:4px solid #E2E8F0; border-top:4px solid var(--obsidian); border-radius:50%; animation:spin 1s infinite linear;"></div>
+        <div style="margin-top:15px; font-weight:900; color:var(--obsidian); font-family:'Montserrat'; font-size:12px; letter-spacing: 2px;">MEMUAT...</div>
         <style>@keyframes spin{100%{transform:rotate(360deg)}}</style>
     </div>
 
     <div id="securityScreen">
         <div class="sec-icon-box"><div class="scan-laser"></div><i class="fas fa-wallet" id="secIcon"></i></div>
-        <div class="sec-title" id="secTitle" style="font-family:'Outfit'; font-weight:900; font-size:22px; color:var(--royal-blue);">DOMPET TABUNGAN</div>
-        <div class="sec-desc" id="secDesc" style="font-size:12px; color:#64748B; margin-bottom:20px;">Keamanan 6 Digit PIN.</div>
+        <div class="sec-title" id="secTitle" style="font-family:'Montserrat'; font-weight:900; font-size:24px; color:var(--obsidian);">DOMPET TABUNGAN</div>
+        <div class="sec-desc" id="secDesc" style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:25px;">Keamanan 6 Digit PIN.</div>
         
         <div class="camera-container" id="camWrap">
             <video id="videoInput" autoplay muted playsinline></video>
@@ -142,7 +159,7 @@
         </div>
 
         <button class="btn-action" id="btnMainAction" style="display:none;" onclick="handleAction()">MULAI SCAN</button>
-        <div id="scanStatus" style="font-size:12px; font-weight:800; color:var(--electric-blue); height:20px;"></div>
+        <div id="scanStatus" style="font-size:12px; font-weight:800; color:var(--fresh-teal); height:20px; text-transform:uppercase;"></div>
         
         <div class="pin-area" id="pinArea">
             <div class="pin-display"><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div></div>
@@ -150,80 +167,80 @@
                 <div class="pin-key" onclick="pressPin(1)">1</div><div class="pin-key" onclick="pressPin(2)">2</div><div class="pin-key" onclick="pressPin(3)">3</div>
                 <div class="pin-key" onclick="pressPin(4)">4</div><div class="pin-key" onclick="pressPin(5)">5</div><div class="pin-key" onclick="pressPin(6)">6</div>
                 <div class="pin-key" onclick="pressPin(7)">7</div><div class="pin-key" onclick="pressPin(8)">8</div><div class="pin-key" onclick="pressPin(9)">9</div>
-                <div class="pin-key" style="color:var(--danger);" onclick="clearPin()">C</div>
+                <div class="pin-key" style="color:var(--danger-glow);" onclick="clearPin()">C</div>
                 <div class="pin-key" onclick="pressPin(0)">0</div>
-                <div class="pin-key" style="color:var(--danger);" onclick="delPin()"><i class="fas fa-backspace"></i></div>
+                <div class="pin-key" style="color:var(--danger-glow);" onclick="delPin()"><i class="fas fa-backspace"></i></div>
             </div>
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:5px; width:100%; max-width:250px; margin-top:20px;" id="btnBawahKamera">
-            <button class="btn-action btn-outline" id="btnSwitch" onclick="switchMode()">Gunakan PIN (6 Digit)</button>
-            <button class="btn-action btn-ghost" onclick="window.location.href='dashboard.html'">BATAL / KEMBALI</button>
+        <div style="display:flex; flex-direction:column; gap:8px; width:100%; max-width:280px; margin-top:30px;" id="btnBawahKamera">
+            <button class="btn-action btn-outline" id="btnSwitch" onclick="switchMode()">GUNAKAN PIN (6 DIGIT)</button>
+            <button class="btn-action btn-ghost" onclick="window.location.href='dashboard.html'">BATAL & KEMBALI</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="customAlertModal" style="z-index: 30000;">
         <div class="modal-box" style="padding: 30px;">
-            <div id="camTitle" style="font-family:'Outfit'; font-size:20px; color:var(--royal-blue); margin-bottom:10px; font-weight:900;"></div>
-            <div id="camMsg" style="font-size:13px; color:var(--text-main); margin-bottom:25px; line-height:1.6;"></div>
-            <input type="password" id="camInput" class="form-input" style="display:none; margin-bottom:20px; text-align:center; font-size:20px; letter-spacing:5px;" placeholder="Password">
+            <div id="camTitle" style="font-family:'Montserrat'; font-size:20px; color:var(--obsidian); margin-bottom:15px; font-weight:900;"></div>
+            <div id="camMsg" style="font-size:13px; font-weight:600; color:var(--text-muted); margin-bottom:25px; line-height:1.6;"></div>
+            <input type="password" id="camInput" class="form-input" style="display:none; margin-bottom:20px; text-align:center; font-size:24px; letter-spacing:5px;" placeholder="Password">
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" id="camBtnCancel">BATAL</button>
-                <button class="btn-submit bg-sukses" id="camBtnOk" style="background:var(--electric-blue);">OK</button>
+                <button class="btn-submit" id="camBtnOk">OK</button>
             </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="agreeModal">
         <div class="modal-box">
-            <div style="font-family:'Outfit'; font-weight:900; font-size:18px; color:var(--royal-blue); margin-bottom:15px;">AKTIVASI DOMPET</div>
-            <div style="height:150px; overflow-y:auto; text-align:left; font-size:11px; color:#475569; margin-bottom:20px; background:#F8FAFC; padding:15px; border-radius:12px; line-height: 1.6;">
-                <b>PENTING:</b><br><br>1. PIN KHUSUS TABUNGAN (6 Digit).<br>2. BEDA DENGAN PIN LOGIN (4 Digit).<br>3. Wajah direkam sebagai kunci ganda.<br>4. Saldo Anda Dijamin Aman.
+            <div style="font-family:'Montserrat'; font-weight:900; font-size:20px; color:var(--obsidian); margin-bottom:15px;">AKTIVASI DOMPET</div>
+            <div style="height:150px; overflow-y:auto; text-align:left; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:20px; background:#F8FAFC; padding:15px; border-radius:16px; border:1px solid var(--border-light); line-height: 1.6;">
+                <b style="color:var(--danger-glow);">PENTING:</b><br><br>1. PIN KHUSUS TABUNGAN (6 Digit).<br>2. BEDA DENGAN PIN LOGIN (4 Digit).<br>3. Wajah direkam sebagai kunci ganda.<br>4. Saldo Anda Dijamin Aman.
             </div>
-            <button class="btn-submit" style="background:var(--success); color:white;" onclick="acceptAgreement()">BUAT KUNCI SEKARANG</button>
+            <button class="btn-submit" style="background:var(--success-glow); color:white;" onclick="acceptAgreement()">BUAT KUNCI SEKARANG</button>
         </div>
     </div>
 
     <div id="mainApp">
-        <div class="header-main">
-            <h1 class="main-title" style="font-family:'Outfit'; font-size:24px; font-weight:900; color:white;">DOMPET TABUNGAN</h1>
+        <div class="header-main" id="mainHeader">
+            <h1 class="main-title">DOMPET TABUNGAN</h1>
             <span class="sub-tag">Kelola masa depan finansialmu</span>
         </div>
 
         <div class="tab-container">
             <button class="tab-btn active" onclick="switchTab('member')">SAYA</button>
-            <button class="tab-btn" onclick="switchTab('admin')" id="btnTabAdmin" style="display:none; color:var(--electric-blue); border:1px solid var(--electric-blue);">INPUT SETORAN</button>
-            <button class="tab-btn" onclick="switchTab('approval')" id="btnTabApprove" style="display:none; color:var(--warning); border:1px solid var(--warning);">VALIDASI</button>
+            <button class="tab-btn" onclick="switchTab('admin')" id="btnTabAdmin" style="display:none; color:var(--fresh-teal); border-color:var(--fresh-teal);">INPUT SETORAN</button>
+            <button class="tab-btn" onclick="switchTab('approval')" id="btnTabApprove" style="display:none; color:var(--warning); border-color:var(--warning);">VALIDASI</button>
         </div>
 
         <div id="viewMember" class="content-area active">
             
             <div class="saldo-card">
-                <button onclick="changePinSelf()" style="position:absolute; top:15px; right:15px; background:rgba(255,255,255,0.2); color:white; padding:5px 10px; border-radius:12px; font-size:9px; font-weight:800; cursor:pointer; border:1px solid rgba(255,255,255,0.4);">GANTI PIN</button>
-                <div style="font-size:10px; opacity:0.8; letter-spacing:2px; cursor:pointer;" ondblclick="toggleStealthAdmin()">SALDO PRIBADI SAYA</div>
+                <button onclick="changePinSelf()" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.15); color:white; padding:8px 12px; border-radius:12px; font-family:'Montserrat'; font-size:10px; font-weight:800; cursor:pointer; border:1px solid rgba(255,255,255,0.3); transition:0.2s;">GANTI PIN</button>
+                <div style="font-size:10px; font-weight:800; opacity:0.8; letter-spacing:2px; cursor:pointer;" ondblclick="toggleStealthAdmin()">SALDO PRIBADI SAYA</div>
                 <div class="saldo-val" id="myBalance">Rp 0</div>
-                <div style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:5px 10px; border-radius:20px; display:inline-block;">
+                <div style="font-size:10px; font-weight:800; background:rgba(255,255,255,0.15); padding:6px 12px; border-radius:20px; display:inline-block; border:1px solid rgba(255,255,255,0.3);">
                     <i class="fas fa-shield-alt"></i> TERVERIFIKASI
                 </div>
                 
-                <div style="display:flex; gap:10px; margin-top:15px;">
+                <div style="display:flex; gap:12px; margin-top:25px;">
                     <button class="btn-nabung" style="flex:1; margin:0;" onclick="document.getElementById('modalQris').style.display='flex'">
-                        <i class="fas fa-qrcode" style="font-size:14px;"></i> SETOR DANA
+                        <i class="fas fa-qrcode" style="font-size:16px;"></i> SETOR DANA
                     </button>
-                    <button class="btn-nabung" style="flex:1; margin:0; background:var(--danger); border-color:var(--danger); color:white; box-shadow: 0 5px 15px rgba(239,68,68,0.3);" onclick="bukaModalTarik()">
-                        <i class="fas fa-hand-holding-usd" style="font-size:14px;"></i> TARIK DANA
+                    <button class="btn-nabung" style="flex:1; margin:0; background:var(--danger-glow); border-color:var(--danger-glow); color:white; box-shadow: 0 10px 25px rgba(225,29,72,0.3);" onclick="bukaModalTarik()">
+                        <i class="fas fa-hand-holding-usd" style="font-size:16px;"></i> TARIK DANA
                     </button>
                 </div>
 
-                <div id="adminIndicator" style="display:none; font-size:9px; margin-top:8px; color:#FCD34D; font-weight:900;">★ DEWA MODE ★</div>
+                <div id="adminIndicator" style="display:none; font-family:'Montserrat'; font-size:10px; margin-top:12px; color:var(--gold-lux); font-weight:900;">★ DEWA MODE ★</div>
             </div>
 
             <div class="global-vault-card" id="globalVaultCard">
                 <div>
-                    <div style="font-size: 10px; font-weight: 800; color: #94A3B8; letter-spacing: 1.5px; margin-bottom: 5px;">
-                        <i class="fas fa-globe" style="color: var(--warning);"></i> TOTAL ASET MLU
+                    <div style="font-size: 10px; font-weight: 800; color: var(--obsidian); letter-spacing: 1.5px; margin-bottom: 5px;">
+                        <i class="fas fa-globe" style="color: var(--gold-lux);"></i> TOTAL ASET MLU
                     </div>
-                    <div id="globalBalance" style="font-family: 'Space Grotesk'; font-size: 22px; font-weight: 900; color: var(--success); letter-spacing: 0.5px;">
+                    <div id="globalBalance" style="font-family: 'Montserrat'; font-size: 24px; font-weight: 900; color: var(--success-glow); letter-spacing: 0.5px;">
                         <i class="fas fa-spinner fa-spin" style="font-size:16px;"></i> Menghitung...
                     </div>
                 </div>
@@ -232,19 +249,19 @@
                 </div>
             </div>
 
-            <button onclick="document.getElementById('videoModal').style.display='flex'" style="width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 16px; border: 2px dashed var(--electric-blue); font-family: 'Outfit'; font-weight: 800; font-size: 13px; color: var(--royal-blue); display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.8); cursor: pointer; transition: 0.2s;">
-                <i class="fab fa-tiktok" style="font-size: 20px; color: #000; filter: drop-shadow(2px 0px 0px #00f2fe) drop-shadow(-2px 0px 0px #fe0979);"></i> LIHAT TUTORIAL
+            <button onclick="document.getElementById('videoModal').style.display='flex'" style="width: 100%; margin-bottom: 25px; padding: 18px; border-radius: 20px; border: 2px dashed var(--obsidian); font-family: 'Montserrat'; font-weight: 900; font-size: 13px; color: var(--obsidian); display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(255,255,255,0.8); cursor: pointer; transition: 0.2s;">
+                <i class="fab fa-tiktok" style="font-size: 22px; color: #000; filter: drop-shadow(2px 0px 0px #00f2fe) drop-shadow(-2px 0px 0px #fe0979);"></i> LIHAT TUTORIAL
             </button>
             
-            <div style="font-family:'Outfit'; font-size:16px; font-weight:800; color:var(--royal-blue); margin-bottom:15px; padding-left:5px;">Mutasi Terakhir</div>
+            <div style="font-family:'Montserrat'; font-size:16px; font-weight:900; color:var(--obsidian); margin-bottom:15px; padding-left:5px; text-transform:uppercase;">Mutasi Terakhir</div>
             <div class="trx-list" id="historyList">
-                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Memuat riwayat...</div>
+                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px; font-weight:600;">Memuat riwayat...</div>
             </div>
         </div>
 
         <div id="viewAdmin" class="content-area">
-            <div style="background:#EFF6FF; padding:15px; border-radius:16px; border:1px solid #BFDBFE; font-size:11px; color:#1D4ED8; margin-bottom:20px;">
-                <b>AREA PENGURUS:</b> Diurutkan berdasarkan Saldo Terbanyak. Gunakan IKON KUNCI untuk Reset PIN member.
+            <div style="background:rgba(14,165,233,0.1); padding:18px; border-radius:18px; border:1px solid rgba(14,165,233,0.3); font-size:11px; font-weight:600; color:var(--fresh-teal); margin-bottom:20px; line-height:1.5;">
+                <b style="font-weight:900;">AREA PENGURUS:</b> Diurutkan berdasarkan Saldo Terbanyak. Gunakan IKON KUNCI untuk Reset PIN member.
             </div>
             <input type="text" id="searchMem" class="form-input" placeholder="Cari Nama / Plat Anggota..." style="margin-bottom:15px;" onkeyup="filterMembers()">
             <div id="adminMemberList"></div>
@@ -255,33 +272,34 @@
         </div>
 
         <div id="viewApproval" class="content-area">
-            <div style="font-family:'Outfit'; font-size:14px; font-weight:800; color:var(--royal-blue); margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:5px;">ANTREAN VALIDASI & TRANSFER</div>
+            <div style="font-family:'Montserrat'; font-size:15px; font-weight:900; color:var(--obsidian); margin-bottom:15px; border-bottom:2px dashed var(--border-light); padding-bottom:10px;">ANTREAN VALIDASI & TRANSFER</div>
             <div id="approvalList">
-                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px;">Memuat antrean validasi...</div>
+                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px; font-weight:600;">Memuat antrean validasi...</div>
             </div>
 
-            <div style="font-family:'Outfit'; font-size:14px; font-weight:800; color:var(--success); margin-top:40px; margin-bottom:15px; border-bottom:2px solid #E2E8F0; padding-bottom:5px;">RIWAYAT PENARIKAN (SELESAI)</div>
+            <div style="font-family:'Montserrat'; font-size:15px; font-weight:900; color:var(--success-glow); margin-top:40px; margin-bottom:15px; border-bottom:2px dashed var(--border-light); padding-bottom:10px;">RIWAYAT PENARIKAN (SELESAI)</div>
             <div id="historyWithdrawList">
-                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px;">Memuat riwayat penarikan...</div>
+                <div style="text-align:center; padding:30px; color:#94A3B8; font-size:11px; font-weight:600;">Memuat riwayat penarikan...</div>
             </div>
         </div>
 
         <div class="back-nav"><a href="dashboard.html" class="btn-premium-back"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a></div>
     </div>
 
+    <!-- MODAL PENARIKAN -->
     <div class="modal-overlay" id="modalTarik">
         <div class="modal-box" style="text-align:left;">
-            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--danger); text-align:center; margin-bottom: 20px;">PENARIKAN DANA</h3>
+            <h3 style="margin-top:0; font-family:'Montserrat'; font-size:20px; color:var(--danger-glow); text-align:center; margin-bottom: 20px;">PENARIKAN DANA</h3>
             
             <div class="form-group">
                 <label class="form-label">Nominal Penarikan (Rp)</label>
                 <input type="number" id="inputTarikAmount" class="form-input" placeholder="Contoh: 100000" oninput="calcPotongan()">
             </div>
 
-            <div id="infoPotongan" style="display:none; background:#FEF2F2; border:1px solid #FCA5A5; padding:12px; border-radius:12px; margin-bottom:20px; font-size:11px; color:#DC2626;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Saldo Dipotong:</span> <b id="txtTotalTarik">Rp 0</b></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Potongan Kas (5%):</span> <b id="txtPotongan">Rp 0</b></div>
-                <div style="display:flex; justify-content:space-between; border-top:1px dashed #FCA5A5; padding-top:6px; margin-top:4px; font-weight:900; font-size:14px; color:var(--success);"><span>BERSIH DITERIMA:</span> <b id="txtBersih">Rp 0</b></div>
+            <div id="infoPotongan" style="display:none; background:rgba(225, 29, 72, 0.05); border:1px dashed var(--danger-glow); padding:15px; border-radius:16px; margin-bottom:20px; font-size:11px; font-weight:600; color:var(--danger-glow);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Saldo Dipotong:</span> <b id="txtTotalTarik">Rp 0</b></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Potongan Kas (5%):</span> <b id="txtPotongan">Rp 0</b></div>
+                <div style="display:flex; justify-content:space-between; border-top:1px dashed rgba(225,29,72,0.4); padding-top:8px; margin-top:6px; font-weight:900; font-size:14px; color:var(--success-glow);"><span>BERSIH DITERIMA:</span> <b id="txtBersih">Rp 0</b></div>
             </div>
             
             <div class="form-group">
@@ -310,24 +328,25 @@
 
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" onclick="document.getElementById('modalTarik').style.display='none'">BATAL</button>
-                <button class="btn-submit" style="background:var(--danger); color:white; box-shadow: 0 10px 25px rgba(239,68,68,0.3);" onclick="submitTarikDana()">AJUKAN PENARIKAN</button>
+                <button class="btn-submit" style="background:var(--danger-glow); color:white; box-shadow: 0 10px 25px rgba(225,29,72,0.3);" onclick="submitTarikDana()">AJUKAN PENARIKAN</button>
             </div>
         </div>
     </div>
 
+    <!-- MODAL UPLOAD BUKTI (ADMIN) -->
     <div class="modal-overlay" id="modalUploadBukti">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--electric-blue); font-family:'Outfit'; font-size:18px; margin-bottom:15px;">UPLOAD BUKTI TRANSFER</h3>
-            <p style="font-size:11px; color:#64748B; margin-bottom:20px;">Pastikan Anda sudah men-transfer dana ke rekening member sebelum mengunggah bukti.</p>
+            <h3 style="margin-top:0; color:var(--obsidian); font-family:'Montserrat'; font-size:20px; margin-bottom:15px; text-transform:uppercase;">Upload Bukti</h3>
+            <p style="font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:20px; line-height:1.5;">Pastikan Anda sudah men-transfer dana ke rekening member sebelum mengunggah bukti.</p>
             
             <input type="hidden" id="uploadBuktiTrxId">
             <input type="hidden" id="uploadBuktiMemberId">
             
-            <div style="border:2px dashed #93C5FD; border-radius:18px; padding:20px; text-align:center; background:#F0F9FF; cursor:pointer; position:relative; margin-bottom:20px;">
-                <i class="fas fa-camera" style="font-size:24px; color:var(--electric-blue); margin-bottom:5px; display:block;"></i>
-                <div style="font-size:11px; font-weight:700; color:#64748B;">Tap untuk Upload Bukti / Resi</div>
+            <div style="border:2px dashed var(--border-light); border-radius:20px; padding:25px; text-align:center; background:#F8FAFC; cursor:pointer; position:relative; margin-bottom:20px;">
+                <i class="fas fa-camera" style="font-size:28px; color:var(--obsidian); margin-bottom:8px; display:block;"></i>
+                <div style="font-size:11px; font-weight:800; color:var(--text-muted);">Tap untuk Upload Bukti / Resi</div>
                 <input type="file" id="inputBuktiFile" accept="image/*" style="position:absolute; inset:0; opacity:0; cursor:pointer;" onchange="processBuktiFoto(this)">
-                <img id="previewBuktiFoto" style="width:100%; max-height:200px; border-radius:12px; object-fit:contain; display:none; margin-top:10px; border:2px solid var(--electric-blue);">
+                <img id="previewBuktiFoto" style="width:100%; max-height:200px; border-radius:12px; object-fit:contain; display:none; margin-top:15px; border:2px solid var(--gold-lux);">
             </div>
 
             <div style="display:flex; gap:10px;">
@@ -337,55 +356,59 @@
         </div>
     </div>
 
+    <!-- MODAL LIHAT BUKTI -->
     <div class="modal-overlay" id="modalViewBukti" style="z-index: 105000;">
-        <div class="modal-box" style="padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <div style="font-family:'Outfit'; font-weight:900; color:var(--royal-blue); font-size: 16px;"><i class="fas fa-receipt"></i> BUKTI TRANSFER</div>
-                <button onclick="document.getElementById('modalViewBukti').style.display='none'" style="background:#F1F5F9; border:none; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; color:#64748B;"><i class="fas fa-times"></i></button>
+        <div class="modal-box" style="padding: 25px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div style="font-family:'Montserrat'; font-weight:900; color:var(--obsidian); font-size: 18px;"><i class="fas fa-receipt"></i> BUKTI TRANSFER</div>
+                <button onclick="document.getElementById('modalViewBukti').style.display='none'" style="background:#F1F5F9; border:none; width:35px; height:35px; border-radius:50%; font-size:16px; cursor:pointer; color:var(--text-muted); transition:0.2s;"><i class="fas fa-times"></i></button>
             </div>
-            <img id="imgBukti" src="" style="width:100%; border-radius:12px; border:1px solid #E2E8F0; margin-bottom:15px; max-height: 50vh; object-fit: contain;">
+            <img id="imgBukti" src="" style="width:100%; border-radius:16px; border:1px solid var(--border-light); margin-bottom:20px; max-height: 50vh; object-fit: contain;">
             <button class="btn-submit bg-cancel" style="margin-top:0;" onclick="document.getElementById('modalViewBukti').style.display='none'">TUTUP</button>
         </div>
     </div>
 
+    <!-- MODAL DEPOSIT (ADMIN) -->
     <div class="modal-overlay" id="modalDeposit">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--royal-blue); font-family:'Outfit'; font-size:20px; margin-bottom:5px;">INPUT SETORAN</h3>
-            <p id="depMemberName" style="font-size:12px; color:#64748B; margin-bottom:25px; font-weight:700; border-bottom:1px solid #eee; padding-bottom:10px;"></p>
+            <h3 style="margin-top:0; color:var(--obsidian); font-family:'Montserrat'; font-size:22px; margin-bottom:5px; text-transform:uppercase;">Input Setoran</h3>
+            <p id="depMemberName" style="font-size:13px; color:var(--gold-lux); margin-bottom:25px; font-weight:800; border-bottom:1px dashed var(--border-light); padding-bottom:15px;"></p>
             <input type="hidden" id="depMemberId">
             <div class="form-group"><label class="form-label">Nominal (Rp)</label><input type="number" id="depAmount" class="form-input" placeholder="Contoh: 20000"></div>
             <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalDeposit').style.display='none'">BATAL</button><button class="btn-submit bg-sukses" onclick="processDeposit()">SIMPAN DATA</button></div>
             
-            <div style="margin-top:25px; border-top:1px dashed #ddd; padding-top:15px;">
-                <div style="font-size:10px; font-weight:800; color:#94A3B8; margin-bottom:10px; text-transform:uppercase;">Transaksi Terakhir (Edit/Hapus)</div>
-                <div id="adminRecentTrx" style="max-height:180px; overflow-y:auto; background:#F8FAFC; border-radius:12px; padding:5px;"></div>
+            <div style="margin-top:25px; border-top:1px solid var(--border-light); padding-top:15px; text-align:left;">
+                <div style="font-size:10px; font-weight:800; color:var(--text-muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Transaksi Terakhir (Edit/Hapus)</div>
+                <div id="adminRecentTrx" style="max-height:180px; overflow-y:auto; background:white; border:1px solid var(--border-light); border-radius:16px; padding:10px;"></div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL EDIT TRX (ADMIN) -->
     <div class="modal-overlay" id="modalEditTrx" style="z-index: 20000;">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:var(--warning); font-family:'Outfit'; font-size:18px;">KOREKSI NOMINAL</h3>
+            <h3 style="margin-top:0; color:var(--warning); font-family:'Montserrat'; font-size:20px; margin-bottom:20px;">KOREKSI NOMINAL</h3>
             <input type="hidden" id="editTrxId"><input type="hidden" id="editOldAmount">
             <div class="form-group"><label class="form-label">Nominal Baru (Rp)</label><input type="number" id="editNewAmount" class="form-input"></div>
             <div style="display:flex; gap:10px;"><button class="btn-submit bg-cancel" onclick="document.getElementById('modalEditTrx').style.display='none'">BATAL</button><button class="btn-submit" style="background:var(--warning); color:white;" onclick="saveEditTrx()">UPDATE</button></div>
         </div>
     </div>
 
+    <!-- MODAL QRIS SETOR -->
     <div class="modal-overlay" id="modalQris">
-        <div class="modal-box" style="background:white; border-radius:20px; padding:30px; text-align:left;">
-            <h3 style="margin-top:0; font-family:'Outfit'; color:var(--royal-blue); text-align:center;">FORM PENGAJUAN SETORAN</h3>
+        <div class="modal-box" style="padding:35px 25px; text-align:left;">
+            <h3 style="margin-top:0; font-family:'Montserrat'; color:var(--obsidian); font-size:20px; text-align:center; margin-bottom:25px;">PENGAJUAN SETORAN</h3>
             <div class="form-group">
                 <label class="form-label">1. Masukkan Nominal (Bulat)</label>
                 <input type="number" id="inputNabungBase" class="form-input" placeholder="Contoh: 50000" onkeyup="calcTotalTransfer()" onchange="calcTotalTransfer()">
             </div>
-            <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:15px; border-radius:12px; text-align:center; margin-bottom:15px;">
-                <div style="font-size:11px; color:#166534; font-weight:800;">JUMLAH YANG HARUS DI TRANSFER:</div>
-                <div id="totalNabungTxt" style="font-family:'Space Grotesk'; font-size:32px; font-weight:900; color:var(--success); margin:5px 0;">Rp 0</div>
-                <div style="font-size:10px; color:#15803D;">(Termasuk Kode Unik: <b id="kodeUnikTxt">***</b>)</div>
+            <div style="background:rgba(5,150,105,0.05); border:1px dashed var(--success-glow); padding:20px 15px; border-radius:16px; text-align:center; margin-bottom:20px;">
+                <div style="font-size:10px; color:var(--success-glow); font-weight:800; letter-spacing:1px;">YANG HARUS DI TRANSFER:</div>
+                <div id="totalNabungTxt" style="font-family:'Montserrat'; font-size:32px; font-weight:900; color:var(--success-glow); margin:8px 0;">Rp 0</div>
+                <div style="font-size:10px; color:var(--text-muted); font-weight:600;">(Termasuk Kode Unik: <b id="kodeUnikTxt" style="color:var(--obsidian);">***</b>)</div>
             </div>
-            <div style="border:2px dashed #ccc; padding:10px; border-radius:10px; margin-bottom:15px;">
-                <img src="qrisnabung.jpg" style="width:100%; border-radius:5px;" alt="QRIS" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'color:red; text-align:center;\'>Gambar QRIS tidak ditemukan.</div>'">
+            <div style="border:1px solid var(--border-light); padding:10px; border-radius:16px; margin-bottom:20px; background:white; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
+                <img src="qrisnabung.jpg" style="width:100%; border-radius:10px;" alt="QRIS" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'color:red; text-align:center; font-size:12px; font-weight:bold; padding:20px;\'>Gambar QRIS (qrisnabung.jpg) tidak ditemukan.</div>'">
             </div>
             <div style="display:flex; gap:10px;">
                 <button class="btn-submit bg-cancel" onclick="document.getElementById('modalQris').style.display='none'">BATAL</button>
@@ -394,6 +417,7 @@
         </div>
     </div>
 
+    <!-- SCRIPT FIREBASE & FACE-API -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, collection, query, where, getDocs, runTransaction, deleteDoc, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -414,7 +438,6 @@
                 })
             }).catch(err => console.error("Notif Gagal:", err));
         };
-        // ====================================================
 
         // === KONEKSI FIREBASE MLU ===
         const firebaseConfig = { apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5", storageBucket: "rtomaka-e67b5.firebasestorage.app", messagingSenderId: "472036722228", appId: "1:472036722228:web:11d520f9204db317d02c61" };
@@ -446,7 +469,8 @@
                 else { input.style.display = 'none'; }
                 
                 btnCancel.style.display = 'block';
-                btnOk.style.background = 'var(--electric-blue)';
+                btnOk.style.background = 'var(--obsidian)';
+                btnOk.style.color = 'var(--gold-lux)';
                 modal.style.display = 'flex';
 
                 btnCancel.onclick = () => { modal.style.display = 'none'; resolve(false); };
@@ -461,17 +485,16 @@
                 document.getElementById('camMsg').innerHTML = msg;
                 document.getElementById('camInput').style.display = 'none';
                 document.getElementById('camBtnCancel').style.display = 'none';
-                document.getElementById('camBtnOk').style.background = 'var(--success)';
+                document.getElementById('camBtnOk').style.background = 'var(--success-glow)';
+                document.getElementById('camBtnOk').style.color = 'white';
                 modal.style.display = 'flex';
                 document.getElementById('camBtnOk').onclick = () => { modal.style.display = 'none'; resolve(true); };
             });
         };
 
-        // HIERARKI
         const hierarchy = { "KETUA UMUM": 1, "WAKIL KETUA": 2, "PEMBINA": 3, "PENASEHAT": 4, "SEKRETARIS": 5, "BENDAHARA": 6, "HUMAS INTERNAL": 7, "HUMAS EKSTERNAL": 8, "KREATOR": 9, "URC KC": 10, "URC": 10, "MEMBER": 11 };
         const getRank = (role) => { if(!role) return 11; const r = role.toUpperCase(); return hierarchy[r] || 12; };
         
-        // LOGIKA DETEKSI ADMIN & PENGURUS INTI TABUNGAN
         const roleUpper = uData.role ? uData.role.toUpperCase() : "";
         const isKetum = roleUpper.includes("KETUM") || roleUpper === "KETUA UMUM" || roleUpper === "KETUA";
         const isWaketum = roleUpper.includes("WAKETUM") || roleUpper.includes("WAKIL");
@@ -608,14 +631,13 @@
             if(!base || base < 5000) return showAlert("PERHATIAN", "Setoran minimal Rp 5.000");
             let total = base + window.myKodeUnik;
 
-            const konfirm = await showConfirm("KONFIRMASI", `Apakah Anda sudah transfer dana sebesar <b style="color:var(--electric-blue);">Rp ${total.toLocaleString('id-ID')}</b> ke QRIS MLU?<br><br><span style='color:red; font-size:11px;'>*Bukti palsu akan otomatis ditolak sistem.</span>`);
+            const konfirm = await showConfirm("KONFIRMASI", `Apakah Anda sudah transfer dana sebesar <b style="color:var(--obsidian); font-size:16px;">Rp ${total.toLocaleString('id-ID')}</b> ke QRIS MLU?<br><br><span style='color:red; font-size:11px;'>*Bukti palsu akan otomatis ditolak sistem.</span>`);
             if(konfirm) {
                 await addDoc(collection(db, "mlu_tabungan_trx"), {
                     memberId: userId, memberName: myName,
                     type: 'IN', amount: total, desc: 'Pengajuan Setoran (App)', timestamp: Date.now(), status: 'PENDING'
                 });
                 
-                // TEMBAK NOTIF SETORAN
                 window.tembakNotif("💰 SETORAN BARU MASUK", `Member ${myName} mengajukan setoran Rp ${total.toLocaleString('id-ID')}. Mohon divalidasi!`);
 
                 await showAlert("SUKSES", "Pengajuan berhasil dikirim! Saldo masuk setelah divalidasi Admin.");
@@ -671,7 +693,7 @@
             const fee = Math.floor(amount * 0.05);
             const netAmount = amount - fee;
 
-            const konfirm = await showConfirm("KONFIRMASI POTONGAN", `Total Saldo Dipotong: <b style="color:var(--danger);">Rp ${amount.toLocaleString('id-ID')}</b>.<br><br>Sesuai aturan, ada potongan <b>5% (Rp ${fee.toLocaleString('id-ID')})</b> untuk Uang Kas.<br>Dana bersih yang akan ditransfer ke Anda: <b style="color:var(--success); font-size:16px;">Rp ${netAmount.toLocaleString('id-ID')}</b>.<br><br><span style='color:red; font-size:11px;'>*Pencairan membutuhkan validasi KETUM dan WAKETUM.</span>`);
+            const konfirm = await showConfirm("KONFIRMASI POTONGAN", `Total Saldo Dipotong: <b style="color:var(--danger-glow);">Rp ${amount.toLocaleString('id-ID')}</b>.<br><br>Sesuai aturan, ada potongan <b>5% (Rp ${fee.toLocaleString('id-ID')})</b> untuk Uang Kas.<br>Dana bersih yang akan ditransfer ke Anda: <b style="color:var(--success-glow); font-size:16px;">Rp ${netAmount.toLocaleString('id-ID')}</b>.<br><br><span style='color:red; font-size:11px;'>*Pencairan membutuhkan validasi KETUM dan WAKETUM.</span>`);
             
             if(konfirm) {
                 await addDoc(collection(db, "mlu_tabungan_trx"), {
@@ -682,7 +704,6 @@
                     status: 'PENDING_APPROVAL', apprKetum: false, apprWaketum: false
                 });
 
-                // TEMBAK NOTIF PENARIKAN
                 window.tembakNotif("💸 PENGAJUAN PENARIKAN", `Member ${myName} ingin menarik Rp ${amount.toLocaleString('id-ID')}. Menunggu ACC Ketum & Waketum.`);
 
                 await showAlert("SUKSES", "Pengajuan berhasil dikirim! Menunggu ACC Ketum & Waketum.");
@@ -701,10 +722,7 @@
             const konfirm = await showConfirm("TERIMA DANA", "Apakah Anda sudah mengecek dan memastikan bahwa dana benar-benar sudah masuk ke rekening/tangan Anda?");
             if(konfirm) {
                 await updateDoc(doc(db, "mlu_tabungan_trx", trxId), { status: 'SUCCESS' });
-                
-                // TEMBAK NOTIF TERIMA DANA
                 window.tembakNotif("🤝 PENARIKAN SELESAI", `Member telah mengkonfirmasi penerimaan dana penarikan. Transaksi sukses!`);
-
                 showAlert("SELESAI", "Transaksi selesai. Terima kasih!");
             }
         }
@@ -803,10 +821,10 @@
             isFaceMode = !isFaceMode; 
             if (isFaceMode) { 
                 startCamera(); 
-                document.getElementById('btnSwitch').innerText = "Gunakan PIN (6 Digit)"; 
+                document.getElementById('btnSwitch').innerText = "GUNAKAN PIN (6 DIGIT)"; 
                 document.getElementById('btnSwitch').classList.add('btn-outline'); 
-                document.getElementById('btnSwitch').style.background='rgba(45,99,237,0.05)'; 
-                document.getElementById('btnSwitch').style.color='var(--electric-blue)'; 
+                document.getElementById('btnSwitch').style.background='rgba(255,255,255,0.8)'; 
+                document.getElementById('btnSwitch').style.color='var(--obsidian)'; 
             } else { 
                 stopCamera(); 
                 document.getElementById('camWrap').style.display = 'none'; 
@@ -814,10 +832,10 @@
                 document.getElementById('secTitle').innerText = "MASUKKAN PIN";
                 document.getElementById('secDesc').innerText = "Gunakan 6 Digit PIN Tabungan.";
                 if(document.getElementById('btnSwitch')) {
-                    document.getElementById('btnSwitch').innerText = "Gunakan Face ID"; 
+                    document.getElementById('btnSwitch').innerText = "GUNAKAN FACE ID"; 
                     document.getElementById('btnSwitch').classList.remove('btn-outline'); 
-                    document.getElementById('btnSwitch').style.background='var(--electric-blue)'; 
-                    document.getElementById('btnSwitch').style.color='white'; 
+                    document.getElementById('btnSwitch').style.background='var(--obsidian)'; 
+                    document.getElementById('btnSwitch').style.color='var(--gold-lux)'; 
                     if(!faceApiLoaded) document.getElementById('btnSwitch').style.display = 'none';
                 }
             } 
@@ -830,7 +848,7 @@
         
         window.processPin = async () => {
             if (isSetupMode) {
-                const conf = await showConfirm("SIMPAN PIN", `Jadikan <b>${currentPinInput}</b> sebagai PIN Dompet Tabungan Anda?`);
+                const conf = await showConfirm("SIMPAN PIN", `Jadikan <b style="color:var(--obsidian); font-size:18px;">${currentPinInput}</b> sebagai PIN Dompet Tabungan Anda?`);
                 if(conf) {
                     const faceObj = userFaceDesc ? { ...userFaceDesc } : null; 
                     updateDoc(doc(db, "mlu_members", userId), { faceDescriptor: faceObj, pin_tabungan: currentPinInput }).then(() => { unlockApp(); });
@@ -879,11 +897,11 @@
                 arrApp.forEach(data => {
                     const isNabung = data.type === 'IN';
                     const titleText = isNabung ? "Setoran Tabungan" : "Penarikan Dana";
-                    const color = isNabung ? "var(--success)" : "var(--danger)";
+                    const color = isNabung ? "var(--success-glow)" : "var(--danger-glow)";
                     
                     let infoTransferHtml = '';
                     if(!isNabung) {
-                        infoTransferHtml = `<div style="font-size:11px; color:#475569; margin-top:4px; background:#F1F5F9; padding:5px; border-radius:6px; display:inline-block;"><b>Metode:</b> ${data.metodeTransfer || '-'} | <b>Rek:</b> ${data.noRekening || '-'}</div>`;
+                        infoTransferHtml = `<div style="font-size:11px; color:#475569; margin-top:4px; background:#F8FAFC; padding:5px; border-radius:8px; display:inline-block; border:1px solid var(--border-light);"><b>Metode:</b> ${data.metodeTransfer || '-'} | <b>Rek:</b> ${data.noRekening || '-'}</div>`;
                     }
 
                     let actionHtml = '';
@@ -891,18 +909,17 @@
                     if(isNabung) {
                         actionHtml = `
                         <div style="display:flex; flex-direction:column; gap:5px; margin-top:10px;">
-                            <button class="btn-submit" style="background:${color}; padding:8px 15px; margin:0;" onclick="window.approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">VALIDASI SETORAN</button>
-                            <button class="btn-submit bg-cancel" style="padding:8px 15px; margin:0;" onclick="window.rejectKlaim('${data.id}', true)">TOLAK</button>
+                            <button class="btn-submit" style="background:${color}; color:white; padding:12px 15px; margin:0;" onclick="window.approveKlaim('${data.id}', '${data.type}', ${data.amount}, '${data.memberId}')">VALIDASI SETORAN</button>
+                            <button class="btn-submit bg-cancel" style="padding:12px 15px; margin:0;" onclick="window.rejectKlaim('${data.id}', true)">TOLAK</button>
                         </div>`;
                     } else {
                         if (data.status === 'PENDING_APPROVAL') {
-                            let statusKetum = data.apprKetum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Ketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Ketum</span>`;
-                            let statusWaketum = data.apprWaketum ? `<span style="color:var(--success)"><i class="fas fa-check-circle"></i> Waketum</span>` : `<span style="color:var(--danger)"><i class="fas fa-clock"></i> Waketum</span>`;
+                            let statusKetum = data.apprKetum ? `<span style="color:var(--success-glow)"><i class="fas fa-check-circle"></i> Ketum</span>` : `<span style="color:var(--danger-glow)"><i class="fas fa-clock"></i> Ketum</span>`;
+                            let statusWaketum = data.apprWaketum ? `<span style="color:var(--success-glow)"><i class="fas fa-check-circle"></i> Waketum</span>` : `<span style="color:var(--danger-glow)"><i class="fas fa-clock"></i> Waketum</span>`;
                             
-                            // TOMBOL ACC PENARIKAN (TETAP KHUSUS KETUM & WAKETUM)
-                            let btnKetum = (!data.apprKetum && (isKetum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--royal-blue); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'KETUM', ${data.amount}, '${data.memberId}')">ACC KETUM</button>` : '';
-                            let btnWaketum = (!data.apprWaketum && (isWaketum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--warning); color:white; padding:8px; margin:0; font-size:11px;" onclick="window.approveTarik('${data.id}', 'WAKETUM', ${data.amount}, '${data.memberId}')">ACC WAKETUM</button>` : '';
-                            let btnTolak = `<button class="btn-submit bg-cancel" style="padding:8px; margin:0; font-size:11px; flex:0.5;" onclick="window.rejectKlaim('${data.id}', false, ${data.amount}, '${data.memberId}')">TOLAK</button>`;
+                            let btnKetum = (!data.apprKetum && (isKetum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--obsidian); color:var(--gold-lux); padding:10px; margin:0; font-size:10px;" onclick="window.approveTarik('${data.id}', 'KETUM', ${data.amount}, '${data.memberId}')">ACC KETUM</button>` : '';
+                            let btnWaketum = (!data.apprWaketum && (isWaketum || isSuperAdmin)) ? `<button class="btn-submit" style="background:var(--warning); color:white; padding:10px; margin:0; font-size:10px;" onclick="window.approveTarik('${data.id}', 'WAKETUM', ${data.amount}, '${data.memberId}')">ACC WAKETUM</button>` : '';
+                            let btnTolak = `<button class="btn-submit bg-cancel" style="padding:10px; margin:0; font-size:10px; flex:0.5;" onclick="window.rejectKlaim('${data.id}', false, ${data.amount}, '${data.memberId}')">TOLAK</button>`;
 
                             actionHtml = `
                             <div style="font-size:11px; background:#F8FAFC; padding:8px; border-radius:8px; margin-top:10px; margin-bottom:8px; border:1px solid #E2E8F0; text-align:center;">
@@ -915,15 +932,15 @@
                         else if (data.status === 'WAITING_TRANSFER') {
                             actionHtml = `
                             <div style="margin-top:10px;">
-                                <button class="btn-submit" style="background:var(--electric-blue); padding:10px; font-size:12px; box-shadow: 0 5px 15px rgba(45,99,237,0.3);" onclick="window.bukaUploadBukti('${data.id}', '${data.memberId}')">
+                                <button class="btn-submit" style="background:var(--obsidian); color:white; padding:12px; font-size:11px; box-shadow: 0 5px 15px rgba(10,17,40,0.2);" onclick="window.bukaUploadBukti('${data.id}', '${data.memberId}')">
                                     <i class="fas fa-upload"></i> UPLOAD BUKTI TRANSFER
                                 </button>
                             </div>`;
                         }
                         else if (data.status === 'WAITING_CONFIRMATION') {
                             actionHtml = `
-                            <div style="margin-top:10px; font-size:11px; text-align:center; padding:8px; background:rgba(245,158,11,0.1); color:var(--warning); border-radius:8px; border:1px dashed var(--warning); font-weight:800;">
-                                <i class="fas fa-spinner fa-spin"></i> MENUNGGU USER KONFIRMASI TERIMA DANA
+                            <div style="margin-top:10px; font-size:10px; text-align:center; padding:8px; background:rgba(217, 119, 6, 0.1); color:var(--warning); border-radius:8px; border:1px dashed var(--warning); font-weight:800; letter-spacing:0.5px;">
+                                <i class="fas fa-spinner fa-spin"></i> MENUNGGU KONFIRMASI USER
                             </div>`;
                         }
                     }
@@ -931,8 +948,8 @@
                     let feeBreakdownHtml = '';
                     if (!isNabung && data.feeKas) {
                         feeBreakdownHtml = `
-                            <div style="font-size:10px; color:#DC2626; margin-top:4px;">Kas (5%): Rp ${data.feeKas.toLocaleString('id-ID')}</div>
-                            <div style="font-size:12px; color:var(--success); font-weight:900; margin-top:2px;">Cair: Rp ${data.netAmount.toLocaleString('id-ID')}</div>
+                            <div style="font-size:10px; color:var(--danger-glow); margin-top:4px;">Kas (5%): Rp ${data.feeKas.toLocaleString('id-ID')}</div>
+                            <div style="font-size:12px; color:var(--success-glow); font-weight:900; margin-top:2px;">Cair: Rp ${data.netAmount.toLocaleString('id-ID')}</div>
                         `;
                     }
 
@@ -941,12 +958,12 @@
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
                             <div>
                                 <div style="font-size:10px; color:#64748B;">${new Date(data.timestamp).toLocaleDateString('id-ID')}</div>
-                                <h4 style="margin:5px 0; color:var(--royal-blue); font-family:'Outfit'; font-size:16px;">${data.memberName}</h4>
-                                <div style="font-size:11px; color:#64748B;">${titleText}</div>
+                                <h4 style="margin:5px 0; color:var(--obsidian); font-family:'Montserrat'; font-size:16px; text-transform:uppercase;">${data.memberName}</h4>
+                                <div style="font-size:11px; font-weight:700; color:#64748B;">${titleText}</div>
                                 ${infoTransferHtml}
                             </div>
                             <div style="text-align:right;">
-                                <div style="font-family:'Space Grotesk'; font-weight:900; font-size:18px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div>
+                                <div style="font-family:'Montserrat'; font-weight:900; font-size:18px; color:${color};">Rp ${data.amount.toLocaleString('id-ID')}</div>
                                 ${feeBreakdownHtml}
                             </div>
                         </div>
@@ -973,33 +990,33 @@
 
                 arrHist.forEach(data => {
                     const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
-                    let infoTransferHtml = `<div style="font-size:11px; color:#475569; margin-top:4px; background:#F1F5F9; padding:5px; border-radius:6px; display:inline-block;"><b>Metode:</b> ${data.metodeTransfer || '-'} | <b>Rek:</b> ${data.noRekening || '-'}</div>`;
+                    let infoTransferHtml = `<div style="font-size:10px; color:#475569; margin-top:4px; background:#F8FAFC; padding:5px; border-radius:6px; display:inline-block; border:1px solid var(--border-light);"><b>Metode:</b> ${data.metodeTransfer || '-'} | <b>Rek:</b> ${data.noRekening || '-'}</div>`;
                     
                     let feeBreakdownHtml = '';
                     if (data.feeKas) {
                         feeBreakdownHtml = `
-                            <div style="font-size:10px; color:#DC2626; margin-top:4px;">Kas (5%): Rp ${data.feeKas.toLocaleString('id-ID')}</div>
-                            <div style="font-size:12px; color:var(--success); font-weight:900; margin-top:2px;">Cair: Rp ${data.netAmount.toLocaleString('id-ID')}</div>
+                            <div style="font-size:10px; color:var(--danger-glow); margin-top:4px;">Kas (5%): Rp ${data.feeKas.toLocaleString('id-ID')}</div>
+                            <div style="font-size:12px; color:var(--success-glow); font-weight:900; margin-top:2px;">Cair: Rp ${data.netAmount.toLocaleString('id-ID')}</div>
                         `;
                     }
 
-                    let btnBukti = data.buktiTransfer ? `<button class="btn-outline-modal" style="padding:6px; font-size:10px; border-radius:8px; margin-top:8px; width:100%;" onclick="window.lihatBukti('${data.buktiTransfer}')"><i class="fas fa-image"></i> LIHAT BUKTI TRANSFER</button>` : '';
+                    let btnBukti = data.buktiTransfer ? `<button class="btn-outline-modal" style="padding:8px; font-size:10px; border-radius:12px; margin-top:10px; width:100%;" onclick="window.lihatBukti('${data.buktiTransfer}')"><i class="fas fa-image"></i> LIHAT BUKTI TRANSFER</button>` : '';
 
                     contHist.innerHTML += `
-                    <div class="app-card" style="border-left:5px solid var(--success); display:flex; flex-direction:column; align-items:stretch; opacity: 0.9;">
+                    <div class="app-card" style="border-left:5px solid var(--success-glow); display:flex; flex-direction:column; align-items:stretch; opacity: 0.9;">
                         <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
                             <div>
                                 <div style="font-size:10px; color:#64748B;">${dateStr}</div>
-                                <h4 style="margin:5px 0; color:var(--royal-blue); font-family:'Outfit'; font-size:16px;">${data.memberName}</h4>
-                                <div style="font-size:11px; color:#64748B;">Penarikan Dana</div>
+                                <h4 style="margin:5px 0; color:var(--obsidian); font-family:'Montserrat'; font-size:16px; text-transform:uppercase;">${data.memberName}</h4>
+                                <div style="font-size:11px; font-weight:700; color:#64748B;">Penarikan Dana</div>
                                 ${infoTransferHtml}
                             </div>
                             <div style="text-align:right;">
-                                <div style="font-family:'Space Grotesk'; font-weight:900; font-size:18px; color:var(--danger);">Rp ${data.amount.toLocaleString('id-ID')}</div>
+                                <div style="font-family:'Montserrat'; font-weight:900; font-size:18px; color:var(--danger-glow);">Rp ${data.amount.toLocaleString('id-ID')}</div>
                                 ${feeBreakdownHtml}
                             </div>
                         </div>
-                        <div style="margin-top:10px; font-size:11px; text-align:center; padding:6px; background:#ECFDF5; color:var(--success); border-radius:8px; border:1px solid #A7F3D0; font-weight:800;">
+                        <div style="margin-top:12px; font-size:10px; text-align:center; padding:8px; background:rgba(5, 150, 105, 0.1); color:var(--success-glow); border-radius:8px; border:1px dashed rgba(5, 150, 105, 0.3); font-weight:800; letter-spacing:1px;">
                             <i class="fas fa-check-circle"></i> SELESAI DITRANSFER
                         </div>
                         ${btnBukti}
@@ -1050,7 +1067,6 @@
                     status: 'WAITING_CONFIRMATION'
                 });
                 
-                // TEMBAK NOTIF BUKTI TRANSFER
                 window.tembakNotif("🧾 BUKTI TRANSFER DIKIRIM", `Admin telah mengunggah bukti transfer. Silakan cek dan konfirmasi!`);
 
                 document.getElementById('modalUploadBukti').style.display = 'none';
@@ -1061,7 +1077,6 @@
                 btn.innerText = "KIRIM BUKTI"; btn.style.opacity = '1';
             }
         }
-
 
         window.approveKlaim = async (trxId, type, amount, memberId) => {
             const konf = await showConfirm("VALIDASI TRANSAKSI", "Anda yakin dana setor sudah berhasil diverifikasi?");
@@ -1075,14 +1090,12 @@
                 t.update(mRef, { saldoTabungan: currentSaldo }); t.update(r, { status: 'SUCCESS' });
             });
             
-            // TEMBAK NOTIF SETORAN DIVALIDASI
             window.tembakNotif("✅ SETORAN DIVALIDASI", `Setoran Rp ${amount.toLocaleString('id-ID')} telah sukses masuk ke Tabungan!`);
-
             showAlert("BERHASIL", "Setoran divalidasi. Saldo tabungan member telah bertambah otomatis.");
         }
 
         window.approveTarik = async (trxId, roleAcc, amount, memberId) => {
-            const konf = await showConfirm("VALIDASI PENARIKAN", `Anda menyetujui penarikan ini sebagai <b>${roleAcc}</b>?`);
+            const konf = await showConfirm("VALIDASI PENARIKAN", `Anda menyetujui penarikan ini sebagai <b style="color:var(--obsidian);">${roleAcc}</b>?`);
             if(!konf) return;
 
             await runTransaction(db, async(t) => {
@@ -1118,11 +1131,9 @@
                             timestamp: Date.now()
                         });
                     }
-                    // KEDUA BELAH PIHAK UDAH ACC
                     window.tembakNotif("✅ PENARIKAN FULL ACC", `Penarikan Tabungan telah di-ACC. Menunggu Admin mentransfer dana!`);
                 } else {
                     t.update(rRef, { apprKetum: isKetumNow, apprWaketum: isWaketumNow });
-                    // BARU 1 PIHAK YANG ACC
                     window.tembakNotif("⏳ UPDATE ACC PENARIKAN", `Persetujuan ${roleAcc} berhasil dicatat.`);
                 }
             }).then(() => {
@@ -1142,37 +1153,34 @@
         window.renderMembers = (arr) => {
             const cont = document.getElementById('adminMemberList'); cont.innerHTML = "";
             
-            // Render Peringkat 1, 2, 3 dengan Mahkota
             arr.forEach((m, i) => {
                 const namaTampil = m.namaKtp || m.nama || 'TANPA NAMA';
                 const saldoMember = m.saldoTabungan ? m.saldoTabungan.toLocaleString('id-ID') : '0';
-                
-                // Gunakan stableKodeUnik yang sudah diikat sebelumnya (bukan urutan array)
                 const noUrut = m.kodeUnikFinal || '999';
                 
                 let rankBadge = '';
-                if (i === 0 && m.saldoTabungan > 0) rankBadge = '<i class="fas fa-crown" style="color:#F59E0B; margin-left:5px;"></i>';
+                if (i === 0 && m.saldoTabungan > 0) rankBadge = '<i class="fas fa-crown" style="color:#D97706; margin-left:5px;"></i>';
                 else if (i === 1 && m.saldoTabungan > 0) rankBadge = '<i class="fas fa-crown" style="color:#94A3B8; margin-left:5px;"></i>';
                 else if (i === 2 && m.saldoTabungan > 0) rankBadge = '<i class="fas fa-crown" style="color:#B45309; margin-left:5px;"></i>';
 
                 cont.innerHTML += `
                 <div class="member-row">
                     <div>
-                        <div class="m-name" style="font-family:'Outfit'; font-size:14px; font-weight:800; color:var(--text-main);">${i+1}. ${namaTampil} ${rankBadge}</div>
-                        <div style="font-size:10px; color:var(--electric-blue); margin-top:2px;">[ Kode Unik: ${noUrut} ]</div>
-                        <div class="m-plat" style="font-size:11px; color:#94A3B8; margin-top:2px;">${m.plat||'-'}</div>
-                        <div style="font-size:12px; color:var(--success); font-weight:900; font-family:'Space Grotesk'; margin-top:4px;">Rp ${saldoMember}</div>
+                        <div class="m-name" style="font-family:'Montserrat'; font-size:14px; font-weight:800; color:var(--text-main); text-transform:uppercase;">${i+1}. ${namaTampil} ${rankBadge}</div>
+                        <div style="font-size:10px; color:var(--text-muted); margin-top:4px; font-weight:700;">[ Kode Unik: ${noUrut} ]</div>
+                        <div class="m-plat" style="font-size:11px; color:var(--obsidian); margin-top:2px; font-weight:800;">${m.plat||'-'}</div>
+                        <div style="font-size:13px; color:var(--success-glow); font-weight:900; font-family:'Montserrat'; margin-top:4px;">Rp ${saldoMember}</div>
                     </div>
                     <div style="display:flex;">
-                        <button class="btn-reset" onclick="window.resetMember('${m.id}', '${namaTampil}')"><i class="fas fa-key"></i></button>
-                        <button class="btn-plus" onclick="document.getElementById('modalDeposit').style.display='flex'; document.getElementById('depMemberId').value='${m.id}'; document.getElementById('depMemberName').innerText='${namaTampil}'; window.loadAdminRecentTrx('${m.id}');"><i class="fas fa-plus"></i></button>
+                        <button class="btn-reset" onclick="window.resetMember('${m.id}', '${escapeHtml(namaTampil)}')"><i class="fas fa-key"></i></button>
+                        <button class="btn-plus" onclick="document.getElementById('modalDeposit').style.display='flex'; document.getElementById('depMemberId').value='${m.id}'; document.getElementById('depMemberName').innerText='${escapeHtml(namaTampil)}'; window.loadAdminRecentTrx('${m.id}');"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>`;
             });
         }
 
         window.resetMember = async (id, name) => {
-            const konf = await showConfirm("RESET KEAMANAN", `Anda yakin ingin me-reset Wajah (Face ID) & PIN milik <b>${name}</b>?`);
+            const konf = await showConfirm("RESET KEAMANAN", `Anda yakin ingin me-reset Wajah (Face ID) & PIN milik <b style="color:var(--obsidian);">${name}</b>?`);
             if(konf) updateDoc(doc(db, "mlu_members", id), { pin_tabungan: null, faceDescriptor: null }).then(() => showAlert("SUKSES", "Keamanan akun tersebut berhasil di-reset."));
         };
 
@@ -1185,7 +1193,7 @@
         
         window.loadAdminRecentTrx = async (memberId) => {
             const cont = document.getElementById('adminRecentTrx');
-            cont.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="font-size:24px; color:var(--electric-blue);"></i></div>';
+            cont.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin" style="font-size:24px; color:var(--obsidian);"></i></div>';
             
             const q = query(collection(db, "mlu_tabungan_trx"), where("memberId", "==", memberId));
             const snap = await getDocs(q);
@@ -1201,11 +1209,11 @@
                 const dateStr = new Date(data.timestamp).toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
                 const isPlus = data.type === 'IN';
                 
-                const btnDelete = isSuperAdmin ? `<button class="btn-edit" style="color:var(--danger); background:rgba(239,68,68,0.1);" onclick="window.deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>` : ``;
+                const btnDelete = isSuperAdmin ? `<button class="btn-edit" style="color:var(--danger-glow); background:rgba(225, 29, 72, 0.1);" onclick="window.deleteTrx('${data.id}', ${data.amount}, '${data.type}', '${memberId}')"><i class="fas fa-trash"></i></button>` : ``;
 
                 cont.innerHTML += `
                 <div class="admin-hist-item">
-                    <div style="font-size:11px;"><div style="font-weight:700; color:${isPlus?'#10B981':'#EF4444'};">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div><div style="color:#aaa;">${dateStr}</div></div>
+                    <div style="font-size:11px;"><div style="font-family:'Montserrat'; font-weight:900; color:${isPlus?'var(--success-glow)':'var(--danger-glow)'};">${isPlus?'+':'-'} Rp ${data.amount.toLocaleString('id-ID')}</div><div style="color:var(--text-muted); margin-top:2px;">${dateStr}</div></div>
                     <div style="display:flex; gap:5px;">
                         <button class="btn-edit" onclick="window.openEditTrx('${data.id}', ${data.amount})"><i class="fas fa-pencil-alt"></i></button>
                         ${btnDelete}
@@ -1284,7 +1292,7 @@
                 if(arr.length===0) { list.innerHTML = `<div style="text-align:center; padding:30px; color:#94A3B8; font-size:12px;">Belum ada Riwayat Mutasi Rekening.</div>`; return; }
                 
                 arr.forEach(d => {
-                    const color = d.type === 'IN' ? 'var(--success)' : 'var(--danger)'; 
+                    const color = d.type === 'IN' ? 'var(--success-glow)' : 'var(--danger-glow)'; 
                     const sign = d.type === 'IN' ? '+' : '-';
                     const dateStr = new Date(d.timestamp).toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
                     
@@ -1296,19 +1304,19 @@
                     else if (d.status === 'WAITING_CONFIRMATION') {
                         pendingTag = 'DANA DIKIRIM';
                         actionBtn = `
-                        <div style="display:flex; gap:5px; margin-top:10px; border-top:1px dashed #E2E8F0; padding-top:10px;">
-                            <button class="btn-outline-modal" style="padding:6px; font-size:10px; border-radius:8px; flex:1;" onclick="window.lihatBukti('${d.buktiTransfer}')"><i class="fas fa-image"></i> LIHAT BUKTI</button>
-                            <button class="btn-submit bg-sukses" style="padding:6px; margin:0; font-size:10px; border-radius:8px; flex:1;" onclick="window.konfirmasiTerimaDana('${d.id}')"><i class="fas fa-check-circle"></i> TERIMA DANA</button>
+                        <div style="display:flex; gap:5px; margin-top:12px; border-top:1px dashed var(--border-light); padding-top:12px;">
+                            <button class="btn-outline-modal" style="padding:10px; font-size:10px; border-radius:12px; flex:1;" onclick="window.lihatBukti('${d.buktiTransfer}')"><i class="fas fa-image"></i> LIHAT BUKTI</button>
+                            <button class="btn-submit bg-sukses" style="padding:10px; margin:0; font-size:10px; border-radius:12px; flex:1;" onclick="window.konfirmasiTerimaDana('${d.id}')"><i class="fas fa-check-circle"></i> TERIMA DANA</button>
                         </div>`;
                     }
 
-                    const tagHtml = pendingTag ? `<span style="background:var(--warning); color:white; padding:2px 5px; border-radius:5px; font-size:8px; margin-left:5px; font-weight:900;">${pendingTag}</span>` : '';
+                    const tagHtml = pendingTag ? `<span style="background:var(--warning); color:white; padding:4px 8px; border-radius:6px; font-size:8px; margin-left:5px; font-weight:900; letter-spacing:0.5px;">${pendingTag}</span>` : '';
 
                     list.innerHTML += `
                     <div class="trx-item" style="flex-direction:column; align-items:stretch;">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div><div style="font-weight:800; font-size:13px; color:var(--text-main);">${d.desc} ${tagHtml}</div><div style="font-size:10px; color:#aaa; margin-top:3px;">${dateStr}</div></div>
-                            <div style="font-family:'Space Grotesk'; font-weight:900; font-size:14px; color:${d.status.includes('PENDING')?'#94A3B8':color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
+                            <div><div style="font-family:'Montserrat'; font-weight:800; font-size:13px; color:var(--obsidian);">${d.desc} ${tagHtml}</div><div style="font-size:10px; color:var(--text-muted); margin-top:4px;">${dateStr}</div></div>
+                            <div style="font-family:'Montserrat'; font-weight:900; font-size:15px; color:${d.status.includes('PENDING')?'#94A3B8':color};">${sign} Rp ${d.amount.toLocaleString('id-ID')}</div>
                         </div>
                         ${actionBtn}
                     </div>`;

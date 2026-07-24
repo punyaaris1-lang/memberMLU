@@ -4,41 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MLU - Account Settings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --royal-blue: #0A2259; --electric-blue: #2D63ED; --bg-surface: #F8FAFC; --white: #FFFFFF; --text-main: #0F172A; --text-muted: #64748B; --danger: #EF4444; --success: #10B981; --border-soft: rgba(226, 232, 240, 0.9); }
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; }
-        * { box-sizing: border-box; outline: none; }
-        .profile-header { background: linear-gradient(160deg, var(--royal-blue) 0%, #15398F 100%); padding: 40px 20px 100px; text-align: center; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; }
-        .header-title { font-family: 'Space Grotesk'; font-size: 20px; font-weight: 900; color: var(--white); text-transform: uppercase; }
+        :root {
+            --bg-canvas: #F4F7FC; --obsidian: #0A1128; --cyan-glow: #00E5FF;
+            --gold-lux: #C5A059; --text-main: #0F172A; --text-muted: #64748B;
+            --success: #059669; --warning: #D97706; --danger: #DC2626;
+            --electric-blue: #2D63ED; --fresh-teal: #0EA5E9; 
+            --border-light: #E2E8F0;
+        }
+        
+        body { 
+            margin: 0; padding: 0; background-color: var(--bg-canvas);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.05), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(197, 160, 89, 0.06), transparent 40%),
+                linear-gradient(rgba(10, 17, 40, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 17, 40, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            font-family: 'Montserrat', sans-serif; color: var(--text-main);
+            padding-bottom: 120px; overflow-x: hidden; position: relative; -webkit-tap-highlight-color: transparent;
+        }
+        
+        * { box-sizing: border-box; outline: none; text-decoration: none; }
+
+        .bg-watermark { position: fixed; bottom: -10%; right: -25%; height: 100vh; opacity: 0.08; transform: scale(1.1) rotate(-15deg); z-index: -1; pointer-events: none; user-select: none; }
+
+        .profile-header { padding: 40px 20px 100px; text-align: center; position: relative; z-index: 10;}
+        .header-title { font-size: 28px; font-weight: 900; color: var(--obsidian); text-transform: uppercase; letter-spacing: -1px; }
+        
         .avatar-container { position: relative; width: 120px; height: 120px; margin: -60px auto 30px; z-index: 10; }
-        .avatar-img { width: 100%; height: 100%; border-radius: 35px; object-fit: cover; background: #F1F5F9; border: 4px solid var(--white); box-shadow: 0 15px 35px rgba(10,34,89,0.15); }
-        .btn-edit-photo { position: absolute; bottom: -5px; right: -5px; width: 40px; height: 40px; border-radius: 50%; background: var(--electric-blue); color: var(--white); border: 3px solid var(--white); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 35px; object-fit: cover; background: var(--bg-canvas); border: 4px solid white; box-shadow: 0 15px 35px rgba(10,17,40,0.1); }
+        .btn-edit-photo { position: absolute; bottom: -5px; right: -5px; width: 40px; height: 40px; border-radius: 50%; background: var(--obsidian); color: var(--gold-lux); border: 3px solid white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 15px rgba(10,17,40,0.2);}
         #fileInput { display: none; }
-        .form-wrapper { padding: 0 25px; }
+        
+        .form-wrapper { padding: 0 25px; position: relative; z-index: 10;}
         .input-group { margin-bottom: 20px; position: relative; }
-        .input-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; margin-left: 5px; }
+        .input-label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; margin-left: 5px; letter-spacing: 0.5px;}
         .input-box { position: relative; }
-        .input-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--electric-blue); font-size: 18px; z-index: 2;}
-        .form-control { width: 100%; padding: 18px 18px 18px 50px; background: var(--white); border: 1px solid var(--border-soft); border-radius: 20px; font-family: 'Inter'; font-weight: 600; font-size: 15px; position: relative; appearance: none; -webkit-appearance: none;}
-        .form-control:disabled { background: #F1F5F9; color: var(--text-muted); }
-        .btn-save { width: 100%; padding: 20px; margin-top: 10px; background: linear-gradient(135deg, var(--royal-blue) 0%, var(--electric-blue) 100%); color: var(--white); border: none; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 15px; cursor: pointer; }
-        .btn-logout { width: 100%; padding: 18px; margin-top: 15px; background: transparent; color: var(--danger); border: 2px dashed #FCA5A5; border-radius: 20px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .input-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--obsidian); font-size: 16px; z-index: 2;}
+        .form-control { width: 100%; padding: 16px 16px 16px 50px; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border: 1px solid white; border-radius: 18px; font-family: 'Montserrat'; font-weight: 600; font-size: 14px; position: relative; appearance: none; -webkit-appearance: none; color: var(--text-main); box-shadow: 0 5px 15px rgba(10,17,40,0.02); transition: 0.3s;}
+        .form-control:focus { border-color: var(--gold-lux); box-shadow: 0 5px 20px rgba(197, 160, 89, 0.15); background: white;}
+        .form-control:disabled { background: #F1F5F9; color: var(--text-muted); border-color: #E2E8F0; box-shadow: none;}
+        
+        .btn-save { width: 100%; padding: 18px; margin-top: 10px; background: var(--obsidian); color: var(--gold-lux); border: none; border-radius: 18px; font-family: 'Montserrat'; font-weight: 900; font-size: 13px; letter-spacing: 1px; cursor: pointer; box-shadow: 0 10px 30px rgba(10,17,40,0.2); transition: 0.2s;}
+        .btn-save:active { transform: scale(0.98); }
+        .btn-logout { width: 100%; padding: 18px; margin-top: 15px; background: transparent; color: var(--danger-glow); border: 2px dashed rgba(225, 29, 72, 0.4); border-radius: 18px; font-family: 'Montserrat'; font-weight: 900; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s;}
+        .btn-logout:active { background: rgba(225, 29, 72, 0.1); }
+        
         .dock-container { position: fixed; bottom: 25px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 1000; }
-        .nav-pill { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); padding: 12px 30px; border-radius: 50px; display: flex; gap: 40px; border: 1px solid var(--border-soft); }
-        .nav-tab { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #CBD5E1; }
-        .nav-tab.active { color: var(--electric-blue); }
-        .overlay { position: fixed; inset: 0; background: rgba(10,34,89,0.8); display: none; align-items: center; justify-content: center; z-index: 9999; }
-        .modal-box { background: white; padding: 30px; border-radius: 30px; text-align: center; width: 90%; max-width: 300px; }
+        .nav-pill { background: rgba(10, 17, 40, 0.95); backdrop-filter: blur(15px); padding: 12px 30px; border-radius: 50px; display: flex; gap: 40px; border: 1px solid rgba(197, 160, 89, 0.3); box-shadow: 0 15px 30px rgba(10,17,40,0.3);}
+        .nav-tab { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #64748B; transition: 0.2s;}
+        .nav-tab.active { color: var(--gold-lux); transform: translateY(-3px);}
+        
+        .overlay { position: fixed; inset: 0; background: rgba(10,17,40,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-box { background: rgba(255,255,255,0.95); padding: 30px; border-radius: 30px; text-align: center; width: 90%; max-width: 300px; box-shadow: 0 30px 80px rgba(0,0,0,0.2); border: 1px solid white;}
     </style>
 </head>
 <body>
 
+    <img src="logomlumaster.png" class="bg-watermark" alt="" onerror="this.style.display='none'">
+
     <div class="overlay" id="statusOverlay">
         <div class="modal-box">
-            <i class="fas fa-spinner fa-spin" id="statusIcon" style="font-size:40px; color:var(--electric-blue); margin-bottom:15px;"></i>
-            <div id="statusText" style="font-family:'Space Grotesk'; font-weight:800; color:var(--royal-blue);">Menyimpan...</div>
+            <i class="fas fa-spinner fa-spin" id="statusIcon" style="font-size:40px; color:var(--obsidian); margin-bottom:15px;"></i>
+            <div id="statusText" style="font-family:'Montserrat'; font-weight:900; color:var(--obsidian);">Menyimpan...</div>
         </div>
     </div>
 
@@ -56,15 +87,15 @@
         <div class="input-group"><label class="input-label">Nama Panggilan (WA)</label><div class="input-box"><i class="fas fa-user"></i><input type="text" id="inpWa" class="form-control" style="text-transform:uppercase;"></div></div>
         <div class="input-group"><label class="input-label">Nomor WhatsApp Pribadi</label><div class="input-box"><i class="fab fa-whatsapp"></i><input type="tel" id="inpHp" class="form-control"></div></div>
         
-        <div class="input-group" style="background:#FEF2F2; border:1px dashed #FCA5A5; padding:15px; border-radius:20px; margin-top:25px;">
-            <div style="font-size:10px; font-weight:800; color:var(--danger); margin-bottom:15px; text-align:center;"><i class="fas fa-heartbeat"></i> KONTAK DARURAT (WAJIB)</div>
+        <div class="input-group" style="background:rgba(225, 29, 72, 0.05); border:1px dashed var(--danger-glow); padding:20px 15px; border-radius:20px; margin-top:25px;">
+            <div style="font-size:10px; font-weight:800; color:var(--danger-glow); margin-bottom:15px; text-align:center;"><i class="fas fa-heartbeat"></i> KONTAK DARURAT (WAJIB)</div>
             
             <label class="input-label">No. HP Darurat</label>
-            <div class="input-box" style="margin-bottom:15px;"><i class="fas fa-phone-alt" style="color:var(--danger);"></i><input type="tel" id="inpDarurat" class="form-control" placeholder="Cth: 0812345678..."></div>
+            <div class="input-box" style="margin-bottom:15px;"><i class="fas fa-phone-alt" style="color:var(--danger-glow);"></i><input type="tel" id="inpDarurat" class="form-control" placeholder="Cth: 0812345678..."></div>
             
             <label class="input-label">Hubungan</label>
             <div class="input-box">
-                <i class="fas fa-users" style="color:var(--danger);"></i>
+                <i class="fas fa-users" style="color:var(--danger-glow);"></i>
                 <select id="inpHubungan" class="form-control">
                     <option value="">-- Pilih Hubungan --</option>
                     <option value="ISTRI">Istri</option>
@@ -110,7 +141,7 @@
         document.getElementById('inpDarurat').value = uData.darurat || "";
         document.getElementById('inpHubungan').value = uData.hubungan || "";
         
-        let currentPhotoBase64 = uData.foto || `https://ui-avatars.com/api/?background=2D63ED&color=fff&bold=true&size=200&name=${encodeURIComponent(uData.nama)}`;
+        let currentPhotoBase64 = uData.foto || `https://ui-avatars.com/api/?background=C5A059&color=0A1128&bold=true&size=200&name=${encodeURIComponent(uData.nama)}`;
         document.getElementById('profileImg').src = currentPhotoBase64;
 
         // Image Compressor
@@ -164,7 +195,7 @@
                 localStorage.setItem('maka_user', JSON.stringify(uData));
 
                 document.getElementById('statusIcon').className = 'fas fa-check-circle';
-                document.getElementById('statusIcon').style.color = '#10B981';
+                document.getElementById('statusIcon').style.color = 'var(--success-glow)';
                 document.getElementById('statusText').innerText = 'Berhasil Disimpan!';
                 setTimeout(() => { document.getElementById('statusOverlay').style.display = 'none'; location.reload(); }, 1500);
 

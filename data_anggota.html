@@ -5,89 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MLU - Directory</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* === TEMA ULTRA LUXURY (WHITE & ROYAL BLUE) === */
-        :root { 
-            --royal-blue: #0A2259; 
-            --electric-blue: #2D63ED; 
-            --gold-lux: #D4AF37;
-            --bg-surface: #F0F4F8; 
-            --text-main: #0F172A; 
-            --text-muted: #64748B; 
-            --danger: #EF4444;
-            
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.9);
-            --shadow-soft: 0 10px 40px rgba(10, 34, 89, 0.08);
+        :root {
+            --bg-canvas: #F4F7FC; --obsidian: #0A1128; --cyan-glow: #00E5FF;
+            --gold-lux: #C5A059; --text-main: #0F172A; --text-muted: #64748B;
+            --success: #059669; --warning: #D97706; --danger: #DC2626;
+            --electric-blue: #2D63ED; --fresh-teal: #0EA5E9; 
+            --border-light: #E2E8F0;
         }
         
-        body { margin: 0; background: var(--bg-surface); font-family: 'Inter', sans-serif; color: var(--text-main); padding-bottom: 120px; overflow-x: hidden; position: relative; -webkit-tap-highlight-color: transparent;}
+        body { 
+            margin: 0; padding: 0; background-color: var(--bg-canvas);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.05), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(197, 160, 89, 0.06), transparent 40%),
+                linear-gradient(rgba(10, 17, 40, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 17, 40, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            font-family: 'Montserrat', sans-serif; color: var(--text-main);
+            padding-bottom: 120px; overflow-x: hidden; position: relative; -webkit-tap-highlight-color: transparent;
+        }
+        
         * { box-sizing: border-box; outline: none; text-decoration: none; }
 
-        .ambient-light { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: floatLight 10s infinite alternate; }
-        .light-1 { top: -20%; left: -20%; width: 500px; height: 500px; background: #bfdbfe; }
-        .light-2 { top: 40%; right: -30%; width: 400px; height: 400px; background: rgba(212, 175, 55, 0.15); animation-delay: 2s; }
-        .bg-watermark { position: fixed; top: 15%; right: -15%; width: 100%; height: 80%; background-image: url('logomlu.png'); background-repeat: no-repeat; background-size: contain; background-position: center; opacity: 0.04; transform: rotate(-15deg); z-index: -2; pointer-events: none; }
-        @keyframes floatLight { 0% {transform: translate(0,0);} 100% {transform: translate(20px, 40px);} }
+        .bg-watermark { position: fixed; bottom: -10%; right: -25%; height: 100vh; opacity: 0.08; transform: scale(1.1) rotate(-15deg); z-index: -1; pointer-events: none; user-select: none; }
 
         .header-main { padding: 40px 20px 20px; position: relative; z-index: 10; text-align: center; }
-        .sub-tag { font-family: 'Space Grotesk'; font-size: 10px; font-weight: 800; letter-spacing: 2px; color: var(--electric-blue); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .main-title { font-family: 'Outfit'; font-size: 32px; font-weight: 900; color: var(--royal-blue); margin: 0; letter-spacing: -1px; text-shadow: 0 10px 30px rgba(10,34,89,0.1); }
+        .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: var(--gold-lux); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .main-title { font-size: 28px; font-weight: 900; color: var(--obsidian); margin: 0; letter-spacing: -1px; text-transform: uppercase; }
 
         .search-container { padding: 0 20px 20px; position: sticky; top: 0; z-index: 99; margin-top: 10px; }
         .search-box { 
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
             border-radius: 20px; padding: 5px 20px; display: flex; align-items: center; 
-            box-shadow: 0 10px 30px rgba(10, 34, 89, 0.08); border: 1px solid white;
+            box-shadow: 0 10px 30px rgba(10, 17, 40, 0.05); border: 1px solid white;
             transition: 0.3s;
         }
-        .search-box:focus-within { transform: scale(1.02); box-shadow: 0 15px 40px rgba(45,99,237,0.15); border-color: var(--electric-blue); }
-        .search-box i { color: var(--electric-blue); font-size: 18px; margin-right: 12px; }
-        .search-box input { flex: 1; border: none; padding: 16px 0; font-family: 'Inter'; font-size: 14px; font-weight: 600; background: transparent; color: var(--text-main); outline: none; }
+        .search-box:focus-within { transform: scale(1.02); box-shadow: 0 15px 35px rgba(197, 160, 89, 0.15); border-color: var(--gold-lux); }
+        .search-box i { color: var(--obsidian); font-size: 18px; margin-right: 12px; }
+        .search-box input { flex: 1; border: none; padding: 16px 0; font-family: 'Montserrat'; font-size: 14px; font-weight: 600; background: transparent; color: var(--text-main); outline: none; }
 
         .list-container { padding: 0 20px 30px; display: flex; flex-direction: column; gap: 15px; }
         
         .member-card { 
-            background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 1);
             border-radius: 24px; padding: 18px; display: flex; align-items: center; gap: 15px; 
-            box-shadow: 0 5px 20px rgba(10, 34, 89, 0.03); transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(10, 17, 40, 0.04); transition: 0.3s;
             animation: slideUp 0.5s ease-out backwards;
         }
         .member-card.is-pengurus { 
-            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(254, 243, 199, 0.4) 100%); 
-            border-color: rgba(212, 175, 55, 0.3);
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(197, 160, 89, 0.05) 100%); 
+            border-color: rgba(197, 160, 89, 0.3); box-shadow: 0 10px 30px rgba(197, 160, 89, 0.1);
         }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .m-photo { width: 60px; height: 60px; border-radius: 18px; object-fit: cover; background: white; border: 2px solid white; flex-shrink: 0; cursor: zoom-in; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-        .is-pengurus .m-photo { border-color: #FCD34D; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.15); }
+        .m-photo { width: 60px; height: 60px; border-radius: 18px; object-fit: cover; background: var(--bg-canvas); border: 2px solid white; flex-shrink: 0; cursor: zoom-in; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .is-pengurus .m-photo { border-color: var(--gold-lux); }
 
         .m-info { flex: 1; min-width: 0; }
-        .m-name { font-family: 'Outfit'; font-size: 16px; font-weight: 800; color: var(--royal-blue); text-transform: uppercase; margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .m-name { font-size: 16px; font-weight: 900; color: var(--obsidian); text-transform: uppercase; margin-bottom: 2px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .m-wa-name { font-size: 10px; font-weight: 700; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
         
         .m-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 6px; }
-        .badge { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; }
-        .bg-plat { background: #eff6ff; color: var(--electric-blue); border-color: #dbeafe; }
-        .bg-role { background: #f8fafc; color: var(--text-muted); border-color: #e2e8f0; }
-        .is-pengurus .bg-role { background: #fffbeb; color: #b45309; border-color: #fcd34d; }
+        .badge { font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid transparent; }
+        .bg-plat { background: #F1F5F9; color: var(--obsidian); border-color: #E2E8F0; }
+        .bg-role { background: rgba(197, 160, 89, 0.1); color: var(--gold-lux); border-color: rgba(197, 160, 89, 0.3); }
+        .badge-official { background: var(--obsidian); color: var(--gold-lux); border-color: rgba(197, 160, 89, 0.5); }
+        .badge-akamsi { background: linear-gradient(135deg, var(--warning), #B45309); color: white; border: none; }
 
         /* KONTAK DARURAT BADGE */
         .m-darurat { margin-top: 8px; display: inline-block; }
         .btn-darurat-call {
             display: inline-flex; align-items: center; gap: 5px; 
-            background: rgba(239, 68, 68, 0.1); color: var(--danger); 
+            background: rgba(225, 29, 72, 0.1); color: var(--danger-glow); 
             padding: 4px 10px; border-radius: 8px; font-size: 9px; font-weight: 800; 
-            text-decoration: none; border: 1px solid rgba(239, 68, 68, 0.2);
+            text-decoration: none; border: 1px solid rgba(225, 29, 72, 0.2);
             transition: 0.2s;
         }
-        .btn-darurat-call:active { transform: scale(0.95); background: var(--danger); color: white; }
+        .btn-darurat-call:active { transform: scale(0.95); background: var(--danger-glow); color: white; }
         
-        /* STATE BELUM ISI DARURAT */
         .btn-darurat-empty {
             display: inline-flex; align-items: center; gap: 5px; 
             background: #F1F5F9; color: #94A3B8; 
@@ -96,79 +96,77 @@
         }
 
         .m-saldo { 
-            font-size: 11px; font-weight: 800; color: #10B981; 
+            font-size: 11px; font-weight: 800; color: var(--success-glow); 
             display: inline-flex; align-items: center; gap: 6px; 
-            cursor: pointer; padding: 5px 10px; background: rgba(16, 185, 129, 0.1); 
-            border-radius: 10px; transition: 0.2s; border: 1px solid rgba(16, 185, 129, 0.2);
+            cursor: pointer; padding: 5px 10px; background: rgba(5, 150, 105, 0.1); 
+            border-radius: 10px; transition: 0.2s; border: 1px solid rgba(5, 150, 105, 0.2);
         }
-        .m-saldo:active { transform: scale(0.95); background: rgba(16, 185, 129, 0.2); }
+        .m-saldo:active { transform: scale(0.95); background: rgba(5, 150, 105, 0.2); }
 
         .m-actions { display: flex; flex-direction: column; gap: 8px; }
         .btn-act { width: 40px; height: 40px; border-radius: 14px; border: none; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .btn-call { background: white; color: #10B981; border: 1px solid #e2e8f0; }
-        .btn-call:active { background: #10B981; color: white; border-color: #10B981; }
-        .btn-edit { background: white; color: var(--electric-blue); border: 1px solid #e2e8f0; display: none; }
-        .btn-del { background: white; color: var(--danger); border: 1px solid #e2e8f0; display: none; }
+        .btn-call { background: white; color: var(--success-glow); border: 1px solid #e2e8f0; }
+        .btn-call:active { background: var(--success-glow); color: white; border-color: var(--success-glow); }
+        .btn-edit { background: white; color: var(--fresh-teal); border: 1px solid #e2e8f0; display: none; }
+        .btn-del { background: white; color: var(--danger-glow); border: 1px solid #e2e8f0; display: none; }
 
-        .fab-add { position: fixed; bottom: 30px; right: 25px; width: 55px; height: 55px; background: linear-gradient(135deg, var(--electric-blue) 0%, var(--royal-blue) 100%); color: white; border-radius: 20px; display: none; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 10px 30px rgba(45,99,237,0.4); border: 2px solid white; cursor: pointer; z-index: 1000; transition: 0.2s;}
+        .fab-add { position: fixed; bottom: 30px; right: 25px; width: 55px; height: 55px; background: var(--obsidian); color: var(--gold-lux); border-radius: 20px; display: none; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 10px 30px rgba(10, 17, 40, 0.3); border: 2px solid var(--gold-lux); cursor: pointer; z-index: 1000; transition: 0.2s;}
         .fab-add:active { transform: scale(0.9); }
 
-        /* MODAL KACA ANTI SCROLL BUG (FIX KEYBOARD) */
-        .modal-overlay { 
-            position: fixed; inset: 0; background: rgba(10,34,89,0.6); backdrop-filter: blur(8px); 
+        /* MODAL KACA */
+        .modal-glass-overlay { 
+            position: fixed; inset: 0; background: rgba(10,17,40,0.7); backdrop-filter: blur(8px); 
             display: none; align-items: flex-start; justify-content: center; z-index: 9999; 
             opacity: 0; transition: opacity 0.3s; padding: 20px;
             overflow-y: auto; overscroll-behavior: contain;
         }
-        .modal-overlay.show { opacity: 1; display: flex; }
-        .modal-box { 
+        .modal-glass-overlay.show { opacity: 1; display: flex; }
+        .modal-glass-box { 
             background: rgba(255,255,255,0.95); width: 100%; max-width: 450px; 
             border-radius: 25px; padding: 25px; transform: scale(0.9); transition: 0.3s; 
             box-shadow: 0 30px 80px rgba(0,0,0,0.2); border: 1px solid white;
             position: relative; margin: auto; max-height: 85vh; overflow-y: auto; overscroll-behavior: contain;
         }
-        .modal-overlay.show .modal-box { transform: scale(1); }
+        .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-family: 'Outfit'; font-size: 20px; font-weight: 900; color: var(--royal-blue); }
+        .modal-title { font-size: 18px; font-weight: 900; color: var(--obsidian); text-transform: uppercase; }
         .btn-close { background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; color: var(--text-muted); transition: 0.2s;}
         
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px;}
-        .form-input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Inter'; font-weight: 600; font-size: 14px; outline: none; transition: 0.2s;}
-        .form-input:focus { border-color: var(--electric-blue); background: white; box-shadow: 0 0 0 3px rgba(45,99,237,0.1); }
+        .form-input { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid #E2E8F0; background: #F8FAFC; font-family: 'Montserrat'; font-weight: 600; font-size: 14px; outline: none; transition: 0.2s;}
+        .form-input:focus { border-color: var(--gold-lux); background: white; box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1); }
 
-        .upload-area { border: 2px dashed #93C5FD; border-radius: 18px; padding: 20px; text-align: center; background: #F0F9FF; cursor: pointer; position: relative; margin-bottom: 20px; transition: 0.2s;}
+        .upload-area { border: 2px dashed #CBD5E1; border-radius: 18px; padding: 20px; text-align: center; background: #F8FAFC; cursor: pointer; position: relative; margin-bottom: 20px; transition: 0.2s;}
         .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-        .preview-img { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; display: none; margin: 10px auto 0; border: 2px solid var(--electric-blue); box-shadow: 0 5px 15px rgba(45,99,237,0.2); }
+        .preview-img { width: 80px; height: 80px; border-radius: 16px; object-fit: cover; display: none; margin: 10px auto 0; border: 2px solid var(--gold-lux); box-shadow: 0 5px 15px rgba(197, 160, 89, 0.2); }
 
-        .btn-save { width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--electric-blue); color: white; font-family: 'Space Grotesk'; font-size: 14px; font-weight: 800; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 25px rgba(45,99,237,0.25); letter-spacing: 1px; transition: 0.2s;}
+        .btn-save { width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--obsidian); color: var(--gold-lux); font-family: 'Montserrat'; font-size: 12px; font-weight: 900; margin-top: 10px; cursor: pointer; box-shadow: 0 10px 25px rgba(10, 17, 40, 0.2); letter-spacing: 1px; transition: 0.2s;}
         .btn-save:active { transform: scale(0.98); }
 
         /* LIGHTBOX */
-        .photo-viewer-overlay { position: fixed; inset: 0; background: rgba(5,10,21,0.9); z-index: 99999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px;}
+        .photo-viewer-overlay { position: fixed; inset: 0; background: rgba(10,17,40,0.9); z-index: 99999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); padding: 20px;}
         .pv-container { position: relative; max-width: 400px; width: 100%; text-align: center; }
         .pv-container img { width: 100%; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); object-fit: cover; max-height: 70vh; border: 2px solid rgba(255,255,255,0.2); }
-        .pv-close { position: absolute; top: -15px; right: -15px; width: 40px; height: 40px; border-radius: 50%; background: var(--danger); color: white; border: 2px solid white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4); transition: 0.2s; }
+        .pv-close { position: absolute; top: -15px; right: -15px; width: 40px; height: 40px; border-radius: 50%; background: var(--danger-glow); color: white; border: 2px solid white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(225, 29, 72, 0.4); transition: 0.2s; }
 
         .back-nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; z-index: 100; text-align: center;}
-        .btn-premium-back { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border: 1px solid white; padding: 14px 25px; border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 800; font-size: 12px; color: var(--royal-blue); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px rgba(10,34,89,0.15); transition: 0.2s;}
-        .btn-premium-back:active { transform: scale(0.95); }
+        .btn-premium-back { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid var(--border-light); padding: 14px 25px; border-radius: 40px; font-family: 'Montserrat'; font-weight: 800; font-size: 11px; color: var(--obsidian); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 15px 30px rgba(10,17,40,0.1); transition: 0.2s;}
+        .btn-premium-back:active { transform: scale(0.95); background: var(--obsidian); color: var(--gold-lux); }
 
         .hist-list { margin-top: 15px; max-height: 400px; overflow-y: auto; text-align: left; }
         .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #E2E8F0; }
         .hist-item:last-child { border-bottom: none; }
         .hist-desc { font-size: 12px; font-weight: 700; color: var(--text-main); }
         .hist-date { font-size: 10px; color: var(--text-muted); }
-        .hist-val { font-family: 'Space Grotesk'; font-weight: 800; font-size: 13px; }
-        .val-in { color: #10B981; } .val-out { color: var(--danger); }
+        .hist-val { font-family: 'Montserrat'; font-weight: 900; font-size: 13px; }
+        .val-in { color: var(--success-glow); } .val-out { color: var(--danger-glow); }
     </style>
 </head>
 <body>
 
-    <div class="ambient-light light-1"></div>
-    <div class="ambient-light light-2"></div>
-    <div class="bg-watermark"></div>
+    <img src="logomlumaster.png" class="bg-watermark" alt="" onerror="this.style.display='none'">
 
     <header class="header-main" id="mainHeader">
         <span class="sub-tag">DATABASE KOMUNITAS</span>
@@ -199,8 +197,8 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="formModal">
-        <div class="modal-box">
+    <div class="modal-glass-overlay" id="formModal">
+        <div class="modal-glass-box">
             <div class="modal-header">
                 <div class="modal-title" id="modalTitleText">Tambah Anggota</div>
                 <button class="btn-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
@@ -209,7 +207,7 @@
             <input type="hidden" id="formId">
             
             <div class="upload-area">
-                <i class="fas fa-camera" style="font-size:24px; color:var(--electric-blue); margin-bottom:5px; display:block;"></i>
+                <i class="fas fa-camera" style="font-size:24px; color:var(--obsidian); margin-bottom:5px; display:block;"></i>
                 <div style="font-size:11px; font-weight:700; color:var(--text-muted);">Tap untuk Upload Foto Wajah</div>
                 <input type="file" id="formFoto" accept="image/*">
                 <img id="previewFoto" class="preview-img">
@@ -220,8 +218,8 @@
             <div class="form-group"><label>Plat Nomor</label><input type="text" id="formPlat" class="form-input" style="text-transform:uppercase;"></div>
             <div class="form-group"><label>Nomor HP Pribadi</label><input type="tel" id="formHp" class="form-input" placeholder="081234..."></div>
             
-            <div style="background: rgba(239, 68, 68, 0.05); border: 1px dashed var(--danger); padding: 15px; border-radius: 14px; margin-bottom: 15px;">
-                <div style="font-size: 10px; font-weight: 800; color: var(--danger); margin-bottom: 10px; display: flex; align-items: center; gap: 5px;"><i class="fas fa-heartbeat"></i> KONTAK DARURAT (WAJIB)</div>
+            <div style="background: rgba(225, 29, 72, 0.05); border: 1px dashed var(--danger-glow); padding: 15px; border-radius: 14px; margin-bottom: 15px;">
+                <div style="font-size: 10px; font-weight: 800; color: var(--danger-glow); margin-bottom: 10px; display: flex; align-items: center; gap: 5px;"><i class="fas fa-heartbeat"></i> KONTAK DARURAT (WAJIB)</div>
                 <div class="form-group" style="margin-bottom:10px;">
                     <label style="color:#64748B;">No. HP Darurat</label>
                     <input type="tel" id="formDarurat" class="form-input" style="background: white;" placeholder="085678...">
@@ -271,13 +269,13 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="historyModal">
-        <div class="modal-box">
+    <div class="modal-glass-overlay" id="historyModal">
+        <div class="modal-glass-box">
             <div class="modal-header">
                 <div class="modal-title">Riwayat Tabungan</div>
                 <button class="btn-close" onclick="document.getElementById('historyModal').classList.remove('show'); setTimeout(()=>document.getElementById('historyModal').style.display='none',300);"><i class="fas fa-times"></i></button>
             </div>
-            <div id="historyTargetName" style="font-size:12px; font-weight:800; color:#64748B; margin-top:-15px; margin-bottom:15px; text-transform:uppercase; border-bottom:1px solid #eee; padding-bottom:10px; text-align:center;"></div>
+            <div id="historyTargetName" style="font-size:12px; font-weight:800; color:#64748B; margin-top:-15px; margin-bottom:15px; text-transform:uppercase; border-bottom:1px dashed #E2E8F0; padding-bottom:10px; text-align:center;"></div>
             <div id="historyContent" class="hist-list"></div>
         </div>
     </div>
@@ -293,17 +291,14 @@
         const u = JSON.parse(localStorage.getItem('maka_user')) || {};
         const platKu = (u.plat || "").replace(/\s+/g, '').toUpperCase();
         let dewaMode = localStorage.getItem('maka_dewa_mode') || 'ON';
-        const isUserDewa = (platKu === 'B4248SWF'); // HANYA PLAT SUPER ADMIN
+        const isUserDewa = (platKu === 'B4248SWF'); 
         
         const myRoleUpper = (u.role || "").toUpperCase();
         const isKetum = myRoleUpper.includes("KETUM") || myRoleUpper === "KETUA UMUM" || myRoleUpper === "KETUA";
         const isWaketum = myRoleUpper.includes("WAKETUM") || myRoleUpper.includes("WAKIL");
         const isBendahara = myRoleUpper.includes("BENDAHARA");
         
-        // Pengecekan Atasan: Yang boleh lihat nomor darurat secara Full
         const isAtasan = isKetum || isWaketum || isBendahara || (isUserDewa && dewaMode === 'ON');
-        
-        // Pengecekan Admin Umum (Bisa Edit/Hapus User)
         const platAdminKhusus = ["B4231SWF", "B4146SWH", "B4769SWE", "B4457SWF", "B4248SWF"];
         const isAdmin = u.isSuperAdmin || (isUserDewa && dewaMode === 'ON') || (u.role && u.role !== 'KELUARGA MLU' && u.role !== 'GUEST') || platAdminKhusus.includes(platKu);
 
@@ -312,7 +307,7 @@
             const header = document.getElementById('mainHeader');
             const btnSaklar = document.createElement('button');
             btnSaklar.innerHTML = dewaMode === 'ON' ? '<i class="fas fa-crown"></i> ADMIN: ON' : '<i class="fas fa-user-shield"></i> ADMIN: OFF';
-            btnSaklar.style.cssText = `margin-top:10px; background:${dewaMode==='ON'?'#D4AF37':'rgba(255,255,255,0.2)'}; color:${dewaMode==='ON'?'#000':'#FFF'}; border:1px solid ${dewaMode==='ON'?'#D4AF37':'rgba(255,255,255,0.4)'}; padding:6px 12px; border-radius:20px; font-family:'Space Grotesk'; font-size:10px; font-weight:800; cursor:pointer; box-shadow:${dewaMode==='ON'?'0 0 15px rgba(212,175,55,0.6)':'none'}; transition:0.2s;`;
+            btnSaklar.style.cssText = `margin-top:10px; background:${dewaMode==='ON'?'var(--obsidian)':'rgba(255,255,255,0.5)'}; color:${dewaMode==='ON'?'var(--gold-lux)':'var(--obsidian)'}; border:1px solid ${dewaMode==='ON'?'var(--gold-lux)':'var(--obsidian)'}; padding:6px 12px; border-radius:20px; font-family:'Montserrat'; font-size:10px; font-weight:800; cursor:pointer; box-shadow:${dewaMode==='ON'?'0 5px 15px rgba(10,17,40,0.2)':'none'}; transition:0.2s;`;
             btnSaklar.onclick = () => { localStorage.setItem('maka_dewa_mode', dewaMode === 'ON' ? 'OFF' : 'ON'); location.reload(); };
             header.appendChild(btnSaklar);
         }
@@ -345,6 +340,23 @@
             reader.readAsDataURL(file);
         });
 
+        // FILTER BADGE KETAT
+        function getRoleBadge(role, plat) {
+            let cPlat = (plat || '').replace(/\s+/g, '').toUpperCase();
+            if (cPlat === 'B4146SWH') return `<span class="badge badge-akamsi"><i class="fas fa-crown"></i> AKAMSI</span>`;
+            if (cPlat === 'B4248SWF') return `<span class="badge bg-role">KELUARGA MLU</span>`;
+            
+            let r = (role || '').toUpperCase();
+            if (r === 'GUEST' || r === 'NON-MEMBER' || r === 'MANUAL' || r === '') return '';
+            if (r === 'MEMBER') return `<span class="badge bg-role">KELUARGA MLU</span>`;
+            
+            const officialRoles = ['KETUM', 'WAKETUM', 'SEKRETARIS', 'BENDAHARA', 'HUMAS', 'KORLAP', 'URC', 'SATGAS', 'DIVISI', 'PENASEHAT', 'PEMBINA', 'PENGURUS'];
+            let isOfficial = officialRoles.some(official => r.includes(official));
+            if (isOfficial) return `<span class="badge badge-official"><i class="fas fa-shield-alt"></i> ${r}</span>`;
+            
+            return `<span class="badge bg-role">KELUARGA MLU</span>`;
+        }
+
         // LOAD DATA
         onSnapshot(query(collection(db, "mlu_members"), orderBy("namaKtp", "asc")), (snap) => {
             membersData = [];
@@ -352,12 +364,8 @@
                 const data = doc.data();
                 const platClean = (data.plat || "").replace(/\s+/g, '').toUpperCase();
                 
-                // MODE SILUMAN: Hide B4248SWF dari semua orang
                 if (platClean === "B4248SWF" || doc.id === "ghost_admin") {
-                    // Hanya muncul kalau Bapak sendiri yang buka dan Dewa Mode lagi ON
-                    if (isUserDewa && dewaMode === 'ON') {
-                        membersData.push({ id: doc.id, ...data });
-                    }
+                    if (isUserDewa && dewaMode === 'ON') membersData.push({ id: doc.id, ...data });
                 } else {
                     membersData.push({ id: doc.id, ...data }); 
                 }
@@ -368,35 +376,25 @@
         function renderList(data) {
             const list = document.getElementById('memberList'); list.innerHTML = '';
             
-            // Urutkan: Pengurus di atas
             data.sort((a, b) => {
-                let aIsP = (a.role && a.role !== 'KELUARGA MLU'); let bIsP = (b.role && b.role !== 'KELUARGA MLU');
+                let aIsP = (a.role && a.role !== 'KELUARGA MLU' && a.role !== 'MEMBER' && a.role !== 'GUEST'); 
+                let bIsP = (b.role && b.role !== 'KELUARGA MLU' && b.role !== 'MEMBER' && b.role !== 'GUEST');
                 if (aIsP && !bIsP) return -1; if (!aIsP && bIsP) return 1; return 0;
             });
 
             data.forEach((m, index) => {
-                const cleanPlatCheck = (m.plat || "").replace(/\s+/g, '').toUpperCase();
-                let isPengurus = m.role && m.role !== 'KELUARGA MLU';
-                
-                // EASTER EGG FERY KELUARGA CEMARA
-                let roleDisplay = m.role || 'KELUARGA MLU';
-                let roleHtml = '';
-                if (cleanPlatCheck === 'B4794SWF') {
-                    roleHtml = `<span class="badge" style="background:#ECFDF5; color:#10B981; border-color:#A7F3D0;"><i class="fas fa-tree"></i> KELUARGA CEMARA</span>`;
-                } else if (isPengurus) {
-                    roleHtml = `<span class="badge bg-role" style="color:#B45309">${roleDisplay}</span>`;
-                }
+                let isPengurus = (m.role && m.role !== 'KELUARGA MLU' && m.role !== 'MEMBER' && m.role !== 'GUEST');
+                let roleHtml = getRoleBadge(m.role, m.plat);
                 
                 const cardClass = isPengurus ? 'member-card is-pengurus' : 'member-card';
                 const nameKtp = m.namaKtp || m.nama || "-";
                 const nameWa = m.namaWa || "-";
-                const photoSrc = m.foto && m.foto.length > 50 ? m.foto : `https://ui-avatars.com/api/?background=${isPengurus ? 'D4AF37' : '2D63ED'}&color=${isPengurus ? '000' : 'fff'}&bold=true&name=${encodeURIComponent(nameKtp)}`;
+                const photoSrc = m.foto && m.foto.length > 50 ? m.foto : `https://ui-avatars.com/api/?background=${isPengurus ? 'C5A059' : 'E2E8F0'}&color=${isPengurus ? '0A1128' : '0F172A'}&bold=true&name=${encodeURIComponent(nameKtp)}`;
                 let waLink = m.hp && m.hp !== "-" ? `https://wa.me/62${m.hp.replace(/^0+/, '')}` : '#';
                 const saldo = m.saldoTabungan ? parseInt(m.saldoTabungan).toLocaleString('id-ID') : "0";
 
                 const isMe = (m.id === u.id); 
                 
-                // LOGIKA PRIVASI TABUNGAN
                 let saldoHtml = '';
                 if (isMe || isAtasan) {
                     saldoHtml = `
@@ -405,28 +403,22 @@
                     </div>`;
                 }
 
-                // LOGIKA SENSOR KONTAK DARURAT
                 let daruratHtml = '';
                 if (m.darurat && m.darurat !== "-" && m.darurat !== "") {
                     let displayDarurat = m.darurat;
                     let linkDarurat = `tel:${m.darurat}`;
-                    
-                    // Samarkan nomor jika bukan atasan DAN bukan dirinya sendiri
                     if (!isAtasan && !isMe) {
                         displayDarurat = m.darurat.substring(0, 4) + 'x'.repeat(Math.max(0, m.darurat.length - 4));
                         linkDarurat = '#'; 
                     }
-
                     daruratHtml = `<div class="m-darurat"><a href="${linkDarurat}" class="btn-darurat-call"><i class="fas fa-heartbeat fa-beat"></i> DARURAT (${m.hubungan || 'KELUARGA'}): ${displayDarurat}</a></div>`;
                 } else {
-                    // Jika belum mengisi, tampilkan badge abu-abu
                     daruratHtml = `<div class="m-darurat"><span class="btn-darurat-empty"><i class="fas fa-exclamation-circle"></i> BELUM ISI DARURAT</span></div>`;
                 }
 
-                // LOGIKA PRIVASI PIN/PASSWORD (KHUSUS KETUM & DEWA)
                 let pinHtml = '';
                 if (isKetum || (isUserDewa && dewaMode === 'ON')) {
-                    pinHtml = `<div style="margin-top:6px; display:inline-block; font-size:10px; color:var(--danger); font-weight:800; background:rgba(239,68,68,0.1); padding:4px 8px; border-radius:6px; border:1px dashed var(--danger);"><i class="fas fa-unlock-alt"></i> PIN: ${m.pin || 'KOSONG'}</div>`;
+                    pinHtml = `<div style="margin-top:6px; display:inline-block; font-size:10px; color:var(--danger-glow); font-weight:800; background:rgba(225,29,72,0.1); padding:4px 8px; border-radius:6px; border:1px dashed var(--danger-glow);"><i class="fas fa-unlock-alt"></i> PIN: ${m.pin || 'KOSONG'}</div>`;
                 }
 
                 const delay = index * 0.05; 
@@ -439,7 +431,6 @@
                             <div class="m-wa-name">WA: ${nameWa}</div>
                             <div class="m-badges">
                                 <span class="badge bg-plat">${m.plat}</span>
-                                <span class="badge bg-role">${m.type||'RTO'}</span>
                                 ${roleHtml}
                             </div>
                             ${saldoHtml}
