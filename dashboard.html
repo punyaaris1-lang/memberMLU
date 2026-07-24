@@ -15,7 +15,7 @@
     <link rel="manifest" href="manifest.json">
     
     <script>
-        const DASH_VERSION = "ELITE_V4.6_FINAL_GPS_LAYOUT"; 
+        const DASH_VERSION = "ELITE_V4.7_PERFECTION"; 
         if (localStorage.getItem('mlu_elite_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('mlu_elite_v', DASH_VERSION); window.location.reload(true); 
@@ -51,11 +51,11 @@
 
         .bg-watermark { position: fixed; bottom: -10%; right: -25%; height: 100vh; opacity: 0.08; transform: scale(1.1) rotate(-15deg); z-index: 0; pointer-events: none; user-select: none; }
 
-        /* LOADER & SPLASH */
+        /* LOADER & SPLASH DIPERBESAR */
         .splash-screen { position: fixed; inset: 0; background-color: var(--bg-canvas); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease, transform 0.6s ease; }
         .splash-screen.hide { opacity: 0; transform: scale(1.05); pointer-events: none; }
         
-        .splash-image-frame { width: 220px; height: 220px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; background: rgba(10, 17, 40, 0.03); border-radius: 24px; box-shadow: 0 20px 40px rgba(10,17,40,0.08); padding: 15px;}
+        .splash-image-frame { width: 320px; height: 320px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; background: rgba(10, 17, 40, 0.03); border-radius: 24px; box-shadow: 0 20px 40px rgba(10,17,40,0.08); padding: 15px;}
         .splash-image-frame img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(10,17,40,0.15)); border-radius: 12px;}
         
         .terminal-text { font-weight: 900; color: var(--obsidian); font-size: 14px; text-align: center; letter-spacing: 1px; padding: 0 20px; line-height: 1.6; margin-top: 15px; min-height: 50px;}
@@ -116,7 +116,7 @@
         }
 
         /* TEXT NODES DIRAPATKAN */
-        .slogan-box { position: absolute; top: calc(48% + 115px); left: 50%; transform: translateX(-50%); text-align: center; width: 100%; z-index: 10; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slogan-box { position: absolute; top: calc(48% + 95px); left: 50%; transform: translateX(-50%); text-align: center; width: 100%; z-index: 10; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .slogan-top { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
         .slogan-bottom { display: block; font-size: clamp(15px, 4.5vw, 18px); font-weight: 900; letter-spacing: 2px; margin-top: 4px; text-transform: uppercase; background: linear-gradient(135deg, #DFBE7B 0%, #C5A059 40%, #9A7B1C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap; }
         .dashboard-core.active .slogan-box { opacity: 0; transform: translate(-50%, 20px) scale(0.95); pointer-events: none; }
@@ -126,7 +126,6 @@
         
         .node-top { top: calc(48% - 150px); left: 50%; transform: translate(-50%, -20px) scale(0.95); align-items: center; text-align: center; width: 100%; }
         
-        /* OYAR & ENGGANO DITARIK KE ATAS */
         .node-left { top: calc(48% + 155px); left: 25px; align-items: flex-start; text-align: left; transform: translateY(-50%) translateX(-20px) scale(0.95); }
         .node-right { top: calc(48% + 155px); right: 25px; align-items: flex-end; text-align: right; transform: translateY(-50%) translateX(20px) scale(0.95); }
         
@@ -207,7 +206,6 @@
         
         .ls-name-wrap { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 2px; flex-wrap: wrap; }
         
-        /* FONT SLOT DIPERKECIL */
         .ls-name { font-size: 10px; font-weight: 800; color: var(--text-main); text-transform: uppercase; white-space: normal; line-height: 1.3;}
         .ls-plat { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 900; color: var(--obsidian); line-height: 1; white-space: nowrap; margin-bottom: 2px;}
         .ls-role { font-size: 7px; font-weight: 800; padding: 2px 5px; border-radius: 6px; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; display: inline-block; vertical-align: middle;}
@@ -343,15 +341,15 @@
             <div class="menu-title-sys">SYSTEM MENU</div>
             <div class="icon-grid">
                 <a href="#" class="grid-item" onclick="bukaSetting(event); tutupMenu(event);"><div class="app-icon bg-pengaturan"><i class="fas fa-sliders"></i></div><div class="app-text">Pengaturan</div></a>
-                <a href="antrian.html" class="grid-item"><div class="app-icon bg-antrian"><i class="fas fa-layer-group"></i></div><div class="app-text">Antrian</div></a>
-                <a href="lokasi_fc.html" class="grid-item"><div class="app-icon bg-lokasi"><i class="fas fa-map-location-dot"></i></div><div class="app-text">Lokasi FC</div></a>
-                <a href="data_anggota.html" class="grid-item"><div class="app-icon bg-anggota"><i class="fas fa-users"></i></div><div class="app-text">Data Anggota</div></a>
-                <a href="store.html" class="grid-item"><div class="app-icon bg-pasar"><i class="fas fa-basket-shopping"></i></div><div class="app-text">Pasar MLU</div></a>
-                <a href="keuangan.html" class="grid-item"><div class="app-icon bg-uang"><i class="fas fa-wallet"></i></div><div class="app-text">Uang Kas</div></a>
-                <a href="tabungan.html" class="grid-item"><div class="app-icon bg-tabungan"><i class="fas fa-sack-dollar"></i></div><div class="app-text">Tabungan</div></a>
-                <a href="reminder.html" class="grid-item"><div class="app-icon bg-garasi"><i class="fas fa-warehouse"></i></div><div class="app-text">Garasi</div></a>
-                <a href="pengurus.html" class="grid-item"><div class="app-icon bg-pengurus"><i class="fas fa-user-shield"></i></div><div class="app-text">Pengurus</div></a>
-                <a href="info_mlu.html" class="grid-item"><div class="app-icon bg-info"><i class="fas fa-bullhorn"></i></div><div class="app-text">Info MLU</div></a>
+                <a href="antrian.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-antrian"><i class="fas fa-layer-group"></i></div><div class="app-text">Antrian</div></a>
+                <a href="lokasi_fc.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-lokasi"><i class="fas fa-map-location-dot"></i></div><div class="app-text">Lokasi FC</div></a>
+                <a href="data_anggota.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-anggota"><i class="fas fa-users"></i></div><div class="app-text">Data Anggota</div></a>
+                <a href="store.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-pasar"><i class="fas fa-basket-shopping"></i></div><div class="app-text">Pasar MLU</div></a>
+                <a href="keuangan.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-uang"><i class="fas fa-wallet"></i></div><div class="app-text">Uang Kas</div></a>
+                <a href="tabungan.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-tabungan"><i class="fas fa-sack-dollar"></i></div><div class="app-text">Tabungan</div></a>
+                <a href="reminder.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-garasi"><i class="fas fa-warehouse"></i></div><div class="app-text">Garasi</div></a>
+                <a href="pengurus.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-pengurus"><i class="fas fa-user-shield"></i></div><div class="app-text">Pengurus</div></a>
+                <a href="info_mlu.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-info"><i class="fas fa-bullhorn"></i></div><div class="app-text">Info MLU</div></a>
             </div>
         </div>
     </div>
@@ -601,7 +599,7 @@
 
         window.showLockedAlert = (e) => {
             if(e) e.stopPropagation(); 
-            document.getElementById('alertMessageText').innerText = "Mohon maaf, lokasi FC Oyar & Enggano saat ini belum mendapat persetujuan dari pihak MAKA. <br> MAKA emang TAI kalo urusan begini lama giliran Xendit cepet.";
+            document.getElementById('alertMessageText').innerText = "Mohon maaf, lokasi Oyar & Enggano saat blm disetujui oleh MAKA. UrusaN begini MAKA emang kaya TAI.Giliran Xendit aja cepet.";
             const m = document.getElementById('modalCustomAlert');
             m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10);
         };
@@ -663,6 +661,9 @@
         
         window.bukaMenu = (e) => { if(e) e.stopPropagation(); document.getElementById('menuModal').classList.add('show'); };
         window.tutupMenu = (e) => { if(e) e.stopPropagation(); document.getElementById('menuModal').classList.remove('show'); };
+        
+        // PENGATURAN STATE MENU AGAR TETAP TERBUKA SAAT BACK DARI HALAMAN LAIN
+        window.simpanStateMenu = () => { sessionStorage.setItem('maka_open_menu', 'true'); };
         
         window.bukaStationMonitor = (e) => { if(e) e.stopPropagation(); document.getElementById('stationMonitor').classList.add('show'); updateStationUI(); };
         window.tutupStationMonitor = () => { document.getElementById('stationMonitor').classList.remove('show'); };
@@ -1147,7 +1148,7 @@
         });
 
         // =======================================================
-        // SPLASH SCRIPT (FIXED NO BLANK + TYPING TEXT)
+        // SPLASH SCRIPT - CUMA MUNCUL SEKALI & JUMP KE ACTIVE
         // =======================================================
         const splash = document.getElementById('splashScreen');
         const terminalText = document.getElementById('terminalText');
@@ -1188,24 +1189,31 @@
                             lineIndex++;
                             typeWriterNew();
                         } else {
-                            setTimeout(() => { if(splash) splash.classList.add('hide'); }, 1000); 
+                            setTimeout(() => { 
+                                if(splash) splash.classList.add('hide'); 
+                            }, 1000); 
                         }
                     }, 800);
                 }
             }
         }
 
-        typeWriterNew();
-    </script>
+        // Cek Memori: Kalo Menu abis dibuka, otomatis buka lagi
+        if (sessionStorage.getItem('maka_open_menu') === 'true') {
+            sessionStorage.removeItem('maka_open_menu');
+            splash.style.display = 'none'; // skip loading
+            dashboard.classList.add('active'); // otomatis logo kepencet
+            document.getElementById('menuModal').classList.add('show'); // otomatis buka menu
+        } 
+        // Cek Memori: Loading cukup sekali per browser session
+        else if (!sessionStorage.getItem('splashShown')) {
+            sessionStorage.setItem('splashShown', 'true');
+            typeWriterNew();
+        } else {
+            splash.style.display = 'none'; // skip loading
+            dashboard.classList.add('active'); // otomatis logo kepencet
+        }
 
-    <!-- FAIL-SAFE MENCEGAH BLANK WHITE PERMANEN -->
-    <script>
-        setTimeout(function() {
-            var s = document.getElementById('splashScreen');
-            if(s && !s.classList.contains('hide')) {
-                s.classList.add('hide');
-            }
-        }, 3500); 
     </script>
 </body>
 </html>
