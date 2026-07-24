@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- SCRIPT MAINTENANCE (HAPUS BARIS INI KALAU MAU DINORMALIN LAGI) -->
-    <script>window.location.replace("maintenance.html");</script>
+        <!-- SCRIPT MAINTENANCE DENGAN BACKDOOR DEVELOPER -->
+    <script>
+        // Cek apakah di link ada kunci rahasia "?dev=mlu"
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('dev') === 'mlu') {
+            // Kalau kunci benar, simpan izin di browser Abang
+            localStorage.setItem('izin_masuk_dev', 'sah');
+        }
+
+        // Kalau browser belum punya izin, lempar ke halaman maintenance!
+        if (localStorage.getItem('izin_masuk_dev') !== 'sah') {
+            window.location.replace("maintenance.html");
+        }
+    </script>
+    
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
