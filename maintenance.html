@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0A1128">
+    <title>MLU - Maintenance</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --obsidian: #0A1128;
+            --gold-lux: #C5A059;
+            --fresh-teal: #0EA5E9;
+            --danger-glow: #E11D48;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--obsidian);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.1), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(197, 160, 89, 0.1), transparent 40%);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-main);
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; text-align: center;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+
+        /* GEAR BACKGROUND ANIMATION */
+        .bg-gears {
+            position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+        }
+        .gear-large {
+            position: absolute; font-size: 400px; color: rgba(255,255,255,0.02);
+            top: -100px; right: -150px; animation: spin 20s linear infinite;
+        }
+        .gear-small {
+            position: absolute; font-size: 200px; color: rgba(255,255,255,0.03);
+            bottom: -50px; left: -80px; animation: spinReverse 15s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+
+        /* GLASS CARD CONTAINER */
+        .maintenance-card {
+            position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px; padding: 40px 30px;
+            width: 90%; max-width: 380px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            transform: translateY(20px); opacity: 0;
+            animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes floatUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* MOTOR ANIMATION GROUP (ANTI KEPOTONG & SINKRON) */
+        .motor-stage {
+            position: relative; height: 95px; width: 100%;
+            border-bottom: 3px dashed rgba(197, 160, 89, 0.4);
+            margin-bottom: 30px; overflow: hidden;
+        }
+        
+        .motor-group {
+            position: absolute; bottom: -2px; left: calc(50% - 30px);
+            display: flex; flex-direction: column; align-items: center;
+            animation: driveWrapper 6s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        .chat-bubble {
+            background: var(--fresh-teal); color: white;
+            font-size: 10px; font-weight: 800; padding: 6px 10px; border-radius: 12px;
+            margin-bottom: 5px; white-space: nowrap; position: relative;
+            box-shadow: 0 5px 10px rgba(14, 165, 233, 0.3);
+        }
+        
+        /* Ekor balon obrolan */
+        .chat-bubble::after {
+            content: ''; position: absolute; bottom: -4px; left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px 5px 0; border-style: solid;
+            border-color: var(--fresh-teal) transparent transparent transparent;
+        }
+
+        .motor-icon {
+            font-size: 45px; color: var(--gold-lux);
+            filter: drop-shadow(0 10px 10px rgba(197, 160, 89, 0.4));
+            transform-origin: bottom center;
+            animation: flipMotor 6s ease-in-out infinite;
+        }
+
+        /* Pembungkusnya bergerak ke kiri dan kanan */
+        @keyframes driveWrapper {
+            0% { transform: translateX(-140px); }
+            45%, 50% { transform: translateX(140px); }
+            95%, 100% { transform: translateX(-140px); }
+        }
+
+        /* Motornya saja yang flip dan wheelie, balon chat tetap tegak dibaca */
+        @keyframes flipMotor {
+            0%, 5% { transform: scaleX(1) rotate(0deg); }
+            10%, 40% { transform: scaleX(1) rotate(-10deg); } /* Wheelie gaspol */
+            43%, 47% { transform: scaleX(1) rotate(10deg); }  /* Ngerem mendadak */
+            50%, 55% { transform: scaleX(-1) rotate(0deg); }  /* Putar balik */
+            60%, 90% { transform: scaleX(-1) rotate(-10deg); }/* Wheelie gaspol arah balik */
+            93%, 97% { transform: scaleX(-1) rotate(10deg); } /* Ngerem mendadak arah balik */
+            100% { transform: scaleX(1) rotate(0deg); }       /* Balik posisi awal */
+        }
+
+        /* TEXT STYLING */
+        .title {
+            font-size: 24px; font-weight: 900; color: white;
+            letter-spacing: 1px; margin: 0 0 10px 0; line-height: 1.2;
+            text-transform: uppercase;
+        }
+        .title span { color: var(--fresh-teal); }
+        .subtitle {
+            font-size: 13px; font-weight: 500; color: var(--text-muted);
+            line-height: 1.6; margin: 0 0 30px 0;
+        }
+
+        /* TOMBOL REFRESH */
+        .btn-refresh {
+            width: 100%; background: var(--fresh-teal); color: white;
+            border: none; padding: 16px; border-radius: 16px;
+            font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 900;
+            letter-spacing: 1px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.3);
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-refresh:active {
+            transform: scale(0.96); box-shadow: 0 5px 15px rgba(14, 165, 233, 0.4);
+        }
+        .btn-refresh i { font-size: 16px; }
+
+        /* LOADING DOTS */
+        .loading-dots {
+            display: flex; justify-content: center; gap: 6px; margin-bottom: 25px;
+        }
+        .dot {
+            width: 8px; height: 8px; background: var(--gold-lux); border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* BACKDOOR LOGIN DEV (Disembunyikan, klik 5x logo kunci) */
+        .secret-dev {
+            position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.1);
+            font-size: 20px; cursor: default; z-index: 50;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animasi Gear Raksasa di Background -->
+    <div class="bg-gears">
+        <i class="fas fa-cog gear-large"></i>
+        <i class="fas fa-cogs gear-small"></i>
+    </div>
+
+    <!-- Pintu Rahasia Developer (Tap 5x untuk tembus maintenance) -->
+    <i class="fas fa-lock secret-dev" id="devLock" onclick="bukaBackdoor()"></i>
+
+    <div class="maintenance-card">
+        
+        <!-- Panggung Animasi Motor Terpadu (Anti-Kepotong) -->
+        <div class="motor-stage">
+            <div class="motor-group">
+                <div class="chat-bubble">Ngopi dulu aja Bang! ☕</div>
+                <i class="fas fa-motorcycle motor-icon"></i>
+            </div>
+        </div>
+
+        <h1 class="title">APK MLU<span> LAGI TURUN MESIN!</span></h1>
+        
+        <p class="subtitle">
+            Sabar ya Bang, mekanik MLU lagi ngoprek daleman server. 
+            Biar aplikasi makin ngacir, antrean Fast Charging aman, dan bebas dari kendala. Mudah2an ga lama <br> Sementara pake antrian umum dulu ya</p>
+
+        <div class="loading-dots">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+
+        <button class="btn-refresh" onclick="window.location.replace('index.html')">
+            <i class="fas fa-rotate-right"></i> COBA REFRESH LAGI
+        </button>
+        
+        <p style="font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.2); margin-top: 20px; letter-spacing: 1px;">
+            MAKA LINTAS UTARA 
+        </p>
+    </div>
+
+    <script>
+        let klikCount = 0;
+        function bukaBackdoor() {
+            klikCount++;
+            if (klikCount >= 5) {
+                localStorage.setItem('izin_masuk_dev', 'sah');
+                window.location.replace('index.html');
+            }
+            setTimeout(() => { klikCount = 0; }, 2000); 
+        }
+    </script>
+</body>
+</html>
