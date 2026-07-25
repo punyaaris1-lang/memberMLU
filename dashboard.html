@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" style="background-color: #F4F7FC;">
 <head>
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('dev') === 'mlu') { localStorage.setItem('izin_masuk_dev', 'sah'); }
-        if (localStorage.getItem('izin_masuk_dev') !== 'sah') { window.location.replace("maintenance.html"); }
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#F4F7FC">
