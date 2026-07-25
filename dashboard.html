@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="id" style="background-color: #F4F7FC;">
 <head>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('dev') === 'mlu') { localStorage.setItem('izin_masuk_dev', 'sah'); }
+        if (localStorage.getItem('izin_masuk_dev') !== 'sah') { window.location.replace("maintenance.html"); }
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#F4F7FC">
@@ -159,6 +165,8 @@
         
         .bg-pengaturan { background: linear-gradient(135deg, #475569, #1E293B); }
         .bg-antrian { background: linear-gradient(135deg, #0EA5E9, #0284C7); }
+        .bg-service { background: linear-gradient(135deg, #64748B, #334155); }
+
         .bg-lokasi { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
         .bg-pasar { background: linear-gradient(135deg, #F43F5E, #E11D48); }
         .bg-uang { background: linear-gradient(135deg, #F59E0B, #D97706); }
@@ -335,6 +343,11 @@
             <div class="menu-title-sys">SYSTEM MENU</div>
             <div class="icon-grid">
                 <a href="#" class="grid-item" onclick="bukaSetting(event); tutupMenu(event);"><div class="app-icon bg-pengaturan"><i class="fas fa-sliders"></i></div><div class="app-text">Pengaturan</div></a>
+                <a href="https://linktr.ee/MAKA_BookingService" target="_blank" class="grid-item">
+    <div class="app-icon bg-service"><i class="fas fa-tools"></i></div>
+    <div class="app-text">Service MAKA</div>
+</a>
+
                 <a href="antrian.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-antrian"><i class="fas fa-layer-group"></i></div><div class="app-text">Antrian</div></a>
                 <a href="lokasi_fc.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-lokasi"><i class="fas fa-map-location-dot"></i></div><div class="app-text">Lokasi FC</div></a>
                 <a href="data_anggota.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-anggota"><i class="fas fa-users"></i></div><div class="app-text">Data Anggota</div></a>
