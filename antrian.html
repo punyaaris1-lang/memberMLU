@@ -7,7 +7,7 @@
     <title>MLU - Smart Charging Hub</title>
     
     <script>
-        const DASH_VERSION = "ELITE_ANTRIAN_V2.9";
+        const DASH_VERSION = "ELITE_ANTRIAN_V3.0";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -37,7 +37,8 @@
                 linear-gradient(90deg, rgba(10, 17, 40, 0.03) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
             font-family: 'Montserrat', sans-serif; color: var(--text-main);
-            padding-bottom: 120px; -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; 
+            padding-bottom: 180px; /* Ditambah biar tombol bawah ga ketutupan */
+            -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; 
             -webkit-tap-highlight-color: transparent;
         }
         * { box-sizing: border-box; outline: none; text-decoration: none; }
@@ -50,11 +51,11 @@
 
         /* HEADER PREMIUM GLASSMORPHISM */
         .header-premium { 
-            padding: 40px 20px 80px; position: relative; z-index: 10; text-align: center; 
+            padding: 30px 20px 60px; position: relative; z-index: 10; text-align: center; 
         }
         .head-flex { display: flex; justify-content: space-between; align-items: flex-start; text-align: left; }
         .sub-tag { font-size: 10px; font-weight: 800; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .main-title { font-size: 26px; font-weight: 900; color: var(--obsidian); margin: 0; line-height: 1.1; text-transform: uppercase;}
+        .main-title { font-size: 22px; font-weight: 900; color: var(--obsidian); margin: 0; line-height: 1.1; text-transform: uppercase;}
 
         .admin-badge { display: none; background: var(--obsidian); color: var(--gold-lux); border: 1px solid rgba(197, 160, 89, 0.4); padding: 6px 12px; border-radius: 12px; font-size: 9px; font-weight: 800; align-items: center; gap: 6px; box-shadow: 0 5px 15px rgba(10,17,40,0.1); letter-spacing: 1px;}
         
@@ -70,55 +71,51 @@
         .status-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border-radius: 24px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 15px 35px rgba(10,17,40,0.06); border: 1px solid white; cursor: pointer; }
         .sc-left { border-left: 4px solid var(--gold-lux); padding-left: 12px; }
         .sc-lbl { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .sc-val { font-size: 14px; font-weight: 900; color: var(--obsidian); margin-top: 4px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;}
+        .sc-val { font-size: 13px; font-weight: 900; color: var(--obsidian); margin-top: 4px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;}
         .sc-right { text-align: right; }
-        .sc-tot { font-size: 32px; font-weight: 900; color: var(--gold-lux); line-height: 1;}
+        .sc-tot { font-size: 28px; font-weight: 900; color: var(--gold-lux); line-height: 1;}
 
         /* SLOT CONTAINER */
-        .slot-container { padding: 30px 20px 10px; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 10;}
+        .slot-container { padding: 30px 20px 10px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;}
         
-        /* THE PERFECT LAYOUT UNTUK NAMA PANJANG (Diadaptasi dari kode lama) */
-        .slot-bay { background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-radius: 24px; border: 1px solid white; padding: 15px; display: flex; align-items: center; gap: 15px; position: relative; transition: 0.3s; box-shadow: 0 10px 30px rgba(10,17,40,0.03); }
+        .slot-bay { background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid white; padding: 12px; display: flex; align-items: center; gap: 12px; position: relative; transition: 0.3s; box-shadow: 0 10px 30px rgba(10,17,40,0.03); }
         .slot-bay.is-active { border-color: rgba(197, 160, 89, 0.4); box-shadow: 0 15px 35px rgba(197, 160, 89, 0.1); background: rgba(255, 255, 255, 0.95); }
         .slot-bay.is-admin { border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 15px 35px rgba(0, 229, 255, 0.1); }
         .slot-bay.is-empty { border-style: dashed; background: rgba(255,255,255,0.5); box-shadow: none; border-color: var(--border-light);}
         
-        .sb-num { width: 55px; height: 55px; border-radius: 16px; background: #F1F5F9; color: #94A3B8; font-size: 24px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .sb-num { width: 45px; height: 45px; border-radius: 14px; background: #F1F5F9; color: #94A3B8; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .slot-bay.is-active .sb-num { background: var(--obsidian); color: var(--gold-lux); box-shadow: 0 5px 15px rgba(10,17,40,0.2);}
         .slot-bay.is-admin .sb-num { background: var(--fresh-teal); color: white; box-shadow: 0 5px 15px rgba(14,165,233,0.3);}
 
         .sb-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center;}
         
-        /* Baris 1: Nama, Batre, Role (Bebas wrap ke bawah) */
-        .sb-name { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
+        .sb-name { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;}
         
-        /* Baris 2: Plat Nomor (Gede) */
-        .sb-plat { font-size: 22px; font-weight: 900; color: var(--obsidian); line-height: 1; margin-bottom: 6px;}
-        .slot-bay.is-empty .sb-plat { color: #CBD5E1; }
+        .sb-plat { font-size: 18px; font-weight: 900; color: var(--obsidian); line-height: 1; margin-bottom: 4px;}
+        .slot-bay.is-empty .sb-plat { color: #CBD5E1; font-size: 14px; letter-spacing: 1px; }
         
-        /* Baris 3: Timer & Kudeta */
-        .sb-timer { font-size: 10px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 5px; flex-wrap: wrap;}
+        .sb-timer { font-size: 9px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; gap: 5px; flex-wrap: wrap;}
         
         /* ROLE BADGES */
-        .badge-official { background: var(--obsidian); color: var(--gold-lux); border: 1px solid rgba(197,160,89,0.4); font-size: 8px; font-weight: 900; padding: 3px 8px; border-radius: 6px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
-        .badge-akamsi { background: linear-gradient(135deg, var(--warning), #B45309); color: white; font-size: 8px; font-weight: 900; padding: 3px 8px; border-radius: 6px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; border: none;}
-        .badge-member { background: rgba(197, 160, 89, 0.1); color: var(--gold-lux); border: 1px solid rgba(197, 160, 89, 0.3); font-size: 8px; font-weight: 900; padding: 3px 8px; border-radius: 6px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
-        .badge-batre { color: var(--success-glow); font-size: 12px; font-weight: 900; white-space: nowrap; }
+        .badge-official { background: var(--obsidian); color: var(--gold-lux); border: 1px solid rgba(197,160,89,0.4); font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .badge-akamsi { background: linear-gradient(135deg, var(--warning), #B45309); color: white; font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; border: none;}
+        .badge-member { background: rgba(197, 160, 89, 0.1); color: var(--gold-lux); border: 1px solid rgba(197, 160, 89, 0.3); font-size: 8px; font-weight: 900; padding: 3px 6px; border-radius: 6px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .badge-batre { color: var(--success-glow); font-size: 11px; font-weight: 900; white-space: nowrap; }
 
-        .btn-dots { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; color: var(--obsidian); border: 1px solid transparent; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-dots { width: 35px; height: 35px; border-radius: 50%; background: #F1F5F9; color: var(--obsidian); border: 1px solid transparent; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; }
         .btn-dots:active { background: rgba(197,160,89,0.1); border-color: var(--gold-lux); color: var(--gold-lux); transform: scale(0.9); }
         .admin-only { display: none; }
 
-        .btn-kudeta-user { background: rgba(225, 29, 72, 0.1); color: var(--danger-glow); border: 1px solid var(--danger-glow); padding: 4px 10px; border-radius: 6px; font-size: 9px; font-weight: 900; margin-left: 5px; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px;}
+        .btn-kudeta-user { background: rgba(225, 29, 72, 0.1); color: var(--danger-glow); border: 1px solid var(--danger-glow); padding: 4px 8px; border-radius: 6px; font-size: 8px; font-weight: 900; margin-left: 5px; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px;}
         .btn-kudeta-user:active { background: var(--danger-glow); color: white; }
 
-        .btn-action-main { padding: 10px 20px; border-radius: 12px; border: none; font-size: 11px; font-weight: 900; letter-spacing: 1px; cursor: pointer; }
+        .btn-action-main { padding: 8px 12px; border-radius: 10px; border: none; font-size: 10px; font-weight: 900; letter-spacing: 1px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
         .btn-fill { background: var(--obsidian); color: var(--gold-lux); box-shadow: 0 5px 15px rgba(10,17,40,0.2); }
         .btn-disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; box-shadow: none; }
 
         /* --- BOTTOM ACTIONS --- */
-        .action-hub { padding: 10px 20px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;}
-        .btn-hub { width: 100%; padding: 18px; border-radius: 18px; font-size: 13px; font-weight: 900; letter-spacing: 1px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .action-hub { padding: 10px 20px 40px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;}
+        .btn-hub { width: 100%; padding: 16px; border-radius: 16px; font-size: 12px; font-weight: 900; letter-spacing: 1px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
         .btn-take-q { background: var(--obsidian); color: var(--gold-lux); box-shadow: 0 10px 25px rgba(10,17,40,0.2); display: none; }
         .btn-take-q:active { transform: scale(0.98); }
         .btn-cancel-me { background: rgba(225, 29, 72, 0.05); color: var(--danger-glow); border: 2px dashed rgba(225, 29, 72, 0.4); display: none; }
@@ -489,8 +486,12 @@
             if (cPlat === 'B4248SWF') return `<span class="badge-member">KELUARGA MLU</span>`;
             
             let r = (role || '').toUpperCase();
-            if (r === 'GUEST' || r === 'NON-MEMBER' || r === 'MANUAL' || r === '') return '';
-            if (r === 'MEMBER') return `<span class="badge-member">KELUARGA MLU</span>`;
+            if (r === 'GUEST' || r === 'NON-MEMBER' || r === '') return '';
+            
+            // Perbaikan logika badge Member
+            if (r === 'MEMBER' || r === 'KELUARGA MLU') return `<span class="badge-member">KELUARGA MLU</span>`;
+            
+            if (r === 'MANUAL' || r === 'KUDETA') return `<span class="badge-official" style="background:var(--fresh-teal); border:none; color:white;"><i class="fas fa-user-shield"></i> VIA ADMIN</span>`;
             
             const officialRoles = ['KETUM', 'WAKETUM', 'SEKRETARIS', 'BENDAHARA', 'HUMAS', 'KORLAP', 'URC', 'SATGAS', 'DIVISI', 'PENASEHAT', 'PEMBINA', 'PENGURUS'];
             let isOfficial = officialRoles.some(official => r.includes(official));
@@ -571,7 +572,7 @@
 
                     let timerHTML = isMe ? `<div class="sb-timer" style="color:var(--gold-lux); border-color:var(--gold-lux);"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` : `<div class="sb-timer"><i class="fas fa-clock"></i> ${durationMin} MIN RUNNING</div>`;
 
-                    // LAYOUT SEJAJAR (NAMA DI ATAS, PLAT + BATRE + MENIT DI BAWAH)
+                    // LAYOUT SEJAJAR
                     div.innerHTML = `
                     <div class="sb-num">0${i+1}</div>
                     <div class="sb-info">
@@ -597,9 +598,17 @@
                         if (isInLocation || isSuperAdmin) actionHtml = `<button class="btn-action-main btn-fill" onclick="mintaBatre('slot', ${i})">MASUK SLOT</button>`; 
                         else actionHtml = `<button class="btn-action-main btn-disabled">HARUS DI LOKASI</button>`;
                     } 
-                    else actionHtml = `<button class="btn-action-main btn-disabled">ANTRIAN BERJALAN</button>`;
+                    else actionHtml = `<button class="btn-action-main btn-disabled" style="opacity:0.5;">ANTRIAN BERJALAN</button>`;
 
-                    div.innerHTML = `<div class="sb-num">0${i+1}</div><div class="sb-info"><div class="sb-plat">KOSONG</div></div><div style="display:flex; gap:10px; align-items:center;">${actionHtml}${adminBtn}</div>`;
+                    div.innerHTML = `
+                    <div class="sb-num">0${i+1}</div>
+                    <div class="sb-info" style="flex:1;">
+                        <div class="sb-plat" style="font-size:14px;">KOSONG</div>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center; flex-shrink:0;">
+                        ${actionHtml}
+                        ${adminBtn}
+                    </div>`;
                 }
                 container.appendChild(div);
             });
