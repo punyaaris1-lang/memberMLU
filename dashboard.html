@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.json">
     
     <script>
-        const DASH_VERSION = "ELITE_V5.0_CINEMATIC"; 
+        const DASH_VERSION = "ELITE_V5.1_SECURITY"; 
         if (localStorage.getItem('mlu_elite_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('mlu_elite_v', DASH_VERSION); window.location.reload(true); 
@@ -666,7 +666,8 @@
             if(rcr) { rcr.style.display = 'block'; rcr.innerText = displayRole; }
         }
 
-        let isSuperAdmin = (myPlatClean === 'B4248SWF' || myPlatClean === 'B4146SWH' || (roleCek !== 'MEMBER' && roleCek !== 'GUEST' && roleCek !== 'NON-MEMBER' && roleCek !== ''));
+        let isAdminAntrian = (myPlatClean === 'B4248SWF' || myPlatClean === 'B4146SWH' || myPlatClean === 'B4457SWF' || (roleCek !== 'MEMBER' && roleCek !== 'GUEST' && roleCek !== 'NON-MEMBER' && roleCek !== ''));
+        let isGpsBypass = (myPlatClean === 'B4248SWF');
 
         document.getElementById('nameCenter').innerText = myName; document.getElementById('nameCorner').innerText = myName;
         document.getElementById('platCenter').innerText = myPlat; document.getElementById('platCorner').innerText = myPlat;
@@ -682,7 +683,7 @@
         if(document.getElementById('inpNama')) document.getElementById('inpNama').value = myName;
         if(document.getElementById('inpPlat')) document.getElementById('inpPlat').value = myPlat;
 
-        if(isSuperAdmin) { document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); }
+        if(isAdminAntrian) { document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); }
 
         const appMain = initializeApp({ apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" }); 
         const db = getFirestore(appMain);
@@ -703,7 +704,7 @@
         window.bukaStationMonitor = (e) => { if(e) e.stopPropagation(); document.getElementById('stationMonitor').classList.add('show'); updateStationUI(); };
         window.tutupStationMonitor = () => { document.getElementById('stationMonitor').classList.remove('show'); };
         
-        window.persiapanDaftar = () => { if(!isInLocation && !isSuperAdmin) return alert("Harus di radius 300m untuk ngantre!"); document.getElementById('modalDaftarAntrian').classList.add('show'); };
+        window.persiapanDaftar = () => { if(!isInLocation && !isGpsBypass) return alert("Harus di radius 300m untuk ngantre!"); document.getElementById('modalDaftarAntrian').classList.add('show'); };
         window.tutupDaftarAntrian = () => { document.getElementById('modalDaftarAntrian').classList.remove('show'); };
 
         window.bukaSetting = (e) => { if(e) e.stopPropagation(); document.getElementById('modalSetting').classList.add('show'); };
@@ -748,7 +749,7 @@
         }
 
         function checkGpsLogic() {
-            if (isSuperAdmin) {
+            if (isGpsBypass) {
                 isInLocation = true;
                 if (watchId !== null) navigator.geolocation.clearWatch(watchId);
             } else if (navigator.geolocation) {
@@ -828,8 +829,10 @@
                     if(rcr) { rcr.style.display = 'block'; rcr.innerText = displayRole; }
                 }
 
-                isSuperAdmin = (myPlatClean === 'B4248SWF' || myPlatClean === 'B4146SWH' || (roleCek !== 'MEMBER' && roleCek !== 'GUEST' && roleCek !== 'NON-MEMBER' && roleCek !== ''));
-                if(isSuperAdmin) document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+                isAdminAntrian = (myPlatClean === 'B4248SWF' || myPlatClean === 'B4146SWH' || myPlatClean === 'B4457SWF' || (roleCek !== 'MEMBER' && roleCek !== 'GUEST' && roleCek !== 'NON-MEMBER' && roleCek !== ''));
+                isGpsBypass = (myPlatClean === 'B4248SWF');
+                
+                if(isAdminAntrian) document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
                 checkGpsLogic(); 
             }
             updateStationUI();
@@ -908,7 +911,7 @@
                         }
                     }
 
-                    let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="event.stopPropagation(); openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
+                    let adminBtn = isAdminAntrian ? `<button class="btn-dots" onclick="event.stopPropagation(); openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
                     let timerHTML = isMe 
                         ? `<div class="stat-timer" style="color:var(--gold-lux); border-color:var(--gold-lux); background:rgba(197,160,89,0.1);"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` 
                         : `<div class="stat-timer"><i class="fas fa-clock"></i> ${durationMin} MIN</div>`;
@@ -937,7 +940,7 @@
                     if (myQIndex === 0 || myQIndex === 1) {
                         btnMasuk = `<button style="background: var(--obsidian); color: var(--gold-lux); border: none; padding: 10px 18px; border-radius: 12px; font-family: 'Montserrat'; font-weight: 900; font-size: 10px; letter-spacing: 1px; cursor:pointer;" onclick="pilihSlotDash(${i})">MASUK</button>`;
                     }
-                    let adminBtn = isSuperAdmin ? `<button class="btn-dots" onclick="bukaDaftarAdmin(${i})"><i class="fas fa-plus"></i></button>` : '';
+                    let adminBtn = isAdminAntrian ? `<button class="btn-dots" onclick="bukaDaftarAdmin(${i})"><i class="fas fa-plus"></i></button>` : '';
 
                     slotsHTML += `
                     <div class="light-slot" style="border-style: dashed; background: rgba(255,255,255,0.5); box-shadow: none;">
@@ -992,7 +995,7 @@
         };
 
         window.submitDaftarAntrian = async () => {
-            if(!isInLocation && !isSuperAdmin) return alert("Pendaftaran gagal: Anda tidak berada di area radius!");
+            if(!isInLocation && !isGpsBypass) return alert("Pendaftaran gagal: Anda tidak berada di area radius!");
             const b = document.getElementById('inpBatre').value;
             if(!b) return alert("Isi persentase baterai!"); if(parseInt(b) > 98) return alert("Maksimal charging 98%!");
             
@@ -1030,7 +1033,7 @@
         }
         
         window.pilihSlotDash = (i) => {
-            if(!isInLocation && !isSuperAdmin) return alert("Anda harus di lokasi untuk menempati slot!");
+            if(!isInLocation && !isGpsBypass) return alert("Anda harus di lokasi untuk menempati slot!");
             window.showActionLoader();
             runTransaction(dbGading, async(t)=>{ 
                 const d = (await t.get(refGading)).data(); if(d.chargingSlots[i]) throw new Error("Slot sudah terisi!"); 
