@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.json">
     
     <script>
-        const DASH_VERSION = "ELITE_V4.9_RESPONSIVE"; 
+        const DASH_VERSION = "ELITE_V5.0_CINEMATIC"; 
         if (localStorage.getItem('mlu_elite_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('mlu_elite_v', DASH_VERSION); window.location.reload(true); 
@@ -49,14 +49,24 @@
 
         .bg-watermark { position: fixed; bottom: -10%; right: -25%; height: 100vh; opacity: 0.08; transform: scale(1.1) rotate(-15deg); z-index: 0; pointer-events: none; user-select: none; }
 
-        /* LOADER & SPLASH DIPERBESAR */
-        .splash-screen { position: fixed; inset: 0; background-color: var(--bg-canvas); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s ease, transform 0.6s ease; }
-        .splash-screen.hide { opacity: 0; transform: scale(1.05); pointer-events: none; }
+        /* SPLASH SCREEN CINEMATIC BLUR */
+        .splash-screen { position: fixed; inset: 0; background-color: var(--obsidian); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden; }
+        .splash-screen.hide { opacity: 0; transform: scale(1.1); pointer-events: none; }
         
-        .splash-image-frame { width: 320px; height: 320px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; background: rgba(10, 17, 40, 0.03); border-radius: 24px; box-shadow: 0 20px 40px rgba(10,17,40,0.08); padding: 15px;}
-        .splash-image-frame img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(10,17,40,0.15)); border-radius: 12px;}
+        .splash-bg-blur { position: absolute; inset: -10%; width: 120%; height: 120%; background-size: cover; background-position: center; filter: blur(30px) brightness(0.35); z-index: 1; animation: slowZoom 15s linear infinite alternate; }
         
-        .terminal-text { font-weight: 900; color: var(--obsidian); font-size: 14px; text-align: center; letter-spacing: 1px; padding: 0 20px; line-height: 1.6; margin-top: 15px; min-height: 50px;}
+        .splash-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; padding: 25px; }
+        
+        .splash-landscape-frame { width: 100%; max-width: 360px; border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); position: relative; margin-bottom: 20px; }
+        .splash-landscape-frame img { width: 100%; height: auto; display: block; object-fit: contain; }
+        
+        .splash-landscape-frame::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,17,40,0.8) 100%); pointer-events: none; }
+        
+        .splash-logo { width: 90px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6)); margin-top: -65px; z-index: 3; position: relative; }
+
+        @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+
+        .terminal-text { font-family: 'Space Grotesk', sans-serif; font-weight: 900; color: #FFFFFF; font-size: 15px; text-align: center; letter-spacing: 2px; padding: 0 20px; line-height: 1.6; margin-top: 15px; min-height: 50px; text-shadow: 0 5px 15px rgba(0,0,0,0.9); text-transform: uppercase; }
         
         #actionLoader { position: fixed; inset: 0; background: rgba(244,247,252,0.8); backdrop-filter: blur(5px); z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -192,7 +202,7 @@
         .bg-pengurus { background: linear-gradient(135deg, #6366F1, #4F46E5); }
         .bg-info { background: linear-gradient(135deg, #06B6D4, #0891B2); }
         .bg-anggota { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
-        .bg-service { background: linear-gradient(135deg, #64748B, #334155); } /* Ditambahin warna buat service MAKA */
+        .bg-service { background: linear-gradient(135deg, #64748B, #334155); } 
 
         /* --- UI STATION MONITOR --- */
         .monitor-overlay { position: fixed; inset: 0; background: rgba(244, 247, 252, 0.85); backdrop-filter: blur(25px); z-index: 100; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: 0.4s ease; }
@@ -346,12 +356,16 @@
         <div style="font-family:'Montserrat'; font-weight:900; color:var(--obsidian); letter-spacing:2px; font-size: 12px;">MEMPROSES...</div>
     </div>
 
-    <!-- SPLASH SCREEN (IMAGE SHOWCASE + TYPING) -->
+    <!-- SPLASH SCREEN CINEMATIC -->
     <div class="splash-screen" id="splashScreen">
-        <div class="splash-image-frame">
-            <img id="splashImg" src="foto1.jpg" alt="MLU Showcase" onerror="this.src='logomlumaster.png';">
+        <div class="splash-bg-blur" id="splashBgBlur"></div>
+        <div class="splash-content">
+            <div class="splash-landscape-frame">
+                <img id="splashImgMain" src="foto1.jpg" alt="MLU Moment">
+            </div>
+            <img src="logomlumaster.png" class="splash-logo" alt="MLU Logo" onerror="this.style.display='none'">
+            <div class="terminal-text" id="terminalText"></div>
         </div>
-        <div class="terminal-text" id="terminalText"></div>
     </div>
 
     <!-- SYSTEM MENU -->
@@ -446,7 +460,7 @@
          ========================================================== -->
     <div class="monitor-overlay" id="stationMonitor">
         <div class="dashboard-container">
-            <div class="hud-header" style="align-items: center; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 15px;">
+            <div class="hud-header" style="align-items: center; border-bottom: 1px dashed rgba(0,0,0,0.05); padding-bottom: 15px;">
                 <button class="btn-ghost" onclick="tutupStationMonitor()"><i class="fas fa-arrow-left"></i></button>
                 <div class="hud-title-group" style="flex: 1; text-align: center; margin: 0 10px;">
                     <div class="hud-location" style="font-size: 18px; font-weight: 900; white-space: nowrap; margin-bottom: 0;">KELAPA GADING</div>
@@ -1183,10 +1197,27 @@
         });
 
         // =======================================================
-        // SPLASH SCRIPT - CUMA MUNCUL SEKALI & JUMP KE ACTIVE
+        // SPLASH SCRIPT - CINEMATIC RANDOM PHOTO
         // =======================================================
         const splash = document.getElementById('splashScreen');
         const terminalText = document.getElementById('terminalText');
+        const splashBgBlur = document.getElementById('splashBgBlur');
+        const splashImgMain = document.getElementById('splashImgMain');
+        
+        // Setup Foto Random (Batas 1 sampai 14)
+        if (splashImgMain) {
+            const totalFoto = 14;
+            const randomNum = Math.floor(Math.random() * totalFoto) + 1;
+            const namaFileFoto = `foto${randomNum}.jpg`;
+            
+            // Pasang ke frame landscape depan
+            splashImgMain.src = namaFileFoto;
+            
+            // Pasang ke background blur belakang
+            if (splashBgBlur) {
+                splashBgBlur.style.backgroundImage = `url('${namaFileFoto}')`;
+            }
+        }
         
         const hour = new Date().getHours();
         let greeting = "SELAMAT MALAM";
@@ -1196,7 +1227,7 @@
 
         const textLines = [
             "BEDA WARNA, BEDA RANGKA,<br>SATU KELUARGA...",
-            `${greeting}, ${myName.toUpperCase()}!`
+            `${greeting},<br><span style="color:var(--gold-lux);">${myName.toUpperCase()}!</span>`
         ];
         
         let lineIndex = 0;
@@ -1206,16 +1237,25 @@
             if (lineIndex < textLines.length) {
                 let currentText = textLines[lineIndex];
                 let isTag = currentText.substring(charIndex, charIndex + 4) === "<br>";
+                let isSpan = currentText.substring(charIndex, charIndex + 6) === "<span ";
+                let isCloseSpan = currentText.substring(charIndex, charIndex + 7) === "</span>";
                 
                 if (charIndex < currentText.length) {
                     if (isTag) {
                         if(terminalText) terminalText.innerHTML += "<br>";
                         charIndex += 4;
+                    } else if (isSpan) {
+                        let spanTag = currentText.substring(charIndex, currentText.indexOf(">", charIndex) + 1);
+                        if(terminalText) terminalText.innerHTML += spanTag;
+                        charIndex += spanTag.length;
+                    } else if (isCloseSpan) {
+                        if(terminalText) terminalText.innerHTML += "</span>";
+                        charIndex += 7;
                     } else {
                         if(terminalText) terminalText.innerHTML += currentText.charAt(charIndex);
                         charIndex++;
                     }
-                    setTimeout(typeWriterNew, 20); 
+                    setTimeout(typeWriterNew, 25); 
                 } else {
                     setTimeout(() => {
                         if (lineIndex === 0) {
@@ -1226,29 +1266,25 @@
                         } else {
                             setTimeout(() => { 
                                 if(splash) splash.classList.add('hide'); 
-                            }, 1000); 
+                            }, 1200); 
                         }
                     }, 800);
                 }
             }
         }
 
-        // Cek Memori: Kalo Menu abis dibuka, otomatis buka lagi
         if (sessionStorage.getItem('maka_open_menu') === 'true') {
             sessionStorage.removeItem('maka_open_menu');
-            splash.style.display = 'none'; // skip loading
-            dashboard.classList.add('active'); // otomatis logo kepencet
-            document.getElementById('menuModal').classList.add('show'); // otomatis buka menu
-        } 
-        // Cek Memori: Loading cukup sekali per browser session
-        else if (!sessionStorage.getItem('splashShown')) {
+            if(splash) splash.style.display = 'none';
+            dashboard.classList.add('active');
+            document.getElementById('menuModal').classList.add('show');
+        } else if (!sessionStorage.getItem('splashShown')) {
             sessionStorage.setItem('splashShown', 'true');
             typeWriterNew();
         } else {
-            splash.style.display = 'none'; // skip loading
-            dashboard.classList.add('active'); // otomatis logo kepencet
+            if(splash) splash.style.display = 'none';
+            dashboard.classList.add('active');
         }
-
     </script>
 </body>
 </html>
