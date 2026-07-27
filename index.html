@@ -321,5 +321,20 @@
             if (e.key === 'Enter') { document.getElementById('inputPin').focus(); }
         });
     </script>
+        <script>
+        // PWA SERVICE WORKER REGISTRATION
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker terdaftar dengan sukses:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('Pendaftaran ServiceWorker gagal:', err);
+                    });
+            });
+        }
+    </script>
+
 </body>
 </html>
