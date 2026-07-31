@@ -334,14 +334,9 @@
         .t-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
         .t-slide.active { opacity: 1; }
         .t-quote { font-size: 13px; font-weight: 500; color: #E2E8F0; line-height: 1.6; text-align: center; margin-bottom: 35px; padding: 0 10px; font-style: italic; }
-        .charging-hud { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; padding-top: 25px; border-top: 1px dashed rgba(255,255,255,0.1); }
-        .hud-slot-info { color: #10B981; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; animation: pulseTextTribute 2s infinite; }
-        .hud-slot-info span { color: white; font-weight: 900; font-size: 14px; }
-        @keyframes pulseTextTribute { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-        .btn-stop-charging { width: 100%; background: var(--danger-glow); color: white; border: none; padding: 16px 0; border-radius: 16px; font-family: 'Montserrat'; font-size: 13px; font-weight: 900; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(225, 29, 72, 0.3); transition: 0.2s; }
-        .btn-stop-charging:active { transform: scale(0.97); box-shadow: 0 5px 15px rgba(225, 29, 72, 0.4); }
-        .btn-pantau { background: transparent; color: var(--text-muted); border: none; padding: 10px; font-family: 'Montserrat'; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
-        .btn-pantau:active { color: white; transform: scale(0.95); }
+        
+        .btn-pantau { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px 24px; border-radius: 14px; font-family: 'Montserrat'; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .btn-pantau:active { background: rgba(255,255,255,0.1); transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -377,10 +372,10 @@
         <div style="font-family:'Montserrat'; font-weight:900; color:var(--obsidian); letter-spacing:2px; font-size: 12px;">MEMPROSES...</div>
     </div>
 
-    <!-- TRIBUTE OVERLAY (MUNCUL SAAT CHARGING) -->
-    <div class="tribute-overlay" id="modalTribute">
+    <!-- TRIBUTE OVERLAY / KUBURAN (MUNCUL SAAT KLIK NODE GADING) -->
+    <div class="tribute-overlay" id="modalTributeRIP">
         <div class="tribute-content-wrapper">
-            <div class="t-title" id="tributeTitle">[ H-X ] SEBELUM SAYA BENAR-BENAR PADAM.</div>
+            <div class="t-title" style="color: var(--text-muted);">[ CHAPTER CLOSED ]<br><span style="color: white; font-size: 20px; letter-spacing: 2px;">FC KELAPA GADING</span></div>
             <div class="tribute-landscape-frame">
                 <img id="tFoto1" class="t-slide active" src="foto1.jpg" alt="" onerror="this.src='https://images.unsplash.com/photo-1558981420-87aa9dad1c89?q=80&w=600&auto=format&fit=crop'">
                 <img id="tFoto2" class="t-slide" src="foto2.jpg" alt="" onerror="this.src='https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=600&auto=format&fit=crop'">
@@ -388,15 +383,9 @@
             <div class="t-quote">
                 " Terima kasih atas semua kenangan hebat yg pernah tercipta disini. FC Kelapa Gading pamit, ingatlah pernah ada tempat yg selalu menerimamu tanpa syarat. Terima kasih sudah pernah singgah untuk pulang kesini."
             </div>
-            <div class="charging-hud">
-                <div class="hud-slot-info">
-                    <i class="fas fa-bolt"></i> PENGISIAN BERJALAN DI <span id="slotNumberDisplay">SLOT X</span>
-                </div>
-                <button class="btn-stop-charging" onclick="triggerStopFromTribute()">
-                    <i class="fas fa-power-off"></i> SELESAI CHARGING
-                </button>
-                <button class="btn-pantau" onclick="tutupTribute()">
-                    <i class="fas fa-eye"></i> PANTAU ANTREAN LAIN
+            <div style="margin-top: 15px;">
+                <button class="btn-pantau" onclick="tutupTributeRIP()">
+                    <i class="fas fa-times"></i> TUTUP KOTAK MEMORI
                 </button>
             </div>
         </div>
@@ -467,11 +456,11 @@
             <span class="slogan-bottom">Satu Keluarga</span>
         </div>
 
-        <!-- NODE FC GADING -->
-        <div class="clean-node node-top" onclick="bukaStationMonitor(event)">
-            <div class="fc-prefix">FAST CHARGING</div>
-            <div class="giant-title">KELAPA GADING</div>
-            <div class="q-small-text" id="nodeGadingKosong">LOADING...</div>
+        <!-- NODE FC GADING (VERSI KUBURAN) -->
+        <div class="clean-node node-top" onclick="bukaTributeRIP(event)">
+            <div class="fc-prefix" style="color: var(--text-muted);">CHAPTER CLOSED</div>
+            <div class="giant-title" style="background: linear-gradient(135deg, #0A1128 0%, #64748B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">KELAPA GADING</div>
+            <div class="q-small-text" style="color: var(--danger-glow);"><i class="fas fa-power-off"></i> TUTUP PERMANEN</div>
         </div>
 
         <!-- NODE OYAR & ENGGANO -->
@@ -502,7 +491,7 @@
     </main>
 
     <!-- ==========================================================
-         UI STATION MONITOR
+         UI STATION MONITOR (SUDAH TIDAK DIAKSES DARI DASHBOARD)
          ========================================================== -->
     <div class="monitor-overlay" id="stationMonitor">
         <div class="dashboard-container">
@@ -651,54 +640,31 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // TRIBUTE LOGIC GLOBAL (Agar bisa dipanggil dari inline HTML)
-        window.activeTributeSlot = -1;
-        let slideInterval;
+        // TRIBUTE KUBURAN LOGIC
+        let slideIntervalRIP;
         
-        window.hitungMundurTribute = () => {
-            const sekarang = new Date().getTime();
-            const tahunIni = new Date().getFullYear();
-            const target = new Date(`${tahunIni}-07-31T23:59:59`).getTime();
-            const selisih = target - sekarang;
-            const hari = Math.ceil(selisih / (1000 * 60 * 60 * 24));
-            const el = document.getElementById('tributeTitle');
-            if(el) {
-                if (hari > 0) { el.innerText = `[ H-${hari} ] SEBELUM SAYA BENAR-BENAR PADAM.`; } 
-                else if (hari === 0) { el.innerText = `[ HARI TERAKHIR ] SEBELUM SAYA PADAM.`; } 
-                else { el.innerText = `[ MEMORI ] SEBELUM SAYA PADAM.`; }
-            }
+        window.bukaTributeRIP = (e) => {
+            if(e) e.stopPropagation();
+            document.getElementById('modalTributeRIP').classList.add('show');
+            mulaiSlideshowRIP();
         };
 
-        window.bukaTribute = (idx) => {
-            window.activeTributeSlot = idx;
-            document.getElementById('slotNumberDisplay').innerText = `SLOT ${idx + 1}`;
-            document.getElementById('modalTribute').classList.add('show');
-            hitungMundurTribute();
-            mulaiSlideshow();
-        };
-
-        window.tutupTribute = () => {
-            document.getElementById('modalTribute').classList.remove('show');
-            if(slideInterval) clearInterval(slideInterval);
-        };
-
-        window.triggerStopFromTribute = () => {
-            if(window.activeTributeSlot > -1) {
-                window.stopChargingDash(window.activeTributeSlot);
-            }
+        window.tutupTributeRIP = () => {
+            document.getElementById('modalTributeRIP').classList.remove('show');
+            if(slideIntervalRIP) clearInterval(slideIntervalRIP);
         };
 
         const totalPhotos = 19;
         let currentIdx = 1;
         let isImg1Active = true;
         
-        function mulaiSlideshow() {
-            if(slideInterval) clearInterval(slideInterval);
+        function mulaiSlideshowRIP() {
+            if(slideIntervalRIP) clearInterval(slideIntervalRIP);
             const img1 = document.getElementById('tFoto1');
             const img2 = document.getElementById('tFoto2');
             if(!img1 || !img2) return;
             
-            slideInterval = setInterval(() => {
+            slideIntervalRIP = setInterval(() => {
                 currentIdx++;
                 if (currentIdx > totalPhotos) currentIdx = 1;
                 if (isImg1Active) {
@@ -948,6 +914,8 @@
             updateStationUI();
         });
 
+        // Backend listener untuk Gading sebenarnya bisa dihapus karena tutup permanen, 
+        // tapi gw biarin untuk jaga-jaga kalau lu butuh kerangkanya buat lokasi lain.
         onSnapshot(refGading, (snap) => {
             if(!snap.exists()) return; 
             const d = snap.data(); localSlots = d.chargingSlots || [null, null, null]; localQueue = d.waitingQueue || []; 
@@ -976,15 +944,6 @@
 
         function updateStationUI() {
             let usedCount = localSlots.filter(s => s !== null).length; let emptySlots = TOTAL_SLOTS - usedCount;
-            
-            let statusGading = "";
-            if (emptySlots > 0) {
-                statusGading = `<i class="fas fa-bolt" style="color:var(--success-glow);"></i> <span style="color:var(--success-glow);">${emptySlots} SLOT TERSEDIA</span>`;
-            } else {
-                statusGading = `<i class="fas fa-users" style="color:var(--warning);"></i> <span style="color:var(--warning);">${localQueue.length} ANTREAN</span>`;
-            }
-            let txtKosong = document.getElementById('nodeGadingKosong');
-            if(txtKosong) txtKosong.innerHTML = statusGading;
             
             let nextQName = "KOSONG";
             if (localQueue.length > 0) {
@@ -1023,9 +982,8 @@
                         ? `<div class="stat-timer" style="color:var(--gold-lux); border-color:var(--gold-lux); background:rgba(197,160,89,0.1);"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` 
                         : `<div class="stat-timer"><i class="fas fa-clock"></i> ${durationMin} MIN</div>`;
 
-                    /* JIKA INI SLOT SAYA, MAKA KETIKA DIKLIK BUKA POP-UP TRIBUTE */
                     slotsHTML += `
-                    <div class="light-slot active" ${isMe ? `onclick="bukaTribute(${i})" style="cursor:pointer;"` : ''}>
+                    <div class="light-slot active" ${isMe ? `onclick="bukaTributeRIP(event)" style="cursor:pointer;"` : ''}>
                         <div class="ls-num">0${i+1}</div>
                         <div class="ls-body" style="flex:1; display:flex; align-items:center; justify-content:space-between; min-width:0;">
                             <div class="ls-info" style="flex:1; min-width:0; padding-right:10px;">
@@ -1068,8 +1026,7 @@
 
             const actionContainer = document.getElementById('actionBtnContainer');
             if (mySlotIndex > -1) {
-                /* JIKA SEDANG CHARGING, TOMBOL BAWAH BERUBAH JADI BUKA STATUS PENGISIAN */
-                actionContainer.innerHTML = `<button class="btn-fab-danger" style="background:var(--obsidian); color:var(--gold-lux); border-color:var(--obsidian); box-shadow: 0 10px 25px rgba(10,17,40,0.3);" onclick="bukaTribute(${mySlotIndex})"><i class="fas fa-bolt"></i> STATUS PENGISIAN SLOT ${mySlotIndex+1}</button>`;
+                actionContainer.innerHTML = `<button class="btn-fab-danger" style="background:var(--obsidian); color:var(--gold-lux); border-color:var(--obsidian); box-shadow: 0 10px 25px rgba(10,17,40,0.3);" onclick="bukaTributeRIP(event)"><i class="fas fa-bolt"></i> STATUS PENGISIAN SLOT ${mySlotIndex+1}</button>`;
             } else if (myQIndex > -1) {
                 actionContainer.innerHTML = `<button class="btn-fab-danger" onclick="batalAntrianDash()"><i class="fas fa-times"></i> BATALKAN ANTRIAN</button>`;
             } else {
@@ -1139,7 +1096,7 @@
                     const d = (await t.get(refGading)).data(); d.chargingSlots[idx] = null; t.update(refGading, {chargingSlots: d.chargingSlots}); 
                 }).then(() => { 
                     window.hideActionLoader(); 
-                    window.tutupTribute(); /* AUTO TUTUP TRIBUTE KALAU LAGI BUKA */
+                    window.tutupTributeRIP(); 
                 }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
             });
         }
@@ -1155,7 +1112,7 @@
                 t.update(refGading, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
             }).then(() => { 
                 window.hideActionLoader();
-                window.bukaTribute(i); /* AUTO BUKA TRIBUTE SETELAH MASUK SLOT */
+                window.bukaTributeRIP(null); 
             }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
         }
 
@@ -1172,7 +1129,7 @@
                 }).then(() => { 
                     window.hideActionLoader(); 
                     alert("Berhasil Kudeta!"); 
-                    window.bukaTribute(idx); /* AUTO BUKA TRIBUTE SETELAH KUDETA BERHASIL */
+                    window.bukaTributeRIP(null); 
                 }).catch(e => { window.hideActionLoader(); alert("Gagal: " + (e.message || e)); }); 
             });
         }
