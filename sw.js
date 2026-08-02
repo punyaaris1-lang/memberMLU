@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mlu-premium-v1';
+const CACHE_NAME = 'mlu-premium-v2';
 const urlsToCache = [
   './',
   './dashboard.html',
