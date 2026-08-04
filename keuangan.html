@@ -293,7 +293,8 @@
         const isKetum = roleCek.includes("KETUM") || roleCek === "KETUA UMUM" || roleCek === "KETUA";
         const isBendahara = roleCek.includes("BENDAHARA");
         
-        const isKeuanganAdmin = (isUserDewa && dewaMode === 'ON') || isKetum || isBendahara;
+        // TAMBAH AKSES UNTUK PLAT B4286SWE DI SINI
+        const isKeuanganAdmin = (isUserDewa && dewaMode === 'ON') || isKetum || isBendahara || (myPlatClean === 'B4286SWE');
 
         if (isKeuanganAdmin) {
             document.getElementById('btnAddTx').style.display = 'flex';

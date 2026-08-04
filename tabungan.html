@@ -455,6 +455,12 @@
         let userId = uData.id; 
         if(!userId) userId = cleanPlat;
 
+        // FUNGSI FIX UNTUK MENCEGAH CRASH SAAT RENDER MEMBER
+        function escapeHtml(text) {
+            if (!text) return "";
+            return String(text).replace(/&/g, "&lt;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
         // CUSTOM ALERTS
         window.showConfirm = (title, msg, isPrompt = false) => {
             return new Promise((resolve) => {
@@ -502,7 +508,8 @@
         const isBendahara = roleUpper.includes("BENDAHARA");
         const isSuperAdmin = (cleanPlat === "B4248SWF" || uData.id === "ghost_admin");
         
-        const isTrueAdmin = isKetum || isWaketum || isSekretaris || isBendahara || isSuperAdmin || (cleanPlat === "B4650SWE");
+        // TAMBAH AKSES UNTUK PLAT B4286SWE DI SINI
+        const isTrueAdmin = isKetum || isWaketum || isSekretaris || isBendahara || isSuperAdmin || (cleanPlat === "B4650SWE") || (cleanPlat === "B4286SWE");
         let isViewAdminVisible = isTrueAdmin; 
 
         let userFaceDesc = null; let userPinTabungan = null; let isSetupMode = false; let isFaceMode = true; let stream = null; let videoEl = document.getElementById('videoInput'); let detectInterval = null; let currentPinInput = "";
@@ -1166,9 +1173,9 @@
                 cont.innerHTML += `
                 <div class="member-row">
                     <div>
-                        <div class="m-name" style="font-family:'Montserrat'; font-size:14px; font-weight:800; color:var(--text-main); text-transform:uppercase;">${i+1}. ${namaTampil} ${rankBadge}</div>
+                        <div class="m-name" style="font-family:'Montserrat'; font-size:14px; font-weight:800; color:var(--text-main); text-transform:uppercase;">${i+1}. ${escapeHtml(namaTampil)} ${rankBadge}</div>
                         <div style="font-size:10px; color:var(--text-muted); margin-top:4px; font-weight:700;">[ Kode Unik: ${noUrut} ]</div>
-                        <div class="m-plat" style="font-size:11px; color:var(--obsidian); margin-top:2px; font-weight:800;">${m.plat||'-'}</div>
+                        <div class="m-plat" style="font-size:11px; color:var(--obsidian); margin-top:2px; font-weight:800;">${escapeHtml(m.plat||'-')}</div>
                         <div style="font-size:13px; color:var(--success-glow); font-weight:900; font-family:'Montserrat'; margin-top:4px;">Rp ${saldoMember}</div>
                     </div>
                     <div style="display:flex;">
