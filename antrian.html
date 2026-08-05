@@ -7,7 +7,7 @@
     <title>MLU - Smart Charging Hub</title>
     
     <script>
-        const DASH_VERSION = "ELITE_ANTRIAN_V3.1_ZIUNG_PINDAHAN";
+        const DASH_VERSION = "ELITE_ANTRIAN_V3.2_ZIUNG_PINDAHAN";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -566,7 +566,6 @@
             let r = (role || '').toUpperCase();
             if (r === 'GUEST' || r === 'NON-MEMBER' || r === '') return '';
             
-            // Perbaikan logika badge Member
             if (r === 'MEMBER' || r === 'KELUARGA MLU') return `<span class="badge-member">KELUARGA MLU</span>`;
             
             if (r === 'MANUAL' || r === 'KUDETA') return `<span class="badge-official" style="background:var(--fresh-teal); border:none; color:white;"><i class="fas fa-user-shield"></i> VIA ADMIN</span>`;
@@ -595,11 +594,17 @@
             if (document.getElementById('sheetDaftarAntrian').classList.contains('show')) window.renderQueueList();
         });
 
+        // --- SISTEM SNAPSHOT YANG MEMAKSA HANYA 2 SLOT ---
         onSnapshot(mainRef, (snap) => { 
             if (!snap.exists()) return; 
             const d = snap.data(); 
 
-            localSlots = d.chargingSlots || [null, null]; 
+            let rawSlots = d.chargingSlots || [];
+            localSlots = [
+                rawSlots.length > 0 ? rawSlots[0] : null,
+                rawSlots.length > 1 ? rawSlots[1] : null
+            ];
+            
             localQueue = d.waitingQueue || []; 
             blockedList = d.blockedPlates || []; 
             updateUI(); 
@@ -752,24 +757,26 @@
             } else alert("Semua slot penuh!");
         }
 
+        // --- SISTEM PENULISAN DATABASE YANG DI-KUNCI 2 SLOT SAJA ---
+
         window.pindahDariAntrianKeSlot = (slotIndex) => {
             showGlobalLoader();
             runTransaction(db, async(t) => {
                 const d = (await t.get(mainRef)).data();
-                if(d.chargingSlots[slotIndex] !== null) throw new Error("Mohon maaf, Slot ini baru saja terisi!");
+                let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                
+                if(s[slotIndex] !== null) throw new Error("Mohon maaf, Slot ini baru saja terisi!");
                 let q = d.waitingQueue || [];
                 const myIdx = q.findIndex(x => cleanStr(x.plat) === myPlatClean);
                 if(myIdx === -1) throw new Error("Data antrian Anda tidak ditemukan.");
                 
-                let me = q.splice(myIdx, 1)[0]; me.startTime = Date.now(); d.chargingSlots[slotIndex] = me;
-                t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q });
+                let me = q.splice(myIdx, 1)[0]; me.startTime = Date.now(); s[slotIndex] = me;
+                t.update(mainRef, { chargingSlots: s, waitingQueue: q });
                 let nextUser = (myIdx === 0 && q.length > 0) ? q[0].plat : null; return nextUser;
             }).then((nextUser) => {
                 catatLog("MASUK_SLOT", `Pindah otomatis/mandiri ke Slot 0${slotIndex + 1}`);
                 hideGlobalLoader();
-                
                 setTimeout(() => { document.getElementById('warningPopupOverlay').style.display = 'flex'; }, 300);
-
                 if(nextUser) window.kirimNotifKePlat(nextUser, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby di dekat stasiun FC.");
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
         };
@@ -779,19 +786,19 @@
             showGlobalLoader();
             runTransaction(db, async(t) => {
                 const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || [];
+                let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                
                 const myIdx = q.findIndex(x => cleanStr(x.plat) === myPlatClean);
                 if(myIdx === -1) throw new Error("Anda tidak ada di antrian!");
                 
                 let me = q.splice(myIdx, 1)[0]; me.userName = me.userName + " 👑"; me.role = "KUDETA"; me.startTime = Date.now();
-                let kickedPlat = d.chargingSlots[idx].plat; d.chargingSlots[idx] = me;
-                t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q});
+                let kickedPlat = s[idx] ? s[idx].plat : null; s[idx] = me;
+                t.update(mainRef, {chargingSlots: s, waitingQueue: q});
                 let nextUser = (myIdx === 0 && q.length > 0) ? q[0].plat : null; return { kicked: kickedPlat, next: nextUser };
             }).then((res) => { 
                 catatLog("KUDETA_USER", `Mengkudeta plat ${res.kicked} dari Slot 0${idx + 1}`);
                 hideGlobalLoader();
-                
                 setTimeout(() => { document.getElementById('warningPopupOverlay').style.display = 'flex'; }, 300);
-
                 if(res.kicked) window.kirimNotifKePlat(res.kicked, "⚔️ ANDA DI-KUDETA!", "Waktu Anda sudah habis dan Slot telah diambil alih paksa oleh member lain.");
                 if(res.next) window.kirimNotifKePlat(res.next, "⚠️ BERSIAAAAPP!", "Giliran Anda selanjutnya! Harap standby di dekat stasiun FC.");
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
@@ -808,10 +815,7 @@
             const rawBatre = document.getElementById('inpMemberBatre').value.trim();
             const bInt = parseInt(rawBatre);
             if(!rawBatre) return alert("Isi sisa baterai!");
-            if(bInt > 98) {
-                alert("⚠️ KONDISI FC ABNORMAL!\n\nMaksimal charging dibatasi 98%. DILARANG charging 100% atau tunggu indikator biru!");
-                return;
-            }
+            if(bInt > 98) { alert("⚠️ KONDISI FC ABNORMAL!\n\nMaksimal charging dibatasi 98%. DILARANG charging 100% atau tunggu indikator biru!"); return; }
             
             const batreFinal = rawBatre + "%";
             forceCloseSheet('sheetInputBatre');
@@ -830,12 +834,15 @@
                 }).catch(e => { hideGlobalLoader(); alert(e.message || e); });
             } else if (memberActionType === 'slot') {
                 runTransaction(db, async(t)=>{ 
-                    const d = (await t.get(mainRef)).data(); if(d.chargingSlots[memberActionSlotIdx]) throw new Error("SLOT PENUH!"); 
+                    const d = (await t.get(mainRef)).data(); 
+                    let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                    if(s[memberActionSlotIdx]) throw new Error("SLOT PENUH!"); 
+                    
                     let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === myPlatClean); 
                     if(idx === -1 && !isSuperAdmin) throw new Error("ANDA TIDAK ADA DI ANTRIAN!"); 
                     let me = idx > -1 ? q.splice(idx, 1)[0] : { plat: myPlat, userName: myName, role: myRole }; 
-                    me.startTime = Date.now(); me.batre = batreFinal; me.battery = batreFinal; d.chargingSlots[memberActionSlotIdx] = me; 
-                    t.update(mainRef, { chargingSlots: d.chargingSlots, waitingQueue: q }); 
+                    me.startTime = Date.now(); me.batre = batreFinal; me.battery = batreFinal; s[memberActionSlotIdx] = me; 
+                    t.update(mainRef, { chargingSlots: s, waitingQueue: q }); 
                 }).then(() => {
                     catatLog("MASUK_SLOT_LANGSUNG", `Masuk langsung ke Slot 0${memberActionSlotIdx + 1} (Batre: ${batreFinal})`);
                     hideGlobalLoader();
@@ -844,8 +851,11 @@
             } else if (memberActionType === 'kudeta') {
                 runTransaction(db, async(t) => {
                     const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; q = q.filter(x => cleanStr(x.plat) !== myPlatClean);
-                    let kickedPlat = d.chargingSlots[currentTargetSlot].plat; d.chargingSlots[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal, battery: batreFinal };
-                    t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: q}); return kickedPlat;
+                    let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                    
+                    let kickedPlat = s[currentTargetSlot] ? s[currentTargetSlot].plat : null; 
+                    s[currentTargetSlot] = { plat: myPlat, userName: myName + " 👑", role: "KUDETA", startTime: Date.now(), batre: batreFinal, battery: batreFinal };
+                    t.update(mainRef, {chargingSlots: s, waitingQueue: q}); return kickedPlat;
                 }).then((kickedPlat) => { 
                     catatLog("KUDETA_ADMIN", `Admin mengeluarkan paksa ${kickedPlat} dari Slot 0${currentTargetSlot + 1}`);
                     forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader(); 
@@ -858,7 +868,10 @@
         window.stopCharging = (i) => { 
             showGlobalLoader();
             runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); d.chargingSlots[i] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+                const d = (await t.get(mainRef)).data(); 
+                let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                
+                s[i] = null; t.update(mainRef, {chargingSlots: s}); 
                 let nextUser = (d.waitingQueue && d.waitingQueue.length > 0) ? d.waitingQueue[0].plat : null; return nextUser;
             }).then((nextUser) => {
                 catatLog("SELESAI_CHARGING", `Selesai dan keluar dari Slot 0${i + 1}`);
@@ -886,8 +899,11 @@
             if(targetIdx === currentTargetSlot) return forceCloseSheet('sheetPilihSlot'); 
             showGlobalLoader();
             runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); if(d.chargingSlots[targetIdx] !== null) throw new Error("Slot Tujuan Sedang Terisi!"); 
-                d.chargingSlots[targetIdx] = d.chargingSlots[currentTargetSlot]; d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); return d.chargingSlots[targetIdx].plat;
+                const d = (await t.get(mainRef)).data(); 
+                let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                
+                if(s[targetIdx] !== null) throw new Error("Slot Tujuan Sedang Terisi!"); 
+                s[targetIdx] = s[currentTargetSlot]; s[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: s}); return s[targetIdx].plat;
             }).then((p) => { 
                 catatLog("ADMIN_PINDAH_SLOT", `Memindahkan ${p} dari Slot 0${currentTargetSlot + 1} ke Slot 0${targetIdx + 1}`);
                 forceCloseSheet('sheetPilihSlot'); hideGlobalLoader(); if(p) window.kirimNotifKePlat(p, "🔄 PINDAH SLOT", `Admin telah memindahkan Anda ke Slot 0${targetIdx+1}.`);
@@ -897,8 +913,11 @@
         window.adminKick = () => { 
             showGlobalLoader();
             runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); let kickedPlat = d.chargingSlots[currentTargetSlot] ? d.chargingSlots[currentTargetSlot].plat : null;
-                d.chargingSlots[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: d.chargingSlots}); 
+                const d = (await t.get(mainRef)).data(); 
+                let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                
+                let kickedPlat = s[currentTargetSlot] ? s[currentTargetSlot].plat : null;
+                s[currentTargetSlot] = null; t.update(mainRef, {chargingSlots: s}); 
                 let nextUser = (d.waitingQueue && d.waitingQueue.length > 0) ? d.waitingQueue[0].plat : null; return {kicked: kickedPlat, next: nextUser};
             }).then((res) => { 
                 catatLog("ADMIN_KICK", `Mengeluarkan paksa ${res.kicked} dari Slot 0${currentTargetSlot + 1}`);
@@ -911,9 +930,12 @@
         window.adminToQueue = () => { 
             showGlobalLoader();
             runTransaction(db, async(t)=>{ 
-                const d = (await t.get(mainRef)).data(); const s = d.chargingSlots[currentTargetSlot]; 
-                if(s) { d.waitingQueue.unshift(s); d.chargingSlots[currentTargetSlot] = null; } 
-                t.update(mainRef, {chargingSlots: d.chargingSlots, waitingQueue: d.waitingQueue}); return s ? s.plat : null;
+                const d = (await t.get(mainRef)).data(); 
+                let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                
+                const obj = s[currentTargetSlot]; 
+                if(obj) { d.waitingQueue.unshift(obj); s[currentTargetSlot] = null; } 
+                t.update(mainRef, {chargingSlots: s, waitingQueue: d.waitingQueue}); return obj ? obj.plat : null;
             }).then((p) => { 
                 catatLog("ADMIN_TURUN_TAHTA", `Menurunkan ${p} dari Slot 0${currentTargetSlot + 1} kembali ke antrean`);
                 forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader(); if(p) window.kirimNotifKePlat(p, "⚠️ PERHATIAN!", "Admin telah mengembalikan posisi Anda dari Slot menjadi Antrean.");
@@ -948,9 +970,12 @@
                     q.push(newObj); t.update(mainRef, { waitingQueue: q });
                 } else if (jalur === 'slot') {
                     let targetIdx = currentTargetSlot;
-                    if (targetIdx === -1) { targetIdx = d.chargingSlots.findIndex(s => s === null); if(targetIdx === -1) throw new Error("Semua slot penuh! Pilih Masuk Antrian."); } 
-                    else { if(d.chargingSlots[targetIdx] !== null) throw new Error("Slot keburu terisi!"); }
-                    newObj.startTime = Date.now(); d.chargingSlots[targetIdx] = newObj; t.update(mainRef, { chargingSlots: d.chargingSlots });
+                    let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                    
+                    if (targetIdx === -1) { targetIdx = s.findIndex(x => x === null); if(targetIdx === -1) throw new Error("Semua slot penuh! Pilih Masuk Antrian."); } 
+                    else { if(s[targetIdx] !== null) throw new Error("Slot keburu terisi!"); }
+                    
+                    newObj.startTime = Date.now(); s[targetIdx] = newObj; t.update(mainRef, { chargingSlots: s });
                 }
             }).then(() => { 
                 catatLog("ADMIN_INPUT_MANUAL", `Mendaftarkan manual ${plat} (${nama}) ke jalur ${jalur}`);
@@ -961,15 +986,17 @@
         window.adminPromoteToSlot = (index, targetSlotIdx = -1) => {
             showGlobalLoader();
             runTransaction(db, async(t) => {
-                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; let slots = d.chargingSlots || [null, null];
+                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; 
+                let s = (d.chargingSlots || []).slice(0, 2); while(s.length < 2) s.push(null);
+                
                 let emptyIdx = targetSlotIdx;
-                if(emptyIdx === -1) { emptyIdx = slots.findIndex(s => s === null); } 
-                else if(slots[emptyIdx] !== null) { throw new Error("Slot 0" + (emptyIdx+1) + " sedang terisi!"); }
+                if(emptyIdx === -1) { emptyIdx = s.findIndex(x => x === null); } 
+                else if(s[emptyIdx] !== null) { throw new Error("Slot 0" + (emptyIdx+1) + " sedang terisi!"); }
                 
                 if (emptyIdx === -1) throw new Error("Semua slot sedang penuh! Keluarkan salah satu kendaraan di slot terlebih dahulu.");
                 
-                let userToPromote = q.splice(index, 1)[0]; userToPromote.startTime = Date.now(); slots[emptyIdx] = userToPromote;
-                t.update(mainRef, { waitingQueue: q, chargingSlots: slots });
+                let userToPromote = q.splice(index, 1)[0]; userToPromote.startTime = Date.now(); s[emptyIdx] = userToPromote;
+                t.update(mainRef, { waitingQueue: q, chargingSlots: s });
                 
                 let nextUser = (index === 0 && q.length > 0) ? q[0].plat : null; return { promoted: userToPromote.plat, slotNum: emptyIdx + 1, next: nextUser };
             }).then((res) => { 
