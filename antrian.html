@@ -7,7 +7,7 @@
     <title>MLU - Smart Charging Hub</title>
     
     <script>
-        const DASH_VERSION = "ELITE_ANTRIAN_V3.0";
+        const DASH_VERSION = "ELITE_ANTRIAN_V3.1_ZIUNG_PINDAHAN";
         if (localStorage.getItem('maka_antrian_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('maka_antrian_v', DASH_VERSION);
@@ -37,7 +37,7 @@
                 linear-gradient(90deg, rgba(10, 17, 40, 0.03) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
             font-family: 'Montserrat', sans-serif; color: var(--text-main);
-            padding-bottom: 180px; /* Ditambah biar tombol bawah ga ketutupan */
+            padding-bottom: 180px; 
             -webkit-font-smoothing: antialiased; overflow-x: hidden; position: relative; 
             -webkit-tap-highlight-color: transparent;
         }
@@ -112,6 +112,49 @@
         .btn-action-main { padding: 8px 12px; border-radius: 10px; border: none; font-size: 10px; font-weight: 900; letter-spacing: 1px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
         .btn-fill { background: var(--obsidian); color: var(--gold-lux); box-shadow: 0 5px 15px rgba(10,17,40,0.2); }
         .btn-disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; box-shadow: none; }
+
+        /* =========================================================
+           WOW FACTOR: 3D MAP (TEMA PINDAHAN)
+           ========================================================= */
+        .map-3d-widget { margin: 5px 20px 15px; position: relative; display: flex; justify-content: center; align-items: center; height: 140px; z-index: 10; }
+        .scene { perspective: 1000px; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .map-plane { width: 280px; height: 90px; background: #F1F5F9; transform: rotateX(60deg) rotateZ(-15deg); transform-style: preserve-3d; border-radius: 12px; position: relative; box-shadow: -4px 8px 0px #CBD5E1, -10px 15px 15px rgba(0,0,0,0.15), inset 0 0 0 3px #FFFFFF; }
+        .city-water { position: absolute; top: -20px; left: 100px; width: 60px; height: 130px; background: #BAE6FD; opacity: 0.7; transform: rotate(15deg); }
+        .city-park { position: absolute; top: 10px; left: 10px; width: 50px; height: 30px; background: #D1FAE5; opacity: 0.7; }
+        .city-block { position: absolute; top: 50px; left: 210px; width: 40px; height: 25px; background: #E2E8F0; border-radius: 4px; }
+        .road-path { position: absolute; top: 35px; left: 20px; width: 240px; height: 20px; background: #FFFFFF; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
+        .road-line { position: absolute; top: 44px; left: 20px; width: 240px; height: 2px; border-top: 2px dashed #94A3B8; }
+        .stand-up { position: absolute; transform: translate(-50%, -100%) translateZ(5px) rotateZ(15deg) rotateX(-60deg); transform-style: preserve-3d; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Teks Kelapa Gading (Ditinggalkan) */
+        .gading-huge-text { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 900; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; position: absolute; top: -15px; white-space: nowrap; background: rgba(255,255,255,0.7); padding: 4px 10px; border-radius: 8px; border: 1px dashed #CBD5E1; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
+        /* Pin Ziung */
+        .pin-marker { width: 22px; height: 22px; background: var(--danger-glow); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: inset -2px -2px 6px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2); position: relative; }
+        .pin-marker::after { content: ''; position: absolute; width: 8px; height: 8px; background: #FFF; border-radius: 50%; top: 7px; left: 7px; }
+        .pin-shadow { width: 14px; height: 4px; background: rgba(0,0,0,0.3); border-radius: 50%; margin-top: 2px; }
+        .pin-label { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 900; color: var(--obsidian); background: rgba(255,255,255,0.9); padding: 2px 8px; border-radius: 6px; position: absolute; top: -22px; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid var(--border-light); }
+        .pin-label.ziung { background: var(--obsidian); color: var(--gold-lux); border-color: var(--gold-lux); }
+        
+        .pin-gading { top: 45px; left: 30px; z-index: 5; }
+        .pin-ziung { top: 45px; left: 250px; z-index: 5; }
+        
+        /* Animasi Mobil Pindahan */
+        .motor-stand { position: absolute; transform-origin: center bottom; animation: driveRoute 6s infinite linear; z-index: 10; }
+        .bouncing-pickup { position: relative; display: flex; align-items: center; justify-content: center; animation: bounceMotor 0.3s infinite alternate; filter: drop-shadow(2px 5px 3px rgba(0,0,0,0.3)); }
+        
+        /* Truk madep kanan (di flip X) */
+        .truck-icon { font-size: 26px; color: var(--obsidian); transform: scaleX(-1); }
+        /* Tumpukan kardus di belakang bak mobil */
+        .boxes-icon { position: absolute; top: -8px; left: 2px; font-size: 14px; color: var(--warning); z-index: -1; transform: scaleX(-1); filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        
+        @keyframes bounceMotor { 0% { transform: translateY(0); } 100% { transform: translateY(-4px); } }
+        @keyframes driveRoute { 
+            0% { top: 45px; left: 30px; opacity: 0; transform: translate(-50%, -100%) translateZ(6px) rotateZ(15deg) rotateX(-60deg); } 
+            10% { opacity: 1; } 
+            90% { opacity: 1; } 
+            100% { top: 45px; left: 250px; opacity: 0; transform: translate(-50%, -100%) translateZ(6px) rotateZ(15deg) rotateX(-60deg); } 
+        }
 
         /* --- BOTTOM ACTIONS --- */
         .action-hub { padding: 10px 20px 40px; display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;}
@@ -230,7 +273,7 @@
         <div class="head-flex">
             <div>
                 <span class="sub-tag">Station Monitor</span>
-                <h1 class="main-title">FC KELAPA GADING</h1>
+                <h1 class="main-title">FC ZIUNG (STARVO)</h1>
             </div>
             <div style="display:flex; gap:10px; align-items:center;">
                 <div class="admin-badge admin-only" id="adminIndicator"><i class="fas fa-shield-alt"></i> PENGURUS</div>
@@ -255,6 +298,42 @@
     </div>
 
     <div class="slot-container" id="slotsContainer"></div>
+
+    <!-- WIDGET ISOMETRIC 3D MAP (TEMA PINDAHAN) -->
+    <div class="map-3d-widget">
+        <div class="scene">
+            <div class="map-plane">
+                <div class="city-water"></div>
+                <div class="city-park"></div>
+                <div class="city-block"></div>
+                <div class="road-path"></div>
+                <div class="road-line"></div>
+                
+                <!-- Titik Lama: Teks Billboard Gading yang Ditinggalkan -->
+                <div class="stand-up pin-gading">
+                    <div class="gading-huge-text">KELAPA GADING</div>
+                </div>
+                
+                <!-- Titik Baru: Pin Ziung -->
+                <div class="stand-up pin-ziung">
+                    <div class="pin-label ziung">FC ZIUNG</div>
+                    <div class="pin-marker"></div>
+                    <div class="pin-shadow"></div>
+                </div>
+                
+                <!-- Animasi: Pickup Bawa Kardus -->
+                <div class="motor-stand">
+                    <div class="bouncing-pickup">
+                        <!-- Truck di-flip supaya menghadap kanan -->
+                        <i class="fas fa-truck-pickup truck-icon"></i>
+                        <!-- Kardus ditumpuk di bak belakang -->
+                        <i class="fas fa-boxes boxes-icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END WIDGET ISOMETRIC 3D MAP -->
 
     <div class="action-hub">
         <button id="btnTakeQ" class="btn-hub btn-take-q" onclick="mintaBatre('antrian', -1)">AMBIL ANTRIAN SAYA</button>
@@ -295,7 +374,6 @@
             <div class="sheet-menu">
                 <button class="sm-btn" onclick="adminMoveSlot(0)"><div class="sm-icon bg-dark">1</div> Masuk Slot 1</button>
                 <button class="sm-btn" onclick="adminMoveSlot(1)"><div class="sm-icon bg-dark">2</div> Masuk Slot 2</button>
-                <button class="sm-btn" onclick="adminMoveSlot(2)"><div class="sm-icon bg-dark">3</div> Masuk Slot 3</button>
             </div>
         </div>
     </div>
@@ -438,7 +516,7 @@
             } catch(e) {}
         }
 
-        const STATION_LAT = -6.171583; const STATION_LNG = 106.899844; const MAX_DIST_KM = 0.3; 
+        const STATION_LAT = -6.186135; const STATION_LNG = 106.954544; const MAX_DIST_KM = 0.05; 
         let isInLocation = false; 
 
         function calculateDist(lat1, lon1, lat2, lon2) { 
@@ -456,7 +534,7 @@
                 if(dist <= MAX_DIST_KM) { 
                     isInLocation = true; gpsInd.className = "gps-badge ok"; gpsInd.innerHTML = "<i class='fas fa-map-marker-alt'></i> ANDA DI LOKASI"; 
                     if (!window.radarNotifSent) {
-                        window.tembakNotif("📍 LOKASI FC TERDETEKSI", "Anda sudah masuk radius FC Kelapa Gading. Silakan ambil antrean!");
+                        window.tembakNotif("📍 LOKASI FC TERDETEKSI", "Anda sudah masuk radius FC Ziung. Silakan ambil antrean!");
                         window.radarNotifSent = true;
                     }
                 } 
@@ -468,7 +546,7 @@
             }, (err) => { isInLocation = false; gpsInd.className = "gps-badge err"; gpsInd.innerHTML = "<i class='fas fa-eye'></i> MODE PANTAU (NO GPS)"; updateUI(); }, {enableHighAccuracy: false, maximumAge: 10000});
         }
 
-        let localSlots = [null, null, null]; 
+        let localSlots = [null, null]; 
         let localQueue = []; 
         let blockedList = [];
         let currentTargetSlot = -1;
@@ -521,7 +599,7 @@
             if (!snap.exists()) return; 
             const d = snap.data(); 
 
-            localSlots = d.chargingSlots || [null, null, null]; 
+            localSlots = d.chargingSlots || [null, null]; 
             localQueue = d.waitingQueue || []; 
             blockedList = d.blockedPlates || []; 
             updateUI(); 
@@ -542,7 +620,7 @@
             const btnTake = document.getElementById('btnTakeQ');
             
             let usedCount = localSlots.filter(s => s !== null).length;
-            let emptySlots = 3 - usedCount;
+            let emptySlots = 2 - usedCount;
 
             localSlots.forEach((s, i) => {
                 const div = document.createElement('div');
@@ -785,7 +863,7 @@
             }).then((nextUser) => {
                 catatLog("SELESAI_CHARGING", `Selesai dan keluar dari Slot 0${i + 1}`);
                 hideGlobalLoader();
-                if(nextUser) window.kirimNotifKePlat(nextUser, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
+                if(nextUser) window.kirimNotifKePlat(nextUser, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Ziung! Silakan masuk ke slot sekarang.");
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
         
@@ -826,7 +904,7 @@
                 catatLog("ADMIN_KICK", `Mengeluarkan paksa ${res.kicked} dari Slot 0${currentTargetSlot + 1}`);
                 forceCloseSheet('sheetKelolaIsi'); hideGlobalLoader();
                 if(res.kicked) window.kirimNotifKePlat(res.kicked, "⛔ ANDA DIKELUARKAN", "Admin telah mengeluarkan kendaraan Anda dari Slot Charging.");
-                if(res.next) window.kirimNotifKePlat(res.next, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Gading! Silakan masuk ke slot sekarang.");
+                if(res.next) window.kirimNotifKePlat(res.next, "🔋 SLOT TERSEDIA!", "Ada slot kosong di FC Ziung! Silakan masuk ke slot sekarang.");
             }).catch(e => { hideGlobalLoader(); alert(e.message || e); }); 
         };
         
@@ -858,7 +936,7 @@
             const nama = document.getElementById('inpAdminNama').value.trim().toUpperCase(); const plat = document.getElementById('inpAdminPlat').value.trim().toUpperCase(); const batre = document.getElementById('inpAdminBatre').value.trim();
             const bInt = parseInt(batre);
             if(!nama || !plat) return alert("Nama dan Plat wajib diisi!");
-            if(bInt > 98) return alert("Batas maksimal FC Gading 98%.");
+            if(bInt > 98) return alert("Batas maksimal FC Ziung 98%.");
             
             showGlobalLoader();
             runTransaction(db, async(t) => {
@@ -883,10 +961,10 @@
         window.adminPromoteToSlot = (index, targetSlotIdx = -1) => {
             showGlobalLoader();
             runTransaction(db, async(t) => {
-                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; let slots = d.chargingSlots || [null, null, null];
+                const d = (await t.get(mainRef)).data(); let q = d.waitingQueue || []; let slots = d.chargingSlots || [null, null];
                 let emptyIdx = targetSlotIdx;
                 if(emptyIdx === -1) { emptyIdx = slots.findIndex(s => s === null); } 
-                else if(slots[emptyIdx] !== null) { throw new Error("Slot " + (emptyIdx+1) + " sedang terisi!"); }
+                else if(slots[emptyIdx] !== null) { throw new Error("Slot 0" + (emptyIdx+1) + " sedang terisi!"); }
                 
                 if (emptyIdx === -1) throw new Error("Semua slot sedang penuh! Keluarkan salah satu kendaraan di slot terlebih dahulu.");
                 
@@ -951,7 +1029,6 @@
                                 <span class="ag-label">SLOT:</span>
                                 <button class="btn-adm btn-bg-gold" onclick="adminPromoteToSlot(${i}, 0)" title="Masuk Slot 1">1</button>
                                 <button class="btn-adm btn-bg-gold" onclick="adminPromoteToSlot(${i}, 1)" title="Masuk Slot 2">2</button>
-                                <button class="btn-adm btn-bg-gold" onclick="adminPromoteToSlot(${i}, 2)" title="Masuk Slot 3">3</button>
                             </div>
                             <div class="action-group" style="flex:0.8;">
                                 ${i > 0 ? `<button class="btn-adm btn-bg-blue" style="flex:1;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : `<button class="btn-adm" style="flex:1; opacity:0.3;" disabled><i class="fas fa-arrow-up"></i></button>`}

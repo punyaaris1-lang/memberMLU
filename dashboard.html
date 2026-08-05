@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.json">
     
     <script>
-        const DASH_VERSION = "ELITE_V7.1_SECURITY"; 
+        const DASH_VERSION = "ELITE_V7.2_ZIUNG_STARVO"; 
         if (localStorage.getItem('mlu_elite_v') !== DASH_VERSION) {
             if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
             localStorage.setItem('mlu_elite_v', DASH_VERSION); window.location.reload(true); 
@@ -48,6 +48,8 @@
         * { box-sizing: border-box; outline: none; }
 
         .bg-watermark { position: fixed; bottom: -10%; right: -25%; height: 100vh; opacity: 0.08; transform: scale(1.1) rotate(-15deg); z-index: 0; pointer-events: none; user-select: none; }
+
+        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
         /* SPLASH SCREEN CINEMATIC BLUR */
         .splash-screen { position: fixed; inset: 0; background-color: var(--obsidian); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden; }
@@ -266,6 +268,128 @@
         .btn-kudeta-user { background: rgba(225, 29, 72, 0.1); color: var(--danger-glow); border: 1px solid var(--danger-glow); padding: 4px 10px; border-radius: 6px; font-family: 'Montserrat'; font-size: 9px; font-weight: 900; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px; display: inline-block;}
         .btn-kudeta-user:active { background: var(--danger-glow); color: white; }
 
+        /* =========================================================
+           WOW FACTOR: ELONGATED 3D MAP (HEMAT SPACE)
+           ========================================================= */
+        .map-3d-widget {
+            margin: 5px 0;
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+            height: 140px; 
+        }
+
+        .scene {
+            perspective: 1000px;
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .map-plane {
+            width: 280px; height: 90px;
+            background: #F1F5F9;
+            transform: rotateX(60deg) rotateZ(-15deg);
+            transform-style: preserve-3d;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 
+                -4px 8px 0px #CBD5E1,
+                -10px 15px 15px rgba(0,0,0,0.15),
+                inset 0 0 0 3px #FFFFFF;
+        }
+
+        .city-water { position: absolute; top: -20px; left: 100px; width: 60px; height: 130px; background: #BAE6FD; opacity: 0.7; transform: rotate(15deg);}
+        .city-park { position: absolute; top: 10px; left: 10px; width: 50px; height: 30px; background: #D1FAE5; opacity: 0.7;}
+        .city-block { position: absolute; top: 50px; left: 210px; width: 40px; height: 25px; background: #E2E8F0; border-radius: 4px;}
+
+        .road-path {
+            position: absolute;
+            top: 35px; left: 20px;
+            width: 240px; height: 20px;
+            background: #FFFFFF;
+            border-radius: 4px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+
+        .road-line {
+            position: absolute;
+            top: 44px; left: 20px;
+            width: 240px; height: 2px;
+            border-top: 2px dashed #94A3B8;
+        }
+
+        .stand-up {
+            position: absolute;
+            transform: translate(-50%, -100%) translateZ(5px) rotateZ(15deg) rotateX(-60deg);
+            transform-style: preserve-3d;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .pin-marker {
+            width: 22px; height: 22px;
+            background: var(--danger-glow);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .pin-marker::after {
+            content: ''; position: absolute;
+            width: 8px; height: 8px;
+            background: #FFF; border-radius: 50%;
+            top: 7px; left: 7px;
+        }
+        .pin-shadow {
+            width: 14px; height: 4px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%; margin-top: 2px;
+        }
+        .pin-label {
+            font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 900;
+            color: var(--obsidian);
+            background: rgba(255,255,255,0.9);
+            padding: 2px 8px; border-radius: 6px;
+            position: absolute; top: -22px;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-light);
+        }
+        .pin-label.ziung { background: var(--obsidian); color: var(--gold-lux); border-color: var(--gold-lux);}
+
+        .pin-gading { top: 45px; left: 30px; z-index: 5;}
+        .pin-ziung { top: 45px; left: 250px; z-index: 5;}
+
+        .motor-stand {
+            position: absolute;
+            transform-origin: center bottom;
+            animation: driveRoute 6s infinite linear;
+            z-index: 10;
+        }
+        
+        .bouncing-motor {
+            color: var(--obsidian);
+            font-size: 24px;
+            animation: bounceMotor 0.3s infinite alternate;
+            filter: drop-shadow(2px 5px 3px rgba(0,0,0,0.3));
+        }
+
+        @keyframes bounceMotor {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+
+        @keyframes driveRoute {
+            0% { 
+                top: 45px; left: 30px; opacity: 0;
+                transform: translate(-50%, -100%) translateZ(6px) rotateZ(15deg) rotateX(-60deg);
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { 
+                top: 45px; left: 250px; opacity: 0;
+                transform: translate(-50%, -100%) translateZ(6px) rotateZ(15deg) rotateX(-60deg);
+            }
+        }
+
         /* QUEUE DOCK */
         .queue-dock { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 40px rgba(10,17,40,0.05); cursor: pointer; transition: 0.2s;}
         .queue-dock:active { transform: scale(0.98); }
@@ -474,16 +598,18 @@
             <div class="q-small-text" style="color: var(--danger-glow);"><i class="fas fa-power-off"></i> TUTUP PERMANEN</div>
         </div>
 
-        <!-- NODE OYAR & ENGGANO (CLASSIFIED) -->
+        <!-- NODE OYAR (CLASSIFIED) -->
         <div class="clean-node node-left" onclick="showLockedAlert(event)">
             <div class="fc-prefix">LOKASI FC</div>
             <div class="giant-title" style="color: #94A3B8; letter-spacing: 4px;">???</div>
             <div class="q-small-text" style="color: var(--warning);"><i class="fas fa-user-secret"></i> CLASSIFIED</div>
         </div>
-        <div class="clean-node node-right" onclick="showLockedAlert(event)">
-            <div class="fc-prefix">LOKASI FC</div>
-            <div class="giant-title" style="color: #94A3B8; letter-spacing: 4px;">???</div>
-            <div class="q-small-text" style="color: var(--warning);"><i class="fas fa-user-secret"></i> CLASSIFIED</div>
+        
+        <!-- NODE KANAN (ZIUNG + STARVO INTEGRATION) -->
+        <div class="clean-node node-right" onclick="bukaStationMonitor(event)">
+            <div class="fc-prefix">FAST CHARGING</div>
+            <div class="giant-title" style="background: linear-gradient(135deg, #0A1128 0%, #2D63ED 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ZIUNG</div>
+            <div class="q-small-text" id="nodeZiungKosong">LOADING...</div>
         </div>
 
         <!-- LOKASI FC ALTERNATIF -->
@@ -502,6 +628,79 @@
             <i class="fas fa-bars-staggered"></i><span>MENU</span>
         </div>
     </main>
+
+    <!-- ==========================================================
+         UI STATION MONITOR ZIUNG (2 SLOT)
+         ========================================================== -->
+    <div class="monitor-overlay" id="stationMonitor">
+        <div class="dashboard-container">
+            <div class="hud-header" style="align-items: center; border-bottom: 1px dashed rgba(0,0,0,0.05); padding-bottom: 15px;">
+                <button class="btn-ghost" onclick="tutupStationMonitor()"><i class="fas fa-arrow-left"></i></button>
+                <div class="hud-title-group" style="flex: 1; text-align: center; margin: 0 10px;">
+                    <div class="hud-location" style="font-size: 18px; font-weight: 900; white-space: nowrap; margin-bottom: 0;">ZIUNG (STARVO)</div>
+                </div>
+                <div class="admin-header-group">
+                    <button class="btn-admin-access admin-only" style="display: none; width: 40px; height: 40px; border-radius: 50%; justify-content: center; padding: 0;" onclick="bukaSheet('sheetManageAntrian')">
+                        <i class="fas fa-shield-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SLOTS -->
+            <div class="stage-slots" id="slotListContainer"></div>
+
+            <!-- WIDGET ISOMETRIC 3D MAP (VERSI MEMANJANG) -->
+            <div class="map-3d-widget">
+                <div class="scene">
+                    <div class="map-plane">
+                        <div class="city-water"></div>
+                        <div class="city-park"></div>
+                        <div class="city-block"></div>
+                        
+                        <div class="road-path"></div>
+                        <div class="road-line"></div>
+                        
+                        <div class="stand-up pin-gading">
+                            <div class="pin-label">GADING</div>
+                            <div class="pin-marker"></div>
+                            <div class="pin-shadow"></div>
+                        </div>
+                        
+                        <div class="stand-up pin-ziung">
+                            <div class="pin-label ziung">FC ZIUNG</div>
+                            <div class="pin-marker"></div>
+                            <div class="pin-shadow"></div>
+                        </div>
+                        
+                        <div class="motor-stand">
+                            <div class="bouncing-motor"><i class="fas fa-motorcycle"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END WIDGET ISOMETRIC 3D MAP -->
+
+            <!-- QUEUE DOCK -->
+            <div class="queue-dock" onclick="bukaSheet('sheetDaftarAntrian')" style="cursor: pointer;">
+                <div class="qd-header" style="margin-bottom:0;">
+                    <div style="flex:1; min-width:0; padding-right:10px;">
+                        <div class="qd-title" style="font-size:10px; color:var(--text-muted);">ANTRIAN BERIKUTNYA</div>
+                        <div style="font-family:'Montserrat', sans-serif; font-size:18px; font-weight:900; color:var(--obsidian); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="nextQueueNameDock">KOSONG</div>
+                    </div>
+                    <div style="text-align:right; flex-shrink:0;">
+                        <div style="font-size:10px; color:var(--text-muted); font-weight:800; text-transform:uppercase;">TOTAL</div>
+                        <div class="qd-count" id="queue-count" style="font-size:24px; color:var(--electric-blue); font-family:'Montserrat', sans-serif; border:none; background:transparent; padding:0; margin-top:2px;">0</div>
+                    </div>
+                </div>
+                <div style="font-size:10px; color:var(--electric-blue); font-weight:800; text-align:center; margin-top:12px; border-top:1px dashed var(--border-light); padding-top:12px;">
+                    <i class="fas fa-list"></i> KLIK UNTUK LIHAT SEMUA ANTRIAN
+                </div>
+            </div>
+
+            <!-- BOTTOM ACTION -->
+            <div class="action-zone" id="actionBtnContainer"></div>
+        </div>
+    </div>
 
     <!-- ==========================================================
          MODALS (FORM DAFTAR, QR, SETTING)
@@ -567,7 +766,6 @@
             <div class="sheet-menu">
                 <button class="sm-btn" onclick="adminMoveSlot(0)"><div class="sm-icon bg-dark">1</div> Masuk Slot 1</button>
                 <button class="sm-btn" onclick="adminMoveSlot(1)"><div class="sm-icon bg-dark">2</div> Masuk Slot 2</button>
-                <button class="sm-btn" onclick="adminMoveSlot(2)"><div class="sm-icon bg-dark">3</div> Masuk Slot 3</button>
             </div>
         </div>
     </div>
@@ -682,7 +880,7 @@
 
         window.showLockedAlert = (e) => {
             if(e) e.stopPropagation(); 
-            document.getElementById('alertMessageText').innerText = "Mohon maaf, lokasi Oyar & Enggano masih menunggu persetujuan dari MAKA. Urusan begini MAKA emang kaya TAI. Giliran Xendit aja cepet.";
+            document.getElementById('alertMessageText').innerText = "Mohon maaf, lokasi Oyar masih menunggu persetujuan dari MAKA. Urusan begini MAKA emang kaya TAI. Giliran Xendit aja cepet.";
             const m = document.getElementById('modalCustomAlert');
             m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10);
         };
@@ -748,6 +946,12 @@
         
         window.simpanStateMenu = () => { sessionStorage.setItem('maka_open_menu', 'true'); };
         
+        window.bukaStationMonitor = (e) => { if(e) e.stopPropagation(); document.getElementById('stationMonitor').classList.add('show'); updateStationUI(); };
+        window.tutupStationMonitor = () => { document.getElementById('stationMonitor').classList.remove('show'); };
+        
+        window.persiapanDaftar = () => { if(!isInLocation && !isGpsBypass) return alert("Harus di radius 50m dari Ziung untuk ngantre!"); document.getElementById('modalDaftarAntrian').classList.add('show'); };
+        window.tutupDaftarAntrian = () => { document.getElementById('modalDaftarAntrian').classList.remove('show'); };
+
         window.bukaSetting = (e) => { if(e) e.stopPropagation(); document.getElementById('modalSetting').classList.add('show'); };
         window.tutupSetting = () => { document.getElementById('modalSetting').classList.remove('show'); };
         
@@ -780,7 +984,15 @@
             } catch(e) { window.hideActionLoader(); alert("Error: " + e.message); }
         };
 
-        const STATION_LAT = -6.171583; const STATION_LNG = 106.899844; const MAX_DIST_KM = 0.3; 
+        // KONFIGURASI ZIUNG & 2 SLOT
+        const STATION_LAT = -6.186135; 
+        const STATION_LNG = 106.954544; 
+        const MAX_DIST_KM = 0.05; // 50 METER
+        const TOTAL_SLOTS = 2; 
+        let localSlots = [null, null]; 
+        let localQueue = []; 
+        let currentTargetSlot = -1;
+
         let isInLocation = false; let watchId = null;
 
         function hitungJarak(lat1, lon1, lat2, lon2) { 
@@ -819,7 +1031,7 @@
 
             onSnapshot(collection(db, "fc_locations"), (snap) => {
                 let altFCs = [ { id: "kc", name: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, color: "var(--success-glow)" } ];
-                snap.forEach(doc => { const d = doc.data(); if(d.isActive !== false && doc.id !== 'gading') { altFCs.push({ id: doc.id, name: d.name || doc.id, lat: d.lat, lng: d.lng, color: "var(--fresh-teal)", mapLink: d.mapLink }); }});
+                snap.forEach(doc => { const d = doc.data(); if(d.isActive !== false && doc.id !== 'gading' && doc.id !== 'ziung') { altFCs.push({ id: doc.id, name: d.name || doc.id, lat: d.lat, lng: d.lng, color: "var(--fresh-teal)", mapLink: d.mapLink }); }});
 
                 navigator.geolocation.watchPosition((pos) => {
                     let nearestFC = null; let minDist = Infinity;
@@ -843,8 +1055,6 @@
             });
         }
         startAltFCRadar();
-
-        const TOTAL_SLOTS = 3; let localSlots = [null, null, null]; let localQueue = []; let currentTargetSlot = -1;
 
         window.memberDict = {};
         onSnapshot(collection(db, "mlu_members"), (snap) => {
@@ -876,9 +1086,19 @@
                 if(isAdminAntrian) document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
                 checkGpsLogic(); 
             }
+            updateStationUI();
         });
 
-        // Backend listener untuk antrean dashboard dihapus biar bersih.
+        onSnapshot(refGading, (snap) => {
+            if(!snap.exists()) return; 
+            const d = snap.data(); 
+            let sRaw = d.chargingSlots || [null, null];
+            localSlots = [sRaw[0], sRaw[1]]; 
+            localQueue = d.waitingQueue || []; 
+            updateStationUI();
+            if (document.getElementById('sheetManageAntrian').classList.contains('show')) window.renderQueueAdmin();
+            if (document.getElementById('sheetDaftarAntrian').classList.contains('show')) window.renderQueueList();
+        });
 
         function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
         function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
@@ -897,6 +1117,405 @@
             if (isOfficial) return `<span class="ls-role badge-official"><i class="fas fa-shield-alt"></i> ${r}</span>`;
             return '';
         }
+
+        // FUNGSI STARVO INTEGRATION
+        window.mulaiCasStarvo = (idx) => {
+            window.showActionLoader(); 
+            runTransaction(dbGading, async(t)=>{ 
+                const d = await t.get(refGading); 
+                let slots = [...(d.data().chargingSlots || [null, null])]; 
+                if(slots[idx] && cleanStr(slots[idx].plat) === cleanStr(myPlatClean)) {
+                    slots[idx].isChargingStarted = true;
+                    slots[idx].startTime = Date.now();
+                    t.update(refGading, {chargingSlots: slots}); 
+                }
+            }).then(() => { 
+                window.hideActionLoader(); 
+                setTimeout(() => {
+                    const starvoIntent = "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=com.moizasia.starvo_mobile;S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.moizasia.starvo_mobile;end;";
+                    let a = document.createElement('a');
+                    a.href = starvoIntent;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, 300); 
+            }).catch(e=>{ 
+                window.hideActionLoader(); 
+                alert(e.message || e); 
+            }); 
+        }
+
+        function updateStationUI() {
+            let usedCount = localSlots.filter(s => s !== null).length; let emptySlots = TOTAL_SLOTS - usedCount;
+            
+            let statusZiung = "";
+            if (emptySlots > 0) {
+                statusZiung = `<i class="fas fa-bolt" style="color:var(--success-glow);"></i> <span style="color:var(--success-glow);">${emptySlots} SLOT TERSEDIA</span>`;
+            } else {
+                statusZiung = `<i class="fas fa-users" style="color:var(--warning);"></i> <span style="color:var(--warning);">${localQueue.length} ANTREAN</span>`;
+            }
+            let txtKosong = document.getElementById('nodeZiungKosong');
+            if(txtKosong) txtKosong.innerHTML = statusZiung;
+            
+            let nextQName = "KOSONG";
+            if (localQueue.length > 0) {
+                let nqUser = localQueue[0];
+                nextQName = cleanName(nqUser.userName);
+                if (window.memberDict && window.memberDict[cleanStr(nqUser.plat)]) {
+                    nextQName = cleanName(window.memberDict[cleanStr(nqUser.plat)].nama);
+                }
+            }
+            document.getElementById('queue-count').innerText = localQueue.length;
+            document.getElementById('nextQueueNameDock').innerText = escapeHtml(nextQName);
+
+            let myQIndex = localQueue.findIndex(q => cleanStr(q.plat) === myPlatClean);
+            let mySlotIndex = localSlots.findIndex(s => s && cleanStr(s.plat) === myPlatClean);
+
+            let slotsHTML = '';
+            localSlots.forEach((s, i) => {
+                if(s) {
+                    let bat = s.batreSisa || s.batre || s.battery || "-";
+                    let dispName = cleanName(s.userName); let dispRole = s.role || "MEMBER";
+                    if(window.memberDict[cleanStr(s.plat)]) { dispName = cleanName(window.memberDict[cleanStr(s.plat)].nama); dispRole = window.memberDict[cleanStr(s.plat)].role || dispRole; }
+                    
+                    let badgeHtml = getRoleBadge(dispRole, s.plat);
+                    let durationMin = Math.floor((Date.now() - (s.startTime || Date.now())) / 60000);
+                    const isMe = (cleanStr(s.plat) === myPlatClean);
+
+                    let userKudetaBtn = '';
+                    if (!isMe) {
+                        if ((myQIndex === 0 && durationMin >= 20) || (myQIndex === 1 && durationMin >= 25)) {
+                            userKudetaBtn = `<button class="btn-kudeta-user" onclick="event.stopPropagation(); prosesKudetaUser(${i}, '${escapeHtml(s.plat)}')">⚡ KUDETA</button>`;
+                        }
+                    }
+
+                    let adminBtn = isAdminAntrian ? `<button class="btn-dots" onclick="event.stopPropagation(); openMenuIsi(${i}, '${escapeHtml(s.plat)}')"><i class="fas fa-ellipsis-v"></i></button>` : '';
+                    
+                    // PENYESUAIAN PENDING STARVO DI UI SLOT
+                    let timerHTML = '';
+                    if (s.isChargingStarted === false) {
+                        timerHTML = `<div class="stat-timer" style="color:var(--gold-lux); border-color:var(--gold-lux); background:rgba(197,160,89,0.1); animation: blink 2s infinite;"><i class="fas fa-exclamation-circle"></i> PENDING STARVO</div>`;
+                    } else {
+                        timerHTML = isMe 
+                            ? `<div class="stat-timer" style="color:var(--gold-lux); border-color:var(--gold-lux); background:rgba(197,160,89,0.1);"><i class="fas fa-bolt"></i> ${durationMin} MIN (ANDA)</div>` 
+                            : `<div class="stat-timer"><i class="fas fa-clock"></i> ${durationMin} MIN</div>`;
+                    }
+
+                    slotsHTML += `
+                    <div class="light-slot active">
+                        <div class="ls-num">0${i+1}</div>
+                        <div class="ls-body" style="flex:1; display:flex; align-items:center; justify-content:space-between; min-width:0;">
+                            <div class="ls-info" style="flex:1; min-width:0; padding-right:10px;">
+                                <div class="ls-name-wrap">
+                                    ${badgeHtml ? `<div style="margin-bottom:3px;">${badgeHtml}</div>` : ''}
+                                    <div class="ls-name">${escapeHtml(dispName)}</div>
+                                </div>
+                                <div class="ls-plat">${escapeHtml(s.plat)}</div>
+                                ${userKudetaBtn ? `<div style="margin-top:2px;">${userKudetaBtn}</div>` : ''}
+                            </div>
+                            <div class="ls-stats" style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; flex-shrink:0; gap:6px;">
+                                <div class="stat-bat" style="font-size:16px; font-weight:900; color:var(--success-glow); display:flex; align-items:center; gap:4px;"><i class="fas fa-bolt"></i> ${bat.replace('%','')} %</div>
+                                ${timerHTML}
+                                ${adminBtn}
+                            </div>
+                        </div>
+                    </div>`;
+                } else {
+                    let btnMasuk = '';
+                    if (myQIndex === 0 || myQIndex === 1) {
+                        btnMasuk = `<button style="background: var(--obsidian); color: var(--gold-lux); border: none; padding: 10px 18px; border-radius: 12px; font-family: 'Montserrat'; font-weight: 900; font-size: 10px; letter-spacing: 1px; cursor:pointer;" onclick="pilihSlotDash(${i})">MASUK</button>`;
+                    }
+                    let adminBtn = isAdminAntrian ? `<button class="btn-dots" onclick="bukaDaftarAdmin(${i})"><i class="fas fa-plus"></i></button>` : '';
+
+                    slotsHTML += `
+                    <div class="light-slot" style="border-style: dashed; background: rgba(255,255,255,0.5); box-shadow: none;">
+                        <div class="ls-num">0${i+1}</div>
+                        <div class="ls-info" style="flex:1; min-width:0; padding-right:10px;">
+                            <div class="ls-name" style="color: var(--text-muted); font-size:11px; font-weight:800; text-transform:uppercase; white-space:normal; line-height:1.3; margin-bottom:2px;">KOSONG</div>
+                            <div class="ls-plat" style="font-family:'Montserrat', sans-serif; font-size:18px; font-weight:900; color:#CBD5E1; line-height:1; white-space:nowrap; margin-bottom:4px;">Tersedia</div>
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            ${btnMasuk}
+                            ${adminBtn}
+                        </div>
+                    </div>`;
+                }
+            });
+            document.getElementById('slotListContainer').innerHTML = slotsHTML;
+
+            const actionContainer = document.getElementById('actionBtnContainer');
+            if (mySlotIndex > -1) {
+                let mySlotData = localSlots[mySlotIndex];
+                if (mySlotData.isChargingStarted === false) {
+                    actionContainer.innerHTML = `
+                        <div style="display:flex; gap:10px; width:100%;">
+                            <button class="btn-fab-danger" style="background:var(--warning); color:white; border-color:var(--warning); flex:1;" onclick="mulaiCasStarvo(${mySlotIndex})"><i class="fas fa-play"></i> BUKA STARVO & CAS</button>
+                            <button class="btn-fab-danger" style="flex:0.3; background:rgba(225,29,72,0.1); color:var(--danger-glow); border-color:rgba(225,29,72,0.3);" onclick="stopChargingDash(${mySlotIndex})"><i class="fas fa-times"></i></button>
+                        </div>
+                    `;
+                } else {
+                    actionContainer.innerHTML = `<button class="btn-fab-danger" style="background:var(--obsidian); color:var(--success-glow); border-color:var(--obsidian);" onclick="stopChargingDash(${mySlotIndex})"><i class="fas fa-check"></i> SELESAI CHARGING (SLOT 0${mySlotIndex+1})</button>`;
+                }
+            } else if (myQIndex > -1) {
+                actionContainer.innerHTML = `<button class="btn-fab-danger" onclick="batalAntrianDash()"><i class="fas fa-times"></i> BATALKAN ANTRIAN</button>`;
+            } else {
+                actionContainer.innerHTML = `<button class="btn-fab-danger" style="background:var(--obsidian); color:var(--gold-lux); border-color:var(--obsidian); box-shadow: 0 10px 25px rgba(10,17,40,0.3);" onclick="persiapanDaftar()"><i class="fas fa-bolt"></i> AMBIL ANTRIAN SAYA</button>`;
+            }
+        }
+
+        window.renderQueueList = () => {
+            const body = document.getElementById('qListBody'); body.innerHTML = '';
+            if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8; font-size: 11px;'>Antrian Kosong</p>";
+            localQueue.forEach((q, i) => {
+                let b = q.batre || q.battery; let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` <span style="color:var(--success-glow); font-size:12px; font-weight:900;"><i class="fas fa-bolt"></i> ${b}</span>` : '';
+                let roleBadge = getRoleBadge(q.role, q.plat);
+                let dispName = cleanName(q.userName);
+                if (window.memberDict && window.memberDict[cleanStr(q.plat)]) dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
+
+                body.innerHTML += `
+                <div class="q-item">
+                    <div style="flex:1; min-width:0;">
+                        <div style="display:flex; flex-direction:column; align-items:flex-start; margin-bottom:2px;">
+                            ${roleBadge ? `<div style="margin-bottom:3px;">${roleBadge}</div>` : ''}
+                            <span style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">${escapeHtml(dispName)}</span>
+                        </div>
+                        <div style="font-family:'Montserrat', sans-serif; font-size:15px; font-weight:900; color:var(--obsidian); margin-bottom:2px;">${escapeHtml(q.plat)}</div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+                        <div>${batreInfo}</div>
+                        <div style="font-family:'Montserrat', sans-serif; font-size:14px; background:var(--obsidian); color:var(--gold-lux); padding:4px 12px; border-radius:10px; font-weight:900;">#${i+1}</div>
+                    </div>
+                </div>`;
+            });
+        };
+
+        window.submitDaftarAntrian = async () => {
+            if(!isInLocation && !isGpsBypass) return alert("Pendaftaran gagal: Anda tidak berada di area radius!");
+            const b = document.getElementById('inpBatre').value;
+            if(!b) return alert("Isi persentase baterai!"); if(parseInt(b) > 98) return alert("Maksimal charging 98%!");
+            
+            window.showActionLoader();
+            try { 
+                const snap = await getDoc(refGading); 
+                if(snap.exists()) { 
+                    let d = snap.data(); let q = d.waitingQueue || [];
+                    if(q.find(x => cleanStr(x.plat) === myPlatClean)) { window.hideActionLoader(); alert("Anda sudah terdaftar!"); return; } 
+                    q.push({ userName: myName, plat: myPlatClean, batre: b + "%", role: roleCek, timestamp: Date.now() }); 
+                    await updateDoc(refGading, { waitingQueue: q }); 
+                    window.hideActionLoader(); tutupDaftarAntrian(); 
+                } 
+            } catch(e) { window.hideActionLoader(); alert("ERROR: " + (e.message || e)); } 
+        }
+
+        window.batalAntrianDash = () => {
+            confirmModal("Yakin ingin keluar dari antrian?", () => {
+                window.showActionLoader();
+                runTransaction(dbGading, async(t) => { 
+                    const d = (await t.get(refGading)).data(); 
+                    const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== myPlatClean); 
+                    t.update(refGading, { waitingQueue: newQ }); 
+                }).then(() => { window.hideActionLoader(); }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
+            });
+        }
+        
+        window.stopChargingDash = (idx) => {
+            confirmModal("Selesai dan kosongkan slot ini?", () => {
+                window.showActionLoader();
+                runTransaction(dbGading, async(t)=>{ 
+                    const d = (await t.get(refGading)).data(); 
+                    let newSlots = [...(d.chargingSlots || [null, null])];
+                    newSlots[idx] = null; 
+                    t.update(refGading, {chargingSlots: newSlots}); 
+                }).then(() => { 
+                    window.hideActionLoader(); 
+                }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
+            });
+        }
+        
+        window.pilihSlotDash = (i) => {
+            if(!isInLocation && !isGpsBypass) return alert("Anda harus di lokasi untuk menempati slot!");
+            window.showActionLoader();
+            runTransaction(dbGading, async(t)=>{ 
+                const d = (await t.get(refGading)).data(); 
+                if(d.chargingSlots && d.chargingSlots[i]) throw new Error("Slot sudah terisi!"); 
+                let q = d.waitingQueue; const idx = q.findIndex(x => cleanStr(x.plat) === myPlatClean); 
+                if(idx === -1) throw new Error("Anda tidak berada di daftar tunggu!");
+                
+                const me = q.splice(idx, 1)[0]; 
+                me.isChargingStarted = false; 
+                me.startTime = Date.now(); 
+                let newSlots = [...(d.chargingSlots || [null, null])]; 
+                newSlots[i] = me; 
+                
+                t.update(refGading, { chargingSlots: newSlots, waitingQueue: q }); 
+            }).then(() => { 
+                window.hideActionLoader();
+            }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
+        }
+
+        window.prosesKudetaUser = (idx, platKick) => {
+            confirmModal(`YAKIN KUDETA SLOT INI (${platKick})?`, () => {
+                window.showActionLoader();
+                runTransaction(dbGading, async(t)=>{ 
+                    const d = (await t.get(refGading)).data(); 
+                    let q = d.waitingQueue || []; let slots = [...(d.chargingSlots || [null, null])];
+                    const myIndex = q.findIndex(x => cleanStr(x.plat) === myPlatClean); 
+                    if(myIndex === -1) throw new Error("Anda tidak ngantri!");
+                    const me = q.splice(myIndex, 1)[0]; 
+                    me.isChargingStarted = false; 
+                    me.startTime = Date.now(); 
+                    slots[idx] = me; t.update(refGading, { chargingSlots: slots, waitingQueue: q }); 
+                }).then(() => { 
+                    window.hideActionLoader(); 
+                    alert("Berhasil Kudeta!"); 
+                }).catch(e => { window.hideActionLoader(); alert("Gagal: " + (e.message || e)); }); 
+            });
+        }
+
+        window.openMenuIsi = (idx, plat) => { currentTargetSlot = idx; document.getElementById('titleKelolaIsi').innerText = `Kelola Slot 0${idx + 1} (${plat})`; bukaSheet('sheetKelolaIsi'); };
+        
+        window.adminMoveSlot = (targetIdx) => { 
+            if(targetIdx === currentTargetSlot) return tutupSheet({target:{id:'sheetPilihSlot'}}, 'sheetPilihSlot'); 
+            window.showActionLoader();
+            runTransaction(dbGading, async(t)=>{ 
+                const d = (await t.get(refGading)).data(); 
+                let slots = [...(d.chargingSlots || [null, null])];
+                if(slots[targetIdx] !== null) throw new Error("Slot Tujuan Sedang Terisi!"); 
+                slots[targetIdx] = slots[currentTargetSlot]; 
+                slots[currentTargetSlot] = null; 
+                t.update(refGading, {chargingSlots: slots}); 
+            }).then(() => { window.hideActionLoader(); tutupSheet({target:{id:'sheetPilihSlot'}}, 'sheetPilihSlot'); }).catch(e => { window.hideActionLoader(); alert(e.message || e); }); 
+        };
+        
+        window.adminKick = () => { 
+            window.showActionLoader();
+            runTransaction(dbGading, async(t)=>{ 
+                const d = (await t.get(refGading)).data(); 
+                let slots = [...(d.chargingSlots || [null, null])];
+                slots[currentTargetSlot] = null; t.update(refGading, {chargingSlots: slots}); 
+            }).then(() => { window.hideActionLoader(); tutupSheet({target:{id:'sheetKelolaIsi'}}, 'sheetKelolaIsi'); }).catch(e => { window.hideActionLoader(); alert(e.message || e); }); 
+        };
+        
+        window.adminToQueue = () => { 
+            window.showActionLoader();
+            runTransaction(dbGading, async(t)=>{ 
+                const d = (await t.get(refGading)).data(); 
+                let slots = [...(d.chargingSlots || [null, null])];
+                const s = slots[currentTargetSlot]; 
+                if(s) { d.waitingQueue.unshift(s); slots[currentTargetSlot] = null; } 
+                t.update(refGading, {chargingSlots: slots, waitingQueue: d.waitingQueue}); 
+            }).then(() => { window.hideActionLoader(); tutupSheet({target:{id:'sheetKelolaIsi'}}, 'sheetKelolaIsi'); }).catch(e => { window.hideActionLoader(); alert(e.message || e); }); 
+        };
+
+        window.adminTriggerKudeta = () => {
+            confirmModal("YAKIN INGIN MENGKUDETA SLOT INI?\nPengguna ini akan dikeluarkan paksa, dan plat Anda akan menempati slot ini!", () => {
+                window.showActionLoader();
+                runTransaction(dbGading, async(t) => {
+                    const d = (await t.get(refGading)).data(); let q = d.waitingQueue || []; q = q.filter(x => cleanStr(x.plat) !== cleanStr(myPlat));
+                    let slots = [...(d.chargingSlots || [null, null])];
+                    slots[currentTargetSlot] = { plat: myPlat, userName: myName, role: roleCek, startTime: Date.now(), batre: "15%", battery: "15%", isChargingStarted: false };
+                    t.update(refGading, {chargingSlots: slots, waitingQueue: q});
+                }).then(() => { window.hideActionLoader(); tutupSheet({target:{id:'sheetKelolaIsi'}}, 'sheetKelolaIsi'); }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
+            });
+        };
+
+        window.bukaDaftarAdmin = (slotIndex) => { currentTargetSlot = slotIndex; document.getElementById('inpAdminNama').value = ''; document.getElementById('inpAdminPlat').value = ''; document.getElementById('inpAdminBatre').value = ''; bukaSheet('sheetDaftarAdmin'); };
+
+        window.adminSubmitDaftar = (jalur) => {
+            const nama = document.getElementById('inpAdminNama').value.trim().toUpperCase(); const plat = document.getElementById('inpAdminPlat').value.trim().toUpperCase(); const batre = document.getElementById('inpAdminBatre').value.trim();
+            if(!nama || !plat) return alert("Nama dan Plat wajib diisi!"); if(parseInt(batre) > 98) return alert("Batas FC Ziung 98%.");
+            
+            window.showActionLoader();
+            runTransaction(dbGading, async(t) => {
+                const d = (await t.get(refGading)).data(); const bVal = batre ? batre + '%' : '-';
+                const newObj = { plat: plat, userName: nama, batre: bVal, battery: bVal, role: "MANUAL", time: Date.now() };
+                
+                if(jalur === 'antrian') {
+                    let q = d.waitingQueue || []; if(q.some(x => cleanStr(x.plat) === cleanStr(plat))) throw new Error("Plat sudah ada di antrian!");
+                    q.push(newObj); t.update(refGading, { waitingQueue: q });
+                } else if (jalur === 'slot') {
+                    let targetIdx = currentTargetSlot;
+                    let slots = [...(d.chargingSlots || [null, null])];
+                    if (targetIdx === -1) { targetIdx = slots.findIndex(s => s === null); if(targetIdx === -1) throw new Error("Semua slot penuh!"); } 
+                    else { if(slots[targetIdx] !== null) throw new Error("Slot keburu terisi!"); }
+                    
+                    newObj.startTime = Date.now(); 
+                    newObj.isChargingStarted = false;
+                    slots[targetIdx] = newObj; t.update(refGading, { chargingSlots: slots });
+                }
+            }).then(() => { window.hideActionLoader(); tutupSheet({target:{id:'sheetDaftarAdmin'}}, 'sheetDaftarAdmin'); }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
+        };
+
+        window.adminPromoteToSlot = (index, targetSlotIdx = -1) => {
+            window.showActionLoader();
+            runTransaction(dbGading, async(t) => {
+                const d = (await t.get(refGading)).data(); let q = d.waitingQueue || []; let slots = [...(d.chargingSlots || [null, null])];
+                let emptyIdx = targetSlotIdx;
+                if(emptyIdx === -1) { emptyIdx = slots.findIndex(s => s === null); } 
+                else if(slots[emptyIdx] !== null) { throw new Error("Slot 0" + (emptyIdx+1) + " sedang terisi!"); }
+                
+                if (emptyIdx === -1) throw new Error("Semua slot sedang penuh!");
+                let userToPromote = q.splice(index, 1)[0]; 
+                userToPromote.startTime = Date.now(); 
+                userToPromote.isChargingStarted = false;
+                slots[emptyIdx] = userToPromote;
+                t.update(refGading, { waitingQueue: q, chargingSlots: slots });
+            }).then(() => { window.hideActionLoader(); }).catch(e => { window.hideActionLoader(); alert(e.message || e); });
+        };
+
+        window.adminReorder = (index, dir) => { 
+            window.showActionLoader();
+            runTransaction(dbGading, async(t)=>{ 
+                const d = (await t.get(refGading)).data(); let q = d.waitingQueue; 
+                let temp = q[index]; q[index] = q[index + dir]; q[index + dir] = temp; 
+                t.update(refGading, {waitingQueue: q}); 
+            }).then(() => { window.hideActionLoader(); }).catch(e => { window.hideActionLoader(); alert(e.message || e); }); 
+        };
+
+        window.adminKickQueue = (plat) => { 
+            confirmModal(`Keluarkan ${plat} dari antrean?`, () => {
+                window.showActionLoader();
+                runTransaction(dbGading, async(t)=>{ 
+                    const d = (await t.get(refGading)).data(); const newQ = d.waitingQueue.filter(q => cleanStr(q.plat) !== cleanStr(plat)); 
+                    t.update(refGading, {waitingQueue: newQ}); 
+                }).then(() => { window.hideActionLoader(); }).catch(e => { window.hideActionLoader(); alert(e.message || e); }); 
+            });
+        };
+
+        window.renderQueueAdmin = () => {
+            const body = document.getElementById('qAdminBody'); body.innerHTML = '';
+            if(localQueue.length === 0) body.innerHTML = "<p style='text-align:center; color:#94A3B8; font-size: 11px;'>Antrian Kosong</p>";
+            localQueue.forEach((q, i) => {
+                let dispName = cleanName(q.userName);
+                if (window.memberDict && window.memberDict[cleanStr(q.plat)]) dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
+
+                body.innerHTML += `
+                    <div class="admin-card">
+                        <div class="q-row-adm">
+                            <div class="q-number">${i+1}</div>
+                            <div style="flex:1;">
+                                <div style="font-family:'Montserrat'; font-size:14px; font-weight:900; color:var(--obsidian);">${escapeHtml(q.plat)}</div>
+                                <div style="font-size:10px; color:var(--text-muted); font-weight: 700; text-transform:uppercase; margin-top:2px;">${escapeHtml(dispName)}</div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <div class="action-group">
+                                <span class="ag-label">SLOT:</span>
+                                <button class="btn-adm btn-bg-gold" onclick="adminPromoteToSlot(${i}, 0)" title="Masuk Slot 1">1</button>
+                                <button class="btn-adm btn-bg-gold" onclick="adminPromoteToSlot(${i}, 1)" title="Masuk Slot 2">2</button>
+                            </div>
+                            <div class="action-group" style="flex:0.8;">
+                                ${i > 0 ? `<button class="btn-adm btn-bg-blue" style="flex:1;" onclick="adminReorder(${i}, -1)"><i class="fas fa-arrow-up"></i></button>` : `<button class="btn-adm" style="flex:1; opacity:0.3;" disabled><i class="fas fa-arrow-up"></i></button>`}
+                                ${i < localQueue.length - 1 ? `<button class="btn-adm btn-bg-blue" style="flex:1;" onclick="adminReorder(${i}, 1)"><i class="fas fa-arrow-down"></i></button>` : `<button class="btn-adm" style="flex:1; opacity:0.3;" disabled><i class="fas fa-arrow-down"></i></button>`}
+                                <button class="btn-adm btn-bg-red" style="flex:1;" onclick="adminKickQueue('${escapeHtml(q.plat)}')"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.unblockAll = () => { confirmModal("Hapus semua daftar blokir?", () => { updateDoc(refGading, {blockedPlates: []}); alert("Daftar blokir dibersihkan."); }); };
 
         const radarTrigger = document.getElementById('radarTrigger');
         const dashboard = document.getElementById('mainDashboard');
@@ -1000,7 +1619,7 @@
             dashboard.classList.add('active');
         }
     </script>
-    <script>
+        <script>
         // PWA SERVICE WORKER REGISTRATION
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
