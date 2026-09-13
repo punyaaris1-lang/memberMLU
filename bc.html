@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id" style="background-color: #F4F7FC;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MLU - Tracker Patungan BC</title>
+    
+    <!-- FONTS & ICONS -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* =========================================
+           MLU ELITE CORE STYLES (NATIVE CSS)
+           ========================================= */
+        :root {
+            --bg-canvas: #F4F7FC; --obsidian: #0A1128;
+            --gold-lux: #C5A059; --text-main: #0F172A; --text-muted: #64748B;
+            --danger-glow: #E11D48; --danger-bg: rgba(225, 29, 72, 0.05);
+            --success-glow: #059669; --border-light: #E2E8F0;
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg-canvas);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.03), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(197, 160, 89, 0.04), transparent 40%),
+                linear-gradient(rgba(10, 17, 40, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 17, 40, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            font-family: 'Montserrat', sans-serif; color: var(--text-main);
+            -webkit-tap-highlight-color: transparent; user-select: none;
+            padding-bottom: 80px;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+
+        /* HEADER */
+        .app-header {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+        }
+        .header-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 900; color: var(--obsidian); letter-spacing: 1px; text-transform: uppercase; }
+        .btn-switch {
+            background: var(--obsidian); color: var(--gold-lux);
+            border: none; padding: 6px 12px; border-radius: 8px;
+            font-family: 'Montserrat'; font-size: 10px; font-weight: 800; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(10,17,40,0.2); letter-spacing: 0.5px; transition: 0.2s;
+        }
+        .btn-switch:active { transform: scale(0.95); }
+
+        .container { padding: 20px; max-width: 500px; margin: 0 auto; display: none; }
+        .container.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           MEMBER VIEW STYLES
+           ========================================= */
+        .member-card {
+            background: #FFFFFF; border: 1px solid var(--border-light);
+            border-radius: 20px; padding: 25px; text-align: center;
+            box-shadow: 0 20px 40px rgba(10,17,40,0.04); margin-bottom: 20px;
+        }
+        .mc-title { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        .mc-amount { font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 900; color: var(--obsidian); line-height: 1; margin-bottom: 5px; }
+        .mc-desc { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 25px; }
+        
+        .btn-qris {
+            width: 100%; background: var(--obsidian); color: var(--gold-lux);
+            border: none; padding: 16px; border-radius: 14px;
+            font-family: 'Montserrat'; font-size: 13px; font-weight: 900;
+            letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 25px rgba(10, 17, 40, 0.2); transition: 0.2s;
+        }
+        .btn-qris:active { transform: scale(0.98); }
+
+        /* =========================================
+           ADMIN VIEW STYLES (LIST & FILTERS)
+           ========================================= */
+        .filter-group { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .filter-group::-webkit-scrollbar { display: none; }
+        .chip {
+            padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border-light);
+            background: white; font-size: 11px; font-weight: 800; color: var(--text-muted);
+            white-space: nowrap; cursor: pointer; transition: 0.2s;
+        }
+        .chip.active { background: var(--obsidian); color: white; border-color: var(--obsidian); }
+
+        .list-container { display: flex; flex-direction: column; gap: 12px; }
+        
+        /* LIST CARD UTAMA */
+        .list-card {
+            background: white; border-radius: 16px; padding: 15px;
+            display: flex; flex-direction: column;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02); transition: 0.2s;
+        }
+        .list-card.nunggak { border-left: 4px solid var(--danger-glow); background: var(--danger-bg); }
+        .list-card.aman { border-left: 4px solid var(--gold-lux); }
+
+        .lc-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .lc-left { display: flex; flex-direction: column; gap: 4px; }
+        .lc-name { font-size: 14px; font-weight: 900; color: var(--obsidian); text-transform: uppercase; }
+        .lc-meta { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: var(--text-muted); }
+        
+        .badge-role { padding: 2px 6px; border-radius: 4px; font-size: 8px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: white; }
+        .bg-rto { background: #2D63ED; }
+        .bg-trnsgo { background: #0EA5E9; }
+        .bg-lain { background: #64748B; }
+
+        .lc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        .status-tag { padding: 4px 8px; border-radius: 6px; font-size: 9px; font-weight: 900; letter-spacing: 0.5px; }
+        .tag-nunggak { background: rgba(225, 29, 72, 0.15); color: var(--danger-glow); }
+        .tag-aman { background: rgba(197, 160, 89, 0.15); color: #B4833E; }
+
+        /* ====== TRACKER TANGGAL (ESTETIK MICRO-CARD) ====== */
+        .lc-dates { 
+            display: flex; gap: 5px; margin-top: 12px; 
+            border-top: 1px dashed var(--border-light); padding-top: 12px; 
+        }
+        .date-box { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 6px 0; border-radius: 8px; border: 1px solid var(--border-light); 
+            background: #F8FAFC; transition: 0.2s; 
+        }
+        .db-date { font-size: 8px; font-weight: 800; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 4px; }
+        .db-icon { font-size: 12px; }
+        
+        /* State: Sudah Bayar */
+        .box-paid { background: rgba(197, 160, 89, 0.08); border-color: rgba(197, 160, 89, 0.4); }
+        .box-paid .db-date { color: #9A7B1C; }
+        .box-paid .db-icon { color: var(--gold-lux); }
+        
+        /* State: Nunggak (Hari kelewat belum bayar) */
+        .box-nunggak { background: rgba(225, 29, 72, 0.08); border-color: rgba(225, 29, 72, 0.3); }
+        .box-nunggak .db-date { color: var(--danger-glow); }
+        .box-nunggak .db-icon { color: var(--danger-glow); }
+        
+        /* State: Belum Masuk Hari (Wait) */
+        .box-wait { opacity: 0.7; }
+        .box-wait .db-icon { color: #CBD5E1; }
+
+        /* BUTTON LOAD MORE */
+        .btn-load-more {
+            width: 100%; padding: 14px; margin-top: 15px;
+            background: transparent; border: 2px dashed #CBD5E1; color: var(--text-muted);
+            border-radius: 14px; font-family: 'Montserrat'; font-size: 11px; font-weight: 800;
+            cursor: pointer; transition: 0.2s; letter-spacing: 1px; text-transform: uppercase;
+        }
+        .btn-load-more:active { background: #F1F5F9; transform: scale(0.98); }
+
+        /* INFO BARS */
+        .info-bar { background: white; border: 1px solid var(--border-light); padding: 12px 15px; border-radius: 12px; display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 11px; font-weight: 800; color: var(--obsidian); }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="header-title"><i class="fas fa-building"></i> Rumah Baru MLU</div>
+        <button class="btn-switch" onclick="toggleMode()" id="btnModeSwitcher">VIEW: MEMBER</button>
+    </header>
+
+    <!-- VIEW 1: MEMBER DASHBOARD -->
+    <div class="container active" id="viewMember">
+        <div class="member-card">
+            <div class="mc-title">Sisa Tagihan Anda</div>
+            <div class="mc-amount" id="memberAmount">Rp 50.000</div>
+            <div class="mc-desc" id="memberDesc">Anda belum melakukan pembayaran.</div>
+            <button class="btn-qris" onclick="alert('Membuka QRIS Pembayaran...')">
+                <i class="fas fa-qrcode"></i> BAYAR VIA QRIS
+            </button>
+        </div>
+        <p style="font-size: 10px; font-weight: 600; color: var(--text-muted); text-align: center; line-height: 1.6;">
+            Sistem akan memotong <b>Rp 10.000</b> per hari dari tagihan Anda.<br>Periode Patungan: 14 September - 18 September.
+        </p>
+    </div>
+
+    <!-- VIEW 2: ADMIN TRACKER -->
+    <div class="container" id="viewAdmin">
+        <div class="info-bar">
+            <span><i class="fas fa-calendar-alt"></i> HARI INI: <b>16 SEP</b></span>
+            <span style="color: var(--danger-glow);"><i class="fas fa-exclamation-circle"></i> NUNGGAK: <b id="countNunggak">0</b></span>
+        </div>
+
+        <div class="filter-group">
+            <div class="chip active" onclick="setFilter('SEMUA', this)">SEMUA (34)</div>
+            <div class="chip" onclick="setFilter('NUNGGAK', this)">NUNGGAK</div>
+            <div class="chip" onclick="setFilter('AMAN', this)">AMAN</div>
+        </div>
+
+        <div class="list-container" id="adminListContainer">
+            <!-- List Member akan di-render di sini oleh JavaScript -->
+        </div>
+
+        <button class="btn-load-more" id="btnLoadMore" onclick="loadMore()">TAMPILKAN LEBIH BANYAK <i class="fas fa-chevron-down"></i></button>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // DATA: 34 Member (paidDays menunjukkan berapa hari yang SUDAH lunas)
+        const membersData = [
+            { name: "Aji", role: "TRNSGO", vin: "-", paidDays: 3 },
+            { name: "Iwan", role: "RTO", vin: "0590", paidDays: 1 },
+            { name: "Sandi Ketum", role: "TRNSGO", vin: "-", paidDays: 5 },
+            { name: "Ubay", role: "RTO", vin: "0667", paidDays: 2 },
+            { name: "Ambon", role: "TRNSGO", vin: "0459", paidDays: 3 },
+            { name: "Bang BW", role: "RTO", vin: "0782", paidDays: 0 },
+            { name: "Amar", role: "TRNSGO", vin: "-", paidDays: 4 },
+            { name: "Sandi Uda", role: "RTO", vin: "-", paidDays: 3 },
+            { name: "Cakwe", role: "RTO", vin: "1023", paidDays: 1 },
+            { name: "Slamet", role: "TRNSGO", vin: "-", paidDays: 3 },
+            { name: "Vijar", role: "RTO", vin: "-", paidDays: 2 },
+            { name: "Ramon", role: "RETAIL", vin: "-", paidDays: 5 },
+            { name: "Awang Thea", role: "RTO", vin: "1032", paidDays: 3 },
+            { name: "Jister", role: "TRNSGO", vin: "-", paidDays: 0 },
+            { name: "Byanca", role: "RTO", vin: "0089", paidDays: 4 },
+            { name: "Gombloh", role: "RTO", vin: "1480", paidDays: 1 },
+            { name: "Abu", role: "TRNSGO", vin: "0335", paidDays: 3 },
+            { name: "Ipung", role: "SIMPATISAN", vin: "-", paidDays: 0 },
+            { name: "Pak Jamil", role: "TRNSGO", vin: "1041", paidDays: 5 },
+            { name: "Nanang", role: "RTO", vin: "1240", paidDays: 2 },
+            { name: "Hendro", role: "RTO", vin: "-", paidDays: 3 },
+            { name: "Ega", role: "TRNSGO", vin: "-", paidDays: 1 },
+            { name: "Dzilan", role: "RTO", vin: "-", paidDays: 3 },
+            { name: "Windiyono", role: "RTO", vin: "0321", paidDays: 0 },
+            { name: "Aki Ahmad", role: "RTO", vin: "-", paidDays: 4 },
+            { name: "Yudif", role: "RTO", vin: "1195", paidDays: 1 },
+            { name: "Jetli", role: "RTO", vin: "-", paidDays: 3 },
+            { name: "Oby", role: "RTO", vin: "0615", paidDays: 2 },
+            { name: "Rizki Gibran", role: "RTO", vin: "1601", paidDays: 5 },
+            { name: "Nandang", role: "RTO", vin: "0714", paidDays: 1 },
+            { name: "Kustanto", role: "RTO", vin: "0856", paidDays: 3 },
+            { name: "Awenk", role: "RTO", vin: "1514", paidDays: 0 },
+            { name: "Doni", role: "RTO", vin: "0821", paidDays: 3 },
+            { name: "Wahyu", role: "BROOMEV", vin: "1049", paidDays: 2 }
+        ];
+
+        // KONFIGURASI TANGGAL
+        // Asumsi hari ini adalah tanggal 16 Sep (Artinya Hari ke-3 dari tanggal 14 Sep)
+        const HARI_INI = 3; 
+        const labelTanggal = ['14 SEP', '15 SEP', '16 SEP', '17 SEP', '18 SEP'];
+        
+        let currentFilter = 'SEMUA';
+        let displayLimit = 10;
+        let isAdminView = false; 
+
+        const formatRp = (angka) => "Rp " + angka.toLocaleString('id-ID');
+
+        function toggleMode() {
+            isAdminView = !isAdminView;
+            document.getElementById('viewMember').classList.toggle('active', !isAdminView);
+            document.getElementById('viewAdmin').classList.toggle('active', isAdminView);
+            document.getElementById('btnModeSwitcher').innerText = isAdminView ? "VIEW: ADMIN" : "VIEW: MEMBER";
+            
+            if (isAdminView) renderAdminList();
+            else updateMemberDashboard();
+        }
+
+        function updateMemberDashboard() {
+            const myData = membersData[0]; // Sample user
+            const totalTagihan = 50000;
+            const sisaTagihan = totalTagihan - (myData.paidDays * 10000);
+            
+            document.getElementById('memberAmount').innerText = formatRp(sisaTagihan);
+            document.getElementById('memberDesc').innerText = `Terbayar: ${myData.paidDays} dari 5 Hari`;
+        }
+
+        function setFilter(tipe, el) {
+            currentFilter = tipe;
+            displayLimit = 10;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderAdminList();
+        }
+
+        function loadMore() {
+            displayLimit += 10;
+            renderAdminList();
+        }
+
+        function renderAdminList() {
+            const container = document.getElementById('adminListContainer');
+            const btnMore = document.getElementById('btnLoadMore');
+            container.innerHTML = ''; 
+
+            let filteredData = membersData.filter(m => {
+                const isAman = m.paidDays >= HARI_INI;
+                if (currentFilter === 'NUNGGAK') return !isAman;
+                if (currentFilter === 'AMAN') return isAman;
+                return true; 
+            });
+
+            const totalNunggak = membersData.filter(m => m.paidDays < HARI_INI).length;
+            document.getElementById('countNunggak').innerText = totalNunggak + " ORANG";
+
+            let dataToShow = filteredData.slice(0, displayLimit);
+
+            dataToShow.forEach(m => {
+                const isAman = m.paidDays >= HARI_INI;
+                const cardClass = isAman ? 'aman' : 'nunggak';
+                const tagClass = isAman ? 'tag-aman' : 'tag-nunggak';
+                const tagText = isAman ? 'AMAN' : 'NUNGGAK';
+                
+                let roleClass = 'bg-lain';
+                if(m.role === 'RTO') roleClass = 'bg-rto';
+                if(m.role === 'TRNSGO') roleClass = 'bg-trnsgo';
+
+                // GENERATE KOTAK TANGGAL (14 Sep - 18 Sep)
+                let datesHTML = `<div class="lc-dates">`;
+                for (let i = 0; i < 5; i++) {
+                    let boxClass = '';
+                    let iconHtml = '';
+                    
+                    if (i < m.paidDays) {
+                        // LUNAS
+                        boxClass = 'box-paid';
+                        iconHtml = '<i class="fas fa-check-circle"></i>';
+                    } else if (i < HARI_INI) {
+                        // NUNGGAK (Hari sudah lewat, tapi belum bayar)
+                        boxClass = 'box-nunggak';
+                        iconHtml = '<i class="fas fa-times-circle"></i>';
+                    } else {
+                        // BELUM JATUH TEMPO
+                        boxClass = 'box-wait';
+                        iconHtml = '<i class="fas fa-minus"></i>';
+                    }
+                    
+                    datesHTML += `
+                        <div class="date-box ${boxClass}">
+                            <div class="db-date">${labelTanggal[i]}</div>
+                            <div class="db-icon">${iconHtml}</div>
+                        </div>
+                    `;
+                }
+                datesHTML += `</div>`;
+
+                const cardHTML = `
+                    <div class="list-card ${cardClass}" onclick="alert('Mencatat Pembayaran: ${m.name}')">
+                        <div class="lc-header">
+                            <div class="lc-left">
+                                <div class="lc-name">${m.name}</div>
+                                <div class="lc-meta">
+                                    <span class="badge-role ${roleClass}">${m.role}</span>
+                                    <span>${m.vin !== '-' ? 'VIN: ' + m.vin : ''}</span>
+                                </div>
+                            </div>
+                            <div class="lc-right">
+                                <div class="status-tag ${tagClass}">${tagText}</div>
+                            </div>
+                        </div>
+                        ${datesHTML}
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+
+            if (displayLimit >= filteredData.length) {
+                btnMore.style.display = 'none';
+            } else {
+                btnMore.style.display = 'block';
+            }
+        }
+
+        updateMemberDashboard();
+    </script>
+</body>
+</html>
