@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="id" style="background-color: #F4F7FC;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F4F7FC">
+    <title>MLU - Elite Light Perfection</title>
+    
+    <link rel="manifest" href="manifest.json">
+    
+    <script>
+        const DASH_VERSION = "ELITE_V5.2_SECURITY"; 
+        if (localStorage.getItem('mlu_elite_v') !== DASH_VERSION) {
+            if ('caches' in window) { caches.keys().then((names) => { names.forEach(name => { caches.delete(name); }); }); }
+            localStorage.setItem('mlu_elite_v', DASH_VERSION); window.location.reload(true); 
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-canvas: #F4F7FC; --obsidian: #0A1128; --cyan-glow: #00E5FF;
+            --gold-lux: #C5A059; --text-main: #0F172A; --text-muted: #64748B;
+            --electric-blue: #2D63ED; --fresh-teal: #0EA5E9; 
+            --success-glow: #059669; --danger-glow: #E11D48; --warning: #D97706;
+            --border-light: #E2E8F0;
+        }
+
+        body {
+            margin: 0; padding: 0; background-color: var(--bg-canvas);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.05), transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(197, 160, 89, 0.06), transparent 40%),
+                linear-gradient(rgba(10, 17, 40, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 17, 40, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            font-family: 'Montserrat', sans-serif; color: var(--text-main);
+            
+            /* KUNCI VIEWPORT ANTI KETUTUP MENU HP BAWAH */
+            position: fixed; inset: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; overflow: hidden;
+            
+            -webkit-tap-highlight-color: transparent; user-select: none;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+
+        .bg-watermark { position: fixed; bottom: -10%; right: -25%; height: 100vh; opacity: 0.08; transform: scale(1.1) rotate(-15deg); z-index: 0; pointer-events: none; user-select: none; }
+
+        /* SPLASH SCREEN CINEMATIC BLUR */
+        .splash-screen { position: fixed; inset: 0; background-color: var(--obsidian); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.8s ease, transform 0.8s ease; overflow: hidden; }
+        .splash-screen.hide { opacity: 0; transform: scale(1.1); pointer-events: none; }
+        
+        .splash-bg-blur { position: absolute; inset: -10%; width: 120%; height: 120%; background-size: cover; background-position: center; filter: blur(30px) brightness(0.35); z-index: 1; animation: slowZoom 15s linear infinite alternate; }
+        
+        .splash-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; padding: 25px; }
+        
+        .splash-landscape-frame { width: 100%; max-width: 360px; border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); position: relative; margin-bottom: 20px; }
+        .splash-landscape-frame img { width: 100%; height: auto; display: block; object-fit: contain; }
+        
+        .splash-landscape-frame::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(10,17,40,0.8) 100%); pointer-events: none; }
+        
+        .splash-logo { width: 90px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6)); margin-top: -65px; z-index: 3; position: relative; }
+
+        @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+
+        .terminal-text { font-family: 'Space Grotesk', sans-serif; font-weight: 900; color: #FFFFFF; font-size: 15px; text-align: center; letter-spacing: 2px; padding: 0 20px; line-height: 1.6; margin-top: 15px; min-height: 50px; text-shadow: 0 5px 15px rgba(0,0,0,0.9); text-transform: uppercase; }
+        
+        #actionLoader { position: fixed; inset: 0; background: rgba(244,247,252,0.8); backdrop-filter: blur(5px); z-index: 999999; display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* DASHBOARD CORE */
+        .dashboard-core { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; z-index: 10; perspective: 1000px; }
+
+        .profile-group { position: absolute; display: flex; align-items: center; gap: 14px; z-index: 40; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; }
+        
+        /* PROFIL ATAS CENTER (PROPORSIONAL DI ATAS LOGO, TIDAK KETUTUP) */
+        .profile-center { 
+            top: 9.5%; left: 50%; transform: translateX(-50%); 
+            opacity: 1; pointer-events: auto;
+            width: max-content; max-width: 90vw;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(12px);
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 12px 28px rgba(10, 17, 40, 0.06);
+        }
+        .dashboard-core.active .profile-center { opacity: 0; transform: translate(-50%, -15px) scale(0.95); pointer-events: none; }
+        .profile-corner { top: 24px; left: 22px; opacity: 0; transform: translateX(-20px); pointer-events: none; }
+        .dashboard-core.active .profile-corner { opacity: 1; transform: translateX(0); pointer-events: auto; transition-delay: 0.1s; }
+        
+        .profile-photo { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-lux); box-shadow: 0 8px 18px rgba(10, 17, 40, 0.12); flex-shrink: 0; background: var(--bg-canvas); }
+        .profile-corner .profile-photo { width: 45px; height: 45px; }
+        .profile-info { display: flex; flex-direction: column; gap: 2px; }
+        .user-name-wrapper { display: flex; align-items: center; gap: 6px; }
+        .user-name { font-size: 17px; font-weight: 800; color: var(--obsidian); letter-spacing: 0.8px; line-height: 1.15; }
+        .profile-corner .user-name { font-size: 15px; }
+        .verified-badge { color: var(--gold-lux); font-size: 12px; }
+        .user-role { font-size: 9px; font-weight: 800; color: var(--gold-lux); letter-spacing: 2.5px; text-transform: uppercase; }
+        .user-car { font-size: 11px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+
+        /* LOGO UTAMA TEPAT DI CENTER (PROPORSIONAL ANTARA PROFIL & SLOGAN) */
+        @keyframes showcaseY {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .core-trigger { 
+            position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%);
+            width: 340px; height: 340px; max-width: 78vw; max-height: 78vw; z-index: 60; cursor: pointer; 
+            background: rgba(0,0,0,0.001); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .logo-rotator {
+            width: 340px; height: 340px; max-width: 78vw; max-height: 78vw;
+            display: flex; align-items: center; justify-content: center;
+            animation: showcaseY 10s linear infinite; 
+            transform-style: preserve-3d; pointer-events: none; 
+            transition: transform 0.4s ease;
+        }
+        .logo-rotator img { 
+            width: 100%; height: 100%; object-fit: contain; 
+            filter: drop-shadow(0 15px 25px rgba(10, 17, 40, 0.25));
+        }
+        
+        .dashboard-core.active .logo-rotator { 
+            animation: none; transform: rotateY(0deg) scale(1.04); 
+        }
+        .dashboard-core.active .core-trigger {
+            top: 38%;
+            filter: drop-shadow(0 0 35px rgba(0, 229, 255, 0.6)) drop-shadow(0 0 70px rgba(197, 160, 89, 0.6));
+        }
+
+        /* SLOGAN TEPAT DI BAWAH LOGO */
+        .slogan-box { position: absolute; top: calc(44% + 178px); left: 50%; transform: translateX(-50%); text-align: center; width: 100%; z-index: 10; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slogan-top { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
+        .slogan-bottom { display: block; font-size: clamp(15px, 4.5vw, 18px); font-weight: 900; letter-spacing: 2px; margin-top: 4px; text-transform: uppercase; background: linear-gradient(135deg, #DFBE7B 0%, #C5A059 40%, #9A7B1C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap; }
+        .dashboard-core.active .slogan-box { opacity: 0; transform: translate(-50%, 20px) scale(0.95); pointer-events: none; }
+
+        .clean-node { position: absolute; display: flex; flex-direction: column; justify-content: center; z-index: 5; opacity: 0; pointer-events: none; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        .clean-node:active { transform: scale(0.95) !important; }
+        
+        /* BLOK FC RUMAH MLU CENTER DI BAWAH LOGO */
+        .node-rumah-mlu {
+            top: calc(38% + 145px);
+            left: 50%;
+            transform: translate(-50%, 20px) scale(0.95);
+            align-items: center;
+            text-align: center;
+            width: 90%;
+            max-width: 340px;
+            z-index: 35;
+        }
+        .dashboard-core.active .node-rumah-mlu {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0) scale(1);
+            transition-delay: 0.1s;
+        }
+
+        .rumah-mlu-title {
+            font-weight: 900;
+            font-size: clamp(20px, 5.5vw, 25px);
+            color: var(--obsidian);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+
+        .antrian-status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 8px 20px rgba(10, 17, 40, 0.06);
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--obsidian);
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+        .antrian-status-pill.has-queue {
+            border-color: rgba(45, 99, 237, 0.35);
+            color: var(--electric-blue);
+            cursor: pointer;
+        }
+        .antrian-status-pill.has-queue:active {
+            transform: scale(0.96);
+            background: #EFF6FF;
+        }
+
+        .btn-daftar-antrian-dash {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #0A1128 0%, #172554 100%);
+            color: var(--gold-lux);
+            border: 1px solid rgba(197, 160, 89, 0.55);
+            border-radius: 14px;
+            padding: 11px 22px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 10px 22px rgba(10, 17, 40, 0.2);
+            transition: transform 0.2s ease;
+        }
+        .btn-daftar-antrian-dash:active {
+            transform: scale(0.96);
+        }
+
+        /* RADAR GPS */
+        .radar-alt-fc { position: absolute; bottom: 82px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 350px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--border-light); border-radius: 20px; padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px rgba(0,0,0,0.05); z-index: 45; opacity: 0; pointer-events: none; transition: 0.5s; cursor: pointer; }
+        .dashboard-core.active .radar-alt-fc { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); transition-delay: 0.2s;}
+        .radar-alt-fc:active { transform: translateX(-50%) scale(0.95) !important; }
+        
+        .pill-menu { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%) translateY(30px); opacity: 0; pointer-events: none; z-index: 50; display: flex; align-items: center; justify-content: center; gap: 10px; background: rgba(10, 17, 40, 0.92); backdrop-filter: blur(10px); padding: 14px 28px; border-radius: 40px; border: 1px solid rgba(197, 160, 89, 0.5); color: var(--gold-lux); cursor: pointer; transition: all 0.5s; box-shadow: 0 15px 30px rgba(10,17,40,0.3); }
+        .dashboard-core.active .pill-menu { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); transition-delay: 0.15s; }
+        .pill-menu:active { transform: translateX(-50%) scale(0.95); background: var(--obsidian); }
+        .pill-menu span { font-size: 11px; font-weight: 800; letter-spacing: 4px; margin-top: 1px; }
+
+        /* === MEDIA QUERY UNTUK HP LAYAR PENDEK BIAR GA NABRAK === */
+        @media (max-height: 750px) {
+            .profile-center { top: 7.5%; padding: 8px 16px; }
+            .profile-photo { width: 52px; height: 52px; }
+            .core-trigger, .logo-rotator { width: 295px; height: 295px; }
+            .core-trigger { top: 44%; }
+            .dashboard-core.active .core-trigger { top: 36%; }
+            .slogan-box { top: calc(44% + 155px); }
+            .node-rumah-mlu { top: calc(36% + 125px); }
+            .radar-alt-fc { bottom: 72px; }
+            .pill-menu { bottom: 14px; }
+        }
+        
+        @media (max-height: 650px) {
+            .profile-center { top: 6%; padding: 7px 14px; }
+            .profile-photo { width: 46px; height: 46px; }
+            .core-trigger, .logo-rotator { width: 250px; height: 250px; }
+            .core-trigger { top: 43%; }
+            .dashboard-core.active .core-trigger { top: 34%; }
+            .slogan-box { top: calc(43% + 132px); }
+            .node-rumah-mlu { top: calc(34% + 108px); }
+            .radar-alt-fc { bottom: 62px; padding: 9px 14px; }
+            .pill-menu { bottom: 10px; padding: 11px 22px; }
+        }
+
+        /* --- SYSTEM MENU (LUXURY OBSIDIAN & GOLD EDITION) --- */
+        .menu-modal { position: fixed; inset: 0; background: rgba(10, 17, 40, 0.65); backdrop-filter: blur(18px); z-index: 999990; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.4s ease; padding: 20px; }
+        .menu-modal.show { opacity: 1; pointer-events: auto; }
+        .system-menu-container { 
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 247, 252, 0.92) 100%); 
+            backdrop-filter: blur(25px); 
+            border-radius: 32px; 
+            padding: 32px 22px 28px; 
+            width: 100%; max-width: 390px; 
+            box-shadow: 0 35px 70px rgba(10, 17, 40, 0.35), inset 0 1px 0 rgba(255, 255, 255, 1); 
+            border: 1px solid rgba(197, 160, 89, 0.35); 
+            position: relative; 
+        }
+        .menu-close-btn { position: absolute; top: -56px; right: 0; width: 44px; height: 44px; border-radius: 50%; background: rgba(10, 17, 40, 0.9); border: 1px solid rgba(197, 160, 89, 0.5); color: var(--gold-lux); font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.25); transition: 0.2s; }
+        .menu-close-btn:active { transform: scale(0.9); }
+        .menu-title-sys { 
+            text-align: center; font-size: 11px; font-weight: 900; letter-spacing: 5px; 
+            color: var(--obsidian); text-transform: uppercase; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .menu-title-sys::before, .menu-title-sys::after {
+            content: ''; width: 22px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-lux), transparent);
+        }
+        .icon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; row-gap: 20px; }
+        .grid-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; cursor: pointer; transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+        .grid-item:active { transform: scale(0.91); }
+        
+        .app-icon { 
+            width: 68px; height: 68px; border-radius: 22px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 25px; margin-bottom: 9px; 
+            position: relative; overflow: hidden;
+            background: linear-gradient(145deg, #0F172A 0%, #0A1128 100%);
+            border: 1px solid rgba(197, 160, 89, 0.38);
+            box-shadow: 0 14px 26px rgba(10, 17, 40, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.16);
+        }
+        .app-icon::before {
+            content: ''; position: absolute; top: -40%; left: -40%; width: 180%; height: 80%;
+            background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 65%);
+            transform: rotate(-20deg); pointer-events: none;
+        }
+        .app-icon::after {
+            content: ''; position: absolute; bottom: 0; left: 20%; right: 20%; height: 2px;
+            border-radius: 2px; opacity: 0.9;
+        }
+        .app-icon i {
+            background: linear-gradient(135deg, #F6E2B3 0%, #C5A059 55%, #9A7B1C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 6px rgba(197, 160, 89, 0.35));
+            z-index: 2;
+        }
+
+        /* AKSEN WARNA LUXURY TIAP ICON */
+        .bg-pengaturan::after { background: #94A3B8; box-shadow: 0 0 8px #94A3B8; }
+        .bg-antrian { border-color: rgba(0, 229, 255, 0.45); }
+        .bg-antrian i { background: linear-gradient(135deg, #E0F2FE 0%, #38BDF8 50%, #0284C7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-antrian::after { background: #00E5FF; box-shadow: 0 0 10px #00E5FF; }
+
+        .bg-lokasi { border-color: rgba(167, 139, 250, 0.45); }
+        .bg-lokasi i { background: linear-gradient(135deg, #EDE9FE 0%, #A78BFA 50%, #7C3AED 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-lokasi::after { background: #A78BFA; box-shadow: 0 0 10px #A78BFA; }
+
+        .bg-anggota { border-color: rgba(96, 165, 250, 0.45); }
+        .bg-anggota i { background: linear-gradient(135deg, #DBEAFE 0%, #60A5FA 50%, #2563EB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-anggota::after { background: #60A5FA; box-shadow: 0 0 10px #60A5FA; }
+
+        .bg-pasar { border-color: rgba(251, 113, 133, 0.45); }
+        .bg-pasar i { background: linear-gradient(135deg, #FFE4E6 0%, #FB7185 50%, #E11D48 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-pasar::after { background: #FB7185; box-shadow: 0 0 10px #FB7185; }
+
+        .bg-uang { border-color: rgba(251, 191, 36, 0.5); }
+        .bg-uang i { background: linear-gradient(135deg, #FEF3C7 0%, #FBBF24 50%, #D97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-uang::after { background: #FBBF24; box-shadow: 0 0 10px #FBBF24; }
+
+        .bg-tabungan { border-color: rgba(52, 211, 153, 0.45); }
+        .bg-tabungan i { background: linear-gradient(135deg, #D1FAE5 0%, #34D399 50%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-tabungan::after { background: #34D399; box-shadow: 0 0 10px #34D399; }
+
+        .bg-garasi { border-color: rgba(251, 146, 60, 0.45); }
+        .bg-garasi i { background: linear-gradient(135deg, #FFEDD5 0%, #FB923C 50%, #EA580C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-garasi::after { background: #FB923C; box-shadow: 0 0 10px #FB923C; }
+
+        .bg-pengurus { border-color: rgba(197, 160, 89, 0.6); }
+        .bg-pengurus::after { background: var(--gold-lux); box-shadow: 0 0 10px var(--gold-lux); }
+
+        .bg-info { border-color: rgba(34, 211, 238, 0.45); }
+        .bg-info i { background: linear-gradient(135deg, #CFFAFE 0%, #22D3EE 50%, #0891B2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-info::after { background: #22D3EE; box-shadow: 0 0 10px #22D3EE; }
+
+        .bg-service { border-color: rgba(197, 160, 89, 0.45); }
+        .bg-service::after { background: var(--gold-lux); box-shadow: 0 0 8px var(--gold-lux); }
+
+        .app-text { font-size: 10px; font-weight: 800; color: var(--obsidian); text-align: center; letter-spacing: 0.4px; }
+
+        /* --- UI STATION MONITOR --- */
+        .monitor-overlay { position: fixed; inset: 0; background: rgba(244, 247, 252, 0.85); backdrop-filter: blur(25px); z-index: 100; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: 0.4s ease; }
+        .monitor-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .dashboard-container { display: flex; flex-direction: column; height: 100%; padding: clamp(15px, 3vh, 25px); gap: clamp(10px, 2vh, 15px); }
+
+        .hud-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: clamp(10px, 1.5vh, 15px); border-bottom: 1px dashed rgba(0,0,0,0.05); margin-bottom: 5px;}
+        .btn-ghost { width: clamp(35px, 10vw, 45px); height: clamp(35px, 10vw, 45px); border-radius: 14px; background: rgba(255,255,255,0.9); border: 1px solid #FFFFFF; color: var(--obsidian); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s; }
+        .btn-ghost:active { transform: scale(0.9); border-color: var(--gold-lux); color: var(--gold-lux); }
+        
+        .hud-title-group { flex: 1; text-align: center; margin: 0 10px; display: flex; flex-direction: column; align-items: center;}
+        .hud-location { font-size: 18px; font-weight: 900; color: var(--obsidian); letter-spacing: -0.5px; white-space: nowrap; margin: 0; text-transform: uppercase;}
+
+        .btn-admin-access { background: rgba(255,255,255,0.9); border: 2px solid var(--fresh-teal); color: var(--fresh-teal); width: 40px; height: 40px; border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(14,165,233,0.15); transition: 0.2s; padding: 0; }
+        .btn-admin-access:active { transform: scale(0.95); background: rgba(14,165,233,0.1); }
+        .admin-header-group { display: flex; flex-direction: column; align-items: flex-end; }
+
+        /* SLOTS STAGE */
+        .stage-slots { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: clamp(10px, 2vh, 15px); }
+        
+        .light-slot { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,1); border-radius: 20px; padding: clamp(12px, 2.5vh, 20px); display: flex; align-items: center; gap: 15px; position: relative; overflow: hidden; transition: 0.4s; box-shadow: 0 15px 35px rgba(10,17,40,0.06); }
+        .light-slot.active { border-color: rgba(197, 160, 89, 0.4); box-shadow: 0 15px 35px rgba(197, 160, 89, 0.1); }
+        .light-slot.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: linear-gradient(180deg, #DFBE7B, #C5A059); }
+
+        .ls-num { font-family: 'Space Grotesk', sans-serif; font-size: clamp(20px, 6vw, 26px); font-weight: 900; color: #CBD5E1; width: clamp(35px, 8vw, 45px); text-align: center; }
+        .light-slot.active .ls-num { color: var(--gold-lux); }
+
+        .ls-body { flex: 1; display: flex; align-items: center; justify-content: space-between; min-width: 0; }
+        .ls-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding-right: 10px; }
+        
+        .ls-name-wrap { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 4px; }
+        
+        .ls-name { font-size: 10px; font-weight: 800; color: var(--text-main); text-transform: uppercase; white-space: normal; line-height: 1.3;}
+        .ls-plat { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 900; color: var(--obsidian); line-height: 1; white-space: nowrap; margin-bottom: 2px;}
+        .ls-role { font-size: 7px; font-weight: 800; padding: 2px 5px; border-radius: 6px; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; display: inline-block; vertical-align: middle;}
+        
+        .badge-official { background: var(--obsidian); color: var(--gold-lux); border: 1px solid rgba(197,160,89,0.4); }
+        .badge-akamsi { background: linear-gradient(135deg, #D97706, #B45309); color: white; border: none; }
+        .badge-member { background: rgba(197, 160, 89, 0.1); color: var(--gold-lux); border: 1px solid rgba(197, 160, 89, 0.3); }
+
+        .ls-stats { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; flex-shrink: 0; gap: 6px; }
+        .stat-bat { font-size: 15px; font-weight: 900; color: var(--success-glow); display: flex; align-items: center; gap: 4px; }
+        .stat-timer { font-size: 10px; font-weight: 800; color: var(--gold-lux); background: rgba(197,160,89,0.1); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(197,160,89,0.2); white-space: nowrap; display: inline-block;}
+        
+        .btn-dots { width: 30px; height: 30px; border-radius: 50%; background: transparent; color: var(--text-muted); border: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .btn-dots:active { color: var(--obsidian); }
+        .admin-only { display: none; }
+        
+        .btn-kudeta-user { background: rgba(225, 29, 72, 0.1); color: var(--danger-glow); border: 1px solid var(--danger-glow); padding: 4px 10px; border-radius: 6px; font-family: 'Montserrat'; font-size: 9px; font-weight: 900; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px; display: inline-block;}
+        .btn-kudeta-user:active { background: var(--danger-glow); color: white; }
+
+        /* QUEUE DOCK */
+        .queue-dock { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,1); border-radius: 24px; padding: 20px; box-shadow: 0 20px 40px rgba(10,17,40,0.05); cursor: pointer; transition: 0.2s;}
+        .queue-dock:active { transform: scale(0.98); }
+        .qd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; }
+        .qd-title { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .qd-count { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 900; color: var(--electric-blue); line-height: 1; margin-top: 2px;}
+
+        /* ACTION ZONE DIANGKAT BIAR TOMBOL AMAN */
+        .action-zone { margin-top: auto; padding-top: clamp(5px, 1vh, 10px); padding-bottom: 30px; }
+        .btn-fab-danger { width: 100%; background: var(--obsidian); border: 1px solid var(--obsidian); color: var(--gold-lux); padding: clamp(14px, 3vh, 18px); border-radius: 18px; font-family: 'Montserrat'; font-size: clamp(12px, 3.2vw, 13px); font-weight: 900; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; box-shadow: 0 10px 25px rgba(10, 17, 40, 0.3); transition: 0.2s; }
+        .btn-fab-danger:active { transform: scale(0.98); box-shadow: 0 5px 15px rgba(10, 17, 40, 0.4);}
+
+        /* MODALS & OVERLAYS */
+        .modal-glass-overlay { position: fixed; inset: 0; background: rgba(10,17,40,0.7); backdrop-filter: blur(8px); z-index: 999999; display: none; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px; }
+        .modal-glass-overlay.show { opacity: 1; pointer-events: auto; display: flex; }
+        .modal-glass-box { background: rgba(255,255,255,0.95); border-radius: 25px; padding: 25px; width: 100%; max-width: 350px; text-align: left; box-shadow: 0 30px 80px rgba(0,0,0,0.2); border: 1px solid white; margin: auto; position: relative; transform: scale(0.9); transition: 0.3s; }
+        .modal-glass-overlay.show .modal-glass-box { transform: scale(1); }
+        .btn-close-modal { position: absolute; top: 15px; right: 15px; background: transparent; border: none; font-size: 18px; color: var(--text-muted); cursor: pointer; transition: 0.2s;}
+        .btn-close-modal:active { transform: scale(0.9); color: var(--danger-glow); }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-label { font-size: 10px; font-weight: 800; color: var(--text-muted); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+        .form-input { width: 100%; padding: 15px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; font-family: 'Montserrat'; font-size: 14px; font-weight: 700; color: var(--text-main); outline: none; transition: 0.2s; }
+        .form-input:focus { border-color: var(--fresh-teal); background: white; }
+        .btn-submit { width: 100%; padding: 16px; background: var(--obsidian); color: var(--gold-lux); border: none; border-radius: 16px; font-family: 'Montserrat'; font-size: 12px; font-weight: 900; cursor: pointer; margin-top: 10px; letter-spacing: 1px; transition: 0.2s;}
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-logout-modal { width: 100%; padding: 16px; background: white; color: var(--danger-glow); border: 2px solid rgba(225, 29, 72, 0.2); border-radius: 16px; font-family: 'Montserrat'; font-size: 12px; font-weight: 900; cursor: pointer; margin-top: 10px; transition: 0.2s;}
+
+        .qr-wrapper { background: white; border: 2px dashed #E2E8F0; padding: 15px; border-radius: 20px; text-align: center; margin-bottom: 15px;}
+        .qr-wrapper img { width: 200px; height: 200px; border-radius: 10px; }
+        .qr-name { font-size: 18px; font-weight: 900; color: var(--obsidian); margin-bottom: 2px; text-align: center;}
+        .qr-desc { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 20px; text-align: center;}
+
+        /* BOTTOM SHEETS ADMIN & DAFTAR ANTREAN */
+        .sheet-overlay { position: fixed; inset: 0; background: rgba(10,17,40,0.6); backdrop-filter: blur(5px); display: none; align-items: flex-end; z-index: 200000; opacity: 0; transition: opacity 0.3s; }
+        .sheet-overlay.show { display: flex; opacity: 1; }
+        .bottom-sheet { width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 30px 30px 0 0; padding: 20px 25px 40px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); max-height: 85vh; overflow-y: auto; }
+        .sheet-overlay.show .bottom-sheet { transform: translateY(0); }
+        .sheet-handle { width: 50px; height: 5px; background: #CBD5E1; border-radius: 5px; margin: 0 auto 20px; }
+        .sheet-title { font-family: 'Montserrat'; font-size: 18px; font-weight: 900; color: var(--obsidian); margin-bottom: 20px; text-align: center; }
+        
+        .sheet-menu { display: flex; flex-direction: column; gap: 10px; }
+        .sm-btn { width: 100%; padding: 16px 20px; background: rgba(255,255,255,0.8); border: 1px solid rgba(226,232,240,0.8); border-radius: 16px; display: flex; align-items: center; gap: 15px; font-family: 'Montserrat'; font-size: 12px; font-weight: 800; color: var(--text-main); cursor: pointer; transition: 0.2s; text-align: left; }
+        .sm-btn:active { background: rgba(14,165,233,0.05); border-color: rgba(14,165,233,0.3); transform: scale(0.98); }
+        .sm-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .bg-blue { background: rgba(14,165,233,0.1); color: var(--fresh-teal); }
+        .bg-red { background: rgba(225,29,72,0.1); color: var(--danger-glow); }
+        .bg-dark { background: #F1F5F9; color: var(--obsidian); }
+        
+        .btn-kudeta-admin { background: var(--danger-glow); color: white; border: none; justify-content: center; font-family: 'Montserrat'; font-weight: 900; letter-spacing: 1px; }
+        .btn-kudeta-admin:active { background: #BE123C;}
+
+        /* CSS KHUSUS ADMIN ANTREAN PANEL */
+        .admin-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .q-row-adm { display: flex; align-items: center; gap: 12px; border-bottom: 1px dashed #E2E8F0; padding-bottom: 10px; margin-bottom: 4px; }
+        .q-number { font-family: 'Montserrat'; font-size: 16px; font-weight: 900; color: var(--text-muted); background: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid #E2E8F0; }
+        .btn-adm { cursor: pointer; padding: 10px; font-weight: 800; font-family: 'Montserrat'; font-size: 10px; border-radius: 10px; transition: 0.2s; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-adm:active { transform: scale(0.95); }
+        .btn-bg-red { background: rgba(225,29,72,0.1); color: var(--danger-glow); }
+        .btn-bg-blue { background: rgba(14,165,233,0.1); color: var(--fresh-teal); }
+        .btn-bg-gold { background: var(--gold-lux); color: var(--obsidian); box-shadow: 0 5px 15px rgba(197,160,89,0.2); }
+        .action-group { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 6px; display: flex; gap: 6px; flex: 1; }
+        .ag-label { font-size: 9px; font-weight: 800; color: var(--text-muted); display: flex; align-items: center; padding: 0 5px; }
+
+        /* LIST ANTRIAN POPUP (USER VIEW) */
+        .q-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: white; border: 1px solid var(--border-light); border-radius: 20px; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.02);}
+
+        /* =======================================================
+           TRIBUTE OVERLAY CSS (CINEMATIC DIMMING)
+           ======================================================= */
+        .tribute-overlay { position: fixed; inset: 0; background: rgba(5, 8, 20, 0.92); backdrop-filter: blur(12px); z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.6s ease-in-out; padding: 20px; box-sizing: border-box; }
+        .tribute-overlay.show { opacity: 1; pointer-events: auto; }
+        .tribute-content-wrapper { width: 100%; max-width: 360px; display: flex; flex-direction: column; align-items: center; transform: translateY(20px) scale(0.95); transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .tribute-overlay.show .tribute-content-wrapper { transform: translateY(0) scale(1); }
+        .t-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 900; color: var(--gold-lux); letter-spacing: 1px; margin-bottom: 15px; text-transform: uppercase; text-align: center; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .tribute-landscape-frame { width: 100%; aspect-ratio: 16/10; border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.8); border: 1px solid rgba(197, 160, 89, 0.3); position: relative; margin-bottom: 25px; background: #000; }
+        .t-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transition: opacity 1.5s ease-in-out; }
+        .t-slide.active { opacity: 1; }
+        .t-quote { font-size: 13px; font-weight: 500; color: #E2E8F0; line-height: 1.6; text-align: center; margin-bottom: 35px; padding: 0 10px; font-style: italic; }
+        
+        .btn-pantau { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px 24px; border-radius: 14px; font-family: 'Montserrat'; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .btn-pantau:active { background: rgba(255,255,255,0.1); transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <!-- Watermark Logo -->
+    <img src="logomlumaster.png" class="bg-watermark" alt="" onerror="this.style.display='none'">
+
+    <!-- CUSTOM ALERT POPUP -->
+    <div class="modal-glass-overlay" id="modalCustomAlert" style="z-index: 99999999;">
+        <div class="modal-glass-box" style="max-width: 300px; text-align: center; padding: 30px 20px;">
+            <div style="font-size: 40px; color: var(--danger-glow); margin-bottom: 15px;"><i class="fas fa-lock"></i></div>
+            <div id="alertMessageText" style="font-family: 'Montserrat'; font-size: 14px; font-weight: 700; color: var(--obsidian); margin-bottom: 25px; line-height: 1.5;">Pesan Alert</div>
+            <button class="btn-submit" onclick="closeCustomAlert()" style="margin-top: 0; background: var(--danger-glow); color: white;">MENGERTI</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM POPUP -->
+    <div class="modal-glass-overlay" id="modalConfirm" style="z-index: 99999999;">
+        <div class="modal-glass-box" style="max-width: 320px; text-align: center; padding: 30px 20px;">
+            <div style="font-size: 40px; color: var(--danger-glow); margin-bottom: 15px;"><i class="fas fa-question-circle"></i></div>
+            <h2 style="font-family:'Montserrat'; font-size:18px; color:var(--obsidian); margin-top:0; margin-bottom: 10px;">KONFIRMASI</h2>
+            <div id="confirmMessageText" style="font-family: 'Montserrat'; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5;">Apakah Anda yakin?</div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-submit" onclick="closeConfirmModal()" style="flex: 1; background: #F1F5F9; color: var(--text-muted); margin-top: 0;">BATAL</button>
+                <button class="btn-submit" id="btnConfirmYes" style="flex: 1; background: var(--danger-glow); color: white; margin-top: 0;">YA, YAKIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADER -->
+    <div id="actionLoader">
+        <div style="width:50px; height:50px; border:4px solid #E2E8F0; border-top:4px solid var(--obsidian); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:15px;"></div>
+        <div style="font-family:'Montserrat'; font-weight:900; color:var(--obsidian); letter-spacing:2px; font-size: 12px;">MEMPROSES...</div>
+    </div>
+
+    <!-- TRIBUTE OVERLAY / KUBURAN -->
+    <div class="tribute-overlay" id="modalTributeRIP">
+        <div class="tribute-content-wrapper">
+            <div class="t-title" style="color: var(--text-muted);">[ TELAH BERPULANG ]<br><span style="color: white; font-size: 20px; letter-spacing: 2px;">FC KELAPA GADING</span></div>
+            <div class="tribute-landscape-frame">
+                <img id="tFoto1" class="t-slide active" src="foto1.jpg" alt="" onerror="this.src='https://images.unsplash.com/photo-1558981420-87aa9dad1c89?q=80&w=600&auto=format&fit=crop'">
+                <img id="tFoto2" class="t-slide" src="foto2.jpg" alt="" onerror="this.src='https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=600&auto=format&fit=crop'">
+            </div>
+            <div class="t-quote">
+                " Terima kasih atas semua kenangan hebat yg pernah tercipta disini. FC Kelapa Gading pamit, ingatlah pernah ada tempat yg selalu menerimamu tanpa syarat. Terima kasih sudah pernah singgah untuk pulang kesini."
+            </div>
+            <div style="margin-top: 15px;">
+                <button class="btn-pantau" onclick="tutupTributeRIP()">
+                    <i class="fas fa-times"></i> TUTUP KOTAK MEMORI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPLASH SCREEN CINEMATIC -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-bg-blur" id="splashBgBlur"></div>
+        <div class="splash-content">
+            <div class="splash-landscape-frame">
+                <img id="splashImgMain" src="foto1.jpg" alt="MLU Moment">
+            </div>
+            <img src="logomlumaster.png" class="splash-logo" alt="MLU Logo" onerror="this.style.display='none'">
+            <div class="terminal-text" id="terminalText"></div>
+        </div>
+    </div>
+
+    <!-- SYSTEM MENU -->
+    <div class="menu-modal" id="menuModal">
+        <div class="system-menu-container">
+            <button class="menu-close-btn" onclick="tutupMenu(event)"><i class="fas fa-times"></i></button>
+            <div class="menu-title-sys">SYSTEM MENU</div>
+            <div class="icon-grid">
+                <a href="#" class="grid-item" onclick="bukaSetting(event); tutupMenu(event);"><div class="app-icon bg-pengaturan"><i class="fas fa-sliders"></i></div><div class="app-text">Pengaturan</div></a>
+                <a href="antrian.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-antrian"><i class="fas fa-bolt-lightning"></i></div><div class="app-text">Antrian</div></a>
+                <a href="lokasi_fc.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-lokasi"><i class="fas fa-map-location-dot"></i></div><div class="app-text">Lokasi FC</div></a>
+                <a href="data_anggota.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-anggota"><i class="fas fa-id-card-clip"></i></div><div class="app-text">Data Anggota</div></a>
+                <a href="store.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-pasar"><i class="fas fa-bag-shopping"></i></div><div class="app-text">Pasar MLU</div></a>
+                <a href="keuangan.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-uang"><i class="fas fa-vault"></i></div><div class="app-text">Uang Kas</div></a>
+                <a href="tabungan.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-tabungan"><i class="fas fa-coins"></i></div><div class="app-text">Tabungan</div></a>
+                <a href="reminder.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-garasi"><i class="fas fa-motorcycle"></i></div><div class="app-text">Garasi</div></a>
+                <a href="pengurus.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-pengurus"><i class="fas fa-crown"></i></div><div class="app-text">Pengurus</div></a>
+                <a href="info_mlu.html" class="grid-item" onclick="simpanStateMenu()"><div class="app-icon bg-info"><i class="fas fa-tower-broadcast"></i></div><div class="app-text">Info MLU</div></a>
+                <a href="https://booking.maka-motors.com/" target="_blank" class="grid-item"><div class="app-icon bg-service"><i class="fas fa-wrench"></i></div><div class="app-text">Booking Service</div></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD UTAMA -->
+    <main class="dashboard-core" id="mainDashboard">
+        <!-- PROFIL (KLIK MUNCUL QR) -->
+        <div class="profile-group profile-center" onclick="tampilkanQR(event)">
+            <img src="" class="profile-photo" id="profPicCenter" alt="User" onerror="this.src='https://ui-avatars.com/api/?background=C5A059&color=0A1128&bold=true&name=M'">
+            <div class="profile-info">
+                <div class="user-role" id="roleCenter">KELUARGA MLU</div>
+                <div class="user-name-wrapper"><span class="user-name" id="nameCenter">Loading...</span><i class="fas fa-shield-check verified-badge"></i></div>
+                <div class="user-car"><i class="fas fa-motorcycle" style="color: var(--gold-lux);"></i> <span id="platCenter">B 0000</span></div>
+            </div>
+        </div>
+        <div class="profile-group profile-corner" onclick="tampilkanQR(event)">
+            <img src="" class="profile-photo" id="profPicCorner" alt="User" onerror="this.src='https://ui-avatars.com/api/?background=C5A059&color=0A1128&bold=true&name=M'">
+            <div class="profile-info">
+                <div class="user-role" id="roleCorner">KELUARGA MLU</div>
+                <div class="user-name-wrapper"><span class="user-name" id="nameCorner">Loading...</span><i class="fas fa-shield-check verified-badge"></i></div>
+                <div class="user-car"><i class="fas fa-motorcycle" style="color: var(--gold-lux);"></i> <span id="platCorner">B 0000</span></div>
+            </div>
+        </div>
+
+        <!-- LOGO TRIGGER TENGAH -->
+        <div class="core-trigger" id="radarTrigger">
+            <div class="logo-rotator">
+                <img src="logomlumaster.png" alt="MLU Logo Master" onerror="this.style.display='none'">
+            </div>
+        </div>
+
+        <div class="slogan-box">
+            <span class="slogan-top">Beda Warna, Beda Rangka</span>
+            <span class="slogan-bottom">Satu Keluarga</span>
+        </div>
+
+        <!-- FC RUMAH MLU + STATUS ANTRIAN + TOMBOL DAFTAR ANTRIAN LANGSUNG -->
+        <div class="clean-node node-rumah-mlu" onclick="event.stopPropagation()">
+            <div class="rumah-mlu-title">FC Rumah MLU</div>
+
+            <div class="antrian-status-pill" id="dashAntrianStatus" onclick="bukaDetailAntrian(event)">
+                <i class="fas fa-layer-group"></i>
+                <span id="dashAntrianText">Antrian: 0 orang</span>
+            </div>
+
+            <button type="button" class="btn-daftar-antrian-dash" onclick="bukaDaftarAntrianLangsung(event)">
+                <i class="fas fa-bolt"></i> Daftar Antrian
+            </button>
+        </div>
+
+        <!-- LOKASI FC ALTERNATIF -->
+        <div class="radar-alt-fc" id="radarAltFc" onclick="klikRadarAlt(event)">
+            <div>
+                <div style="font-size: 9px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 2px;">LOKASI FC ALTERNATIF :</div>
+                <div style="font-size: 13px; font-weight: 900; color: var(--obsidian);" id="altFcNama"><i class="fas fa-satellite-dish" style="color: var(--warning);"></i> MEMINDAI GPS...</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 10px; font-weight: 800; color: var(--warning); background: rgba(217, 119, 6, 0.1); padding: 4px 8px; border-radius: 8px;" id="statusAltFC">Menghitung...</div>
+            </div>
+        </div>
+
+        <!-- BTN MENU BAWAH -->
+        <div class="pill-menu" onclick="bukaMenu(event)">
+            <i class="fas fa-bars-staggered"></i><span>MENU</span>
+        </div>
+    </main>
+
+    <!-- ==========================================================
+         MODALS (FORM DAFTAR, QR, SETTING)
+         ========================================================== -->
+    <div class="modal-glass-overlay" id="modalDaftarAntrian" style="z-index: 9999999;" onclick="if(event.target.id==='modalDaftarAntrian') tutupDaftarAntrian()">
+        <div class="modal-glass-box">
+            <button class="btn-close-modal" onclick="tutupDaftarAntrian()"><i class="fas fa-times"></i></button>
+            <h2 style="font-family:'Montserrat'; font-size:18px; color:var(--obsidian); margin-top:0; margin-bottom: 20px;"><i class="fas fa-bolt" style="color:var(--fresh-teal);"></i> MASUK ANTRIAN</h2>
+            <div class="form-group"><label class="form-label">Nama Pilot</label><input type="text" id="inpNama" class="form-input" readonly></div>
+            <div class="form-group"><label class="form-label">Plat Kendaraan</label><input type="text" id="inpPlat" class="form-input" readonly style="background: #E2E8F0; color: #64748B;"></div>
+            <div class="form-group"><label class="form-label">Sisa Baterai (%)</label><input type="number" inputmode="numeric" pattern="[0-9]*" id="inpBatre" class="form-input" placeholder="Contoh: 15" style="font-size:18px; text-align:center;"></div>
+            <button class="btn-submit" onclick="submitDaftarAntrian()">KONFIRMASI DAFTAR</button>
+        </div>
+    </div>
+
+    <!-- QR CODE -->
+    <div class="modal-glass-overlay" id="modalQR">
+        <div class="modal-glass-box" style="max-width: 280px; text-align: center;">
+            <button class="btn-close-modal" onclick="tutupQR()"><i class="fas fa-times"></i></button>
+            <h2 style="font-family:'Montserrat'; font-size:16px; color:var(--obsidian); margin-top:0; margin-bottom: 20px;"><i class="fas fa-expand"></i> DIGITAL PASS</h2>
+            <div class="qr-wrapper">
+                <img id="imgQrCode" src="" alt="Loading QR...">
+            </div>
+            <div class="qr-name" id="qrNamaFull">Nama</div>
+            <div class="qr-desc"><i class="fas fa-motorcycle"></i> <span id="qrPlatText">B 0000</span></div>
+            <div style="font-size: 9px; color: var(--text-muted); font-weight: 700;">Tunjukkan QR Code ini untuk absensi acara / Kopdar MLU.</div>
+        </div>
+    </div>
+
+    <!-- SETTING PROFIL -->
+    <div class="modal-glass-overlay" id="modalSetting">
+        <div class="modal-glass-box" style="text-align: left;">
+            <button class="btn-close-modal" onclick="tutupSetting()"><i class="fas fa-times"></i></button>
+            <h2 style="font-family:'Montserrat'; font-size:18px; color:var(--obsidian); margin-top:0; margin-bottom: 20px; text-align:center;"><i class="fas fa-user-cog"></i> PENGATURAN</h2>
+            
+            <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="setNama" class="form-input"></div>
+            <div class="form-group"><label class="form-label">Nomor WhatsApp</label><input type="number" id="setWa" class="form-input"></div>
+            <div class="form-group"><label class="form-label">Plat Kendaraan</label><input type="text" id="setPlat" class="form-input" readonly style="background: #E2E8F0; color: #64748B;"></div>
+
+            <button class="btn-submit" onclick="simpanProfil()">UPDATE DATA</button>
+            <button class="btn-logout-modal" onclick="logoutApp()"><i class="fas fa-sign-out-alt"></i> KELUAR APLIKASI</button>
+        </div>
+    </div>
+
+    <!-- BOTTOM SHEETS ADMIN & DETAIL ANTREAN -->
+    <div class="sheet-overlay" id="sheetKelolaIsi" onclick="tutupSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title" id="titleKelolaIsi">Kelola Slot</div>
+            <div class="sheet-menu">
+                <button class="sm-btn btn-kudeta-admin" onclick="adminTriggerKudeta()"><i class="fas fa-bolt"></i> KUDETA SLOT INI</button>
+                <button class="sm-btn" onclick="bukaSheet('sheetPilihSlot')"><div class="sm-icon bg-blue"><i class="fas fa-exchange-alt"></i></div> Pindah ke Slot Lain</button>
+                <button class="sm-btn" onclick="adminToQueue()"><div class="sm-icon bg-dark"><i class="fas fa-undo"></i></div> Kembalikan Jadi Antrian</button>
+                <button class="sm-btn" onclick="adminKick()"><div class="sm-icon bg-red"><i class="fas fa-times"></i></div> Keluarkan (Selesai)</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetPilihSlot" onclick="tutupSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Pindah ke Slot Mana?</div>
+            <div class="sheet-menu">
+                <button class="sm-btn" onclick="adminMoveSlot(0)"><div class="sm-icon bg-dark">1</div> Masuk Slot 1</button>
+                <button class="sm-btn" onclick="adminMoveSlot(1)"><div class="sm-icon bg-dark">2</div> Masuk Slot 2</button>
+                <button class="sm-btn" onclick="adminMoveSlot(2)"><div class="sm-icon bg-dark">3</div> Masuk Slot 3</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetManageAntrian" onclick="tutupSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Atur Daftar Antrian</div>
+            <div id="qAdminBody" style="margin-bottom: 20px; max-height: 40vh; overflow-y: auto;"></div>
+            <button class="sm-btn" onclick="bukaDaftarAdmin(-1)" style="margin-bottom: 10px;"><div class="sm-icon bg-blue"><i class="fas fa-plus"></i></div> Daftar via Admin</button>
+            <button class="sm-btn" onclick="unblockAll()"><div class="sm-icon bg-dark"><i class="fas fa-unlock"></i></div> Buka Semua Daftar Blokir</button>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetDaftarAdmin" onclick="tutupSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title"><i class="fas fa-clipboard-list"></i> Daftar via Admin</div>
+            <div class="form-group"><input type="text" id="inpAdminNama" class="form-input" placeholder="Nama Pengendara"></div>
+            <div class="form-group"><input type="text" id="inpAdminPlat" class="form-input" placeholder="Plat Nomor (B 123 XX)"></div>
+            <div class="form-group"><input type="number" id="inpAdminBatre" class="form-input" placeholder="Sisa Batre (%)"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-submit" style="flex:1; padding: 15px;" onclick="adminSubmitDaftar('antrian')"><i class="fas fa-list-ol"></i> MASUK ANTRIAN</button>
+                <button class="btn-submit" style="background:var(--fresh-teal); flex:1; padding: 15px;" onclick="adminSubmitDaftar('slot')"><i class="fas fa-bolt"></i> MASUK SLOT</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheetDaftarAntrian" onclick="tutupSheet(event, this.id)">
+        <div class="bottom-sheet" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Detail Antrian - FC Rumah MLU</div>
+            <div id="qListBody"></div>
+        </div>
+    </div>
+
+    <!-- ==========================================================
+         FIREBASE & LOGIC
+         ========================================================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, onSnapshot, updateDoc, collection, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // TRIBUTE KUBURAN LOGIC
+        let slideIntervalRIP;
+        
+        window.bukaTributeRIP = (e) => {
+            if(e) e.stopPropagation();
+            document.getElementById('modalTributeRIP').classList.add('show');
+            mulaiSlideshowRIP();
+        };
+
+        window.tutupTributeRIP = () => {
+            document.getElementById('modalTributeRIP').classList.remove('show');
+            if(slideIntervalRIP) clearInterval(slideIntervalRIP);
+        };
+
+        const totalPhotos = 19;
+        let currentIdx = 1;
+        let isImg1Active = true;
+        
+        function mulaiSlideshowRIP() {
+            if(slideIntervalRIP) clearInterval(slideIntervalRIP);
+            const img1 = document.getElementById('tFoto1');
+            const img2 = document.getElementById('tFoto2');
+            if(!img1 || !img2) return;
+            
+            slideIntervalRIP = setInterval(() => {
+                currentIdx++;
+                if (currentIdx > totalPhotos) currentIdx = 1;
+                if (isImg1Active) {
+                    img2.src = `foto${currentIdx}.jpg`;
+                    img2.onerror = function() { this.src = 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=600&auto=format&fit=crop'; };
+                    img2.classList.add('active');
+                    img1.classList.remove('active');
+                } else {
+                    img1.src = `foto${currentIdx}.jpg`;
+                    img1.onerror = function() { this.src = 'https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?q=80&w=600&auto=format&fit=crop'; };
+                    img1.classList.add('active');
+                    img2.classList.remove('active');
+                }
+                isImg1Active = !isImg1Active;
+            }, 4000); 
+        }
+
+        window.alert = function(msg) {
+            document.getElementById('alertMessageText').innerText = msg;
+            const m = document.getElementById('modalCustomAlert');
+            m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10);
+        };
+        window.closeCustomAlert = function() {
+            const m = document.getElementById('modalCustomAlert');
+            m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 300);
+        };
+
+        let confirmAction = null;
+        window.confirmModal = function(msg, action) {
+            document.getElementById('confirmMessageText').innerText = msg;
+            confirmAction = action;
+            const m = document.getElementById('modalConfirm');
+            m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10);
+        };
+        window.closeConfirmModal = function() {
+            const m = document.getElementById('modalConfirm');
+            m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 300);
+            confirmAction = null;
+        };
+        document.getElementById('btnConfirmYes').onclick = function() {
+            if(confirmAction) confirmAction();
+            closeConfirmModal();
+        };
+
+        window.showLockedAlert = (e) => {
+            if(e) e.stopPropagation(); 
+            document.getElementById('alertMessageText').innerText = " xXx ";
+            const m = document.getElementById('modalCustomAlert');
+            m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10);
+        };
+
+        let uData = null;
+        try { uData = JSON.parse(localStorage.getItem('maka_user')); } catch (e) {}
+        if (!uData || !uData.plat) { uData = { namaKtp: "Member", plat: "B XXXX XX", role: "MEMBER" }; }
+
+        const myName = uData.namaKtp || uData.namaWa || uData.nama || "User";
+        const myPlat = uData.plat || "B XXXX XX";
+        const myPlatClean = myPlat.replace(/\s+/g, '').toUpperCase();
+        const userId = uData.id || myPlatClean;
+        let roleCek = (uData.role || "MEMBER").toUpperCase();
+        
+        let displayRole = roleCek;
+        if (roleCek === 'MEMBER') displayRole = 'KELUARGA MLU';
+        else if (roleCek === 'GUEST' || roleCek === 'NON-MEMBER' || !roleCek) displayRole = ''; 
+        
+        if (myPlatClean === 'B4146SWH') displayRole = 'AKAMSI';
+        if (myPlatClean === 'B4248SWF') displayRole = 'KELUARGA MLU';
+
+        const rc = document.getElementById('roleCenter');
+        const rcr = document.getElementById('roleCorner');
+        if (displayRole === '') {
+            if(rc) rc.style.display = 'none';
+            if(rcr) rcr.style.display = 'none';
+        } else {
+            if(rc) { rc.style.display = 'block'; rc.innerText = displayRole; }
+            if(rcr) { rcr.style.display = 'block'; rcr.innerText = displayRole; }
+        }
+
+        let isAdminAntrian = (myPlatClean === 'B4248SWF' || myPlatClean === 'B4146SWH' || myPlatClean === 'B4457SWF' || (roleCek !== 'MEMBER' && roleCek !== 'GUEST' && roleCek !== 'NON-MEMBER' && roleCek !== ''));
+        let isGpsBypass = (myPlatClean === 'B4248SWF');
+
+        document.getElementById('nameCenter').innerText = myName; document.getElementById('nameCorner').innerText = myName;
+        document.getElementById('platCenter').innerText = myPlat; document.getElementById('platCorner').innerText = myPlat;
+        
+        let defaultAvatar = `https://ui-avatars.com/api/?background=C5A059&color=0A1128&bold=true&name=${encodeURIComponent(myName)}`;
+        let userFotoUrl = (uData.foto && typeof uData.foto === 'string' && uData.foto.length > 10) ? uData.foto : defaultAvatar;
+        let picCenter = document.getElementById('profPicCenter');
+        let picCorner = document.getElementById('profPicCorner');
+        if(picCenter) picCenter.src = userFotoUrl;
+        if(picCorner) picCorner.src = userFotoUrl;
+        
+        document.getElementById('setNama').value = myName; document.getElementById('setWa').value = uData.noWa || ""; document.getElementById('setPlat').value = myPlat;
+        if(document.getElementById('inpNama')) document.getElementById('inpNama').value = myName;
+        if(document.getElementById('inpPlat')) document.getElementById('inpPlat').value = myPlat;
+
+        if(isAdminAntrian) { document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex'); }
+
+        const appMain = initializeApp({ apiKey: "AIzaSyAk3G5aQUBVe_g7_peVu1F6xllP_RejGq0", authDomain: "rtomaka-e67b5.firebaseapp.com", projectId: "rtomaka-e67b5" }); 
+        const db = getFirestore(appMain);
+        
+        const appGading = initializeApp({ apiKey: "AIzaSyB666i9lYWIpxOdkwpoX9EvFvHLmHczeq8", authDomain: "fcgadingnew22.firebaseapp.com", projectId: "fcgadingnew22" }, "AppGading");
+        const dbGading = getFirestore(appGading);
+        const refGading = doc(dbGading, "antrian", "utama");
+
+        window.showActionLoader = () => { document.getElementById('actionLoader').style.display = 'flex'; setTimeout(() => document.getElementById('actionLoader').style.opacity = '1', 10); };
+        window.hideActionLoader = () => { document.getElementById('actionLoader').style.opacity = '0'; setTimeout(() => document.getElementById('actionLoader').style.display = 'none', 300); };
+        
+        window.bukaMenu = (e) => { if(e) e.stopPropagation(); document.getElementById('menuModal').classList.add('show'); };
+        window.tutupMenu = (e) => { if(e) e.stopPropagation(); document.getElementById('menuModal').classList.remove('show'); };
+        
+        window.simpanStateMenu = () => { sessionStorage.setItem('maka_open_menu', 'true'); };
+        
+        window.bukaSetting = (e) => { if(e) e.stopPropagation(); document.getElementById('modalSetting').classList.add('show'); };
+        window.tutupSetting = () => { document.getElementById('modalSetting').classList.remove('show'); };
+        
+        window.tampilkanQR = (e) => { 
+            if(e) e.stopPropagation();
+            document.getElementById('imgQrCode').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(userId)}&margin=10`; 
+            document.getElementById('qrNamaFull').innerText = myName; document.getElementById('qrPlatText').innerText = myPlat;
+            document.getElementById('modalQR').classList.add('show'); 
+        };
+        window.tutupQR = () => { document.getElementById('modalQR').classList.remove('show'); };
+        
+        window.bukaSheet = (id) => { 
+            document.querySelectorAll('.sheet-overlay').forEach(el => el.classList.remove('show'));
+            document.getElementById(id).classList.add('show'); 
+            if(id === 'sheetManageAntrian') renderQueueAdmin(); 
+            if(id === 'sheetDaftarAntrian') renderQueueList(); 
+        };
+        window.tutupSheet = (e, id) => { if(e.target.id === id) document.getElementById(id).classList.remove('show'); };
+        
+        window.logoutApp = () => { confirmModal("Yakin keluar dari aplikasi?", () => { localStorage.removeItem('maka_user'); window.location.href = 'index.html'; }); };
+
+        window.simpanProfil = async () => {
+            const newNama = document.getElementById('setNama').value; const newWa = document.getElementById('setWa').value;
+            if(!newNama || !newWa) return alert("Data tidak boleh kosong!");
+            window.showActionLoader();
+            try { 
+                await updateDoc(doc(db, "mlu_members", userId), { namaKtp: newNama, noWa: newWa }); 
+                uData.namaKtp = newNama; uData.noWa = newWa; localStorage.setItem('maka_user', JSON.stringify(uData)); 
+                alert("Profil diperbarui!"); location.reload(); 
+            } catch(e) { window.hideActionLoader(); alert("Error: " + e.message); }
+        };
+
+        const STATION_LAT = -6.171583; const STATION_LNG = 106.899844; const MAX_DIST_KM = 0.3; 
+        let isInLocation = false; let watchId = null;
+
+        function hitungJarak(lat1, lon1, lat2, lon2) { 
+            const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180; 
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; 
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        }
+
+        function checkGpsLogic() {
+            if (isGpsBypass) {
+                isInLocation = true;
+                if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+            } else if (navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition((pos) => {
+                    const dist = hitungJarak(STATION_LAT, STATION_LNG, pos.coords.latitude, pos.coords.longitude);
+                    if(dist <= MAX_DIST_KM) { isInLocation = true; } 
+                    else { isInLocation = false; }
+                }, () => { isInLocation = false; }, {enableHighAccuracy: false, timeout: 15000, maximumAge: 10000});
+            }
+        }
+        checkGpsLogic();
+
+        window.klikRadarAlt = (e) => {
+            if(e) e.stopPropagation();
+            if (document.getElementById('altFcNama').innerText.includes("MEMINDAI") || document.getElementById('altFcNama').innerText.includes("MENCARI")) { 
+                alert('Lokasi GPS belum tersedia!'); 
+            }
+        }
+
+        function startAltFCRadar() {
+            if(!navigator.geolocation) {
+                document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--danger-glow);"></i> GPS TIDAK DIDUKUNG`;
+                document.getElementById('statusAltFC').innerText = "Gagal";
+                return;
+            }
+
+            onSnapshot(collection(db, "fc_locations"), (snap) => {
+                let altFCs = [ { id: "kc", name: "FC KARTIKA CHANDRA", lat: -6.2285953, lng: 106.819502, color: "var(--success-glow)" } ];
+                snap.forEach(doc => { const d = doc.data(); if(d.isActive !== false && doc.id !== 'gading') { altFCs.push({ id: doc.id, name: d.name || doc.id, lat: d.lat, lng: d.lng, color: "var(--fresh-teal)", mapLink: d.mapLink }); }});
+
+                navigator.geolocation.watchPosition((pos) => {
+                    let nearestFC = null; let minDist = Infinity;
+                    altFCs.forEach(fc => { let d = hitungJarak(pos.coords.latitude, pos.coords.longitude, fc.lat, fc.lng); if(d < minDist) { minDist = d; nearestFC = fc; } });
+
+                    if(nearestFC) {
+                        document.getElementById('altFcNama').innerHTML = `<i class="fas fa-map-marker-alt" style="color: ${nearestFC.color};"></i> ${nearestFC.name.toUpperCase()}`;
+                        document.getElementById('statusAltFC').innerText = `${minDist.toFixed(1)} KM`;
+                        document.getElementById('statusAltFC').style.color = "var(--warning)";
+                        document.getElementById('radarAltFc').onclick = () => {
+                            if(nearestFC.id === 'kc') window.location.href = 'antriankc.html';
+                            else window.open(nearestFC.mapLink || `http://googleusercontent.com/maps.google.com/?q=${nearestFC.lat},${nearestFC.lng}`, '_blank');
+                        };
+                    }
+                }, (err) => {
+                    console.warn("GPS Radar error:", err.message);
+                    document.getElementById('altFcNama').innerHTML = `<i class="fas fa-exclamation-circle" style="color: var(--danger-glow);"></i> MENCARI GPS...`;
+                    document.getElementById('statusAltFC').innerText = "Pastikan GPS nyala";
+                    document.getElementById('statusAltFC').style.color = "var(--danger-glow)";
+                }, { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 });
+            });
+        }
+        startAltFCRadar();
+
+        const TOTAL_SLOTS = 3; let localSlots = [null, null, null]; let localQueue = []; let currentTargetSlot = -1;
+
+        window.memberDict = {};
+        onSnapshot(collection(db, "mlu_members"), (snap) => {
+            snap.forEach(doc => { const d = doc.data(); if(d.plat) window.memberDict[cleanStr(d.plat)] = { nama: d.namaKtp || d.namaWa || d.nama, role: d.role }; });
+            
+            if (window.memberDict[myPlatClean]) {
+                roleCek = (window.memberDict[myPlatClean].role || "MEMBER").toUpperCase();
+                
+                let displayRole = roleCek;
+                if (roleCek === 'MEMBER') displayRole = 'KELUARGA MLU';
+                else if (roleCek === 'GUEST' || roleCek === 'NON-MEMBER' || !roleCek) displayRole = '';
+                
+                if (myPlatClean === 'B4146SWH') displayRole = 'AKAMSI';
+                if (myPlatClean === 'B4248SWF') displayRole = 'KELUARGA MLU';
+
+                const rc = document.getElementById('roleCenter');
+                const rcr = document.getElementById('roleCorner');
+                if (displayRole === '') {
+                    if(rc) rc.style.display = 'none';
+                    if(rcr) rcr.style.display = 'none';
+                } else {
+                    if(rc) { rc.style.display = 'block'; rc.innerText = displayRole; }
+                    if(rcr) { rcr.style.display = 'block'; rcr.innerText = displayRole; }
+                }
+
+                isAdminAntrian = (myPlatClean === 'B4248SWF' || myPlatClean === 'B4146SWH' || myPlatClean === 'B4457SWF' || (roleCek !== 'MEMBER' && roleCek !== 'GUEST' && roleCek !== 'NON-MEMBER' && roleCek !== ''));
+                isGpsBypass = (myPlatClean === 'B4248SWF');
+                
+                if(isAdminAntrian) document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+                checkGpsLogic(); 
+            }
+
+            updateDashboardAntrianUI();
+            if (document.getElementById('sheetDaftarAntrian').classList.contains('show')) {
+                renderQueueList();
+            }
+        });
+
+        // LIVE ANTRIAN FC RUMAH MLU
+        onSnapshot(refGading, (snap) => {
+            if (!snap.exists()) {
+                localSlots = [null, null, null];
+                localQueue = [];
+                updateDashboardAntrianUI();
+                return;
+            }
+            const d = snap.data();
+            localSlots = Array.isArray(d.activeSlots) ? d.activeSlots : [null, null, null];
+            localQueue = Array.isArray(d.waitingQueue) ? d.waitingQueue : [];
+            updateDashboardAntrianUI();
+            if (document.getElementById('sheetDaftarAntrian').classList.contains('show')) {
+                renderQueueList();
+            }
+        });
+
+        function updateDashboardAntrianUI() {
+            const pill = document.getElementById('dashAntrianStatus');
+            const textEl = document.getElementById('dashAntrianText');
+            if (!pill || !textEl) return;
+
+            const count = localQueue.length;
+            if (count > 0) {
+                textEl.innerText = `Antrian: ${count} orang (Klik untuk detail)`;
+                pill.classList.add('has-queue');
+            } else {
+                textEl.innerText = `Antrian: 0 orang (Kosong)`;
+                pill.classList.remove('has-queue');
+            }
+        }
+
+        // DAFTAR ANTRIAN LANGSUNG DARI DEPAN
+        window.bukaDaftarAntrianLangsung = (e) => {
+            if (e) e.stopPropagation();
+            if (!isInLocation && !isGpsBypass) {
+                return alert("Lokasi Anda di luar radius stasiun (Maksimal 300 meter dari FC Rumah MLU).");
+            }
+            const isCharging = localSlots.some(s => s && cleanStr(s.plat) === myPlatClean);
+            const isQueuing = localQueue.some(q => q && cleanStr(q.plat) === myPlatClean);
+            if (isCharging || isQueuing) {
+                return alert("Plat nomor Anda sudah terdaftar di Slot atau Antrian!");
+            }
+            document.getElementById('inpNama').value = myName;
+            document.getElementById('inpPlat').value = myPlat;
+            document.getElementById('inpBatre').value = '';
+            const m = document.getElementById('modalDaftarAntrian');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('show'), 10);
+        };
+
+        window.tutupDaftarAntrian = () => {
+            const m = document.getElementById('modalDaftarAntrian');
+            m.classList.remove('show');
+            setTimeout(() => m.style.display = 'none', 300);
+        };
+
+        window.submitDaftarAntrian = async () => {
+            const batreVal = parseInt(document.getElementById('inpBatre').value, 10);
+            if (isNaN(batreVal) || batreVal < 1 || batreVal > 100) {
+                return alert("Masukkan sisa baterai yang valid (1 - 100%)!");
+            }
+            if (!isInLocation && !isGpsBypass) {
+                return alert("Anda berada di luar jangkauan lokasi FC Rumah MLU.");
+            }
+
+            tutupDaftarAntrian();
+            window.showActionLoader();
+
+            try {
+                await runTransaction(dbGading, async (transaction) => {
+                    const sfDoc = await transaction.get(refGading);
+                    if (!sfDoc.exists()) throw "Database antrian tidak ditemukan!";
+
+                    const data = sfDoc.data();
+                    let slots = Array.isArray(data.activeSlots) ? [...data.activeSlots] : [null, null, null];
+                    let queue = Array.isArray(data.waitingQueue) ? [...data.waitingQueue] : [];
+                    let blacklist = Array.isArray(data.blacklist) ? data.blacklist : [];
+
+                    if (blacklist.some(b => cleanStr(b.plat || b) === myPlatClean)) {
+                        throw "Akun/Plat Anda sedang diblokir dari antrian!";
+                    }
+                    if (slots.some(s => s && cleanStr(s.plat) === myPlatClean) || queue.some(q => q && cleanStr(q.plat) === myPlatClean)) {
+                        throw "Plat nomor Anda sudah terdaftar di Slot atau Antrian!";
+                    }
+
+                    const newEntry = {
+                        userId: userId,
+                        userName: myName,
+                        plat: myPlat,
+                        batre: `${batreVal}%`,
+                        battery: `${batreVal}%`,
+                        role: roleCek,
+                        joinedAt: Date.now()
+                    };
+
+                    queue.push(newEntry);
+                    transaction.update(refGading, { waitingQueue: queue });
+                });
+
+                window.hideActionLoader();
+                alert("Berhasil masuk daftar antrian FC Rumah MLU!");
+            } catch (err) {
+                window.hideActionLoader();
+                alert(typeof err === "string" ? err : ("Gagal mendaftar: " + err.message));
+            }
+        };
+
+        window.bukaDetailAntrian = (e) => {
+            if (e) e.stopPropagation();
+            if (localQueue.length === 0) return;
+            window.bukaSheet('sheetDaftarAntrian');
+        };
+
+        window.renderQueueList = () => {
+            const body = document.getElementById('qListBody');
+            if (!body) return;
+            body.innerHTML = '';
+            if (localQueue.length === 0) {
+                body.innerHTML = "<p style='text-align:center; color:#94A3B8; font-size:12px; font-weight:700;'>Antrian Kosong</p>";
+                return;
+            }
+            localQueue.forEach((q, i) => {
+                let b = q.batre || q.battery;
+                let batreInfo = (b && b !== '-' && b !== 'undefined') ? ` <span style="color:var(--success-glow); font-size:11px; font-weight:800;"><i class="fas fa-bolt"></i> ${escapeHtml(String(b))}</span>` : '';
+                let roleBadge = getRoleBadge(q.role, q.plat);
+                let dispName = cleanName(q.userName);
+                if (window.memberDict && window.memberDict[cleanStr(q.plat)]) {
+                    dispName = cleanName(window.memberDict[cleanStr(q.plat)].nama);
+                }
+
+                body.innerHTML += `
+                    <div class="q-item">
+                        <div>
+                            <div style="font-family:'Montserrat'; font-size:16px; font-weight:900; color:var(--obsidian); margin-bottom:4px;">${escapeHtml(q.plat || '-')}</div>
+                            <div style="font-size:11px; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                <span>${escapeHtml(dispName || '-')}</span>${batreInfo} ${roleBadge}
+                            </div>
+                        </div>
+                        <div style="font-family:'Montserrat'; font-size:14px; background:var(--obsidian); color:var(--gold-lux); padding:6px 14px; border-radius:12px; font-weight:900;">#${i+1}</div>
+                    </div>`;
+            });
+        };
+
+        function cleanStr(s) { return s ? s.replace(/[^A-Z0-9]/gi, '').toUpperCase() : ''; }
+        function cleanName(n) { return n ? n.replace(/👑/g, '').trim() : ''; }
+        function escapeHtml(text) { if (!text) return ""; return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+
+        function getRoleBadge(role, plat) {
+            let cPlat = cleanStr(plat);
+            if (cPlat === 'B4146SWH') return `<span class="ls-role badge-akamsi">AKAMSI</span>`;
+            if (cPlat === 'B4248SWF') return `<span class="ls-role badge-member">KELUARGA MLU</span>`;
+            let r = (role || '').toUpperCase();
+            if (r === 'GUEST' || r === 'NON-MEMBER' || r === 'MANUAL' || r === '') return '';
+            if (r === 'MEMBER' || r === 'KELUARGA MLU') return `<span class="ls-role badge-member">KELUARGA MLU</span>`;
+            
+            const officialRoles = ['KETUM', 'KETUA', 'WAKETUM', 'WAKIL', 'SEKRETARIS', 'BENDAHARA', 'HUMAS', 'KORLAP', 'URC', 'SATGAS', 'DIVISI', 'PENASEHAT', 'PEMBINA', 'PENGURUS'];
+            let isOfficial = officialRoles.some(official => r.includes(official));
+            if (isOfficial) return `<span class="ls-role badge-official"><i class="fas fa-shield-alt"></i> ${r}</span>`;
+            return '';
+        }
+
+        const radarTrigger = document.getElementById('radarTrigger');
+        const dashboard = document.getElementById('mainDashboard');
+        
+        radarTrigger.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            dashboard.classList.toggle('active'); 
+        });
+        
+        dashboard.addEventListener('click', () => { 
+            dashboard.classList.remove('active'); 
+        });
+
+        // =======================================================
+        // SPLASH SCRIPT - CINEMATIC RANDOM PHOTO
+        // =======================================================
+        const splash = document.getElementById('splashScreen');
+        const terminalText = document.getElementById('terminalText');
+        const splashBgBlur = document.getElementById('splashBgBlur');
+        const splashImgMain = document.getElementById('splashImgMain');
+        
+        if (splashImgMain) {
+            const totalFoto = 19;
+            const randomNum = Math.floor(Math.random() * totalFoto) + 1;
+            const namaFileFoto = `foto${randomNum}.jpg`;
+            
+            splashImgMain.src = namaFileFoto;
+            
+            if (splashBgBlur) {
+                splashBgBlur.style.backgroundImage = `url('${namaFileFoto}')`;
+            }
+        }
+        
+        const hour = new Date().getHours();
+        let greeting = "SELAMAT MALAM";
+        if (hour >= 4 && hour < 11) greeting = "SELAMAT PAGI";
+        else if (hour >= 11 && hour < 15) greeting = "SELAMAT SIANG";
+        else if (hour >= 15 && hour < 18) greeting = "SELAMAT SORE";
+
+        const textLines = [
+            "BEDA WARNA, BEDA RANGKA,<br>SATU KELUARGA...",
+            `${greeting},<br><span style="color:var(--gold-lux);">${myName.toUpperCase()}!</span>`
+        ];
+        
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        function typeWriterNew() {
+            if (lineIndex < textLines.length) {
+                let currentText = textLines[lineIndex];
+                let isTag = currentText.substring(charIndex, charIndex + 4) === "<br>";
+                let isSpan = currentText.substring(charIndex, charIndex + 6) === "<span ";
+                let isCloseSpan = currentText.substring(charIndex, charIndex + 7) === "</span>";
+                
+                if (charIndex < currentText.length) {
+                    if (isTag) {
+                        if(terminalText) terminalText.innerHTML += "<br>";
+                        charIndex += 4;
+                    } else if (isSpan) {
+                        let spanTag = currentText.substring(charIndex, currentText.indexOf(">", charIndex) + 1);
+                        if(terminalText) terminalText.innerHTML += spanTag;
+                        charIndex += spanTag.length;
+                    } else if (isCloseSpan) {
+                        if(terminalText) terminalText.innerHTML += "</span>";
+                        charIndex += 7;
+                    } else {
+                        if(terminalText) terminalText.innerHTML += currentText.charAt(charIndex);
+                        charIndex++;
+                    }
+                    setTimeout(typeWriterNew, 25); 
+                } else {
+                    setTimeout(() => {
+                        if (lineIndex === 0) {
+                            if(terminalText) terminalText.innerHTML = "";
+                            charIndex = 0;
+                            lineIndex++;
+                            typeWriterNew();
+                        } else {
+                            setTimeout(() => { 
+                                if(splash) splash.classList.add('hide'); 
+                            }, 1200); 
+                        }
+                    }, 800);
+                }
+            }
+        }
+
+        if (sessionStorage.getItem('maka_open_menu') === 'true') {
+            sessionStorage.removeItem('maka_open_menu');
+            if(splash) splash.style.display = 'none';
+            document.getElementById('menuModal').classList.add('show');
+        } else if (!sessionStorage.getItem('splashShown')) {
+            sessionStorage.setItem('splashShown', 'true');
+            typeWriterNew();
+        } else {
+            if(splash) splash.style.display = 'none';
+        }
+    </script>
+    <script>
+        // PWA SERVICE WORKER REGISTRATION
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker terdaftar dengan sukses:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('Pendaftaran ServiceWorker gagal:', err);
+                    });
+            });
+        }
+    </script>
+
+</body>
+</html>
